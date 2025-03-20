@@ -1,0 +1,291 @@
+﻿//Парфумерія,Макіяж,Обличчя,Волосся,Тіло,Здоров'я і погляд,Аксесуари і техніка,Одяг, Чоловікам,Подарунки,Бренди
+[
+
+  {
+
+    "Id": 1,
+    "Name": "Парфумерія",
+    "UrlSlug": "parfumeriya",
+    "Priority": 1,
+    "Description": "Всі види парфумерії",
+    "DateCreated": "2025-03-20T00:00:00Z",
+    "Children": [
+      {
+        "Id": 2,
+        "Name": "Жіноча парфумерія",
+        "UrlSlug": "zhinocha-parfumeriya",
+        "Priority": 1,
+        "Description": "Парфуми для жінок",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 3,
+        "Name": "Чоловіча парфумерія",
+        "UrlSlug": "cholovicha-parfumeriya",
+        "Priority": 2,
+        "Description": "Парфуми для чоловіків",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 4,
+        "Name": "Парфумерія унісекс",
+        "UrlSlug": "parfumeriya-unisex",
+        "Priority": 3,
+        "Description": "Парфуми для всіх",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 5,
+        "Name": "Дитяча парфумерія",
+        "UrlSlug": "dityacha-parfumeriya",
+        "Priority": 4,
+        "Description": "Парфуми для дітей",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 6,
+        "Name": "Wonder Bundle",
+        "UrlSlug": "wonder-bundle",
+        "Priority": 5,
+        "Description": "Набори для подарунків",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 7,
+        "Name": "Набори",
+        "UrlSlug": "nabori",
+        "Priority": 6,
+        "Description": "Парфумерні набори",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 8,
+        "Name": "Мініатюри",
+        "UrlSlug": "miniatyury",
+        "Priority": 7,
+        "Description": "Мініатюрні парфуми",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 9,
+        "Name": "Парфумована вода",
+        "UrlSlug": "parfiumovana-voda",
+        "Priority": 8,
+        "Description": "Парфумована вода",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 10,
+        "Name": "Туалетна вода",
+        "UrlSlug": "tualetna-voda",
+        "Priority": 9,
+        "Description": "Туалетна вода",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 11,
+        "Name": "Одеколон",
+        "UrlSlug": "odekolon",
+        "Priority": 10,
+        "Description": "Одеколон",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 12,
+        "Name": "Масляні духи",
+        "UrlSlug": "maslyani-duhi",
+        "Priority": 11,
+        "Description": "Масляні духи",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 13,
+        "Name": "Нішева парфумерія",
+        "UrlSlug": "nisheva-parfumeriya",
+        "Priority": 12,
+        "Description": "Нішева парфумерія",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 14,
+        "Name": "Елітна парфумерія",
+        "UrlSlug": "elitna-parfumeriya",
+        "Priority": 13,
+        "Description": "Елітні парфуми",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 15,
+        "Name": "Арабська парфумерія",
+        "UrlSlug": "arabska-parfumeriya",
+        "Priority": 14,
+        "Description": "Арабські парфуми",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 16,
+        "Name": "Атомайзери",
+        "UrlSlug": "atomayzery",
+        "Priority": 15,
+        "Description": "Атомайзери для парфумів",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      },
+      {
+        "Id": 17,
+        "Name": "Аромати для дому",
+        "UrlSlug": "aromaty-dlya-domu",
+        "Priority": 16,
+        "Description": "Аромати для дому",
+        "DateCreated": "2025-03-20T00:00:00Z",
+        "ParentId": 1
+      }
+    ]
+  },
+
+{
+  "Id": 2,
+  "IsDeleted": false,
+  "DateCreated": "2025-03-19T12:34:56Z",
+  "Name": "Макіяж",
+  "UrlSlug": "makeup",
+  "Priority": 2,
+  "Image": "makeup-image.jpg",
+  "Description": "Продукти для створення чудового макіяжу.",
+  "ParentId": null,
+  "Parent": null,
+  "Children": []
+},
+{
+  "Id": 3,
+  "IsDeleted": false,
+  "DateCreated": "2025-03-19T12:34:56Z",
+  "Name": "Обличчя",
+  "UrlSlug": "oblychchya",
+  "Priority": 3,
+  "Image": "face-image.jpg",
+  "Description": "Продукти для догляду за обличчям.",
+  "ParentId": null,
+  "Parent": null,
+  "Children": []
+},
+{
+  "Id": 4,
+  "IsDeleted": false,
+  "DateCreated": "2025-03-19T12:34:56Z",
+  "Name": "Волосся",
+  "UrlSlug": "volossya",
+  "Priority": 4,
+  "Image": "hair-image.jpg",
+  "Description": "Шампуні, кондиціонери та засоби для догляду за волоссям.",
+  "ParentId": null,
+  "Parent": null,
+  "Children": []
+},
+{
+  "Id": 5,
+  "IsDeleted": false,
+  "DateCreated": "2025-03-19T12:34:56Z",
+  "Name": "Тіло",
+  "UrlSlug": "tіlo",
+  "Priority": 5,
+  "Image": "body-image.jpg",
+  "Description": "Засоби для догляду за тілом.",
+  "ParentId": null,
+  "Parent": null,
+  "Children": []
+},
+{
+  "Id": 6,
+  "IsDeleted": false,
+  "DateCreated": "2025-03-19T12:34:56Z",
+  "Name": "Здоров'я і догляд",
+  "UrlSlug": "health-and-care",
+  "Priority": 6,
+  "Image": "health-and-care-image.jpg",
+  "Description": "Продукти для підтримки здоров'я та догляду.",
+  "ParentId": null,
+  "Parent": null,
+  "Children": []
+},
+{
+  "Id": 7,
+  "IsDeleted": false,
+  "DateCreated": "2025-03-19T12:34:56Z",
+  "Name": "Аксесуари і техніка",
+  "UrlSlug": "accessories-and-technology",
+  "Priority": 7,
+  "Image": "accessories-and-technology-image.jpg",
+  "Description": "Аксесуари для дому та техніки.",
+  "ParentId": null,
+  "Parent": null,
+  "Children": []
+},
+{
+  "Id": 8,
+  "IsDeleted": false,
+  "DateCreated": "2025-03-19T12:34:56Z",
+  "Name": "Одяг",
+  "UrlSlug": "clothing",
+  "Priority": 8,
+  "Image": "clothing-image.jpg",
+  "Description": "Одяг для будь-якої пори року та стилю.",
+  "ParentId": null,
+  "Parent": null,
+  "Children": []
+},
+{
+  "Id": 9,
+  "IsDeleted": false,
+  "DateCreated": "2025-03-19T12:34:56Z",
+  "Name": "Чоловікам",
+  "UrlSlug": "for-men",
+  "Priority": 9,
+  "Image": "for-men-image.jpg",
+  "Description": "Все для чоловіків: одяг, аксесуари, засоби догляду.",
+  "ParentId": null,
+  "Parent": null,
+  "Children": []
+},
+{
+  "Id": 10,
+  "IsDeleted": false,
+  "DateCreated": "2025-03-19T12:34:56Z",
+  "Name": "Подарунки",
+  "UrlSlug": "gifts",
+  "Priority": 10,
+  "Image": "gifts-image.jpg",
+  "Description": "Ідеї для подарунків для будь-якої події.",
+  "ParentId": null,
+  "Parent": null,
+  "Children": []
+},
+{
+  "Id": 11,
+  "IsDeleted": false,
+  "DateCreated": "2025-03-19T12:34:56Z",
+  "Name": "Бренди",
+  "UrlSlug": "brands",
+  "Priority": 11,
+  "Image": "brands-image.jpg",
+  "Description": "Популярні бренди та їх продукція.",
+  "ParentId": null,
+  "Parent": null,
+  "Children": []
+}
+
+]
