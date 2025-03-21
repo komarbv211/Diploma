@@ -8,9 +8,39 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Core.Services
 {
-    public class ImageService(IConfiguration config) : IImageService
+    public class ImageService : IImageService
     {
-        private readonly string _imgPath = Path.Combine(config["ImagesDir"]!);
+        private readonly string _imgPath;
+        private readonly IConfiguration _config;
+
+        public ImageService(IConfiguration config)
+        {
+            _config = config;
+            _imgPath = Path.GetFullPath(config["ImagesDir"] ?? throw new ArgumentException("ImagesDir configuration is missing"));
+
+            Directory.CreateDirectory(_imgPath);
+
+            if (!IsDirectoryWritable(_imgPath))
+            {
+                throw new UnauthorizedAccessException($"No write access to directory: {_imgPath}");
+            }
+        }
+
+        private static bool IsDirectoryWritable(string dirPath)
+        {
+            try
+            {
+                using var fs = File.Create(
+                    Path.Combine(dirPath, Path.GetRandomFileName()),
+                    1,
+                    FileOptions.DeleteOnClose);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         public async Task<string> SaveImageAsync(IFormFile image)
         {
@@ -113,7 +143,7 @@ namespace Core.Services
         {
             get
             {
-                List<int> sizes = config.GetRequiredSection("ImageSizes").Get<List<int>>()
+                List<int> sizes = _config.GetRequiredSection("ImageSizes").Get<List<int>>()
                    ?? throw new Exception(Errors.ImageSizesReadError);
                 if (sizes.Count == 0)
                 {
