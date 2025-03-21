@@ -53,6 +53,7 @@ namespace WebApiDiploma.Controllers
                 return StatusCode(500, new { Message = "Error loading images", Error = ex.Message });
             }
         }
+       
         // Метод для видалення одного зображення
         [HttpDelete("delete/{imageName}")]
         public IActionResult DeleteImage(string imageName)
