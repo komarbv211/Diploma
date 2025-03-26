@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    internal interface IRepository
+    public interface IRepository<TEntity> where TEntity : class
     {
+        Task<List<TEntity>> GetAllAsync();
+        IQueryable<TEntity> GetAllQueryable();
     }
 }
