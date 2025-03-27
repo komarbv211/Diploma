@@ -1,6 +1,19 @@
-﻿namespace WebApiDiploma.Extensions
+﻿using Core.Interfaces;
+using Core.Mappers;
+using Core.Services;
+using Infrastructure.Repositories;
+
+namespace WebApiDiploma.Extensions
 {
-    public class WebApiServiceExtensions
+    public static class WebApiServiceExtensions
     {
+        public static IServiceCollection AddWebApiServices(this IServiceCollection services)
+        {
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddAutoMapper(typeof(CategoryProfile));
+
+            return services;
+        }
     }
 }
