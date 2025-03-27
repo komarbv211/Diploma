@@ -1,0 +1,50 @@
+version: "3.9"
+networks:
+  myAppNetwork:
+    driver: bridge
+
+services:
+  app:
+    container_name: makeup_container
+    image: komarandrii/makeup-asp-api
+    ports:
+      - "5817:8080"  
+    networks:
+      - myAppNetwork
+    depends_on:
+      - postgresServerDb
+    environment:
+      - DefaultConnection=Server=ep-long-firefly-a2qp0hj6-pooler.eu-central-1.aws.neon.tech;Database=neondb;Username=neondb_owner;Password=npg_wQjgN89tVlTc
+    volumes:
+      - /volumes/makeup-asp/backup:/app/backup 
+      - /volumes/makeup-asp/images:/app/uploading
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+
+  client:
+    container_name: makeup_client_container
+    image: komarandrii/makeup-client
+    restart: on-failure
+    ports:
+      - "5092:80"  
+    networks:
+      - myAppNetwork
+  
+  postgresServerDb:
+    container_name: postgres_db_container
+    image: postgres:13  
+    environment:
+      POSTGRES_USER: neondb_owner
+      POSTGRES_PASSWORD: npg_wQjgN89tVlTc
+      POSTGRES_DB: neondb
+    ports:
+      - "5432:5432"  
+    networks:
+      - myAppNetwork
+    volumes:
+      - postgres_data:/var/lib/postgresql/data 
+
+volumes:
+  postgres_data:
