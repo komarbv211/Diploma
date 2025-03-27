@@ -10,5 +10,6 @@ namespace Core.Interfaces
     {
         Task<List<TEntity>> GetAllAsync();
         IQueryable<TEntity> GetAllQueryable();
+        Task<bool> AnyAsync();
     }
 }

@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.Data;
-using System.Text.Json;
+﻿using Newtonsoft.Json;
 using System.Text;
-using Newtonsoft.Json;
 using Infrastructure.Entities;
-using JsonException = Newtonsoft.Json.JsonException;
 using WebApiDiploma.Models.Seeder;
+using Core.Interfaces;
 
 namespace WebApiDiploma.Extensions
 {
@@ -119,12 +116,12 @@ namespace WebApiDiploma.Extensions
             //}
 
             //Category seeder
-            /*
-            var categoryRepo = scope.ServiceProvider.GetService<IRepository<Category>>();
+            
+            var categoryRepo = scope.ServiceProvider.GetService<IRepository<CategoryEntity>>();
             if (categoryRepo is not null && !await categoryRepo.AnyAsync())
             {
                 Console.WriteLine("Start categories seeder");
-                string categoryJsonDataFile = Path.Combine(Environment.CurrentDirectory, app.Configuration["SeederJsonDir"]!, "Categories.json");
+                string categoryJsonDataFile = Path.Combine(Environment.CurrentDirectory, "Helpers", app.Configuration["SeederJsonDir"]!, "Categories.json");
                 if (File.Exists(categoryJsonDataFile))
                 {
                     var filtersJson = File.ReadAllText(categoryJsonDataFile, Encoding.UTF8);
@@ -146,7 +143,7 @@ namespace WebApiDiploma.Extensions
                 }
                 else Console.WriteLine("File \"JsonData/Categories.json\" not found");
             }
-            */
+            
 
             //Advert seeder
             //var filterValueRepo = scope.ServiceProvider.GetService<IRepository<FilterValue>>();
