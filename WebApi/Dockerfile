@@ -1,20 +1,20 @@
-# Learn about building .NET container images:
-# https://github.com/dotnet/dotnet-docker/blob/main/samples/README.md
+# Stage 1: Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /source
 
-# copy csproj and restore as distinct layers
-COPY ["DiplomaApi/DiplomaApi.csproj", "DiplomaApi/"]
-RUN dotnet restore "DiplomaApi/DiplomaApi.csproj"
+# Копіюємо проект і відновлюємо залежності
+COPY ["WebApiDiploma/WebApiDiploma.csproj", "WebApiDiploma/"]
+RUN dotnet restore "WebApiDiploma/WebApiDiploma.csproj"
 
-# copy everything else and build app
+# Копіюємо всі файли і будуємо додаток
 COPY . .
-WORKDIR /source/DiplomaApi
-RUN dotnet publish -o /app
+WORKDIR /source/WebApiDiploma
+RUN dotnet publish -c Release -o /app
 
-
-# final stage/image
+# Stage 2: Final image for runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
+# Встановлюємо необхідні пакети для підключення до PostgreSQL
 WORKDIR /app
 RUN apt-get update && apt-get install -y \
     wget \
@@ -26,5 +26,12 @@ RUN apt-get update && apt-get install -y \
     apt-get install -y postgresql-client-17 && \
     apt-get remove -y wget gnupg lsb-release && \
     apt-get clean
+
+# Налаштовуємо змінні середовища для підключення до бази даних
+ENV CONNECTIONSTRING="Server=ep-long-firefly-a2qp0hj6-pooler.eu-central-1.aws.neon.tech;Database=neondb;Username=neondb_owner;Password=npg_wQjgN89tVlTc"
+
+# Копіюємо додаток з етапу побудови
 COPY --from=build /app .
-ENTRYPOINT ["dotnet", "DiplomaApi.dll"]
+
+# Запускаємо додаток
+ENTRYPOINT ["dotnet", "WebApiDiploma.dll"]

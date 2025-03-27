@@ -15,34 +15,34 @@ if errorlevel 1 (
 ) 
 
 echo Changing directory client...
-cd "OLX.Frontend"
+cd "client_app"
 
 echo Building Docker image client...
-docker build -t olx-client .
+docker build -t makeup-client .
 
 echo Docker login...
 docker login
 
 echo Tagging Docker image client...
-docker tag olx-client:latest sashok9203/olx-client:latest
+docker tag makeup-client:latest komarandrii/makeup-client:latest
 
 echo Pushing Docker image client to repository...
-docker push sashok9203/olx-client:latest
+docker push komarandrii/makeup-client:latest
 
 echo Done ---client---!
 
 echo Changing directory api...
 cd ".."
-cd "OLX.API"
+cd "WebApi"
 
 echo Building Docker image api...
-docker build -t olx-asp-api . 
+docker build -t makeup-asp-api . 
 
 echo Tagging Docker image api...
-docker tag olx-asp-api:latest sashok9203/olx-asp-api:latest
+docker tag makeup-asp-api:latest komarandrii/makeup-asp-api:latest
 
 echo Pushing Docker image api to repository...
-docker push sashok9203/olx-asp-api:latest
+docker push komarandrii/makeup-asp-api:latest
 
 echo Done ---api---!
 pause
