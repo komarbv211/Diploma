@@ -2,6 +2,7 @@ using Core.Extensions;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using WebApiDiploma.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddDbContext<DbMakeUpContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddWebApiServices();
 
 builder.Services.AddCoreServices();
 builder.Services.AddControllers();
