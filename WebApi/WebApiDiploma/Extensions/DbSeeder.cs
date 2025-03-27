@@ -119,6 +119,7 @@ namespace WebApiDiploma.Extensions
             //}
 
             //Category seeder
+            /*
             var categoryRepo = scope.ServiceProvider.GetService<IRepository<Category>>();
             if (categoryRepo is not null && !await categoryRepo.AnyAsync())
             {
@@ -145,7 +146,7 @@ namespace WebApiDiploma.Extensions
                 }
                 else Console.WriteLine("File \"JsonData/Categories.json\" not found");
             }
-
+            */
 
             //Advert seeder
             //var filterValueRepo = scope.ServiceProvider.GetService<IRepository<FilterValue>>();
