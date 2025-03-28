@@ -13,10 +13,12 @@ namespace Infrastructure.Repositories;
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 {
     protected readonly DbSet<TEntity> dbSet;
+    protected readonly DbMakeUpContext context;
 
     public Repository(DbMakeUpContext context)
     {
         dbSet = context.Set<TEntity>();
+        this.context = context; 
     }
 
     public async Task<List<TEntity>> GetAllAsync()
@@ -30,4 +32,9 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     }
 
     public async virtual Task<bool> AnyAsync() => await dbSet.AnyAsync();
+
+
+    public async virtual Task AddAsync(TEntity entity) => await dbSet.AddAsync(entity);
+
+    public async Task SaveAsync() => await context.SaveChangesAsync();
 }

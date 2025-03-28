@@ -7,7 +7,7 @@ namespace WebApiDiploma.Models.Seeder
     public class SeederCategoryModel
     {
         public string Name { get; init; } = string.Empty;
-        public string? UrlSlug { get; set; }
+        public string UrlSlug { get; set; }
         //public string? Image { get; init; }
 
         public int Priority { get; set; }

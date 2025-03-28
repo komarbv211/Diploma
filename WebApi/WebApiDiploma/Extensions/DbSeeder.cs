@@ -8,14 +8,14 @@ namespace WebApiDiploma.Extensions
 {
     public static class DbSeeder
     {
-       
-            public static async Task SeedDataAsync(this WebApplication app)
-            {
+
+        public static async Task SeedDataAsync(this WebApplication app)
+        {
 
 
-                //Roles seeder
-                using var scope = app.Services.CreateScope();
-                var serviceProvider = scope.ServiceProvider;
+            //Roles seeder
+            using var scope = app.Services.CreateScope();
+            var serviceProvider = scope.ServiceProvider;
             //var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
             //var roles = Roles.Get();
             //if (roleManager.Roles.Count() < roles.Count())
@@ -116,7 +116,7 @@ namespace WebApiDiploma.Extensions
             //}
 
             //Category seeder
-            
+
             var categoryRepo = scope.ServiceProvider.GetService<IRepository<CategoryEntity>>();
             if (categoryRepo is not null && !await categoryRepo.AnyAsync())
             {
@@ -129,12 +129,33 @@ namespace WebApiDiploma.Extensions
                     {
                         var categoryModels = JsonConvert.DeserializeObject<IEnumerable<SeederCategoryModel>>(filtersJson)
                             ?? throw new JsonException();
-                        //if (categoryModels.Any() && filterRepo is not null)
-                        //{
-                        //    var filters = await filterRepo.GetListBySpec(new FilterSpecs.GetAll());
-                        //    await categoryRepo.AddRangeAsync(await GetCategories(categoryModels, filters, imageService));
-                        //    await categoryRepo.SaveAsync();
-                        //}
+                        foreach (var categoryModel in categoryModels)
+                        {
+                            var parent = new CategoryEntity
+                            {
+                                Description = categoryModel.Description,
+                                Name = categoryModel.Name,
+                                ParentId = null,
+                                Priority = categoryModel.Priority,
+                                UrlSlug = categoryModel.UrlSlug
+                            };
+                            await categoryRepo.AddAsync(parent);
+                            await categoryRepo.SaveAsync();
+
+                            foreach (var malvina in categoryModel.Children)
+                            {
+                                var child = new CategoryEntity
+                                {
+                                    Description = malvina.Description,
+                                    Name = malvina.Name,
+                                    ParentId = parent.Id,
+                                    Priority = malvina.Priority,
+                                    UrlSlug = malvina.UrlSlug
+                                };
+                                await categoryRepo.AddAsync(child);
+                                await categoryRepo.SaveAsync();
+                            }
+                        }
                     }
                     catch (JsonException)
                     {
@@ -143,7 +164,7 @@ namespace WebApiDiploma.Extensions
                 }
                 else Console.WriteLine("File \"JsonData/Categories.json\" not found");
             }
-            
+
 
             //Advert seeder
             //var filterValueRepo = scope.ServiceProvider.GetService<IRepository<FilterValue>>();
