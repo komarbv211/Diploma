@@ -1,0 +1,37 @@
+//Seed user data
+[
+  {
+    "email": "Admin1@gmail.com",
+    "password": "Admin_1",
+    "firstName": "Андрій",
+    "lastName": "Комар",
+    "role": "Admin",
+    "phoneNumber": "+38 (067) 365-45-45",
+    "imageBase64": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/SBandera.jpg/250px-SBandera.jpg"
+  },
+  {
+    "email": "User1@gmail.com",
+    "password": "User_1",
+    "firstName": "Сергій",
+    "lastName": "Оленюк",
+    "role": "User",
+    "phoneNumber": "+38 (098) 323-15-00"
+  },
+  {
+    "email": "User2@gmail.com",
+    "password": "User_2",
+    "firstName": "Богдан",
+    "lastName": "Петренко",
+    "role": "User",
+    "phoneNumber": "+38 (097) 999-67-34"
+  },
+  {
+    "email": "User3@gmail.com",
+    "password": "User_3",
+    "firstName": "Ольга",
+    "lastName": "Ковальчук",
+    "role": "User",
+    "phoneNumber": "+38 (098) 654-68-39"
+  }
+
+]

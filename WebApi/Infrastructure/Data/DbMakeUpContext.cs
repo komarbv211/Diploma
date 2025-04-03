@@ -14,5 +14,7 @@ namespace Infrastructure.Data
             base(options) { }
 
         public DbSet<CategoryEntity> Categories { get; set; }
+        public DbSet<UserEntity> Users { get; set; }
+
     }
 }

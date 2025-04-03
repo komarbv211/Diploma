@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Entities
 {
-    public class UserRoleEntity
+    public class UserRoleEntity : IdentityUserRole<long>
     {
-          [ForeignKey("User")]
-        public int UserId { get; set; }
-        [ForeignKey("Role")]
-        public int RoleId { get; set; }
+        //[ForeignKey("User")]
+        //public int UserId { get; set; }
+        //[ForeignKey("Role")]
+        //public int RoleId { get; set; }
 
         public virtual UserEntity User { get; set; }
         public virtual RoleEntity Role { get; set; }
