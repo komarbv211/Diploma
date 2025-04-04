@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Entities
 {
-    public class UserEntity : IdentityUser<long>
+    public class UserEntity : IdentityUser<int>
     {
         [Required, StringLength(75)]
         public string FirstName { get; set; }
@@ -23,6 +23,11 @@ namespace Infrastructure.Entities
         public string Email { get; set; }
         [StringLength(255)]
         public string Password { get; set; }
+
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime LastActivity { get; set; } = DateTime.UtcNow;
+
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new HashSet<RefreshToken>();
 
         //public virtual ICollection<OrderEntity> Orders { get; set; }
         public virtual ICollection<UserRoleEntity> UserRoles { get; set; }

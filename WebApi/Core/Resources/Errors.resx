@@ -123,4 +123,22 @@
   <data name="ImageSizesReadError" xml:space="preserve">
     <value>Error read image sizes</value>
   </data>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>Invalid Credentials</value>
+  </data>
+  <data name="InvalidLoginData" xml:space="preserve">
+    <value>Invalid login or password</value>
+  </data>
+  <data name="InvalidRefreshToken" xml:space="preserve">
+    <value>Invalid Refresh Token</value>
+  </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Invalid token</value>
+  </data>
+  <data name="JwtSettingsReadError" xml:space="preserve">
+    <value>Error reading JWT settings</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User Not Found</value>
+  </data>
 </root>

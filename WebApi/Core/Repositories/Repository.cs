@@ -37,4 +37,22 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     public async virtual Task AddAsync(TEntity entity) => await dbSet.AddAsync(entity);
 
     public async Task SaveAsync() => await context.SaveChangesAsync();
+
+    public virtual void Delete(object id)
+    {
+        TEntity? entityToDelete = dbSet.Find(id);
+        if (entityToDelete != null)
+        {
+            Delete(entityToDelete);
+        }
+    }
+
+    public async virtual Task DeleteAsync(object id)
+    {
+        TEntity? entityToDelete = await dbSet.FindAsync(id);
+        if (entityToDelete != null)
+        {
+            Delete(entityToDelete);
+        }
+    }
 }
