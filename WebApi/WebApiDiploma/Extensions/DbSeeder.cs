@@ -17,16 +17,13 @@ namespace WebApiDiploma.Extensions
             //Roles seeder
             using var scope = app.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
-            //var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
-            //var roles = Roles.Get();
-            //if (roleManager.Roles.Count() < roles.Count())
-            //{
-            //    foreach (var role in roles)
-            //    {
-            //        if (!await roleManager.RoleExistsAsync(role))
-            //            await roleManager.CreateAsync(new IdentityRole<int> { Name = role });
-            //    }
-            //}
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<RoleEntity>>();
+
+            if (!await roleManager.RoleExistsAsync("Admin"))
+                await roleManager.CreateAsync(new RoleEntity { Name = "Admin" });
+            if (!await roleManager.RoleExistsAsync("User"))
+                await roleManager.CreateAsync(new RoleEntity { Name = "User" });
+
 
 
             //NewPost seeder
@@ -43,6 +40,7 @@ namespace WebApiDiploma.Extensions
 
             // Users seeder
             var userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
+            
             var imageService = serviceProvider.GetRequiredService<IImageService>();
             if (!userManager.Users.Any())
             {
