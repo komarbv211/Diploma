@@ -3,6 +3,7 @@ using System.Text;
 using Infrastructure.Entities;
 using WebApiDiploma.Models.Seeder;
 using Core.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebApiDiploma.Extensions
 {
@@ -16,16 +17,13 @@ namespace WebApiDiploma.Extensions
             //Roles seeder
             using var scope = app.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
-            //var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
-            //var roles = Roles.Get();
-            //if (roleManager.Roles.Count() < roles.Count())
-            //{
-            //    foreach (var role in roles)
-            //    {
-            //        if (!await roleManager.RoleExistsAsync(role))
-            //            await roleManager.CreateAsync(new IdentityRole<int> { Name = role });
-            //    }
-            //}
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<RoleEntity>>();
+
+            if (!await roleManager.RoleExistsAsync("Admin"))
+                await roleManager.CreateAsync(new RoleEntity { Name = "Admin" });
+            if (!await roleManager.RoleExistsAsync("User"))
+                await roleManager.CreateAsync(new RoleEntity { Name = "User" });
+
 
 
             //NewPost seeder
@@ -38,51 +36,57 @@ namespace WebApiDiploma.Extensions
             //    }
             //}
 
-            //Users seeder
-            //var userManager = serviceProvider.GetRequiredService<UserManager<OlxUser>>();
-            //var imageService = serviceProvider.GetRequiredService<IImageService>();
-            //if (!userManager.Users.Any())
-            //{
-            //    Console.WriteLine("Start users seeder");
-            //    string usersJsonDataFile = Path.Combine(Environment.CurrentDirectory, app.Configuration["SeederJsonDir"]!, "Users.json");
-            //    if (File.Exists(usersJsonDataFile))
-            //    {
-            //        var userJson = File.ReadAllText(usersJsonDataFile, Encoding.UTF8);
-            //        try
-            //        {
-            //            var usersData = JsonConvert.DeserializeObject<IEnumerable<SeederUserModel>>(userJson)
-            //                ?? throw new JsonException();
-            //            foreach (var user in usersData)
-            //            {
-            //                var newUser = new OlxUser
-            //                {
-            //                    UserName = user.Email,
-            //                    Email = user.Email,
-            //                    PhoneNumber = user.PhoneNumber,
-            //                    FirstName = user.FirstName,
-            //                    LastName = user.LastName,
-            //                    Photo = user.PhotoBase64 is not null
-            //                    ? await imageService.SaveImageAsync(user.PhotoBase64)
-            //                    : await imageService.SaveImageFromUrlAsync(user.PhotoUrl ?? "https://picsum.photos/800/600"),
-            //                    WebSite = user.WebSite,
-            //                    About = user.About,
-            //                    EmailConfirmed = true
-            //                };
 
-            //                var result = await userManager.CreateAsync(newUser, user.Password);
-            //                if (result.Succeeded)
-            //                    await userManager.AddToRoleAsync(newUser, user.Role);
-            //                else
-            //                    Console.WriteLine($"Error create user \"{user.Email}\"");
-            //            }
-            //        }
-            //        catch (JsonException)
-            //        {
-            //            Console.WriteLine("Error deserialize users json file");
-            //        }
-            //    }
-            //    else Console.WriteLine("File \"JsonData/Users.json\" not found");
-            //}
+
+            // Users seeder
+            var userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
+            
+            var imageService = serviceProvider.GetRequiredService<IImageService>();
+            if (!userManager.Users.Any())
+            {
+                Console.WriteLine("Start users seeder");
+                string usersJsonDataFile = Path.Combine(Environment.CurrentDirectory, "Helpers", app.Configuration["SeederJsonDir"]!, "Users.json");
+                if (File.Exists(usersJsonDataFile))
+                {
+                    var userJson = File.ReadAllText(usersJsonDataFile, Encoding.UTF8);
+                    try
+                    {
+                        var usersData = JsonConvert.DeserializeObject<IEnumerable<SeederUserModel>>(userJson)
+                            ?? throw new JsonException();
+                        foreach (var user in usersData)
+                        {
+                            var newUser = new UserEntity
+                            {
+                                UserName = user.Email,
+                                Email = user.Email,
+                                PhoneNumber = user.PhoneNumber,
+                                FirstName = user.FirstName,
+                                LastName = user.LastName,
+                                Image = user.PhotoBase64 is not null
+                                ? await imageService.SaveImageAsync(user.PhotoBase64)
+                                : await imageService.SaveImageFromUrlAsync(user.PhotoUrl ?? "https://picsum.photos/800/600"),
+                                //WebSite = user.WebSite,
+                                //About = user.About,
+                                EmailConfirmed = true
+                            };
+
+                            var result = await userManager.CreateAsync(newUser, user.Password);
+                            if (result.Succeeded)
+                                await userManager.AddToRoleAsync(newUser, user.Role);
+                            else
+                                Console.WriteLine($"Error create user \"{user.Email}\"");
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                        Console.WriteLine("Error deserialize users json file");
+                    }
+                }
+                else Console.WriteLine("File \"JsonData/Users.json\" not found");
+            }
+
+
+
             //Filter seeder
             //var filterRepo = scope.ServiceProvider.GetService<IRepository<Filter>>();
             //if (filterRepo is not null && !await filterRepo.AnyAsync())
