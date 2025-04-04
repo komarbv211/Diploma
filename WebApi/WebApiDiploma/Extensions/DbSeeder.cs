@@ -3,6 +3,7 @@ using System.Text;
 using Infrastructure.Entities;
 using WebApiDiploma.Models.Seeder;
 using Core.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebApiDiploma.Extensions
 {
@@ -38,7 +39,9 @@ namespace WebApiDiploma.Extensions
             //    }
             //}
 
-            Users seeder
+
+
+            // Users seeder
             var userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
             var imageService = serviceProvider.GetRequiredService<IImageService>();
             if (!userManager.Users.Any())
@@ -54,18 +57,18 @@ namespace WebApiDiploma.Extensions
                             ?? throw new JsonException();
                         foreach (var user in usersData)
                         {
-                            var newUser = new OlxUser
+                            var newUser = new UserEntity
                             {
                                 UserName = user.Email,
                                 Email = user.Email,
                                 PhoneNumber = user.PhoneNumber,
                                 FirstName = user.FirstName,
                                 LastName = user.LastName,
-                                Photo = user.PhotoBase64 is not null
+                                Image = user.PhotoBase64 is not null
                                 ? await imageService.SaveImageAsync(user.PhotoBase64)
                                 : await imageService.SaveImageFromUrlAsync(user.PhotoUrl ?? "https://picsum.photos/800/600"),
-                                WebSite = user.WebSite,
-                                About = user.About,
+                                //WebSite = user.WebSite,
+                                //About = user.About,
                                 EmailConfirmed = true
                             };
 
@@ -83,6 +86,8 @@ namespace WebApiDiploma.Extensions
                 }
                 else Console.WriteLine("File \"JsonData/Users.json\" not found");
             }
+
+
 
             //Filter seeder
             //var filterRepo = scope.ServiceProvider.GetService<IRepository<Filter>>();
