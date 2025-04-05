@@ -37,10 +37,14 @@ namespace WebApiDiploma.Controllers
             return Ok(authResponse);
         }
 
-        [HttpDelete("logout")]
-        public async Task<IActionResult> Logout([FromBody] string refreshToken)
+        [HttpPost("logout")]
+        public async Task<IActionResult> LogOut([FromBody] LogoutModel? logoutModel)
         {
-            await accountService.LogoutAsync(refreshToken);
+            
+            if (logoutModel is not null && logoutModel.RefreshToken is not null)
+            {
+                await accountService.LogoutAsync(logoutModel.RefreshToken);
+            }
             return Ok();
         }
     }

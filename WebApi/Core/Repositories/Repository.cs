@@ -1,4 +1,6 @@
-﻿using Core.Interfaces;
+﻿using Ardalis.Specification;
+using Ardalis.Specification.EntityFrameworkCore;
+using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Graph.Models.TermStore;
@@ -54,5 +56,20 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         {
             Delete(entityToDelete);
         }
+    }
+    public virtual void Delete(TEntity entityToDelete)
+    {
+        if (context.Entry(entityToDelete).State == EntityState.Detached)
+        {
+            dbSet.Attach(entityToDelete);
+        }
+        dbSet.Remove(entityToDelete);
+    }
+    public async Task<TEntity?> GetItemBySpec(ISpecification<TEntity> specification) =>
+           await ApplySpecification(specification).FirstOrDefaultAsync();
+    private IQueryable<TEntity> ApplySpecification(ISpecification<TEntity> specification)
+    {
+        var evaluator = new SpecificationEvaluator();
+        return evaluator.GetQuery(dbSet, specification);
     }
 }

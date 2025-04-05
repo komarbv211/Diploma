@@ -1,9 +1,11 @@
-using Core.Extensions;
+ï»¿using Core.Extensions;
 using Infrastructure.Data;
+using Infrastructure.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using WebApiDiploma.Extensions;
-using Infrastructure.Exceptions;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +14,19 @@ builder.Services.AddDbContext<DbMakeUpContext>(opt =>
 {
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-// Ðåºñòðóºìî Identity
-builder.Services.AddIdentityWithRoles();
+
+builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
+{
+    options.Stores.MaxLengthForKeys = 128;
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 5;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+})
+    .AddEntityFrameworkStores<DbMakeUpContext>()
+    .AddDefaultTokenProviders();
+
 
 builder.Services.AddWebApiServices();
 

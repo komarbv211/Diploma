@@ -11,7 +11,7 @@ namespace Infrastructure.Entities
     [Table("tbl_RefreshTokens")]
     public class RefreshToken : BaseEntity<long>
     {
-        public int UserId { get; set; }
+        public long UserId { get; set; }
         public UserEntity User { get; set; } = null!;
 
         [Unicode(false)]

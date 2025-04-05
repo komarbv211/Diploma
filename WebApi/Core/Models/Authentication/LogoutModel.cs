@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Specifications
+namespace Core.Models.Authentication
 {
-    internal class ProductSpecs
+    public class LogoutModel
     {
+        public string? RefreshToken { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ardalis.Specification;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,6 @@ namespace Core.Interfaces
         Task SaveAsync();
         void Delete(object id);
         Task DeleteAsync(object id);
+        Task<TEntity?> GetItemBySpec(ISpecification<TEntity> specification);
     }
 }

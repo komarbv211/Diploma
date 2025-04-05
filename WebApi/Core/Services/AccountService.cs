@@ -2,11 +2,13 @@
 using Core.Interfaces;
 using Core.Models.Authentication;
 using Core.Resources;
+
 using Microsoft.AspNetCore.Identity;
 using System.Net;
 using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Core.Specifications;
 
 namespace Core.Services
 {
@@ -82,19 +84,18 @@ namespace Core.Services
 
 
         // Реалізація методу LogoutAsync
-        public async Task LogoutAsync(string token)
+        public async Task LogoutAsync(string refreshToken)
         {
-            var refreshToken = await tokenRepository.GetAllQueryable()
-                .FirstOrDefaultAsync(t => t.Token == token);
-
-            if (refreshToken == null)
+            var token = await tokenRepository.GetItemBySpec(new RefreshTokenSpecs.GetByValue(refreshToken));
+            if (token is not null)
             {
-                throw new HttpException(Errors.InvalidRefreshToken, HttpStatusCode.BadRequest);
-            }
+                Console.WriteLine($"Токен перед видаленням:  Id: {token.Id}");
 
-            tokenRepository.Delete(refreshToken.Id);
-            await tokenRepository.SaveAsync();
+                await tokenRepository.DeleteAsync(token.Id);
+                await tokenRepository.SaveAsync();
+            }
         }
+
 
         // Реалізація методу RefreshTokensAsync
         public async Task<AuthResponse> RefreshTokensAsync(string refreshToken)
@@ -122,7 +123,7 @@ namespace Core.Services
             token.Token = newRefreshToken;
             token.ExpirationDate = DateTime.UtcNow.AddDays(jwtService.GetRefreshTokenLiveTime());
 
-            tokenRepository.SaveAsync();  // Збереження нового refresh token
+            await tokenRepository.SaveAsync();  
 
             return new AuthResponse
             {

@@ -45,10 +45,10 @@ namespace Core.Services
             {
                 new (ClaimTypes.NameIdentifier,user.Id.ToString()),
                 new ("firstName", user.FirstName ?? string.Empty),
-                new ("secondName", user.SecondName ?? string.Empty),
+                new ("lastName", user.LastName ?? string.Empty),
                 new ("email", user.Email!),
                 new ("phoneNumber", user.PhoneNumber ?? string.Empty),
-                new ("image", user.ImageUrl ?? string.Empty),
+                new ("image", user.Image ?? string.Empty),
             };
             var roles = await userManager.GetRolesAsync(user);
             claims.AddRange(roles.Select(role => new Claim("roles", role)));
