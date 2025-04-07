@@ -8,7 +8,9 @@ namespace Core.Extensions
     {
         public static void AddCoreServices(this IServiceCollection services)
         {
-            services.AddScoped<IImageService, ImageService>();           
+            services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IAccountService, AccountService>();           
         }
     }
 }

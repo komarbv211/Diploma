@@ -18,11 +18,14 @@ namespace Infrastructure.Entities
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
+        public DateTime? LastActivity { get; set; } = DateTime.UtcNow;
 
         [StringLength(200)]
         public string? Image { get; set; }
 
-      
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new HashSet<RefreshToken>();
+
+
         //public virtual ICollection<OrderEntity> Orders { get; set; }
         public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
     }

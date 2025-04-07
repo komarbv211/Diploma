@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Exceptions
+namespace Core.Models.Authentication
 {
-    internal class InfrastructureServiceExtensions
+    public class LogoutModel
     {
+        public string? RefreshToken { get; set; }
     }
 }

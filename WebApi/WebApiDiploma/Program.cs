@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using WebApiDiploma.Extensions;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,7 +14,7 @@ builder.Services.AddDbContext<DbMakeUpContext>(opt =>
 {
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-// ЩОБ БУВ ЮЗЕР МЕНЕДЖЕР РОЛЛІ 
+
 builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 {
     options.Stores.MaxLengthForKeys = 128;
@@ -25,6 +26,7 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 })
     .AddEntityFrameworkStores<DbMakeUpContext>()
     .AddDefaultTokenProviders();
+
 
 builder.Services.AddWebApiServices();
 
