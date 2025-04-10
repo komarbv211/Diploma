@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Core.Interfaces;
+using Infrastructure.Interfaces;
 using Core.Services;
 
 namespace Core.Extensions
