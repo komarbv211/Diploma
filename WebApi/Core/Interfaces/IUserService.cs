@@ -13,7 +13,7 @@ namespace Core.Interfaces
     {
 
         Task<IEnumerable<UserDTO>> GetAllAsync();
-        Task<UserDTO> GetByIdAsync(string id);
+        Task<UserDTO> GetByIdAsync(long id);
         Task CreateUserAsync(UserDTO dto);
         Task UpdateUserAsync(string id, UserDTO dto);
         Task DeleteUserAsync(string id);

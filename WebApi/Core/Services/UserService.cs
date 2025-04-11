@@ -42,7 +42,7 @@ namespace Core.Services
             return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
 
-        public Task<UserDTO> GetByIdAsync(string id)
+        public Task<UserDTO> GetByIdAsync(long id)
         {
             throw new NotImplementedException();
         }
