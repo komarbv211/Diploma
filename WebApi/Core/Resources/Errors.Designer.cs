@@ -79,7 +79,7 @@ namespace Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid Credentials.
+        ///   Looks up a localized string similar to Invalid credentials.
         /// </summary>
         internal static string InvalidCredentials {
             get {
