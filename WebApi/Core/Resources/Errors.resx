@@ -138,6 +138,9 @@
   <data name="JwtSettingsReadError" xml:space="preserve">
     <value>Error reading JWT settings</value>
   </data>
+  <data name="UserCreateError" xml:space="preserve">
+    <value>User creation error</value>
+  </data>
   <data name="UserNotFound" xml:space="preserve">
     <value>User Not Found</value>
   </data>

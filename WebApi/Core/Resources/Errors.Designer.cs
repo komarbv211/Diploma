@@ -124,6 +124,15 @@ namespace Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User creation error.
+        /// </summary>
+        internal static string UserCreateError {
+            get {
+                return ResourceManager.GetString("UserCreateError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User Not Found.
         /// </summary>
         internal static string UserNotFound {

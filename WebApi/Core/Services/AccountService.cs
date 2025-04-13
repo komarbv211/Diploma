@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Core.Specifications;
 using AutoMapper;
+using System.Data;
 
 namespace Core.Services
 {
@@ -84,6 +85,22 @@ namespace Core.Services
                 AccessToken = userAccessToken,
                 RefreshToken = userRefreshToken
             };
+        }
+        private async Task CreateUserAsync(UserEntity user, string? password = null, bool isAdmin = false)
+        {
+            user.EmailConfirmed = user.EmailConfirmed || isAdmin;
+            var result = password is not null
+                ? await userManager.CreateAsync(user, password)
+                : await userManager.CreateAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new HttpException(Errors.UserCreateError, HttpStatusCode.InternalServerError);
+            }
+            //await userManager.AddToRoleAsync(user, isAdmin ? Roles.Admin : Roles.User);
+            //if (!isAdmin && !await userManager.IsEmailConfirmedAsync(user))
+            //{
+            //    await SendEmailConfirmationMessageAsync(user);
+            //}
         }
         public async Task<AuthResponse> GoogleLoginAsync(string googleAccessToken)
         {
