@@ -46,6 +46,8 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 
     public async Task SaveAsync() => await context.SaveChangesAsync();//
 
+
+
     public virtual void Delete(object id)
     {
         TEntity? entityToDelete = dbSet.Find(id);
@@ -98,5 +100,5 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
             context.Entry(entityToUpdate).State = EntityState.Modified;
         });
     }
-
+    
 }
