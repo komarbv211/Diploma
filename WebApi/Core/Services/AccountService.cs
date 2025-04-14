@@ -9,6 +9,8 @@ using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Core.Specifications;
+using Core.DTOs.AuthorizationDTOs;
+using AutoMapper;
 
 namespace Core.Services
 {
@@ -16,7 +18,8 @@ namespace Core.Services
             UserManager<UserEntity> userManager,
             IJwtService jwtService,
             IRepository<RefreshToken> tokenRepository,
-            IRepository<UserEntity> userRepository
+            IRepository<UserEntity> userRepository,
+            IMapper mapper
       ) : IAccountService
     {
 
@@ -30,7 +33,7 @@ namespace Core.Services
             if (user == null)
             {
                 // Перевіряємо, чи це адміністратор
-                if (model.Email == "admin" && model.Password == "admin")  
+                if (model.Email == "admin" && model.Password == "admin")
                 {
                     // Створюємо токен для адміністратора
                     var claims = new List<Claim>
@@ -59,6 +62,11 @@ namespace Core.Services
                 throw new HttpException(Errors.InvalidCredentials, HttpStatusCode.Unauthorized);
             }
 
+            return await GenerateTokensAsync(user);
+        }
+
+        public async Task<AuthResponse> GenerateTokensAsync(UserEntity user)
+        {
             // Створюємо токен для користувача
             var userClaims = await jwtService.GetClaimsAsync(user);
             var userAccessToken = jwtService.CreateToken(userClaims);
@@ -81,7 +89,6 @@ namespace Core.Services
                 RefreshToken = userRefreshToken
             };
         }
-
 
         // Реалізація методу LogoutAsync
         public async Task LogoutAsync(string refreshToken)
@@ -123,7 +130,7 @@ namespace Core.Services
             token.Token = newRefreshToken;
             token.ExpirationDate = DateTime.UtcNow.AddDays(jwtService.GetRefreshTokenLiveTime());
 
-            await tokenRepository.SaveAsync();  
+            await tokenRepository.SaveAsync();
 
             return new AuthResponse
             {
@@ -131,5 +138,24 @@ namespace Core.Services
                 RefreshToken = newRefreshToken
             };
         }
+
+        public async Task<AuthResponse> RegisterAsync(RegisterDto model)
+        {
+            var user = mapper.Map<UserEntity>(model);
+
+            var res = await userManager.CreateAsync(user, model.Password);
+
+            if (!res.Succeeded)
+            {
+                var errors = string.Join(", ", res.Errors.Select(e => e.Description));
+                throw new HttpException($"User creation failed: {errors}", HttpStatusCode.BadRequest);
+            }
+
+            await userManager.AddToRoleAsync(user, "User");
+            user = await userManager.FindByEmailAsync(user.Email);
+
+            return await GenerateTokensAsync(user);
+        }
+
     }
 }
