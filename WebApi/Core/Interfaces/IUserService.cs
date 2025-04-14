@@ -15,8 +15,8 @@ namespace Core.Interfaces
         Task<IEnumerable<UserDTO>> GetAllAsync();
         Task<UserDTO> GetByIdAsync(long id);
         Task CreateUserAsync(UserDTO dto);
-        Task UpdateUserAsync(string id, UserDTO dto);
-        Task DeleteUserAsync(string id);
+        Task UpdateUserAsync(long id, UserDTO dto);
+        Task DeleteUserAsync(long id);
 
 
         //Task<IEnumerable<UserDTO>> Get(bool isAdmin = false);

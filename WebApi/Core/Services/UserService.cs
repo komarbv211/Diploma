@@ -31,9 +31,10 @@ namespace Core.Services
             await _repository.SaveAsync();
         }
 
-        public Task DeleteUserAsync(string id)
+        public async Task DeleteUserAsync(long id)
         {
-            throw new NotImplementedException();
+            await _repository.DeleteAsync(id);
+            await _repository.SaveAsync();
         }
 
         public async Task<IEnumerable<UserDTO>> GetAllAsync()
@@ -42,13 +43,14 @@ namespace Core.Services
             return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
 
-        public Task<UserDTO> GetByIdAsync(long id)
+        public async Task<UserDTO> GetByIdAsync(long id)
         {
-            throw new NotImplementedException();
+            var user = await _repository.GetByID(id);
+            return _mapper.Map<UserDTO>(user);
         }
        
         // Оновлення існуючої сутності
-        public async Task UpdateUserAsync(string id, UserDTO dto)
+        public async Task UpdateUserAsync(long id, UserDTO dto)
         {
             var user = await _repository.GetByID(id);
             if (user != null)
