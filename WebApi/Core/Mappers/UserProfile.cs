@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Core.Models;
-using Infrastructure.Entities;
+using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
+using Infrastructure.Entities;
 
 namespace Core.Mappers
 {
@@ -19,9 +20,12 @@ namespace Core.Mappers
 
 
             CreateMap<UserDTO, UserEntity>().ReverseMap();
-                //.ForMember(x => x.SettlementDescrption, opt => opt.MapFrom(z => z.Settlement != null ? z.Settlement.Description : null))
-                //.ForMember(x => x., opt => opt.MapFrom(z => z.Adverts.Select(y => y.Id)))
-                //.ForMember(x => x.FavoriteAdverts, opt => opt.MapFrom(z => z.FavoriteAdverts.Select(y => y.Id)));
+            CreateMap<UserCreateDTO, UserEntity>().ReverseMap();
+            CreateMap<UserUpdateDTO, UserEntity>().ReverseMap();
+
+            //.ForMember(x => x.SettlementDescrption, opt => opt.MapFrom(z => z.Settlement != null ? z.Settlement.Description : null))
+            //.ForMember(x => x., opt => opt.MapFrom(z => z.Adverts.Select(y => y.Id)))
+            //.ForMember(x => x.FavoriteAdverts, opt => opt.MapFrom(z => z.FavoriteAdverts.Select(y => y.Id)));
 
             //CreateMap<UserEditModel, OlxUser>();
 
