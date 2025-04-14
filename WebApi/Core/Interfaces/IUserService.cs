@@ -1,4 +1,5 @@
-﻿using Core.DTOs.UsersDTOs;
+﻿using Core.DTOs.UsersDTO;
+using Core.DTOs.UsersDTOs;
 using Core.Models.Page;
 using Core.Models.User.User;
 using System;
@@ -14,8 +15,8 @@ namespace Core.Interfaces
 
         Task<IEnumerable<UserDTO>> GetAllAsync();
         Task<UserDTO> GetByIdAsync(long id);
-        Task CreateUserAsync(UserDTO dto);
-        Task UpdateUserAsync(long id, UserDTO dto);
+        Task CreateUserAsync(UserCreateDTO dto);
+        Task UpdateUserAsync(UserUpdateDTO dto);
         Task DeleteUserAsync(long id);
 
 

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
 using Core.Interfaces;
 using Infrastructure.Entities;
@@ -24,9 +25,10 @@ namespace Core.Services
         }
 
 
-        public async Task CreateUserAsync(UserDTO dto)
+        public async Task CreateUserAsync(UserCreateDTO dto)
         {
             var user = _mapper.Map<UserEntity>(dto);
+            user.UserName = user.Email;
             await _repository.Insert(user);
             await _repository.SaveAsync();
         }
@@ -50,9 +52,9 @@ namespace Core.Services
         }
        
         // Оновлення існуючої сутності
-        public async Task UpdateUserAsync(long id, UserDTO dto)
+        public async Task UpdateUserAsync(UserUpdateDTO dto)
         {
-            var user = await _repository.GetByID(id);
+            var user = await _repository.GetByID(dto.Id);
             if (user != null)
             {
                 _mapper.Map(dto, user);

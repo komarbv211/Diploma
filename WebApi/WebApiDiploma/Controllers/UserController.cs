@@ -1,6 +1,8 @@
-﻿using Core.DTOs.UsersDTOs;
+﻿using Core.DTOs.UsersDTO;
+using Core.DTOs.UsersDTOs;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApiDiploma.Controllers
@@ -35,16 +37,16 @@ namespace WebApiDiploma.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] UserDTO dto)
+        public async Task<ActionResult> Create([FromBody] UserCreateDTO dto)
         {
             await service.CreateUserAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = dto.Id }, dto);
+            return Ok();
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Update(long id, [FromBody] UserDTO dto)
+        [HttpPut]
+        public async Task<ActionResult> Update([FromBody] UserUpdateDTO dto)
         {
-            await service.UpdateUserAsync(id, dto);
+            await service.UpdateUserAsync(dto);
             return NoContent();
         }
 
