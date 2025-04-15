@@ -32,6 +32,19 @@ namespace WebApiDiploma.Controllers
             return Ok(result); 
         }
 
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] string googleAccessToken)
+        {
+            if (string.IsNullOrWhiteSpace(googleAccessToken))
+            {
+                return BadRequest("Google access token is required.");
+            }
+
+            var authResponse = await accountService.GoogleLoginAsync(googleAccessToken);
+            return Ok(authResponse);
+        }
+
+
         [HttpPost("refreshTokens")]
         public async Task<IActionResult> RefreshTokens([FromBody] RefreshRequest refreshRequest)
         {

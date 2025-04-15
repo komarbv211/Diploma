@@ -79,7 +79,7 @@ namespace Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid Credentials.
+        ///   Looks up a localized string similar to Invalid credentials.
         /// </summary>
         internal static string InvalidCredentials {
             get {
@@ -120,6 +120,15 @@ namespace Core.Resources {
         internal static string JwtSettingsReadError {
             get {
                 return ResourceManager.GetString("JwtSettingsReadError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User creation error.
+        /// </summary>
+        internal static string UserCreateError {
+            get {
+                return ResourceManager.GetString("UserCreateError", resourceCulture);
             }
         }
         

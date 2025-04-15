@@ -1,9 +1,13 @@
 ﻿using Core.Extensions;
+using Core.Interfaces;
+using Core.Services;
 using Infrastructure.Data;
 using Infrastructure.Entities;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using SixLabors.ImageSharp.Metadata.Profiles.Xmp;
 using WebApiDiploma.Extensions;
 
 
@@ -25,8 +29,11 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
     options.Password.RequireLowercase = false;
 })
     .AddEntityFrameworkStores<DbMakeUpContext>()
-    .AddDefaultTokenProviders();
+.AddDefaultTokenProviders();
 
+//builder.Services.AddAutoMapper(typeof(AppProfile));
+builder.Services.AddScoped<IUserService, UserService>();//
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddWebApiServices();
 

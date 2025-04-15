@@ -31,6 +31,9 @@
 	    <LastGenOutput>Errors.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Validators\User\" />
+	</ItemGroup>
 	
 </Project>
 

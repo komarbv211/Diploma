@@ -23,10 +23,17 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         this.context = context; 
     }
 
-    public async Task<List<TEntity>> GetAllAsync()
+
+    // Отримання всіх елементів без умов
+    public async Task<IEnumerable<TEntity>> GetAllAsync()
     {
         return await dbSet.ToListAsync();
     }
+
+    //public async Task<List<TEntity>> GetAllAsync()
+    //{
+    //    return await dbSet.ToListAsync();
+    //}
 
     public IQueryable<TEntity> GetAllQueryable()
     {
@@ -35,10 +42,11 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 
     public async virtual Task<bool> AnyAsync() => await dbSet.AnyAsync();
 
-
     public async virtual Task AddAsync(TEntity entity) => await dbSet.AddAsync(entity);
 
-    public async Task SaveAsync() => await context.SaveChangesAsync();
+    public async Task SaveAsync() => await context.SaveChangesAsync();//
+
+
 
     public virtual void Delete(object id)
     {
@@ -72,4 +80,25 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         var evaluator = new SpecificationEvaluator();
         return evaluator.GetQuery(dbSet, specification);
     }
+
+    // Вставка нової сутності
+    public async Task Insert(TEntity entity)
+    {
+        await dbSet.AddAsync(entity);
+    }
+    // Отримання сутності за ID
+    public async Task<TEntity?> GetByID(object id)
+    {
+        return await dbSet.FindAsync(id);
+    }
+
+    public Task Update(TEntity entityToUpdate)
+    {
+        return Task.Run(() =>
+        {
+            dbSet.Attach(entityToUpdate);
+            context.Entry(entityToUpdate).State = EntityState.Modified;
+        });
+    }
+    
 }
