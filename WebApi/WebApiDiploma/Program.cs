@@ -3,6 +3,7 @@ using Core.Interfaces;
 using Core.Services;
 using Infrastructure.Data;
 using Infrastructure.Entities;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -32,6 +33,7 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 
 //builder.Services.AddAutoMapper(typeof(AppProfile));
 builder.Services.AddScoped<IUserService, UserService>();//
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddWebApiServices();
 
