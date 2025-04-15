@@ -1,5 +1,7 @@
-﻿using Core.Interfaces;
+﻿using Core.DTOs.AuthorizationDTOs;
+using Core.Interfaces;
 using Core.Models.Authentication;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using RefreshRequest = Core.Models.Authentication.RefreshRequest;
 
@@ -21,6 +23,13 @@ namespace WebApiDiploma.Controllers
         {
             var authResponse = await accountService.LoginAsync(model);
             return Ok(authResponse);
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto model)
+        {
+            var result = await accountService.RegisterAsync(model);
+            return Ok(result); 
         }
 
         [HttpPost("google-login")]

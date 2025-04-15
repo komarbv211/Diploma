@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.DTOs.AuthorizationDTOs;
 using Core.Models;
 using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
@@ -10,6 +11,8 @@ namespace Core.Mappers
     {
         public UserProfile()
         {
+            CreateMap<RegisterDto, UserEntity>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
 
             CreateMap<GoogleUserInfo, UserEntity>()
                 .ForMember(x => x.FirstName, opt => opt.MapFrom(x => x.Given_Name))
