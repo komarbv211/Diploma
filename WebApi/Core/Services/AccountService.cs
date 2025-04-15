@@ -9,6 +9,8 @@ using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Core.Specifications;
+using AutoMapper;
+using System.Data;
 
 namespace Core.Services
 {
@@ -16,7 +18,10 @@ namespace Core.Services
             UserManager<UserEntity> userManager,
             IJwtService jwtService,
             IRepository<RefreshToken> tokenRepository,
-            IRepository<UserEntity> userRepository
+            IRepository<UserEntity> userRepository,
+            IImageService imageService,
+            IGoogleAuthService googleAuthService,
+            IMapper mapper
       ) : IAccountService
     {
 
@@ -81,6 +86,37 @@ namespace Core.Services
                 RefreshToken = userRefreshToken
             };
         }
+        private async Task CreateUserAsync(UserEntity user, string? password = null, bool isAdmin = false)
+        {
+            user.EmailConfirmed = user.EmailConfirmed || isAdmin;
+            var result = password is not null
+                ? await userManager.CreateAsync(user, password)
+                : await userManager.CreateAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new HttpException(Errors.UserCreateError, HttpStatusCode.InternalServerError);
+            }
+            //await userManager.AddToRoleAsync(user, isAdmin ? Roles.Admin : Roles.User);
+            //if (!isAdmin && !await userManager.IsEmailConfirmedAsync(user))
+            //{
+            //    await SendEmailConfirmationMessageAsync(user);
+            //}
+        }
+        public async Task<AuthResponse> GoogleLoginAsync(string googleAccessToken)
+        {
+            var userInfo = await googleAuthService.GetUserInfoAsync(googleAccessToken);
+            UserEntity user = await userManager.FindByEmailAsync(userInfo.Email) ?? mapper.Map<UserEntity>(userInfo);
+
+            if (user.Id == 0)
+            {
+                if (!string.IsNullOrEmpty(userInfo.Picture))
+                {
+                    user.Image = await imageService.SaveImageFromUrlAsync(userInfo.Picture);
+                }
+                await CreateUserAsync(user);
+            }
+            return await GetAuthTokens(user);
+        }
 
 
         // Реалізація методу LogoutAsync
@@ -130,6 +166,29 @@ namespace Core.Services
                 AccessToken = newAccessToken,
                 RefreshToken = newRefreshToken
             };
+
         }
+        private async Task<string> CreateRefreshToken(long userId)
+        {
+            var refeshToken = jwtService.GetRefreshToken();
+            var refreshTokenEntity = new RefreshToken
+            {
+                Token = refeshToken,
+                UserId = userId,
+                ExpirationDate = DateTime.UtcNow.AddDays(jwtService.GetRefreshTokenLiveTime())
+            };
+            await tokenRepository.AddAsync(refreshTokenEntity);
+            await tokenRepository.SaveAsync();
+            return refeshToken;
+        }
+        private async Task<AuthResponse> GetAuthTokens(UserEntity user)
+        {
+            return new()
+            {
+                AccessToken = jwtService.CreateToken(await jwtService.GetClaimsAsync(user)),
+                RefreshToken = await CreateRefreshToken(user.Id)
+            };
+        }
+       
     }
 }

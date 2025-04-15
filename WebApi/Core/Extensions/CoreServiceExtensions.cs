@@ -10,7 +10,9 @@ namespace Core.Extensions
         {
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IJwtService, JwtService>();
-            services.AddScoped<IAccountService, AccountService>();           
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+
         }
     }
 }

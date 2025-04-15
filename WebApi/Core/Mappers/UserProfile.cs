@@ -1,13 +1,8 @@
 ﻿using AutoMapper;
+using Core.Models;
 using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
 using Infrastructure.Entities;
-using Microsoft.Graph.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Mappers
 {
@@ -15,6 +10,14 @@ namespace Core.Mappers
     {
         public UserProfile()
         {
+
+            CreateMap<GoogleUserInfo, UserEntity>()
+                .ForMember(x => x.FirstName, opt => opt.MapFrom(x => x.Given_Name))
+                .ForMember(x => x.LastName, opt => opt.MapFrom(x => x.Family_Name))
+                .ForMember(x => x.UserName, opt => opt.MapFrom(x => x.Email))
+                .ForMember(x => x.Email, opt => opt.MapFrom(x => x.Email))
+                .ForMember(x => x.EmailConfirmed, opt => opt.MapFrom(x => x.Email_Verified));
+
 
             CreateMap<UserDTO, UserEntity>().ReverseMap();
             CreateMap<UserCreateDTO, UserEntity>().ReverseMap();
@@ -30,6 +33,7 @@ namespace Core.Mappers
             //     .ForMember(x => x.SettlementDescrption, opt => opt.MapFrom(z => z.Settlement != null ? z.Settlement.Description : null));
 
             //CreateMap<UserPageRequest, OlxUserFilter>();
+
         }
     }
 }

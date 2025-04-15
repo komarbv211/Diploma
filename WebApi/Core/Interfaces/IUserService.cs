@@ -1,12 +1,5 @@
 ﻿using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
-using Core.Models.Page;
-using Core.Models.User.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
