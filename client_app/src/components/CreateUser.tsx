@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+    useEffect,
+    //  useState 
+} from 'react';
 import {
     LeftOutlined,
     // PlusOutlined,
@@ -6,35 +9,38 @@ import {
 } from '@ant-design/icons';
 import {
     Button,
-    DatePicker,
+    // DatePicker,
     Form,
     Input,
-    InputNumber,
+    // InputNumber,
     message,
-    Select,
+    // Select,
     Space,
     // Upload,
 } from 'antd';
 import { useNavigate } from 'react-router-dom';
 // import type { UploadFile } from 'antd/es/upload/interface';
-import type { DatePickerProps } from 'antd';
+// import type { DatePickerProps } from 'antd';
 import type { Rule } from 'antd/es/form';
 
 const { TextArea } = Input;
 
-interface Category {
-    id: number;
-    name: string;
-}
+// interface Category {
+//     id: number;
+//     name: string;
+// }
 
 interface UserForm {
-    name: string;
+    // name: string;
     lastName?: string;
     firstName?: string;
-    birthday?: string; // ISO date string
-    work_experience?: number;
-    categoryId?: number;
+    // birthday?: string;
+    email?: string; // ISO date string
     imageUrl?: string;
+    phone?: string;
+
+    // work_experience?: number;
+    // categoryId?: number;
 }
 
 // const normFile = (e: any): UploadFile | undefined => {
@@ -44,30 +50,30 @@ interface UserForm {
 //     return e?.file;
 // };
 
-const api = 'https://localhost:5209/api/';
+const api = 'http://localhost:5209/api/';
 
 const CreateUser: React.FC = () => {
     const navigate = useNavigate();
-    const [categories, setCategories] = useState<
-        { label: string; value: number }[]
-    >([]);
+    // const [categories, setCategories] = useState<
+    //     { label: string; value: number }[]
+    // >([]);
 
-    const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-        console.log(date, dateString);
-    };
+    // const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+    //     console.log(date, dateString);
+    // };
 
-    useEffect(() => {
-        fetch(api + 'Categorys/all')
-            .then((res) => res.json())
-            .then((data: Category[]) => {
-                setCategories(
-                    data.map((x) => ({
-                        label: x.name,
-                        value: x.id,
-                    }))
-                );
-            });
-    }, []);
+    // useEffect(() => {
+    //     fetch(api + 'Categorys/all')
+    //         .then((res) => res.json())
+    //         // .then((data: Category[]) => {
+    //         //     setCategories(
+    //         //         data.map((x) => ({
+    //         //             label: x.name,
+    //         //             value: x.id,
+    //         //         }))
+    //         //     );
+    //         // });
+    // }, []);
 
     const onSubmit = (item: UserForm) => {
         console.log(item);
@@ -99,7 +105,7 @@ const CreateUser: React.FC = () => {
                 icon={<LeftOutlined />}
                 type="default"
             ></Button>
-            <h2>Create New Doctor</h2>
+            <h2>Контактна інформація</h2>
 
             <Form
                 labelCol={{ span: 4 }}
@@ -108,37 +114,69 @@ const CreateUser: React.FC = () => {
                 style={{ maxWidth: 600 }}
                 onFinish={onSubmit}
             >
+                <label htmlFor="">Ваше Ім'я</label>
+                {/* <label htmlFor="phone">Ваш номер телефону</label> */}
+
                 <Form.Item
-                    label="Name"
-                    name="name"
+                    //  label="Name"
+                    name="firstName"
                     rules={[{ required: true, message: 'Please input!' } as Rule]}
                 >
-                    <Input />
+                    <Input placeholder="Ваше Ім'я" />
                 </Form.Item>
 
-                <Form.Item label="LastName" name="lastName">
-                    <TextArea style={{ width: '100%' }} />
+
+                <label htmlFor="">Ваше Прізвище</label>
+                <Form.Item
+                    //  label="LastName"
+                    name="lastName">
+                    <TextArea placeholder="Прізвище" style={{ width: '100%' }} />
                 </Form.Item>
 
-                <Form.Item label="FirstName" name="firstName">
-                    <TextArea style={{ width: '100%' }} />
+                <label htmlFor="">"Ваш Email"</label>
+                <Form.Item
+                    name="email"
+                    rules={[{ required: true, type: 'email', message: 'Будь ласка, введіть дійсну електронну адресу!' }]}
+                >
+                    <Input placeholder="Ваш E-mail / login" />
                 </Form.Item>
 
-                <Form.Item label="Birthday" name="birthday">
-                    <DatePicker onChange={onChange} />
+                {/* <label htmlFor="">Ваш День Народження</label> */}
+                {/* <Form.Item */}
+                {/* // name="birthday"> */}
+                {/* <DatePicker placeholder="Ваш День Народження" onChange={onChange} /> */}
+                {/* </Form.Item> */}
+
+                <label htmlFor="">Фото</label>
+                <Form.Item
+                    name="imageUrl">
+                    <Input placeholder="Ваш Фотографія" />
                 </Form.Item>
 
-                <Form.Item label="Work Experience" name="work_experience">
-                    <InputNumber style={{ width: '100%' }} />
+                {/* <Form.Item
+                    name="phone"
+                    rules={[{ required: true, type: 'tel',  pattern: /^\+?\d{10,15}$/, message: 'Будь ласка, введіть дійсний номер телефону!' }]}
+                >
+                    <label htmlFor="">Телефон</label>
+                    <Input placeholder="Ваш номер телефону" />
+                </Form.Item> */}
+                
+                <label htmlFor="">Номер телефону</label>
+                <Form.Item
+                    name="phone"
+                    rules={[
+                        {
+                            required: true,
+                            // type: 'tel',
+                            pattern: /^\+?\d{10,15}$/,
+                            message: 'Будь ласка, введіть дійсний номер телефону!',
+                        },
+                    ]}
+                >
+                    <Input placeholder="Ваш номер телефону" />
                 </Form.Item>
 
-                <Form.Item label="Category" name="categoryId">
-                    <Select options={categories}></Select>
-                </Form.Item>
 
-                <Form.Item label="Image" name="imageUrl">
-                    <Input />
-                </Form.Item>
 
                 <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
                     <Space>

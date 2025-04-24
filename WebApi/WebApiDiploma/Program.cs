@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using SixLabors.ImageSharp.Metadata.Profiles.Xmp;
 using WebApiDiploma.Extensions;
+using WebApiDiploma.ServiceExtensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,6 +53,8 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddCorsPolicies();
+
 var app = builder.Build();
 
 var dir = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration.GetValue<string>("ImagesDir") ?? "uploading");
@@ -72,6 +75,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
+
+app.UseCors("front-end-cors-policy");
 
 app.MapControllers();
 
