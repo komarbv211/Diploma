@@ -8,11 +8,8 @@
             {
                 options.AddPolicy(name: "front-end-cors-policy",
                     policy =>
-                    {
-                      
-                        policy.WithOrigins("https://localhost:5173",
-                                           "http://localhost:5173");
-                     
+                    {                      
+                        policy.WithOrigins("https://localhost:5173");                     
                         policy.AllowAnyOrigin();
                         policy.AllowAnyMethod();
                         policy.AllowAnyHeader();
