@@ -6,7 +6,7 @@ import { GoogleJwtPayload, GoogleResponse, IUserRegisterRequest } from '../inter
 import { APP_ENV } from '../env';
 import { useRegisterUserMutation } from '../services/authApi';
 
-const CreateUser: React.FC = () => {
+const RegistrUser: React.FC = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const [registerUser] = useRegisterUserMutation();
@@ -131,4 +131,4 @@ const CreateUser: React.FC = () => {
     );
 };
 
-export default CreateUser;
+export default RegistrUser;
