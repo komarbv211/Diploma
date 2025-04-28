@@ -71,7 +71,7 @@ const CreateUser: React.FC = () => {
     return (
         <>
             <Button onClick={() => navigate(-1)} type="default">Назад</Button>
-            <h2>Контактна інформація</h2>
+            <h2>Реєстрація нового користувача</h2>
 
             <Form
                 labelCol={{ span: 4 }}
@@ -101,9 +101,28 @@ const CreateUser: React.FC = () => {
                     <Input.Password placeholder="Пароль" />
                 </Form.Item>
 
+                <Form.Item
+                    name="password1"
+                    label="Перевірка пароля"
+                    dependencies={['password1']}
+                    rules={[
+                        { required: true, message: 'Будь ласка, підтвердіть пароль!' },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('Паролі не збігаються!'));
+                            },
+                        }),
+                    ]}
+                >
+                    <Input.Password placeholder="Підтвердіть пароль" />
+                </Form.Item>
+
                 <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
                     <Button type="default" htmlType="reset">Скасувати</Button>
-                    <Button type="primary" htmlType="submit">Створити</Button>
+                    <Button type="primary" htmlType="submit">Реєстрація</Button>
                 </Form.Item>
             </Form>
 

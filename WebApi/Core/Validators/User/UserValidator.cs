@@ -36,6 +36,25 @@ namespace Core.Validators.User
                 .Must(phone => string.IsNullOrEmpty(phone) || new System.Text.RegularExpressions.Regex(@"^\+?\d{10,15}$").IsMatch(phone))
                 .WithMessage("Phone number must be valid.");
 
+            RuleFor(user => user.Password)
+           .NotEmpty()
+           .WithMessage("Пароль обов'язковий!")
+           .MinimumLength(6)
+           .WithMessage("Пароль має містити не менше 6 символів!")
+           .Matches("[A-Z]")
+           .WithMessage("Пароль має містити хоча б одну велику літеру!")
+           .Matches("[a-z]")
+           .WithMessage("Пароль має містити хоча б одну малу літеру!")
+           .Matches("[0-9]")
+           .WithMessage("Пароль має містити хоча б одну цифру!");
+
+            RuleFor(user => user.ConfirmPassword)
+                .NotEmpty()
+                .WithMessage("Підтвердження пароля обов'язкове!")
+                .Equal(user => user.Password)
+                .WithMessage("Паролі не збігаються!");
+
+
         }
     }
 
