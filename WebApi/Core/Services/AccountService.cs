@@ -2,7 +2,6 @@
 using Core.Interfaces;
 using Core.Models.Authentication;
 using Core.Resources;
-
 using Microsoft.AspNetCore.Identity;
 using System.Net;
 using Infrastructure.Entities;
@@ -10,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Core.Specifications;
 using Core.DTOs.AuthorizationDTOs;
-using AutoMapper;
 using AutoMapper;
 using System.Data;
 
