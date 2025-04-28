@@ -1,10 +1,10 @@
 import { Button, message, Form, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { jwtParse } from '../utilities/jwtParse';
-import { GoogleJwtPayload, GoogleResponse, IUserRegisterRequest } from '../interfaces/account';
+import { jwtParse } from '../utilities/jwtParse.ts';
+import { GoogleJwtPayload, GoogleResponse, IUserRegisterRequest } from '../interfaces/account.ts';
 import { APP_ENV } from '../env';
-import { useRegisterUserMutation } from '../services/authApi';
+import { useRegisterUserMutation } from '../services/authApi.ts';
 
 const RegistrUser: React.FC = () => {
     const navigate = useNavigate();
