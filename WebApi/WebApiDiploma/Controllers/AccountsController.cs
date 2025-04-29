@@ -32,8 +32,8 @@ namespace WebApiDiploma.Controllers
             return Ok(result); 
         }
 
-        [HttpPost("google-login")]
-        public async Task<IActionResult> GoogleLogin([FromBody] string googleAccessToken)
+        [HttpPost("login/google")]
+        public async Task<IActionResult> GoogleLogin([FromQuery] string googleAccessToken)
         {
             if (string.IsNullOrWhiteSpace(googleAccessToken))
             {
