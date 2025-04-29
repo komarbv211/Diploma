@@ -26,7 +26,7 @@ export interface IUserRegisterRequest {
 }
 
 export interface IUserLoginRequest {
-    username: string;
+    email: string;
     password: string;
 }
 
