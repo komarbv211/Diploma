@@ -53,7 +53,9 @@ const GoogleAuth: FC<IGoogleAuthProps> = ({ open, onClose, token }) => {
       {error && <Text type="danger">{error}</Text>}
       {userInfo && (
         <div className="text-center">
-          <Avatar src={userInfo.picture} size={100} style={{ marginBottom: 20 }} />
+          {userInfo?.picture && (
+            <Avatar src={userInfo.picture} size={100} style={{ marginBottom: 20 }} />
+          )}
           <div>
             <Title level={4}>{userInfo.given_name} {userInfo.family_name}</Title>
             <Text type="secondary">{userInfo.email}</Text>
