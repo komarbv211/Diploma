@@ -30,14 +30,15 @@ export interface IUserLoginRequest {
     password: string;
 }
 
-export interface AuthResponse {
-    token: string;
-    user: IUser;
+export interface IAuthResponse {
+    accessToken: string;
+    refreshToken: string;
 }
 
 export interface IUserState {
     user: IUser | null;
     token: string | null;
+    refreshToken?: string | null;
 }
 
 export interface IUserAuth {
@@ -53,6 +54,17 @@ export interface LoginButtonProps {
     icon: React.ReactNode;
 }
 
-export interface LoginGoogleRequest {
-    token: string;
+export interface IGoogleLoginRequest {
+    googleAccessToken: string;  
 }
+export interface GoogleProfile {
+    sub: string;
+    name: string;
+    given_name: string;
+    family_name: string;
+    picture: string;
+    email: string;
+    email_verified: boolean;
+    locale: string;
+}
+
