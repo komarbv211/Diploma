@@ -67,4 +67,9 @@ export interface GoogleProfile {
     email_verified: boolean;
     locale: string;
 }
+export interface IGoogleAuthProps {
+    open: boolean;
+    onClose: () => void;
+    token: string;
+  }
 
