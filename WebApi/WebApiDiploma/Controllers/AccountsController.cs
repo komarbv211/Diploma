@@ -33,15 +33,16 @@ namespace WebApiDiploma.Controllers
         }
 
         [HttpPost("login/google")]
-        public async Task<IActionResult> GoogleLogin([FromQuery] string googleAccessToken)
+        public async Task<IActionResult> GoogleLogin([FromForm] GoogleLoginViewModel model)
         {
-            if (string.IsNullOrWhiteSpace(googleAccessToken))
-            {
-                return BadRequest("Google access token is required.");
-            }
+            //if (string.IsNullOrWhiteSpace(googleAccessToken))
+            //{
+            //    return BadRequest("Google access token is required.");
+            //}
 
-            var authResponse = await accountService.GoogleLoginAsync(googleAccessToken);
-            return Ok(authResponse);
+            //var authResponse = await accountService.GoogleLoginAsync(googleAccessToken);
+            //return Ok(authResponse);
+            return Ok();
         }
 
 
