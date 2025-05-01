@@ -107,21 +107,55 @@ namespace Core.Services
             //    await SendEmailConfirmationMessageAsync(user);
             //}
         }
-        public async Task<AuthResponse> GoogleLoginAsync(string googleAccessToken)
+        //public async Task<AuthResponse> GoogleLoginAsync(GoogleLoginViewModel model)
+        //{
+        //    var userInfo = await googleAuthService.GetUserInfoAsync(model.GoogleAccessToken);
+        //    UserEntity user = await userManager.FindByEmailAsync(userInfo.Email) ?? mapper.Map<UserEntity>(userInfo);
+
+        //    if (user.Id == 0)
+        //    {
+        //        if (!string.IsNullOrEmpty(userInfo.Picture))
+        //        {
+        //            user.Image = await imageService.SaveImageFromUrlAsync(userInfo.Picture);
+        //        }
+        //        await CreateUserAsync(user);
+        //    }
+        //    return await GetAuthTokens(user);
+        //}
+        public async Task<AuthResponse> GoogleLoginAsync(GoogleLoginViewModel model)
         {
-            var userInfo = await googleAuthService.GetUserInfoAsync(googleAccessToken);
+            var userInfo = await googleAuthService.GetUserInfoAsync(model.GoogleAccessToken);
+
+            // Знаходимо користувача за email
             UserEntity user = await userManager.FindByEmailAsync(userInfo.Email) ?? mapper.Map<UserEntity>(userInfo);
 
+            // Якщо користувач не знайдений (новий), створюємо його
             if (user.Id == 0)
             {
-                if (!string.IsNullOrEmpty(userInfo.Picture))
+                // Заповнюємо дані користувача з моделі
+                user.FirstName = model.FirstName ?? userInfo.Given_Name;
+                user.LastName = model.LastName ?? userInfo.Family_Name;
+                user.PhoneNumber = model.PhoneNumber;
+                user.Email = userInfo.Email;
+
+                // Якщо є зображення, зберігаємо його                
+                if (model.Image != null)
+                {
+                    user.Image = await imageService.SaveImageAsync(model.Image);
+                }
+                else if (!string.IsNullOrEmpty(userInfo.Picture))
                 {
                     user.Image = await imageService.SaveImageFromUrlAsync(userInfo.Picture);
                 }
+
+                // Створюємо користувача
                 await CreateUserAsync(user);
             }
+
+            // Повертаємо токени автентифікації
             return await GetAuthTokens(user);
         }
+
 
         // Реалізація методу LogoutAsync
         public async Task LogoutAsync(string refreshToken)

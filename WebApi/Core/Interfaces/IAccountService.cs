@@ -7,7 +7,7 @@ namespace Core.Interfaces
     public interface IAccountService
     {
         Task<AuthResponse> LoginAsync(AuthRequest model);
-        Task<AuthResponse> GoogleLoginAsync(string googleAccessToken);
+        Task<AuthResponse> GoogleLoginAsync(GoogleLoginViewModel model);
         Task LogoutAsync(string token);
         Task<AuthResponse> GenerateTokensAsync(UserEntity user);
         Task<AuthResponse> RefreshTokensAsync(string refreshToken);

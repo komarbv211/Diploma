@@ -11,7 +11,7 @@ namespace Core.Interfaces
         Task CreateUserAsync(UserCreateDTO dto);
         Task UpdateUserAsync(UserUpdateDTO dto);
         Task DeleteUserAsync(long id);
-
+        Task<UserDTO?> GetByEmailAsync(string email);
 
         //Task<IEnumerable<UserDTO>> Get(bool isAdmin = false);
         //Task<IEnumerable<UserDTO>> GetLocked();
