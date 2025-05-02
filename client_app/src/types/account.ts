@@ -33,6 +33,7 @@ export interface IUserLoginRequest {
 export interface IAuthResponse {
     accessToken: string;
     refreshToken: string;
+    isNewUser?: boolean;
 }
 
 export interface IUserState {
