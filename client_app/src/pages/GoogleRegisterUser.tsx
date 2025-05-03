@@ -57,6 +57,9 @@ const GoogleRegisterUser = () => {
             }
         }
     };
+    const handleCancel = () => {
+        navigate('/login');
+    };  
     
     return (
         <div style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
@@ -118,9 +121,16 @@ const GoogleRegisterUser = () => {
                         <div style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</div>
                     )}
                 <Form.Item>
-                    <Button type="default" htmlType="reset">Скасувати</Button>
-                    <Button type="primary" htmlType="submit">Завершити Реєстрацію</Button>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                        <Button danger onClick={handleCancel}>
+                            Скасувати
+                        </Button>
+                        <Button type="primary" htmlType="submit">
+                            Завершити Реєстрацію
+                        </Button>
+                    </div>
                 </Form.Item>
+
             </Form>
         </div>
     );
