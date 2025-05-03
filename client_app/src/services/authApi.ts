@@ -63,6 +63,23 @@ export const authApi = createApi({
       },
       invalidatesTags: ['AuthUser'],
     }),  
+    confirmGoogleRegister: builder.mutation<IAuthResponse, FormData>({
+      query: (formData) => ({
+          url: 'register/google',
+          method: 'POST',
+          body: formData,
+      }),
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+          const { data } = await queryFulfilled;
+          if (data.accessToken) {
+              dispatch(setCredentials({
+                  token: data.accessToken,
+                  refreshToken: data.refreshToken,
+              }));
+          }
+      },
+      invalidatesTags: ['AuthUser'],
+    }),  
   }),
 });
 
@@ -70,4 +87,5 @@ export const {
     useRegisterUserMutation,
     useLoginUserMutation,
     useConfirmGoogleLoginMutation,
+    useConfirmGoogleRegisterMutation,
 } = authApi;

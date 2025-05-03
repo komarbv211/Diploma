@@ -1,4 +1,4 @@
-import { Button, Form, Input, Spin  } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { APP_ENV } from '../env';
@@ -6,20 +6,12 @@ import { useConfirmGoogleLoginMutation, useLoginUserMutation } from '../services
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import GoogleLoginButton from '../components/buttons/GoogleLoginButton';
 import { GoogleOutlined } from '@ant-design/icons';
-import { useGetUserByEmailQuery } from '../services/userApi';
-import { useGoogleUserInfo } from '../hooks/useGoogleUserInfo';
-import GoogleAuthForm from './GoogleAuthForm';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const [loginUser] = useLoginUserMutation();  
-    const [errorMessage, setErrorMessage] = useState<string>('');  
-    const [isGoogleAuthOpen, setIsGoogleAuthOpen] = useState(false);
-    const [googleToken, setGoogleToken] = useState<string | null>(null);  
-    const { userInfo } = useGoogleUserInfo(googleToken);    
-    const email = userInfo?.email;
-    const { data, isLoading, refetch } = useGetUserByEmailQuery(email!, { skip: !email });
+    const [errorMessage, setErrorMessage] = useState<string>('');     
     const [confirmGoogleLogin] = useConfirmGoogleLoginMutation();     
 
     
@@ -41,35 +33,34 @@ const Login: React.FC = () => {
     };
 
     const onLoginGoogleResult = async (tokenGoogle: string) => {
-        
-        if(isLoading) return;
-        
-        if (data !== undefined) {
-            console.log("Підтвердження Email:", data);
+        if (!tokenGoogle) return;
+      
+        const formData = new FormData();
+        formData.append("GoogleAccessToken", tokenGoogle);
     
-            const formData = new FormData();
-            formData.append("GoogleAccessToken", tokenGoogle);
-            await confirmGoogleLogin(formData);
-            await refetch();
-            navigate('/');           
-        } else {
-            // Користувача немає — відкриваємо форму
-            setGoogleToken(tokenGoogle);
-            setIsGoogleAuthOpen(true);            
+        try {
+            const result = await confirmGoogleLogin(formData).unwrap();
+            if (result.isNewUser) {
+                navigate(`/google-register?token=${tokenGoogle}`);
+            } else {
+                navigate('/');
+            }
+        } catch (error: unknown) {
+            console.error('Помилка авторизації через Google:', error);
+            const typedError = error as { data?: { message?: string }; status?: number };
+    
+            if (typedError?.status === 401) {
+                setErrorMessage('Токен Google недійсний або протермінований');
+            } else if (typedError?.status === 400) {
+                setErrorMessage('Не вдалося виконати вхід. Спробуйте ще раз.');
+            } else {
+                setErrorMessage('Не вдалося увійти через Google. Спробуйте ще раз.');
+            }
         }
-    };
+    }; 
     
-
-    const handleCloseGoogleAuth = () => {
-        setIsGoogleAuthOpen(false);
-        setGoogleToken(null);
-        refetch();
-        navigate('/');
-    };
-
     return (
-        <GoogleOAuthProvider clientId={APP_ENV.CLIENT_ID}>
-            <Spin spinning={isLoading}>
+        <GoogleOAuthProvider clientId={APP_ENV.CLIENT_ID}>            
             <div style={{ maxWidth: 400, margin: '0 auto', padding: '20px' }}>
                 <Button onClick={() => navigate(-1)} type="default">
                     Назад
@@ -122,16 +113,8 @@ const Login: React.FC = () => {
                     title="Увійти через Google"
                     onLogin={onLoginGoogleResult}
                 />
-            </div>
-            {googleToken && (
-                <GoogleAuthForm
-                    open={isGoogleAuthOpen}
-                    onClose={handleCloseGoogleAuth}
-                    token={googleToken}
-                />
-            )}
+            </div>        
 
-            </Spin>
         </GoogleOAuthProvider>
     );
 };

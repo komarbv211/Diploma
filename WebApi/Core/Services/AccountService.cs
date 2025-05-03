@@ -11,6 +11,7 @@ using Core.Specifications;
 using Core.DTOs.AuthorizationDTOs;
 using AutoMapper;
 using System.Data;
+using Core.Models;
 
 namespace Core.Services
 {
@@ -107,24 +108,36 @@ namespace Core.Services
             //    await SendEmailConfirmationMessageAsync(user);
             //}
         }
-        //public async Task<AuthResponse> GoogleLoginAsync(GoogleLoginViewModel model)
-        //{
-        //    var userInfo = await googleAuthService.GetUserInfoAsync(model.GoogleAccessToken);
-        //    UserEntity user = await userManager.FindByEmailAsync(userInfo.Email) ?? mapper.Map<UserEntity>(userInfo);
-
-        //    if (user.Id == 0)
-        //    {
-        //        if (!string.IsNullOrEmpty(userInfo.Picture))
-        //        {
-        //            user.Image = await imageService.SaveImageFromUrlAsync(userInfo.Picture);
-        //        }
-        //        await CreateUserAsync(user);
-        //    }
-        //    return await GetAuthTokens(user);
-        //}
         public async Task<AuthResponse> GoogleLoginAsync(GoogleLoginViewModel model)
         {
-            var userInfo = await googleAuthService.GetUserInfoAsync(model.GoogleAccessToken);
+            GoogleUserInfo userInfo;
+            try
+            {
+                userInfo = await googleAuthService.GetUserInfoAsync(model.GoogleAccessToken);
+            }
+            catch (HttpRequestException)
+            {
+                throw new UnauthorizedAccessException("Недійсний або протермінований Google токен.");
+            }
+            UserEntity user = await userManager.FindByEmailAsync(userInfo.Email) ?? mapper.Map<UserEntity>(userInfo);
+            if (user.Id == 0)
+                return new AuthResponse
+                { isNewUser = true};
+
+                return await GetAuthTokens(user);
+        }
+
+        public async Task<AuthResponse> FirstRegisterGoogleAsync(GoogleFirstRegisterModel model)
+        {
+            GoogleUserInfo userInfo;
+            try
+            {
+                userInfo = await googleAuthService.GetUserInfoAsync(model.GoogleAccessToken);
+            }
+            catch (HttpRequestException)
+            {
+                throw new UnauthorizedAccessException("Недійсний або протермінований Google токен.");
+            }
 
             // Знаходимо користувача за email
             UserEntity user = await userManager.FindByEmailAsync(userInfo.Email) ?? mapper.Map<UserEntity>(userInfo);
@@ -155,6 +168,7 @@ namespace Core.Services
             // Повертаємо токени автентифікації
             return await GetAuthTokens(user);
         }
+
 
 
         // Реалізація методу LogoutAsync

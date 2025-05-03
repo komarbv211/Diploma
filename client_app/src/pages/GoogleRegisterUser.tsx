@@ -1,26 +1,29 @@
-import { Modal, Form, Input, Upload, Button } from "antd";
+// pages/GoogleRegisterUser.tsx
+import { Form, Input, Upload, Button, Typography } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
-import { useConfirmGoogleLoginMutation } from "../services/authApi";
-import { IGoogleAuthProps } from "../types/account";
+import { useConfirmGoogleRegisterMutation } from "../services/authApi";
 import { useGoogleUserInfo } from "../hooks/useGoogleUserInfo";
-import { useState, useEffect } from "react";
-import { Typography } from 'antd';
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-const GoogleAuthForm: React.FC<IGoogleAuthProps> = ({ open, onClose, token }) => {
+const GoogleRegisterUser = () => {
     const [form] = Form.useForm();
-    const [confirmGoogleLogin] = useConfirmGoogleLoginMutation();
-    const { userInfo } = useGoogleUserInfo(token);
+    const [confirmGoogleRegister] = useConfirmGoogleRegisterMutation();
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const token = new URLSearchParams(location.search).get("token");
+    const { userInfo } = useGoogleUserInfo(token);
     const { Text } = Typography;
-
+    const [errorMessage, setErrorMessage] = useState<string>(''); 
+    
     useEffect(() => {
         if (userInfo) {
             form.setFieldsValue({
-                Image: userInfo.picture,
                 firstName: userInfo?.given_name || '',
                 lastName: userInfo?.family_name || '',
                 email: userInfo.email,
-                phoneNumber: '',
+                phone: '',
             });
         }
     }, [userInfo, form]);
@@ -33,26 +36,33 @@ const GoogleAuthForm: React.FC<IGoogleAuthProps> = ({ open, onClose, token }) =>
         try {
             const values = await form.validateFields();
             const formData = new FormData();
-            formData.append("GoogleAccessToken", token);
+            formData.append("GoogleAccessToken", token!);
             formData.append("FirstName", values.firstName);
             formData.append("LastName", values.lastName);
-            formData.append("PhoneNumber", values.phoneNumber);
+            formData.append("PhoneNumber", values.phone);
             if (selectedImage) {
                 formData.append("Image", selectedImage);
             }
-    
-            await confirmGoogleLogin(formData);
-            onClose();
+            await confirmGoogleRegister(formData);
+            navigate('/');
         } catch (error) {
-            console.error("Error during form submission:", error);
+            console.error("Помилка під час реєстрації:", error);
+            const typedError = error as { data?: { message?: string }; status?: number };
+            if (typedError?.status === 401) {
+                setErrorMessage('Токен Google недійсний або протермінований');
+            } else if (typedError?.status === 400) {
+                setErrorMessage('Помилка при реєстрації через Google. Спробуйте ще раз.');
+            } else {
+                setErrorMessage('Не вдалося зареєструватися через Google. Спробуйте ще раз.');
+            }
         }
     };
     
-
     return (
-        <Modal open={open} onCancel={onClose} onOk={handleSubmit} title="Підтвердіть реєстрацію">
-            <Form form={form} layout="vertical">
-                {userInfo?.picture && (
+        <div style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
+            <h2>Підтвердження Google-реєстрації</h2>
+            <Form form={form} layout="vertical" onFinish={handleSubmit}>
+            {userInfo?.picture && (
                     <Form.Item label="Фото профілю">
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <img
@@ -86,22 +96,34 @@ const GoogleAuthForm: React.FC<IGoogleAuthProps> = ({ open, onClose, token }) =>
                         </div>
                     </Form.Item>
                 )}
-                <Text strong>Email: user@example.com</Text>
 
-                <Form.Item name="firstName" label="Ім'я" rules={[{ required: true, message: 'Будь ласка, введіть Ваше ім\'я!' }]}>
-                    <Input placeholder="Ваше Ім'я" />
+                <Text strong>Email: {userInfo?.email}</Text>
+
+                <Form.Item name="firstName" label="Ім'я" rules={[{ required: true }]}>
+                    <Input />
                 </Form.Item>
 
                 <Form.Item name="lastName" label="Прізвище">
-                    <Input placeholder="Прізвище" />
+                    <Input />
                 </Form.Item>
-                
-                <Form.Item name="phone" label="Номер телефону" rules={[{ required: true, pattern: /^\+?\d{10,15}$/, message: 'Будь ласка, введіть дійсний номер телефону!' }]}>
-                    <Input placeholder="Ваш номер телефону" />
+
+                <Form.Item
+                    name="phone"
+                    label="Номер телефону"
+                    rules={[{ required: true, pattern: /^\+?\d{10,15}$/, message: 'Введіть дійсний номер телефону' }]}
+                >
+                    <Input />
+                </Form.Item>
+                {errorMessage && (
+                        <div style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</div>
+                    )}
+                <Form.Item>
+                    <Button type="default" htmlType="reset">Скасувати</Button>
+                    <Button type="primary" htmlType="submit">Завершити Реєстрацію</Button>
                 </Form.Item>
             </Form>
-        </Modal>
+        </div>
     );
 };
 
-export default GoogleAuthForm;
+export default GoogleRegisterUser;

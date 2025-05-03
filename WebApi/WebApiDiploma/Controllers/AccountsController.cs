@@ -31,12 +31,33 @@ namespace WebApiDiploma.Controllers
             var result = await accountService.RegisterAsync(model);
             return Ok(result); 
         }
-
+        
         [HttpPost("login/google")]
         public async Task<IActionResult> GoogleLogin([FromForm] GoogleLoginViewModel model)
         {
-            var authResponse = await accountService.GoogleLoginAsync(model);
-            return Ok(authResponse);
+            try
+            {
+                var response = await accountService.GoogleLoginAsync(model);
+                return Ok(response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("register/google")]
+        public async Task<IActionResult> GoogleRegister([FromForm] GoogleFirstRegisterModel model)
+        {
+            try
+            {
+                var response = await accountService.FirstRegisterGoogleAsync(model);
+                return Ok(response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
         }
 
         [HttpPost("refreshTokens")]
