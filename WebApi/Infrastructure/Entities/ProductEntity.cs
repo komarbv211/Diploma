@@ -18,9 +18,9 @@ namespace Infrastructure.Entities
 
         [StringLength(4000)]
         public string? Description { get; set; }
-        [ForeignKey("Category")]
-        public long CategoryId { get; set; }
-        public virtual CategoryEntity? Category { get; set; }
+        //[ForeignKey("Category")]
+        //public long CategoryId { get; set; }
+        //public virtual CategoryEntity? Category { get; set; }
 
         public virtual ICollection<ProductImageEntity>? Images { get; set; }
      
