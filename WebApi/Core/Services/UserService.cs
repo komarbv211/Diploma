@@ -62,5 +62,13 @@ namespace Core.Services
                 await _repository.SaveAsync();
             }
         }
+        public async Task<UserDTO?> GetByEmailAsync(string email)
+        {
+            var spec = new Core.Specifications.UserSpecs.ByEmailSpec(email);
+            var user = await _repository.FirstOrDefaultAsync(spec);
+
+            return user == null ? null : _mapper.Map<UserDTO>(user);
+        }
+
     }
 }

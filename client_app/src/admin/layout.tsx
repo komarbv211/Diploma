@@ -1,8 +1,8 @@
 
 import { Breadcrumb, Layout } from 'antd';
 import { Outlet } from 'react-router-dom';
-import AdminSidebar from '../components/admin/AdminSidebar';
-import AdminHeader from '../components/admin/AdminHeader';
+import AdminSidebar from '../components/layouts/admin/AdminSidebar';
+import AdminHeader from '../components/layouts/admin/AdminHeader';
 
 const { Content } = Layout;
 

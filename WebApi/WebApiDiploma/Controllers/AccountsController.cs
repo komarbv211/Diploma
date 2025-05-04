@@ -31,19 +31,34 @@ namespace WebApiDiploma.Controllers
             var result = await accountService.RegisterAsync(model);
             return Ok(result); 
         }
-
-        [HttpPost("google-login")]
-        public async Task<IActionResult> GoogleLogin([FromBody] string googleAccessToken)
+        
+        [HttpPost("login/google")]
+        public async Task<IActionResult> GoogleLogin([FromForm] GoogleLoginViewModel model)
         {
-            if (string.IsNullOrWhiteSpace(googleAccessToken))
+            try
             {
-                return BadRequest("Google access token is required.");
+                var response = await accountService.GoogleLoginAsync(model);
+                return Ok(response);
             }
-
-            var authResponse = await accountService.GoogleLoginAsync(googleAccessToken);
-            return Ok(authResponse);
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
         }
 
+        [HttpPost("register/google")]
+        public async Task<IActionResult> GoogleRegister([FromForm] GoogleFirstRegisterModel model)
+        {
+            try
+            {
+                var response = await accountService.FirstRegisterGoogleAsync(model);
+                return Ok(response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+        }
 
         [HttpPost("refreshTokens")]
         public async Task<IActionResult> RefreshTokens([FromBody] RefreshRequest refreshRequest)
