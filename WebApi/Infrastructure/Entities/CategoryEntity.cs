@@ -22,5 +22,6 @@ public class CategoryEntity : BaseEntity<long>
     public long? ParentId { get; set; }
     public virtual CategoryEntity Parent { get; set; } = null!;
 
+    public virtual ICollection<ProductEntity>? Products { get; set; }
     public virtual ICollection<CategoryEntity> Children { get; set; } = [];
 }
