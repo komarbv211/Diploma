@@ -14,13 +14,14 @@ namespace Infrastructure.Entities
         [Required, StringLength(255)]
         public string Name { get; set; }
         public decimal Price { get; set; }
-        public string? Image { get; set; }
+        //public string? Image { get; set; }
 
         [StringLength(4000)]
         public string? Description { get; set; }
-        //[ForeignKey("Category")]
-        //public long CategoryId { get; set; }
-        //public virtual CategoryEntity? Category { get; set; }
+
+        [ForeignKey("Category")]
+        public long CategoryId { get; set; }
+        public virtual CategoryEntity? Category { get; set; }
 
         public virtual ICollection<ProductImageEntity>? Images { get; set; }
      

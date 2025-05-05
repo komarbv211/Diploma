@@ -11,7 +11,7 @@ namespace Infrastructure.Entities
     public class ProductImageEntity : BaseEntity<long>
     {
         [Required, StringLength(200)]
-        public string NamePhoto { get; set; }
+        public string Name { get; set; }
         //послідовність слідування фото у товарі
         public short Priority { get; set; }
         [ForeignKey("Product")]
