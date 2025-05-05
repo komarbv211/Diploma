@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.DTOs.ProductsDTO
 {
-    public class ProductsDtoItem
+    public class ProductCreateDto
     {
     }
 }
