@@ -1,16 +1,22 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Header from "../components/Header";
+import CustomHeader from "../components/Header";
+import { Content, Header } from "antd/es/layout/layout";
+import { Layout } from "antd";
 
-const Layout: React.FC = () => {
+const AppLayout: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-1 p-4">
+    <Layout className="h-screen">
+      <Header>
+        <CustomHeader />
+      </Header>
+
+      <Content className="bg-white">
         <Outlet />
-      </main>
-    </div>
+      </Content>
+
+    </Layout>
   );
 };
 
-export default Layout;
+export default AppLayout;

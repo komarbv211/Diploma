@@ -18,7 +18,7 @@ namespace WebApiDiploma.Controllers
             service = services;
         }
 
-        [HttpGet]
+        [HttpGet("users")]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll()
         {
             var users = await service.GetAllAsync();
