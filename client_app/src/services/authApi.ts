@@ -1,4 +1,3 @@
-// authApi.ts
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { IAuthResponse, IUserLoginRequest, IUserRegisterRequest } from '../types/account';
 import { createBaseQuery } from '../utilities/createBaseQuery';

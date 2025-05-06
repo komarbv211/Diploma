@@ -1,8 +1,15 @@
 export interface IUserDTO {
     id: number;
+    firstName: string;
+    lastName: string;
     email: string;
-    userName: string;
-    // додай інші поля за потребою
+    phoneNumber: string;
+    image: string;
+    createdDate: string;
+    lastActivity: string;
+    emailConfirmed: boolean;
+    phoneNumberConfirmed: boolean;
+    twoFactorEnabled: boolean;
 }
   
 export interface IUserCreateDTO {
