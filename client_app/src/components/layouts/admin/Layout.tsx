@@ -1,12 +1,12 @@
 
 import { Breadcrumb, Layout } from 'antd';
 import { Outlet } from 'react-router-dom';
-import CustomHeader from '../components/layouts/default/Header';
-import AdminSidebar from '../components/layouts/admin/AdminSidebar';
+import CustomHeader from '../default/Header';
+import AdminSidebar from './AdminSidebar';
 
 const { Content, Sider, Header } = Layout;
 
-export default function AdminLayout() {
+const AdminLayout = () => {
   return (
     <Layout className="h-screen">
       <Header>
@@ -26,3 +26,4 @@ export default function AdminLayout() {
     </Layout>
   );
 }
+export default AdminLayout;
