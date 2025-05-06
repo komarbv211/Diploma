@@ -2,7 +2,7 @@ import { UserOutlined, HomeOutlined, HistoryOutlined, GiftOutlined, DeleteOutlin
 import { Layout, Menu, Input, Typography, Row, Col, Divider, Button, Space, Spin } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { logOut } from '../../store/slices/userSlice';
-import { useGetUserByIdQuery } from '../../services/usersApi';
+import { useGetUserByIdQuery } from '../../services/userApi';
 import { useDispatch } from 'react-redux';
 
 const { Content, Sider } = Layout;

@@ -1,8 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
-import AdminLayout from '../admin/Layout';
 import Dashboard from '../pages/admin/Dashboard';
 import AdminProfile from '../pages/admin/AdminProfile';
 import UsersPage from '../pages/admin/users/UsersPage';
+import AdminLayout from '../admin/Layout';
 
 export const AdminRoutes = () => {
   return (

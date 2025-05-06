@@ -1,61 +1,12 @@
-import { Button, message, Form, Input } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { jwtParse } from '../utilities/jwtParse.ts';
-import { GoogleJwtPayload, GoogleResponse, IUserRegisterRequest } from '../interfaces/account.ts';
-import { APP_ENV } from '../env';
+import { IUserRegisterRequest } from '../types/account.ts';
 import { useRegisterUserMutation } from '../services/authApi.ts';
 
 const RegistrUser: React.FC = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const [registerUser] = useRegisterUserMutation();
-
-    const handleGoogleCallback = (response: GoogleResponse) => {
-        console.log('Google callback отримано');
-        const decoded = jwtParse(response.credential) as GoogleJwtPayload;
-        if (!decoded) {
-            message.error('Помилка при декодуванні Google токену');
-            return;
-        }
-        const googleRequest = {
-            email: decoded.email,
-            firstName: decoded.given_name,
-            lastName: decoded.family_name,
-            imageUrl: decoded.picture,
-            phone: '', 
-        };        
-        form.setFieldsValue(googleRequest);
-        console.log(googleRequest);
-    };
-
-    useEffect(() => {
-        const loadGoogleScript = () => {
-            if (window.google) {
-                window.google.accounts.id.initialize({
-                    client_id: APP_ENV.CLIENT_ID,
-                    callback: handleGoogleCallback,
-                });
-
-                const buttonContainer = document.getElementById('google-signin-button');
-                if (buttonContainer) {
-                    window.google.accounts.id.renderButton(
-                        buttonContainer,
-                        {
-                            theme: 'outline',
-                            size: 'large',
-                            width: "300",
-                        }
-                    );
-                }
-            }
-        };
-
-        const script = document.createElement('script');
-        script.src = "https://accounts.google.com/gsi/client";
-        script.onload = loadGoogleScript;
-        document.head.appendChild(script);
-    }, []); 
 
     const onFinish = async (values: IUserRegisterRequest) => {
         try {
@@ -65,6 +16,7 @@ const RegistrUser: React.FC = () => {
             navigate("..");
         } catch (error) {
             console.error("Помилка при реєстрації", error);
+            message.error('Не вдалося зареєструватися. Спробуйте пізніше.');
         }
     };
 
@@ -121,12 +73,10 @@ const RegistrUser: React.FC = () => {
                 </Form.Item>
 
                 <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
-                    <Button type="default" htmlType="reset">Скасувати</Button>
+                    <Button type="default" htmlType="reset" style={{ marginRight: 10 }}>Скасувати</Button>
                     <Button type="primary" htmlType="submit">Реєстрація</Button>
                 </Form.Item>
             </Form>
-
-            <div id="google-signin-button" style={{ marginTop: 20 }}></div>
         </>
     );
 };

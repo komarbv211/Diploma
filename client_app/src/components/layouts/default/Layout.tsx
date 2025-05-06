@@ -1,8 +1,8 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import CustomHeader from "../components/Header";
 import { Content, Header } from "antd/es/layout/layout";
 import { Layout } from "antd";
+import CustomHeader from "./Header";
 
 const AppLayout: React.FC = () => {
   return (

@@ -1,8 +1,8 @@
 import { Avatar, Dropdown } from 'antd';
 import { UserOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import { getUser, logOut } from '../store/slices/userSlice'
-import { useAppDispatch, useAppSelector } from '../store/store';
+import { getUser, logOut } from '../../../store/slices/userSlice'
+import { useAppDispatch, useAppSelector } from '../../../store/store';
 
 const CustomHeader = () => {
 

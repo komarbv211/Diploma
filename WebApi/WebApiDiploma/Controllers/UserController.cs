@@ -56,6 +56,15 @@ namespace WebApiDiploma.Controllers
             await service.DeleteUserAsync(id);
             return NoContent();
         }
+        [HttpGet("email")]
+        public async Task<ActionResult<UserDTO>> GetByEmail([FromQuery] string email)
+        {
+            var user = await service.GetByEmailAsync(email);
+            if (user == null)
+                return NotFound();
+            return Ok(user);
+        }
+
     }
 
 }

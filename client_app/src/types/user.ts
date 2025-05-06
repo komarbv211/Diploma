@@ -10,5 +10,18 @@ export interface IUserDTO {
     emailConfirmed: boolean;
     phoneNumberConfirmed: boolean;
     twoFactorEnabled: boolean;
-  }
+}
+  
+export interface IUserCreateDTO {
+    email: string;
+    password: string;
+    // інші поля
+}
+  
+export interface IUserUpdateDTO {
+    id: number;
+    email?: string;
+    userName?: string;
+    // інші поля
+}
   

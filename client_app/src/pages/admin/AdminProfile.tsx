@@ -2,7 +2,7 @@ import { Layout, Typography, Row, Col, Divider, Button, Space, Input, Spin, } fr
 import { SettingOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { useGetUserByIdQuery } from '../../services/usersApi';
+import { useGetUserByIdQuery } from '../../services/userApi';
 import { logOut } from '../../store/slices/userSlice';
 import dayjs from 'dayjs';
 

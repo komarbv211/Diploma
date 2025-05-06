@@ -1,66 +1,90 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { AuthResponse, IUserLoginRequest, IUserRegisterRequest, LoginGoogleRequest } from '../interfaces/account';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { IAuthResponse, IUserLoginRequest, IUserRegisterRequest } from '../types/account';
 import { createBaseQuery } from '../utilities/createBaseQuery';
 import { setCredentials } from '../store/slices/userSlice';
 
 export const authApi = createApi({
-    reducerPath: 'accountApi',
-    baseQuery: createBaseQuery('Accounts'),
-    tagTypes: ['AuthUser'],
-    endpoints: (builder) => ({
-        registerUser: builder.mutation<void, IUserRegisterRequest>({
-            query: (userRegister) => ({
-                url: "register",
-                method: "POST",
-                body: userRegister,
-            }),
-            invalidatesTags: ["AuthUser"],
+
+  reducerPath: 'accountApi',
+  baseQuery: createBaseQuery('Accounts'),
+  tagTypes: ['AuthUser'],
+  endpoints: (builder) => ({
+    registerUser: builder.mutation<void, IUserRegisterRequest>({
+        query: (userRegister) => ({
+            url: 'register',
+            method: 'POST',
+            body: userRegister,
         }),
-        googleLoginUser: builder.mutation<AuthResponse, LoginGoogleRequest>({
-            query: (userGoogle) => ({
-                url: "google-login",
-                method: "POST",
-                body: userGoogle,
-            }),
-            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-                try {
-                    const result = await queryFulfilled;
-                    console.log("Google auth user", arg);
-                    if (result.data && result.data.token) {
-                        dispatch(setCredentials({ token: result.data.token }));
-                    }
-                } catch (error) {
-                    console.error('Login failed:', error);
-                }
-            },
-        }),
-        loginUser: builder.mutation<AuthResponse, IUserLoginRequest>({
-            query: (credentials) => ({
+        invalidatesTags: ['AuthUser'],
+    }),
+    loginUser: builder.mutation<IAuthResponse, IUserLoginRequest>({
+        query: (loginCredentials) => {
+            console.log('Відправка запиту логіну:', loginCredentials);
+            return {
                 url: 'login',
                 method: 'POST',
-                body: credentials,
-            }),
-            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-                try {
-                    const result = await queryFulfilled;
-                    console.log("User:", arg);
-                    if (result.data?.token && result.data?.user) {
-                        dispatch(setCredentials({
-                            token: result.data.token,
-                            user: result.data.user
-                        }));
-                    }
-                } catch (error) {
-                    console.error('Login failed:', error);
+                body: loginCredentials,
+            };
+        },
+        async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+            try {
+                const { data } = await queryFulfilled;
+                console.log('Успішна відповідь логіну:', data);
+                if (data.accessToken) {
+                    dispatch(setCredentials({ token: data.accessToken, refreshToken: data.refreshToken}));
                 }
-            },
-        }),
-        
+            } catch (error) {
+                const typedError = error as { status?: number | string; data?: { message?: string } };
+                console.error('Помилка логіну:', {
+                    status: typedError?.status,
+                    data: typedError?.data,
+                    error,
+                });
+                // Не кидаємо помилку, щоб компонент міг обробити її через unwrap
+            }
+        },
+        invalidatesTags: ['AuthUser'],
     }),
+    confirmGoogleLogin: builder.mutation<IAuthResponse, FormData>({
+      query: (formData) => ({
+          url: 'login/google',
+          method: 'POST',
+          body: formData,
+      }),
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+          const { data } = await queryFulfilled;
+          if (data.accessToken) {
+              dispatch(setCredentials({
+                  token: data.accessToken,
+                  refreshToken: data.refreshToken,
+              }));
+          }
+      },
+      invalidatesTags: ['AuthUser'],
+    }),  
+    confirmGoogleRegister: builder.mutation<IAuthResponse, FormData>({
+      query: (formData) => ({
+          url: 'register/google',
+          method: 'POST',
+          body: formData,
+      }),
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+          const { data } = await queryFulfilled;
+          if (data.accessToken) {
+              dispatch(setCredentials({
+                  token: data.accessToken,
+                  refreshToken: data.refreshToken,
+              }));
+          }
+      },
+      invalidatesTags: ['AuthUser'],
+    }),  
+  }),
 });
 
 export const {
     useRegisterUserMutation,
-    useGoogleLoginUserMutation,
-    useLoginUserMutation
+    useLoginUserMutation,
+    useConfirmGoogleLoginMutation,
+    useConfirmGoogleRegisterMutation,
 } = authApi;
