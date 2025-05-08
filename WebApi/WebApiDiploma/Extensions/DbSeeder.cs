@@ -209,6 +209,7 @@ namespace WebApiDiploma.Extensions
                             var product = await Task.WhenAll(productTasks);
                             Console.WriteLine($"Adding {product.Length} adverts to the database.");
                             await ProductRepo.AddRangeAsync(product);
+
                             await ProductRepo.SaveAsync();
                             Console.WriteLine("Adverts added to the database.");
                         //}
