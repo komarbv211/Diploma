@@ -7,6 +7,7 @@ using Microsoft.Graph.Models.TermStore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,6 +42,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     }
 
     public async virtual Task<bool> AnyAsync() => await dbSet.AnyAsync();
+  // public virtual async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> exp) => await dbSet.AnyAsync(exp);
 
     public async virtual Task AddAsync(TEntity entity) => await dbSet.AddAsync(entity);
 
@@ -100,5 +102,9 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
             context.Entry(entityToUpdate).State = EntityState.Modified;
         });
     }
-    
+
+
+    //метод в асинхронному режимі додає колекцію entities до dbSet, який представляє набір об'єктів в Entity Framework.
+    public async virtual Task AddRangeAsync(IEnumerable<TEntity> entities) => await dbSet.AddRangeAsync(entities);
+
 }

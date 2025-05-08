@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@ namespace Core.Interfaces
         Task<IEnumerable<TEntity>> GetAllAsync();
         IQueryable<TEntity> GetAllQueryable();
         Task<bool> AnyAsync();
+       // Task<bool> AnyAsync(Expression<Func<TEntity, bool>> exp);
         Task AddAsync(TEntity entity);
         Task SaveAsync();
         void Delete(object id);
@@ -21,5 +23,6 @@ namespace Core.Interfaces
         Task Insert(TEntity entity);//
         Task Update(TEntity entity);//
         Task<TEntity?> GetByID(object id);//
+        Task AddRangeAsync(IEnumerable<TEntity> entities);
     }
 }
