@@ -1,0 +1,104 @@
+//Seed user data
+[
+  {
+    "Name": "Sister's Aroma Sugar",
+    "Price": 2000,
+    "Description": "Парфумована вода Sugar Porn українського бренда Sister’s Aroma — це чудове уособлення насичених гурманських ароматів, обрамлене стінками дизайнерського флакона і професійно-лаконічною будовою ольфакторної піраміди! Млосно-бадьорий посмак, яке прекрасно поєднується як з чоловічими, так і жіночими темпераментами, змушує свого власника більш впевнено і цілеспрямовано вивчати світ, щодня відкриваючи його нові грані... Уже після першого розпорошення ваша свідомість потоне у ванільній хмарі легкості та невимушеності, надихаючи кожну людину мотиваційними іскрами унікальності, привабливості, шарму!
+
+Початкова нота. Пікантний рожевий перець підхоплює ритм натхненного вступу, змушуючи свого власника залишатися собою, незважаючи на вимоги суспільства і рутину повсякденності.
+
+Нота «серця». Прориваючись крізь флаконне ув’язнення, парфумована вода перетворюється в реальності відгомонами цукру. Ця неймовірна насолода змушує не зупинятися на досягнутому, рухатися до нових вершин.
+
+Кінцева нота. Після вишуканої кульмінації на горизонті з’являється безкрайній кашеміровий шлейф, витканий з тепла, ніжності і чарівності харизми свого власника!",
+    
+  "CategoryId": 1,
+    "Images": [
+      {
+        "Name": "https://www.google.com/imgres?q=Sister%27s%20Aroma%20Sugar%20%D1%84%D0%BE%D1%82%D0%BE&imgurl=https%3A%2F%2Fu.makeup.com.ua%2F4%2F4h%2F4hyzzfthxwpt.jpg&imgrefurl=https%3A%2F%2Fmakeup.com.ua%2Fua%2Fproduct%2F839444%2F&docid=dDe2QVe0xo9STM&tbnid=zYXY7nULhbLk0M&vet=12ahUKEwiI3N-ymo2NAxUYKRAIHUbOA9MQM3oECBUQAA..i&w=2000&h=1883&hcb=2&ved=2ahUKEwiI3N-ymo2NAxUYKRAIHUbOA9MQM3oECBUQAA",
+        "Priority": 1,
+        "ProductId": 1
+      },
+      {
+        "Name": "https://www.google.com/imgres?q=Sister%27s%20Aroma%20Sugar%20%D1%84%D0%BE%D1%82%D0%BE&imgurl=https%3A%2F%2Fimages.prom.ua%2F4367223396_w640_h320_parfyumirovannaya-voda-dlya.jpg&imgrefurl=https%3A%2F%2Fprom.ua%2Fua%2Fp1799853769-parfyumirovannaya-voda-dlya.html&docid=Mf1c8yJ-O5117M&tbnid=N8VrLOM6C5W1RM&vet=12ahUKEwiI3N-ymo2NAxUYKRAIHUbOA9MQM3oECG4QAA..i&w=422&h=319&hcb=2&itg=1&ved=2ahUKEwiI3N-ymo2NAxUYKRAIHUbOA9MQM3oECG4QAA",
+        "Priority": 2,
+        "ProductId": 1
+      }
+    ]
+  },
+  {
+    "Name": "Sister's Aroma Sugar",
+    "Price": 2000,
+    "Description": "Парфумована вода Sugar Porn українського бренда Sister’s Aroma — це чудове уособлення насичених гурманських ароматів, обрамлене стінками дизайнерського флакона і професійно-лаконічною будовою ольфакторної піраміди! Млосно-бадьорий посмак, яке прекрасно поєднується як з чоловічими, так і жіночими темпераментами, змушує свого власника більш впевнено і цілеспрямовано вивчати світ, щодня відкриваючи його нові грані... Уже після першого розпорошення ваша свідомість потоне у ванільній хмарі легкості та невимушеності, надихаючи кожну людину мотиваційними іскрами унікальності, привабливості, шарму!
+
+    Початкова нота.
+    Пікантний рожевий
+    перець підхоплює
+    ритм натхненного
+    вступу,
+    змушуючи свого
+    власника залишатися
+    собою,
+    незважаючи на
+    вимоги суспільства
+    і рутину
+    повсякденності. Нота
+    «серця». Прориваючись
+    крізь флаконне
+    ув’язнення,
+    парфумована вода
+    перетворюється в
+    реальності відгомонами
+    цукру. Ця
+    неймовірна насолода
+    змушує не
+    зупинятися на
+    досягнутому,
+    рухатися до
+    нових вершин.
+
+    Кінцева нота.
+    Після вишуканої
+    кульмінації на
+    горизонті з’являється
+    безкрайній кашеміровий
+    шлейф,
+    витканий з
+    тепла,
+    ніжності і
+    чарівності харизми
+    свого власника!",
+
+    "CategoryId": 1,
+    "Images": [
+      {
+        "Name": "https://www.google.com/imgres?q=Sister%27s%20Aroma%20Sugar%20%D1%84%D0%BE%D1%82%D0%BE&imgurl=https%3A%2F%2Fu.makeup.com.ua%2F4%2F4h%2F4hyzzfthxwpt.jpg&imgrefurl=https%3A%2F%2Fmakeup.com.ua%2Fua%2Fproduct%2F839444%2F&docid=dDe2QVe0xo9STM&tbnid=zYXY7nULhbLk0M&vet=12ahUKEwiI3N-ymo2NAxUYKRAIHUbOA9MQM3oECBUQAA..i&w=2000&h=1883&hcb=2&ved=2ahUKEwiI3N-ymo2NAxUYKRAIHUbOA9MQM3oECBUQAA",
+        "Priority": 1,
+        "ProductId": 1
+      },
+      {
+        "Name": "https://www.google.com/imgres?q=Sister%27s%20Aroma%20Sugar%20%D1%84%D0%BE%D1%82%D0%BE&imgurl=https%3A%2F%2Fimages.prom.ua%2F4367223396_w640_h320_parfyumirovannaya-voda-dlya.jpg&imgrefurl=https%3A%2F%2Fprom.ua%2Fua%2Fp1799853769-parfyumirovannaya-voda-dlya.html&docid=Mf1c8yJ-O5117M&tbnid=N8VrLOM6C5W1RM&vet=12ahUKEwiI3N-ymo2NAxUYKRAIHUbOA9MQM3oECG4QAA..i&w=422&h=319&hcb=2&itg=1&ved=2ahUKEwiI3N-ymo2NAxUYKRAIHUbOA9MQM3oECG4QAA",
+        "Priority": 2,
+        "ProductId": 1
+      }
+    ]
+  },
+  {
+    "Name": "Ноутбук Z200",
+    "Price": 1499.99,
+    "Description": "Легкий та продуктивний ноутбук для роботи та розваг.",
+    "CategoryId": 2,
+    "Images": [
+      {
+        "Name": "https://www.google.com/imgres?q=Dior%20Miss%20Dior%20Blooming%20Bouquet%202023%20%D1%84%D0%BE%D1%82%D0%BE&imgurl=https%3A%2F%2Ffimgs.net%2Fmdimg%2Fperfume%2F375x500.78945.jpg&imgrefurl=https%3A%2F%2Fwww.fragrantica.ua%2Fperfumes%2FDior%2FMiss-Dior-Blooming-Bouquet-2023-78945.html&docid=ezXz8EjK-vU7-M&tbnid=K7Q7gXcL3sS4-M&vet=12ahUKEwiOuoqfnY2NAxUmBxAIHSZzKOMQM3oECB4QAA..i&w=375&h=500&hcb=2&ved=2ahUKEwiOuoqfnY2NAxUmBxAIHSZzKOMQM3oECB4QAA",
+        "Priority": 1,
+        "ProductId": 200
+      },
+      {
+        "Name": "https://www.google.com/imgres?q=Dior%20Miss%20Dior%20Blooming%20Bouquet%202023%20%D1%84%D0%BE%D1%82%D0%BE&imgurl=https%3A%2F%2Fi.makeup.cy%2Fd%2Fdl%2Fdlyskdoyhoxu.jpg&imgrefurl=https%3A%2F%2Fmakeup.cy%2Fru%2Fproduct%2F763547%2F&docid=4VtiGSLHXV392M&tbnid=6_sPYElxMy6fxM&vet=12ahUKEwiOuoqfnY2NAxUmBxAIHSZzKOMQM3oECH4QAA..i&w=1500&h=2000&hcb=2&ved=2ahUKEwiOuoqfnY2NAxUmBxAIHSZzKOMQM3oECH4QAA",
+        "Priority": 2,
+        "ProductId": 200
+      }
+    ]
+  }
+
+]
