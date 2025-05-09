@@ -1,6 +1,8 @@
 ﻿using Core.Extensions;
 using Core.Interfaces;
 using Core.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Infrastructure.Data;
 using Infrastructure.Entities;
 using Infrastructure.Repositories;
@@ -9,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using SixLabors.ImageSharp.Metadata.Profiles.Xmp;
 using WebApiDiploma.Extensions;
+using WebApiDiploma.ServiceExtensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +47,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+//fluent validators
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddCorsPolicies();
+
 var app = builder.Build();
 
 var dir = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration.GetValue<string>("ImagesDir") ?? "uploading");
@@ -64,6 +75,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
+
+app.UseCors("front-end-cors-policy");
 
 app.MapControllers();
 

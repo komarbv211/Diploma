@@ -11,8 +11,7 @@ namespace WebApiDiploma.Extensions
         {
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<ICategoryService, CategoryService>();
-            services.AddAutoMapper(typeof(CategoryProfile));
-            services.AddAutoMapper(typeof(UserProfile));
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());//сканує всі мапери які наслідують Profile
 
             return services;
         }

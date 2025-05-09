@@ -23,6 +23,7 @@ namespace Core.Interfaces
         Task Insert(TEntity entity);//
         Task Update(TEntity entity);//
         Task<TEntity?> GetByID(object id);//
+        Task<TEntity?> FirstOrDefaultAsync(ISpecification<TEntity> specification);
         Task AddRangeAsync(IEnumerable<TEntity> entities);
     }
 }
