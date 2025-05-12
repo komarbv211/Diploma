@@ -12,6 +12,7 @@ namespace WebApiDiploma.Models.Seeder
         public string? Description { get; set; }
         public long CategoryId { get; set; }
         public virtual CategoryEntity? Category { get; set; }
-        public virtual ICollection<ProductImageEntity>? Images { get; set; }
+        //public virtual ICollection<ProductImageEntity>? Images { get; set; }
+        public ICollection<string> ImagePaths { get; init; } = [];
     }
 }

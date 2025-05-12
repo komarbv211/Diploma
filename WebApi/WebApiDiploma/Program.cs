@@ -1,4 +1,5 @@
-﻿using Core.Extensions;
+﻿using Core.Exceptions;
+using Core.Extensions;
 using Core.Interfaces;
 using Core.Services;
 using FluentValidation;
@@ -56,15 +57,16 @@ builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssembli
 builder.Services.AddCorsPolicies();
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionMiddleware>();
 
-var dir = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration.GetValue<string>("ImagesDir") ?? "uploading");
-
-Directory.CreateDirectory(dir);
+var imagesFolger = builder.Configuration.GetValue<string>("ImagesDir") ?? "";
+var dirSave = Path.Combine(builder.Environment.ContentRootPath, imagesFolger);
+Directory.CreateDirectory(dirSave);
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(dir),
-    RequestPath = "/images"
+    FileProvider = new PhysicalFileProvider(dirSave),
+    RequestPath = $"/{imagesFolger}"
 });
 
 // Configure the HTTP request pipeline.

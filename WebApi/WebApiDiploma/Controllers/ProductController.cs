@@ -33,31 +33,19 @@ public class ProductController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromForm] ProductCreateDto dto, [FromForm] List<IFormFile> images)
+    public async Task<IActionResult> Create([FromBody] ProductCreateDto dto)
     {
-        // Збереження зображень
-        if (images.Any())
-        {
-            var savedImages = await _imageService.SaveImagesAsync(images);
-            dto.Images = savedImages;
-        }
-
         await _productService.CreateProductAsync(dto);
         return Ok();
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update([FromForm] ProductUpdateDto dto, [FromForm] List<IFormFile> newImages)
+    public async Task<IActionResult> Update([FromBody] ProductUpdateDto dto)
     {
-        if (newImages.Any())
-        {
-            var savedImages = await _imageService.SaveImagesAsync(newImages);
-            dto.Images = savedImages;
-        }
-
         await _productService.UpdateProductAsync(dto);
         return Ok();
     }
+
 
     [HttpDelete("{id:long}")]
     public async Task<IActionResult> Delete(long id)

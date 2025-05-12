@@ -6,23 +6,29 @@ import { IUserCreateDTO, IUserDTO, IUserUpdateDTO } from '../types/user';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
-  baseQuery: createBaseQuery('User'), 
+  baseQuery: createBaseQuery('User'),
   tagTypes: ['Users'],
   endpoints: (builder) => ({
     getAllUsers: builder.query<IUserDTO[], void>({
-      query: () => '',
+      query: () => ({
+        url: 'users',
+        method: 'GET',
+      }),
       providesTags: ['Users'],
     }),
     getUserById: builder.query<IUserDTO, number>({
-      query: (id) => `${id}`,
-      providesTags: ['Users'],
+      query: (id) => ({
+        url: `${id}`,
+        method: 'GET',
+      }),
+      providesTags: (_, __, id) => [{ type: 'Users', id }],
     }),
     getUserByEmail: builder.query<IUserDTO, string>({
-        query: (email) => ({
-          url: `email`,
-          params: { email },
-        }),
-        providesTags: ['Users'],
+      query: (email) => ({
+        url: `email`,
+        params: { email },
+      }),
+      providesTags: ['Users'],
     }),
     createUser: builder.mutation<void, IUserCreateDTO>({
       query: (user) => ({

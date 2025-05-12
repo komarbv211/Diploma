@@ -16,6 +16,6 @@ namespace Infrastructure.Entities
         public short Priority { get; set; }
         [ForeignKey("Product")]
         public long ProductId { get; set; }
-        public virtual ProductEntity Products { get; set; } = null!;
+        public virtual ProductEntity Product { get; set; } = null!;
     }
 }

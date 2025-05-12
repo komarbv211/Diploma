@@ -4,99 +4,137 @@ using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
+using Core.Exceptions;
 
-namespace Core.Services;
-
-public class ProductService : IProductService
+namespace Core.Services
 {
-    private readonly DbMakeUpContext _context;
-    private readonly IMapper _mapper;
-
-    public ProductService(DbMakeUpContext context, IMapper mapper)
+    public class ProductService : IProductService
     {
-        _context = context;
-        _mapper = mapper;
-    }
+        private readonly DbMakeUpContext _context;
+        private readonly IMapper _mapper;
 
-    public async Task<List<ProductItemDto>> GetProductsAsync()
-    {
-        var products = await _context.Products
-            .Include(p => p.Images)
-            .ToListAsync();
-
-        return _mapper.Map<List<ProductItemDto>>(products);
-    }
-
-    public async Task<ProductItemDto?> GetByIdAsync(long id)
-    {
-        var product = await _context.Products
-            .Include(p => p.Images)
-            .FirstOrDefaultAsync(p => p.Id == id);
-
-        return product == null ? null : _mapper.Map<ProductItemDto>(product);
-    }
-
-    public async Task CreateProductAsync(ProductCreateDto dto)
-    {
-        var product = _mapper.Map<ProductEntity>(dto);
-
-        // Додаємо зображення, якщо є
-        if (dto.Images is { Count: > 0 })
+        public ProductService(DbMakeUpContext context, IMapper mapper)
         {
-            product.Images = dto.Images.Select(name => new ProductImageEntity
-            {
-                Name = name,
-                ProductId = product.Id
-            }).ToList();
+            _context = context;
+            _mapper = mapper;
         }
-        await _context.Products.AddAsync(product);
-        await _context.SaveChangesAsync();
-    }
 
-    public async Task UpdateProductAsync(ProductUpdateDto dto)
-    {
-        var product = await _context.Products
-            .Include(p => p.Images)
-            .FirstOrDefaultAsync(p => p.Id == dto.Id);
-
-        if (product == null) return;
-
-        _mapper.Map(dto, product);
-
-        // Якщо є нові зображення — замінити старі
-        if (dto.Images is { Count: > 0 })
+        public async Task<List<ProductItemDto>> GetProductsAsync()
         {
-            if (product.Images != null)
+            try
             {
-                _context.ProductImages.RemoveRange(product.Images);
+                var products = await _context.Products
+                    .Include(p => p.Images)
+                    .ToListAsync();
+
+                return _mapper.Map<List<ProductItemDto>>(products);
             }
-
-            product.Images = dto.Images.Select(name => new ProductImageEntity
+            catch (Exception ex)
             {
-                Name = name,
-                ProductId = product.Id
-            }).ToList();
+                throw new HttpException("Помилка при отриманні списку продуктів", HttpStatusCode.InternalServerError, ex);
+            }
         }
 
-        _context.Products.Update(product);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task DeleteProductAsync(long id)
-    {
-        var product = await _context.Products
-            .Include(p => p.Images)
-            .FirstOrDefaultAsync(p => p.Id == id);
-
-        if (product == null) return;
-
-        if (product.Images != null)
+        public async Task<ProductItemDto?> GetByIdAsync(long id)
         {
-            _context.ProductImages.RemoveRange(product.Images);
+            try
+            {
+                var product = await _context.Products
+                    .Include(p => p.Images)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                if (product == null)
+                {
+                    throw new HttpException("Продукт не знайдений", HttpStatusCode.NotFound);
+                }
+
+                return _mapper.Map<ProductItemDto>(product);
+            }
+            catch (HttpException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Помилка при отриманні продукту", HttpStatusCode.InternalServerError, ex);
+            }
         }
 
-        _context.Products.Remove(product);
-        await _context.SaveChangesAsync();
-    }
+        public async Task CreateProductAsync(ProductCreateDto dto)
+        {
+            try
+            {
+                var product = _mapper.Map<ProductEntity>(dto);
 
+                // Колекцію зображень не чіпаємо – вона буде додана окремим сервісом
+                await _context.Products.AddAsync(product);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new HttpException("Помилка при збереженні продукту в базі даних", HttpStatusCode.InternalServerError, dbEx);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Невідома помилка при створенні продукту", HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public async Task UpdateProductAsync(ProductUpdateDto dto)
+        {
+            try
+            {
+                var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == dto.Id);
+                if (product == null)
+                {
+                    throw new HttpException("Продукт не знайдений для оновлення", HttpStatusCode.NotFound);
+                }
+
+                _mapper.Map(dto, product);
+
+                _context.Products.Update(product);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new HttpException("Помилка при оновленні продукту в базі даних", HttpStatusCode.InternalServerError, dbEx);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Невідома помилка при оновленні продукту", HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public async Task DeleteProductAsync(long id)
+        {
+            try
+            {
+                var product = await _context.Products
+                    .Include(p => p.Images)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                if (product == null)
+                {
+                    throw new HttpException("Продукт не знайдений для видалення", HttpStatusCode.NotFound);
+                }
+
+                if (product.Images != null)
+                {
+                    _context.ProductImages.RemoveRange(product.Images);
+                }
+
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new HttpException("Помилка при видаленні продукту з бази даних", HttpStatusCode.InternalServerError, dbEx);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Невідома помилка при видаленні продукту", HttpStatusCode.InternalServerError, ex);
+            }
+        }
+    }
 }
