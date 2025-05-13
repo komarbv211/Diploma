@@ -1,4 +1,5 @@
-﻿using Core.Extensions;
+﻿using Core.Exceptions;
+using Core.Extensions;
 using Core.Interfaces;
 using Core.Services;
 using FluentValidation;
@@ -57,6 +58,8 @@ builder.Services.AddCorsPolicies();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionMiddleware>();
+
 var dir = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration.GetValue<string>("ImagesDir") ?? "uploading");
 
 Directory.CreateDirectory(dir);
@@ -64,7 +67,7 @@ Directory.CreateDirectory(dir);
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(dir),
-    RequestPath = "/images"
+    RequestPath = "/images"    
 });
 
 // Configure the HTTP request pipeline.

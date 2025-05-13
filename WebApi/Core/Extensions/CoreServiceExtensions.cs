@@ -12,7 +12,8 @@ namespace Core.Extensions
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IGoogleAuthService, GoogleAuthService>();
-
+            services.AddScoped<IProductService, ProductService>();
         }
+
     }
 }

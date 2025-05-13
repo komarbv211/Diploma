@@ -39,12 +39,9 @@ namespace WebApiDiploma.Controllers
             return CreatedAtAction(nameof(GetById), new { id = dto.Name }, dto); 
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Update(long id, [FromBody] CategoryUpdateDto dto)
-        {
-            if (id != dto.Id)
-                return BadRequest("ID категорії не співпадає.");
-
+        [HttpPut]
+        public async Task<ActionResult> Update([FromBody] CategoryUpdateDto dto)
+        {          
             await _categoryService.UpdateCategoryAsync(dto);
             return NoContent(); 
         }
