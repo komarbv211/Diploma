@@ -13,11 +13,13 @@ namespace Core.Services
     {
         private readonly DbMakeUpContext _context;
         private readonly IMapper _mapper;
+        private readonly IImageService _imageService;
 
-        public ProductService(DbMakeUpContext context, IMapper mapper)
+        public ProductService(DbMakeUpContext context, IMapper mapper, IImageService imageService)
         {
             _context = context;
             _mapper = mapper;
+            _imageService = imageService;
         }
 
         public async Task<List<ProductItemDto>> GetProductsAsync()
@@ -67,9 +69,24 @@ namespace Core.Services
             {
                 var product = _mapper.Map<ProductEntity>(dto);
 
-                // Колекцію зображень не чіпаємо – вона буде додана окремим сервісом
                 await _context.Products.AddAsync(product);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); // потрібно зберегти, щоб отримати ProductId
+
+                // Зберегти зображення, якщо вони є
+                if (dto.image is { Count: > 0 })
+                {
+                    var imageNames = await _imageService.SaveImagesAsync(dto.image);
+
+                    var productImages = imageNames.Select((name, index) => new ProductImageEntity
+                    {
+                        Name = name,
+                        Priority = (short)index,
+                        ProductId = product.Id
+                    });
+
+                    await _context.ProductImages.AddRangeAsync(productImages);
+                    await _context.SaveChangesAsync();
+                }
             }
             catch (DbUpdateException dbEx)
             {
@@ -85,26 +102,76 @@ namespace Core.Services
         {
             try
             {
-                var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == dto.Id);
+                if (dto == null)
+                    throw new ArgumentNullException(nameof(dto), "Дані не можуть бути порожніми");
+
+                if (dto.Id <= 0)
+                    throw new ArgumentException("Неправильний ідентифікатор продукту");
+
+                var product = await _context.Products
+                    .Include(p => p.Images)
+                    .FirstOrDefaultAsync(p => p.Id == dto.Id);
+
                 if (product == null)
+                    throw new HttpException("Продукт не знайдено", HttpStatusCode.NotFound);
+
+                // Оновлення основних даних
+                _mapper.Map(dto, product);
+                _context.Products.Update(product);
+
+                var updatedImages = new List<ProductImageEntity>();
+                var existingImages = product.Images.ToDictionary(i => i.Name, i => i);
+
+                for (int i = 0; i < dto.image.Count; i++)
                 {
-                    throw new HttpException("Продукт не знайдений для оновлення", HttpStatusCode.NotFound);
+                    var formFile = dto.image[i];
+
+                    if (formFile == null || formFile.Length == 0)
+                        continue;
+
+                    if (existingImages.TryGetValue(formFile.FileName, out var existingImage))
+                    {
+                        existingImage.Priority = (short)i;
+                        updatedImages.Add(existingImage);
+                        _context.ProductImages.Update(existingImage);
+                    }
+                    else
+                    {
+                        var newFileName = await _imageService.SaveImageAsync(formFile);
+                        var newImage = new ProductImageEntity
+                        {
+                            Name = newFileName,
+                            Priority = (short)i,
+                            ProductId = product.Id
+                        };
+                        updatedImages.Add(newImage);
+                        await _context.ProductImages.AddAsync(newImage);
+                    }
                 }
 
-                _mapper.Map(dto, product);
+                var imagesToDelete = product.Images
+                    .Where(img => !updatedImages.Any(u => u.Name == img.Name))
+                    .ToList();
 
-                _context.Products.Update(product);
+                foreach (var img in imagesToDelete)
+                {
+                    _imageService.DeleteImageIfExists(img.Name);
+                }
+
+                _context.ProductImages.RemoveRange(imagesToDelete);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException dbEx)
+            catch (ArgumentException ex)
             {
-                throw new HttpException("Помилка при оновленні продукту в базі даних", HttpStatusCode.InternalServerError, dbEx);
+                throw new HttpException(ex.Message, HttpStatusCode.BadRequest);
             }
             catch (Exception ex)
             {
-                throw new HttpException("Невідома помилка при оновленні продукту", HttpStatusCode.InternalServerError, ex);
+                throw new HttpException("Сталася внутрішня помилка сервера", HttpStatusCode.InternalServerError);
             }
         }
+
+
 
         public async Task DeleteProductAsync(long id)
         {

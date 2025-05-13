@@ -1,4 +1,6 @@
-﻿namespace Core.DTOs.ProductsDTO
+﻿using Core.DTOs.ProductDTOs;
+
+namespace Core.DTOs.ProductsDTO
 {   
     public class ProductUpdateDto : ProductCreateDto
     {

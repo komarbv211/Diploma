@@ -57,16 +57,17 @@ builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssembli
 builder.Services.AddCorsPolicies();
 
 var app = builder.Build();
+
 app.UseMiddleware<ExceptionMiddleware>();
 
-var imagesFolger = builder.Configuration.GetValue<string>("ImagesDir") ?? "";
-var dirSave = Path.Combine(builder.Environment.ContentRootPath, imagesFolger);
-Directory.CreateDirectory(dirSave);
+var dir = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration.GetValue<string>("ImagesDir") ?? "uploading");
+
+Directory.CreateDirectory(dir);
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(dirSave),
-    RequestPath = $"/{imagesFolger}"
+    FileProvider = new PhysicalFileProvider(dir),
+    RequestPath = "/images"    
 });
 
 // Configure the HTTP request pipeline.

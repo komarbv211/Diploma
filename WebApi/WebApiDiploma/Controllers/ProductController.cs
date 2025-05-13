@@ -33,14 +33,14 @@ public class ProductController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] ProductCreateDto dto)
+    public async Task<IActionResult> Create([FromForm] ProductCreateDto dto)
     {
         await _productService.CreateProductAsync(dto);
         return Ok();
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] ProductUpdateDto dto)
+    public async Task<IActionResult> Update([FromForm] ProductUpdateDto dto)
     {
         await _productService.UpdateProductAsync(dto);
         return Ok();

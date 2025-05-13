@@ -1,4 +1,6 @@
-﻿namespace Core.DTOs.ProductsDTO
+﻿using Core.DTOs.ProductDTOs;
+
+namespace Core.DTOs.ProductsDTO
 {
     public class ProductItemDto
     {
@@ -7,6 +9,6 @@
         public decimal Price { get; set; }
         public string? Description { get; set; }
         public long CategoryId { get; set; }
-        public List<string>? Images { get; set; }
+        public List<ProductImageDto>? Images { get; set; }
     }
 }
