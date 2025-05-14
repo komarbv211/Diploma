@@ -114,6 +114,7 @@ namespace Core.Services
             try
             {
                 userInfo = await googleAuthService.GetUserInfoAsync(model.GoogleAccessToken);
+
             }
             catch (HttpRequestException)
             {
@@ -161,6 +162,8 @@ namespace Core.Services
                     user.Image = await imageService.SaveImageFromUrlAsync(userInfo.Picture);
                 }
 
+                await CreateUserWithExternalLoginAsync(user, "Google", userInfo.Sub, "Google");
+
                 // Створюємо користувача
                 await CreateUserAsync(user);
             }
@@ -168,6 +171,23 @@ namespace Core.Services
             // Повертаємо токени автентифікації
             return await GetAuthTokens(user);
         }
+
+        private async Task CreateUserWithExternalLoginAsync(UserEntity user, string provider, string providerKey, string providerDisplayName)
+        {
+            var result = await userManager.CreateAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new Exception("Не вдалося створити користувача: " + string.Join("; ", result.Errors.Select(e => e.Description)));
+            }
+
+            var loginInfo = new UserLoginInfo(provider, providerKey, providerDisplayName);
+            var loginResult = await userManager.AddLoginAsync(user, loginInfo);
+            if (!loginResult.Succeeded)
+            {
+                throw new Exception("Не вдалося додати логін для " + provider + ": " + string.Join("; ", loginResult.Errors.Select(e => e.Description)));
+            }
+        }
+
 
 
 
