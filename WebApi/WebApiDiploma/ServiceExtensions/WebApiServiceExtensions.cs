@@ -1,9 +1,8 @@
 ﻿using Core.Interfaces;
-using Core.Mappers;
 using Core.Services;
 using Infrastructure.Repositories;
 
-namespace WebApiDiploma.Extensions
+namespace WebApiDiploma.ServiceExtensions
 {
     public static class WebApiServiceExtensions
     {
@@ -14,6 +13,6 @@ namespace WebApiDiploma.Extensions
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());//сканує всі мапери які наслідують Profile
 
             return services;
-        }
+        }        
     }
 }
