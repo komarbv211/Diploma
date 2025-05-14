@@ -10,20 +10,40 @@ namespace WebApiDiploma.ServiceExtensions
     {
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, JwtOptions jwtOpts)
         {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(o =>
-                    {
-                        o.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateIssuer = true,
-                            ValidateAudience = false,
-                            ValidateLifetime = true,
-                            ValidateIssuerSigningKey = true,
-                            ValidIssuer = jwtOpts.Issuer,
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpts.Key)),
-                            ClockSkew = TimeSpan.Zero
-                        };
-                    });
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //        .AddJwtBearer(o =>
+            //        {
+            //            o.TokenValidationParameters = new TokenValidationParameters
+            //            {
+            //                ValidateIssuer = true,
+            //                ValidateAudience = false,
+            //                ValidateLifetime = true,
+            //                ValidateIssuerSigningKey = true,
+            //                ValidIssuer = jwtOpts.Issuer,
+            //                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpts.Key)),
+            //                ClockSkew = TimeSpan.Zero
+            //            };
+            //        });
+
+            var signinKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpts.Key));
+            services.AddAuthentication(options =>
+             {
+                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+             }).AddJwtBearer(cfg =>
+             {
+                 cfg.RequireHttpsMetadata = false;
+                 cfg.SaveToken = true;
+                 cfg.TokenValidationParameters = new TokenValidationParameters()
+                 {
+                     IssuerSigningKey = signinKey,
+                     ValidateAudience = false,
+                     ValidateIssuer = false,
+                     ValidateLifetime = true,
+                     ValidateIssuerSigningKey = true,
+                     ClockSkew = TimeSpan.Zero
+                 };
+             });
 
             return services;
         }
