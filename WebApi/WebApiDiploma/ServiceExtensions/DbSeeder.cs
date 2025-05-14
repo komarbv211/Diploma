@@ -5,7 +5,7 @@ using WebApiDiploma.Models.Seeder;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
-namespace WebApiDiploma.Extensions
+namespace WebApiDiploma.ServiceExtensions
 {
     public static class DbSeeder
     {

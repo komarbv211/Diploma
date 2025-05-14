@@ -5,17 +5,17 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using RefreshRequest = Core.Models.Authentication.RefreshRequest;
 
-namespace WebApiDiploma.Controllers
+namespace WebApiDiploma.Controllers.Public
 {
-    [Route("api/[controller]")]
+    [Route("api/accounts")]
     [ApiController]
-    public class AccountsController : ControllerBase
+    public class PublicAccountsController : ControllerBase
     {
         private readonly IAccountService accountService;
 
-        public AccountsController(IAccountService accountsService)
+        public PublicAccountsController(IAccountService accountsService)
         {
-            this.accountService = accountsService;
+            accountService = accountsService;
         }
 
         [HttpPost("login")]

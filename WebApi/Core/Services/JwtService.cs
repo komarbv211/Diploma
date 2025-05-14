@@ -51,7 +51,7 @@ namespace Core.Services
                 new ("image", user.Image ?? string.Empty),
             };
             var roles = await userManager.GetRolesAsync(user);
-            claims.AddRange(roles.Select(role => new Claim("roles", role)));
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
             return claims;
         }
 

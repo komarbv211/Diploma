@@ -1,35 +1,20 @@
 ﻿using Core.DTOs.ProductsDTO;
 using Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApiDiploma.Controllers;
+namespace WebApiDiploma.Controllers.Admin;
 
 [ApiController]
-[Route("api/[controller]")]
-public class ProductController : ControllerBase
+[Route("api/admin/product")]
+[Authorize(Roles = "Admin")]
+public class AdminProductController : ControllerBase
 {
     private readonly IProductService _productService;
-    private readonly IImageService _imageService;
 
-    public ProductController(IProductService productService, IImageService imageService)
+    public AdminProductController(IProductService productService)
     {
         _productService = productService;
-        _imageService = imageService;
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<List<ProductItemDto>>> GetAll()
-    {
-        var products = await _productService.GetProductsAsync();
-        return Ok(products);
-    }
-
-    [HttpGet("{id:long}")]
-    public async Task<ActionResult<ProductItemDto>> GetById(long id)
-    {
-        var product = await _productService.GetByIdAsync(id);
-        if (product == null) return NotFound();
-        return Ok(product);
     }
 
     [HttpPost]
