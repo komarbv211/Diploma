@@ -6,6 +6,10 @@ npm install @reduxjs/toolkit react-redux
 cd client_app
 npm run dev 
 
+npm install react-input-mask
+
+npm install --save-dev @types/react-input-mask
+
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

@@ -2,11 +2,22 @@ import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { IUserRegisterRequest } from '../types/account.ts';
 import { useRegisterUserMutation } from '../services/authApi.ts';
+import React, {useState} from 'react';
+import InputMask from 'react-input-mask';
 
 const RegistrUser: React.FC = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const [registerUser] = useRegisterUserMutation();
+    const [phone, setPhone] = useState('');
+
+    const allowedOperators = [
+        '050', '066', '095', '099', // Vodafone
+        '067', '068', '096', '097', '098', // Kyivstar
+        '063', '073', '093' // Lifecell
+    ];
+
+    //const isValidPhone = /^\+380\d{9}$/.test(phone.replace(/\D/g, '') ? '+380' + phone.replace(/\D/g, '').slice(3) : '');
 
     const onFinish = async (values: IUserRegisterRequest) => {
         try {
@@ -45,8 +56,121 @@ const RegistrUser: React.FC = () => {
                     <Input placeholder="Ваш E-mail / login" />
                 </Form.Item>
 
-                <Form.Item name="phone" label="Номер телефону" rules={[{ required: true, pattern: /^\+?\d{10,15}$/, message: 'Будь ласка, введіть дійсний номер телефону!' }]}>
-                    <Input placeholder="Ваш номер телефону" />
+                {/*<Form.Item name="phone" label="Номер телефону" rules={[{ required: true, pattern: /^\+?\d{10,15}$/, message: 'Будь ласка, введіть дійсний номер телефону!' }]}>*/}
+                {/*    <Input placeholder="Ваш номер телефону" />*/}
+                {/*</Form.Item>*/}
+
+                {/*<Form.Item*/}
+
+                {/*    name="phone"*/}
+                {/*    label="Номер телефону"*/}
+                {/*    rules={[*/}
+                {/*        { required: true, message: 'Будь ласка, введіть номер телефону!' },*/}
+                {/*        {*/}
+                {/*            pattern: /^\+380\d{9}$/,*/}
+                {/*            message: 'Номер телефону має бути у форматі +38(0XX) XXX XX XX',*/}
+                {/*        },*/}
+                {/*    ]}*/}
+                {/*>*/}
+                {/*    <InputMask*/}
+                {/*        mask="+38 (099) 999 99 99"*/}
+                {/*        // mask="+380999999999"*/}
+                {/*        maskChar={null}>*/}
+                {/*        {(inputProps) => (*/}
+                {/*            <Input {...(inputProps as React.ComponentProps<typeof Input>)} placeholder="+38 (0XX) XXX XX XX" />*/}
+                {/*        )}*/}
+                {/*    </InputMask>*/}
+                {/*</Form.Item>*/}
+
+                {/*<div>*/}
+                {/*    <label htmlFor="phone">Номер телефону:</label>*/}
+                {/*    <InputMask*/}
+                {/*        mask="+38 (099) 999 99 99"*/}
+                {/*        value={phone}*/}
+                {/*        onChange={(e) => setPhone(e.target.value)}*/}
+                {/*    >*/}
+                {/*        {(inputProps) => <input {...inputProps} type="text" id="phone" />}*/}
+                {/*    </InputMask>*/}
+
+                {/*    /!*<p>Введено: {phone}</p>*!/*/}
+
+
+                {/*</div>*/}
+
+                {/*<Form.Item name="phone" label="Номер телефону">*/}
+
+                {/*<div className="mb-4">*/}
+                {/*    /!*<label*!/*/}
+                {/*    /!*    htmlFor="phone"*!/*/}
+                {/*    /!*    className="block text-sm font-medium text-gray-700 mb-1"*!/*/}
+                {/*    /!*>*!/*/}
+                {/*    /!*    Номер телефону:*!/*/}
+                {/*    /!*</label>*!/*/}
+
+
+                {/*    <InputMask*/}
+                {/*        mask="+38 (099) 999 99 99"*/}
+                {/*        maskChar={null}*/}
+                {/*        value={phone}*/}
+                {/*        onChange={(e) => setPhone(e.target.value)}*/}
+                {/*    >*/}
+                {/*        {(inputProps) => (*/}
+                {/*            <input*/}
+                {/*                {...inputProps}*/}
+                {/*                type="text"*/}
+                {/*                id="phone"*/}
+                {/*                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"*/}
+                {/*                placeholder="+38 (0XX) XXX XX XX"*/}
+                {/*            />*/}
+                {/*        )}*/}
+                {/*    </InputMask>*/}
+                {/*</div>*/}
+                {/*</Form.Item>*/}
+
+
+                <Form.Item
+                    name="phone"
+                    label="Номер телефону"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Будь ласка, введіть номер телефону!',
+                        },
+                        {
+                            validator: (_, value) => {
+                                const digits = value?.replace(/\D/g, '');
+                                const phoneNumber = digits.startsWith('380') ? digits : null;
+                                const operatorCode = phoneNumber?.slice(3, 6);
+
+                                if (!phoneNumber || phoneNumber.length !== 12) {
+                                    return Promise.reject('Номер має містити 12 цифр (включно з кодом країни +380).');
+                                }
+
+                                if (!allowedOperators.includes(operatorCode!)) {
+                                    return Promise.reject(`Код оператора "${operatorCode}" не підтримується.`);
+                                }
+
+                                return Promise.resolve();
+                            },
+                        },
+                    ]}
+                >
+                    <InputMask
+                        mask="+38 (099) 999 99 99"
+                        maskChar={null}
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                    >
+                        {(inputProps) => (
+                            <input
+                                {...inputProps}
+                                type="text"
+                                id="phone"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="+38 (XXX) XXX XX XX"
+                            />
+                        )}
+                    </InputMask>
                 </Form.Item>
 
                 <Form.Item name="password" label="Пароль" rules={[{ required: true, message: 'Будь ласка, введіть пароль!' }]}>

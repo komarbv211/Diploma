@@ -33,7 +33,9 @@ namespace Core.Validators.User
                 .EmailAddress().WithMessage("Email must be a valid email address.");
 
             RuleFor(user => user.PhoneNumber)
-                .Must(phone => string.IsNullOrEmpty(phone) || new System.Text.RegularExpressions.Regex(@"^\+?\d{10,15}$").IsMatch(phone))
+                .Must(phone => string.IsNullOrEmpty(phone) ||
+    new System.Text.RegularExpressions.Regex(@"^\+380\d{9,15}$").IsMatch(phone))
+                //.Must(phone => string.IsNullOrEmpty(phone) || new System.Text.RegularExpressions.Regex(@"^\+?\d{10,15}$").IsMatch(phone))
                 .WithMessage("Phone number must be valid.");
 
             RuleFor(user => user.Password)
