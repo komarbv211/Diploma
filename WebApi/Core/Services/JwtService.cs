@@ -43,7 +43,7 @@ namespace Core.Services
         {
             var claims = new List<Claim>
             {
-                new (ClaimTypes.NameIdentifier,user.Id.ToString()),
+                new ("id",user.Id.ToString()),
                 new ("firstName", user.FirstName ?? string.Empty),
                 new ("lastName", user.LastName ?? string.Empty),
                 new ("email", user.Email!),
@@ -51,7 +51,7 @@ namespace Core.Services
                 new ("image", user.Image ?? string.Empty),
             };
             var roles = await userManager.GetRolesAsync(user);
-            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+            claims.AddRange(roles.Select(role => new Claim("roles", role)));
             return claims;
         }
 
