@@ -1,8 +1,9 @@
 import { jwtDecode } from 'jwt-decode'
+import { IUser } from '../types/account'
 
-export const jwtParse = (value: string | null) => {
+export const jwtParse = (value: string | null): IUser | null => {
     if (!value) {
-        return null
+        return null;
     }
-    return jwtDecode(value)
+    return jwtDecode<IUser>(value);
 }

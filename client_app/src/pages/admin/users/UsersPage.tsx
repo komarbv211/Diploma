@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Table, Button, Dropdown, Menu, Input, Space, Spin, message } from 'antd';
 import { DownOutlined, SearchOutlined } from '@ant-design/icons';
-import { useGetAllUsersQuery } from '../../../services/userApi';
 import { IUser } from '../../../types/account';
 import dayjs from 'dayjs';
+import { useGetAllUsersQuery } from '../../../services/admin/userAdninApi';
 
 const UsersPage = () => {
   const [searchText, setSearchText] = useState('');

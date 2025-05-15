@@ -8,6 +8,8 @@ export const createBaseQuery = (endpoint: string) => {
         prepareHeaders: (headers, { getState }) => {
             // Отримуємо токен з Redux-сховища
             const token = (getState() as RootState).user.token; 
+            // Виводимо токен
+            console.log('[prepareHeaders] Token:', token);
             if (token) {
                 headers.set('Authorization', `Bearer ${token}`);
             }

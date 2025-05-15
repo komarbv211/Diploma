@@ -1,10 +1,12 @@
 // pages/GoogleRegisterUser.tsx
 import { Form, Input, Upload, Button, Typography } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
-import { useConfirmGoogleRegisterMutation } from "../services/authApi";
 import { useGoogleUserInfo } from "../hooks/useGoogleUserInfo";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useConfirmGoogleRegisterMutation } from "../services/authApi";
+import PhoneInput from "../components/PhoneInput";
+import { validateUkrainianPhoneNumber } from "../utilities/phoneValidators";
 
 const GoogleRegisterUser = () => {
     const [form] = Form.useForm();
@@ -113,9 +115,12 @@ const GoogleRegisterUser = () => {
                 <Form.Item
                     name="phone"
                     label="Номер телефону"
-                    rules={[{ required: true, pattern: /^\+?\d{10,15}$/, message: 'Введіть дійсний номер телефону' }]}
+                    rules={[
+                        { required: true, message: 'Введіть номер телефону' },
+                        { validator: validateUkrainianPhoneNumber },
+                    ]}
                 >
-                    <Input />
+                    <PhoneInput />
                 </Form.Item>
                 {errorMessage && (
                         <div style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</div>
