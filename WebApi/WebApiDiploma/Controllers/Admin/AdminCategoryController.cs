@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApiDiploma.Controllers.Admin
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/admin/category")]
     public class AdminCategoryController : ControllerBase
