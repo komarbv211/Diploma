@@ -1,23 +1,21 @@
-// components/PhoneInput.tsx
-import InputMask from 'react-input-mask';
-import { Input } from 'antd';
-import { InputProps } from 'antd/es/input';
+import MaskedInput from 'antd-mask-input';
+import { MaskedInputProps } from 'antd-mask-input/build/main/lib/MaskedInput';
 
-interface PhoneInputProps extends InputProps {
+interface PhoneInputProps extends Omit<MaskedInputProps, 'mask'> {
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const PhoneInput: React.FC<PhoneInputProps> = ({ value, onChange, ...rest }) => {
+  const DUMB_IP_MASK = '+38 (000) 000-00-00';
+
   return (
-    <InputMask
-      mask="+380 (99) 999-99-99"
+    <MaskedInput
+      mask={DUMB_IP_MASK}
       value={value}
       onChange={onChange}
-      maskChar="_"
-    >
-      {(inputProps) => <Input {...inputProps} {...rest} />}
-    </InputMask>
+      {...rest} 
+    />
   );
 };
 

@@ -6,7 +6,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useConfirmGoogleRegisterMutation } from "../services/authApi";
 import PhoneInput from "../components/PhoneInput";
-import { validateUkrainianPhoneNumber } from "../utilities/phoneValidators";
 
 const GoogleRegisterUser = () => {
     const [form] = Form.useForm();
@@ -117,11 +116,20 @@ const GoogleRegisterUser = () => {
                     label="Номер телефону"
                     rules={[
                         { required: true, message: 'Введіть номер телефону' },
-                        { validator: validateUkrainianPhoneNumber },
+                        {
+                        validator: (_, value) => {
+                            const regex_phone = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                            if (!value || regex_phone.test(value)) {
+                            return Promise.resolve();
+                            }
+                            return Promise.reject('Неправильний формат номера телефону');
+                        },
+                        },
                     ]}
                 >
                     <PhoneInput />
                 </Form.Item>
+
                 {errorMessage && (
                         <div style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</div>
                     )}
@@ -130,7 +138,7 @@ const GoogleRegisterUser = () => {
                         <Button danger onClick={handleCancel}>
                             Скасувати
                         </Button>
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" htmlType="submit" >
                             Завершити Реєстрацію
                         </Button>
                     </div>
