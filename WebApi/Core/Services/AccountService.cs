@@ -146,13 +146,11 @@ namespace Core.Services
             // Якщо користувач не знайдений (новий), створюємо його
             if (user.Id == 0)
             {
-                // Заповнюємо дані користувача з моделі
                 user.FirstName = model.FirstName ?? userInfo.Given_Name;
                 user.LastName = model.LastName ?? userInfo.Family_Name;
                 user.PhoneNumber = model.PhoneNumber;
                 user.Email = userInfo.Email;
 
-                // Якщо є зображення, зберігаємо його                
                 if (model.Image != null)
                 {
                     user.Image = await imageService.SaveImageAsync(model.Image);
@@ -162,10 +160,8 @@ namespace Core.Services
                     user.Image = await imageService.SaveImageFromUrlAsync(userInfo.Picture);
                 }
 
+                // Створюємо користувача і додаємо зовнішній логін однією операцією
                 await CreateUserWithExternalLoginAsync(user, "Google", userInfo.Sub, "Google");
-
-                // Створюємо користувача
-                await CreateUserAsync(user);
             }
 
             // Повертаємо токени автентифікації
@@ -186,11 +182,14 @@ namespace Core.Services
             {
                 throw new Exception("Не вдалося додати логін для " + provider + ": " + string.Join("; ", loginResult.Errors.Select(e => e.Description)));
             }
+
+            // 🟢 Додаємо роль "User" після створення
+            var roleResult = await userManager.AddToRoleAsync(user, "User");
+            if (!roleResult.Succeeded)
+            {
+                throw new Exception("Не вдалося додати роль користувачу: " + string.Join("; ", roleResult.Errors.Select(e => e.Description)));
+            }
         }
-
-
-
-
         // Реалізація методу LogoutAsync
         public async Task LogoutAsync(string refreshToken)
         {
