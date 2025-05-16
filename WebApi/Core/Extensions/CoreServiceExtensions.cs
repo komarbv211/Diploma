@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Core.Interfaces;
 using Core.Services;
+using Infrastructure.Repositories;
 
 namespace Core.Extensions
 {
@@ -13,7 +14,8 @@ namespace Core.Extensions
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IGoogleAuthService, GoogleAuthService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
         }
-
     }
 }

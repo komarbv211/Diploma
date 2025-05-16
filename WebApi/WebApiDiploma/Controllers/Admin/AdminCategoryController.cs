@@ -1,25 +1,20 @@
 ﻿using Core.DTOs.CategoryDTOs;
 using Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApiDiploma.Controllers
+namespace WebApiDiploma.Controllers.Admin
 {
-    [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     [ApiController]
-    public class CategoryController : ControllerBase
+    [Route("api/admin/category")]
+    public class AdminCategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
 
-        public CategoryController(ICategoryService categoryService)
+        public AdminCategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAll()
-        {
-            var categories = await _categoryService.GetCategoriesAsync();
-            return Ok(categories);
         }
 
         [HttpGet("{id}")]

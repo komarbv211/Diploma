@@ -1,28 +1,24 @@
 ﻿using Core.Exceptions;
 using Core.Extensions;
-using Core.Interfaces;
-using Core.Services;
+using Core.Models;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Infrastructure.Data;
 using Infrastructure.Entities;
-using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
-using SixLabors.ImageSharp.Metadata.Profiles.Xmp;
-using WebApiDiploma.Extensions;
 using WebApiDiploma.ServiceExtensions;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 1. Підключення бази даних
 builder.Services.AddDbContext<DbMakeUpContext>(opt =>
 {
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+// 2. Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 {
     options.Stores.MaxLengthForKeys = 128;
@@ -32,57 +28,69 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
 })
-    .AddEntityFrameworkStores<DbMakeUpContext>()
+.AddEntityFrameworkStores<DbMakeUpContext>()
 .AddDefaultTokenProviders();
 
-//builder.Services.AddAutoMapper(typeof(AppProfile));
-builder.Services.AddScoped<IUserService, UserService>();//
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+// 3. Власні сервіси
 
 builder.Services.AddWebApiServices();
-
 builder.Services.AddCoreServices();
+
+// 4. Controllers
 builder.Services.AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// 5. JWT автентифікація та авторизація
+builder.Services.AddJwtOptions(builder.Configuration);
+var jwtOpts = builder.Configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>()!;
+builder.Services.AddJwtAuthentication(jwtOpts);
+builder.Services.AddAuthorizationPolicies();
+
+// 6. Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(); // основний
+builder.Services.AddSwaggerJWT(); // +JWT
 
+// 7. CORS
+builder.Services.AddCorsPolicies();
 
-//fluent validators
+// 8. FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddCorsPolicies();
-
+// Build
 var app = builder.Build();
 
+// 9. Обробка винятків
 app.UseMiddleware<ExceptionMiddleware>();
 
+// 10. Статичні файли
 var dir = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration.GetValue<string>("ImagesDir") ?? "uploading");
-
 Directory.CreateDirectory(dir);
 
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(dir),
-    RequestPath = "/images"    
+    RequestPath = "/images"
 });
 
-// Configure the HTTP request pipeline.
+// 11. Swagger у Dev режимі
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// 12. Middleware
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseCors("front-end-cors-policy");
 
+// 13. Маршрутизація
 app.MapControllers();
 
+// 14. Ініціалізація початкових даних
 await app.SeedDataAsync();
 
+// 15. Запуск
 app.Run();

@@ -114,6 +114,7 @@ namespace Core.Services
             try
             {
                 userInfo = await googleAuthService.GetUserInfoAsync(model.GoogleAccessToken);
+
             }
             catch (HttpRequestException)
             {
@@ -145,13 +146,11 @@ namespace Core.Services
             // Якщо користувач не знайдений (новий), створюємо його
             if (user.Id == 0)
             {
-                // Заповнюємо дані користувача з моделі
                 user.FirstName = model.FirstName ?? userInfo.Given_Name;
                 user.LastName = model.LastName ?? userInfo.Family_Name;
                 user.PhoneNumber = model.PhoneNumber;
                 user.Email = userInfo.Email;
 
-                // Якщо є зображення, зберігаємо його                
                 if (model.Image != null)
                 {
                     user.Image = await imageService.SaveImageAsync(model.Image);
@@ -161,16 +160,36 @@ namespace Core.Services
                     user.Image = await imageService.SaveImageFromUrlAsync(userInfo.Picture);
                 }
 
-                // Створюємо користувача
-                await CreateUserAsync(user);
+                // Створюємо користувача і додаємо зовнішній логін однією операцією
+                await CreateUserWithExternalLoginAsync(user, "Google", userInfo.Sub, "Google");
             }
 
             // Повертаємо токени автентифікації
             return await GetAuthTokens(user);
         }
 
+        private async Task CreateUserWithExternalLoginAsync(UserEntity user, string provider, string providerKey, string providerDisplayName)
+        {
+            var result = await userManager.CreateAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new Exception("Не вдалося створити користувача: " + string.Join("; ", result.Errors.Select(e => e.Description)));
+            }
 
+            var loginInfo = new UserLoginInfo(provider, providerKey, providerDisplayName);
+            var loginResult = await userManager.AddLoginAsync(user, loginInfo);
+            if (!loginResult.Succeeded)
+            {
+                throw new Exception("Не вдалося додати логін для " + provider + ": " + string.Join("; ", loginResult.Errors.Select(e => e.Description)));
+            }
 
+            // 🟢 Додаємо роль "User" після створення
+            var roleResult = await userManager.AddToRoleAsync(user, "User");
+            if (!roleResult.Succeeded)
+            {
+                throw new Exception("Не вдалося додати роль користувачу: " + string.Join("; ", roleResult.Errors.Select(e => e.Description)));
+            }
+        }
         // Реалізація методу LogoutAsync
         public async Task LogoutAsync(string refreshToken)
         {

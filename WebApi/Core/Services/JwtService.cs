@@ -43,7 +43,7 @@ namespace Core.Services
         {
             var claims = new List<Claim>
             {
-                new (ClaimTypes.NameIdentifier,user.Id.ToString()),
+                new ("id",user.Id.ToString()),
                 new ("firstName", user.FirstName ?? string.Empty),
                 new ("lastName", user.LastName ?? string.Empty),
                 new ("email", user.Email!),

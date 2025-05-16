@@ -122,30 +122,33 @@ namespace Core.Services
                 var updatedImages = new List<ProductImageEntity>();
                 var existingImages = product.Images.ToDictionary(i => i.Name, i => i);
 
-                for (int i = 0; i < dto.image.Count; i++)
+                if (dto.image != null)
                 {
-                    var formFile = dto.image[i];
-
-                    if (formFile == null || formFile.Length == 0)
-                        continue;
-
-                    if (existingImages.TryGetValue(formFile.FileName, out var existingImage))
+                    for (int i = 0; i < dto.image.Count; i++)
                     {
-                        existingImage.Priority = (short)i;
-                        updatedImages.Add(existingImage);
-                        _context.ProductImages.Update(existingImage);
-                    }
-                    else
-                    {
-                        var newFileName = await _imageService.SaveImageAsync(formFile);
-                        var newImage = new ProductImageEntity
+                        var formFile = dto.image[i];
+
+                        if (formFile == null || formFile.Length == 0)
+                            continue;
+
+                        if (existingImages.TryGetValue(formFile.FileName, out var existingImage))
                         {
-                            Name = newFileName,
-                            Priority = (short)i,
-                            ProductId = product.Id
-                        };
-                        updatedImages.Add(newImage);
-                        await _context.ProductImages.AddAsync(newImage);
+                            existingImage.Priority = (short)i;
+                            updatedImages.Add(existingImage);
+                            _context.ProductImages.Update(existingImage);
+                        }
+                        else
+                        {
+                            var newFileName = await _imageService.SaveImageAsync(formFile);
+                            var newImage = new ProductImageEntity
+                            {
+                                Name = newFileName,
+                                Priority = (short)i,
+                                ProductId = product.Id
+                            };
+                            updatedImages.Add(newImage);
+                            await _context.ProductImages.AddAsync(newImage);
+                        }
                     }
                 }
 
@@ -170,9 +173,6 @@ namespace Core.Services
                 throw new HttpException("Сталася внутрішня помилка сервера", HttpStatusCode.InternalServerError);
             }
         }
-
-
-
         public async Task DeleteProductAsync(long id)
         {
             try
