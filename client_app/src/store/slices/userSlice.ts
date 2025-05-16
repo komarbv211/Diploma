@@ -17,14 +17,11 @@ const getUserAuth = (user: IUser | null): IUserAuth => {
 
 const userInit = (): IUserState => {
     const token: string | null = localStorage.getItem(APP_ENV.ACCESS_KEY);
-    const refreshToken: string | null = localStorage.getItem(APP_ENV.REFRESH_KEY);
-
     const user = getUserFromToken(token)
     const auth = getUserAuth(user);
     return ({
         user: user,
         token: token,
-        refreshToken: refreshToken,
         auth: auth
     })
 }
@@ -36,16 +33,14 @@ const userSlice = createSlice({
     initialState,
     reducers: {
 
-        setCredentials: (state, action: { payload: { token: string; refreshToken: string;} }) => {
-            const {token, refreshToken} = action.payload
+        setCredentials: (state, action: { payload: { token: string} }) => {
+            const {token} = action.payload
             state.user = getUserFromToken(token)
             state.token = token
-            state.refreshToken = refreshToken
             state.auth = getUserAuth(state.user)
 
             if (state.user !== null) {
-                localStorage.setItem(APP_ENV.ACCESS_KEY, token);
-                localStorage.setItem(APP_ENV.REFRESH_KEY, refreshToken);
+                localStorage.setItem(APP_ENV.ACCESS_KEY, token);              
             }
         },
         
