@@ -102,6 +102,11 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
             context.Entry(entityToUpdate).State = EntityState.Modified;
         });
     }
+    public async Task<TEntity?> FirstOrDefaultAsync(ISpecification<TEntity> specification)
+    {
+        return await ApplySpecification(specification).FirstOrDefaultAsync();
+    }
+
 
 
     //метод в асинхронному режимі додає колекцію entities до dbSet, який представляє набір об'єктів в Entity Framework.

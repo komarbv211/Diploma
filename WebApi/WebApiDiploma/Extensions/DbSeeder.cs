@@ -177,7 +177,7 @@ namespace WebApiDiploma.Extensions
             if (ProductRepo is not null && !await ProductRepo.AnyAsync())
             {
                 Console.WriteLine("Start adverts seeder");
-                string productJsonDataFile = Path.Combine(Environment.CurrentDirectory, app.Configuration["SeederJsonDir"]!, "Product.json");
+                string productJsonDataFile = Path.Combine(Environment.CurrentDirectory, "Helpers", app.Configuration["SeederJsonDir"]!, "Product.json");
                 if (File.Exists(productJsonDataFile))
                 {
                     var productJson = File.ReadAllText(productJsonDataFile, Encoding.UTF8);
@@ -206,9 +206,9 @@ namespace WebApiDiploma.Extensions
                                     Images = images,
                                 };
                             });
-                            var product = await Task.WhenAll(productTasks);
-                            Console.WriteLine($"Adding {product.Length} adverts to the database.");
-                            await ProductRepo.AddRangeAsync(product);
+                            var products = await Task.WhenAll(productTasks);
+                            Console.WriteLine($"Adding {products.Length} adverts to the database.");
+                            await ProductRepo.AddRangeAsync(products);
 
                             await ProductRepo.SaveAsync();
                             Console.WriteLine("Adverts added to the database.");
