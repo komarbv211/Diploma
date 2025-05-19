@@ -1,10 +1,11 @@
 // pages/GoogleRegisterUser.tsx
 import { Form, Input, Upload, Button, Typography } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
-import { useConfirmGoogleRegisterMutation } from "../services/authApi";
 import { useGoogleUserInfo } from "../hooks/useGoogleUserInfo";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useConfirmGoogleRegisterMutation } from "../services/authApi";
+import PhoneInput from "../components/PhoneInput";
 
 const GoogleRegisterUser = () => {
     const [form] = Form.useForm();
@@ -113,10 +114,22 @@ const GoogleRegisterUser = () => {
                 <Form.Item
                     name="phone"
                     label="Номер телефону"
-                    rules={[{ required: true, pattern: /^\+?\d{10,15}$/, message: 'Введіть дійсний номер телефону' }]}
+                    rules={[
+                        { required: true, message: 'Введіть номер телефону' },
+                        {
+                        validator: (_, value) => {
+                            const regex_phone = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                            if (!value || regex_phone.test(value)) {
+                            return Promise.resolve();
+                            }
+                            return Promise.reject('Неправильний формат номера телефону');
+                        },
+                        },
+                    ]}
                 >
-                    <Input />
+                    <PhoneInput />
                 </Form.Item>
+
                 {errorMessage && (
                         <div style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</div>
                     )}
@@ -125,7 +138,7 @@ const GoogleRegisterUser = () => {
                         <Button danger onClick={handleCancel}>
                             Скасувати
                         </Button>
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" htmlType="submit" >
                             Завершити Реєстрацію
                         </Button>
                     </div>

@@ -1,14 +1,14 @@
 ﻿using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
 using Core.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApiDiploma.Controllers
+namespace WebApiDiploma.Controllers.User
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService service;
@@ -16,13 +16,6 @@ namespace WebApiDiploma.Controllers
         public UserController(IUserService services)
         {
             service = services;
-        }
-
-        [HttpGet("users")]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll()
-        {
-            var users = await service.GetAllAsync();
-            return Ok(users);
         }
 
         [HttpGet("{id}")]
@@ -33,14 +26,6 @@ namespace WebApiDiploma.Controllers
                 return NotFound();
 
             return Ok(user);
-        }
-
-
-        [HttpPost]
-        public async Task<ActionResult> Create([FromBody] UserCreateDTO dto)
-        {
-            await service.CreateUserAsync(dto);
-            return Ok();
         }
 
         [HttpPut]

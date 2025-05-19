@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { IAuthResponse, IUserLoginRequest, IUserRegisterRequest } from '../types/account';
 import { createBaseQuery } from '../utilities/createBaseQuery';
-import { setCredentials } from '../store/slices/userSlice';
+import { handleAuthQueryStarted } from '../utilities/handleAuthQueryStarted';
 
 export const authApi = createApi({
 
@@ -26,23 +26,7 @@ export const authApi = createApi({
                 body: loginCredentials,
             };
         },
-        async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-            try {
-                const { data } = await queryFulfilled;
-                console.log('Успішна відповідь логіну:', data);
-                if (data.accessToken) {
-                    dispatch(setCredentials({ token: data.accessToken, refreshToken: data.refreshToken}));
-                }
-            } catch (error) {
-                const typedError = error as { status?: number | string; data?: { message?: string } };
-                console.error('Помилка логіну:', {
-                    status: typedError?.status,
-                    data: typedError?.data,
-                    error,
-                });
-                // Не кидаємо помилку, щоб компонент міг обробити її через unwrap
-            }
-        },
+        onQueryStarted: handleAuthQueryStarted,
         invalidatesTags: ['AuthUser'],
     }),
     confirmGoogleLogin: builder.mutation<IAuthResponse, FormData>({
@@ -51,34 +35,19 @@ export const authApi = createApi({
           method: 'POST',
           body: formData,
       }),
-      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-          const { data } = await queryFulfilled;
-          if (data.accessToken) {
-              dispatch(setCredentials({
-                  token: data.accessToken,
-                  refreshToken: data.refreshToken,
-              }));
-          }
-      },
+        onQueryStarted: handleAuthQueryStarted,
       invalidatesTags: ['AuthUser'],
     }),  
     confirmGoogleRegister: builder.mutation<IAuthResponse, FormData>({
-      query: (formData) => ({
-          url: 'register/google',
-          method: 'POST',
-          body: formData,
-      }),
-      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-          const { data } = await queryFulfilled;
-          if (data.accessToken) {
-              dispatch(setCredentials({
-                  token: data.accessToken,
-                  refreshToken: data.refreshToken,
-              }));
-          }
-      },
-      invalidatesTags: ['AuthUser'],
-    }),  
+        query: (formData) => ({
+            url: 'register/google',
+            method: 'POST',
+            body: formData,
+        }),   
+        onQueryStarted: handleAuthQueryStarted,
+        invalidatesTags: ['AuthUser'],
+    }),
+
   }),
 });
 

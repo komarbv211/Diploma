@@ -12,9 +12,10 @@ namespace Infrastructure.Data
             base(options) { }
 
         public DbSet<CategoryEntity> Categories { get; set; }
+        public DbSet<ProductEntity> Products { get; set; }
+        public DbSet<ProductImageEntity> ProductImages { get; set; }
 
-
-          protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             builder.Entity<UserRoleEntity>(ur =>

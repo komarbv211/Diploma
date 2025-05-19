@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
-namespace WebApiDiploma.Controllers
+namespace WebApiDiploma.Controllers.Admin
 {
-    [Route("api/[controller]")]
+    [Route("api/admin/image")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class ImageUploadController : ControllerBase
     {
         private readonly IImageService _imageService;

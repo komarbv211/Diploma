@@ -1,9 +1,11 @@
 import { UserOutlined, HomeOutlined, HistoryOutlined, GiftOutlined, DeleteOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { Layout, Menu, Input, Typography, Row, Col, Divider, Button, Space, Spin } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { logOut } from '../../store/slices/userSlice';
+import { getAuth, logOut } from '../../store/slices/userSlice';
 import { useGetUserByIdQuery } from '../../services/userApi';
 import { useDispatch } from 'react-redux';
+import { useAppSelector } from '../../store/store';
+import AdminSidebar from '../../components/layouts/admin/AdminSidebar';
 
 const { Content, Sider } = Layout;
 const { Title, Text } = Typography;
@@ -12,8 +14,11 @@ const UserProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  
   const { data: user, isLoading } = useGetUserByIdQuery(Number(id));
+  
+  const auth = useAppSelector(getAuth);
+  const isAdmin = auth.roles.includes('Admin');
 
   const handleLogout = () => {
     dispatch(logOut());
@@ -41,9 +46,12 @@ const UserProfile = () => {
 
   return (
     <Layout>
-      <Sider theme="light" width={220} collapsible>
-        <Menu mode="inline" defaultSelectedKeys={['1']} className='py-1' items={menuItems} />
-      </Sider>
+
+      {isAdmin ? (<AdminSidebar />) : (
+        <Sider theme="light" width={220} collapsible>
+          <Menu mode="inline" defaultSelectedKeys={['1']} className='py-1' items={menuItems} />
+        </Sider>
+      )}
 
       <Content className="m-3 p-6 bg-white" key={user.id}>
         <Title level={3}>Профіль користувача</Title>

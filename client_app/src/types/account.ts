@@ -17,6 +17,7 @@ export interface IUser {
     lastName: string;
     email: string;
     photo: string;
+    roles: string[];
     exp: number;
 }
 
@@ -32,13 +33,13 @@ export interface IUserLoginRequest {
 
 export interface IAuthResponse {
     accessToken: string;
-    refreshToken: string;
     isNewUser?: boolean;
 }
 
 export interface IUserState {
     user: IUser | null;
     token: string | null;
+    auth: IUserAuth;
     refreshToken?: string | null;
 }
 
