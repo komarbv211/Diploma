@@ -4,6 +4,7 @@ import { IUserRegisterRequest } from '../types/account.ts';
 import { useRegisterUserMutation } from '../services/authApi.ts';
 import React, {useState} from 'react';
 import InputMask from 'react-input-mask';
+import PhoneInput from "../components/PhoneInput.tsx";
 
 const RegistrUser: React.FC = () => {
     const navigate = useNavigate();
@@ -128,49 +129,68 @@ const RegistrUser: React.FC = () => {
                 {/*</Form.Item>*/}
 
 
+                {/*<Form.Item*/}
+                {/*    name="phone"*/}
+                {/*    label="Номер телефону"*/}
+                {/*    rules={[*/}
+                {/*        {*/}
+                {/*            required: true,*/}
+                {/*            message: 'Будь ласка, введіть номер телефону!',*/}
+                {/*        },*/}
+                {/*        {*/}
+                {/*            validator: (_, value) => {*/}
+                {/*                const digits = value?.replace(/\D/g, '');*/}
+                {/*                const phoneNumber = digits.startsWith('380') ? digits : null;*/}
+                {/*                const operatorCode = phoneNumber?.slice(3, 6);*/}
+
+                {/*                if (!phoneNumber || phoneNumber.length !== 12) {*/}
+                {/*                    return Promise.reject('Номер має містити 12 цифр (включно з кодом країни +380).');*/}
+                {/*                }*/}
+
+                {/*                if (!allowedOperators.includes(operatorCode!)) {*/}
+                {/*                    return Promise.reject(`Код оператора "${operatorCode}" не підтримується.`);*/}
+                {/*                }*/}
+
+                {/*                return Promise.resolve();*/}
+                {/*            },*/}
+                {/*        },*/}
+                {/*    ]}*/}
+                {/*>*/}
+                {/*    <InputMask*/}
+                {/*        mask="+38 (099) 999 99 99"*/}
+                {/*        maskChar={null}*/}
+                {/*        value={phone}*/}
+                {/*        onChange={(e) => setPhone(e.target.value)}*/}
+                {/*    >*/}
+                {/*        {(inputProps) => (*/}
+                {/*            <input*/}
+                {/*                {...inputProps}*/}
+                {/*                type="text"*/}
+                {/*                id="phone"*/}
+                {/*                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"*/}
+                {/*                placeholder="+38 (XXX) XXX XX XX"*/}
+                {/*            />*/}
+                {/*        )}*/}
+                {/*    </InputMask>*/}
+                {/*</Form.Item>*/}
+
                 <Form.Item
                     name="phone"
                     label="Номер телефону"
                     rules={[
-                        {
-                            required: true,
-                            message: 'Будь ласка, введіть номер телефону!',
-                        },
+                        { required: true, message: 'Введіть номер телефону' },
                         {
                             validator: (_, value) => {
-                                const digits = value?.replace(/\D/g, '');
-                                const phoneNumber = digits.startsWith('380') ? digits : null;
-                                const operatorCode = phoneNumber?.slice(3, 6);
-
-                                if (!phoneNumber || phoneNumber.length !== 12) {
-                                    return Promise.reject('Номер має містити 12 цифр (включно з кодом країни +380).');
+                                const regex_phone = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                                if (!value || regex_phone.test(value)) {
+                                    return Promise.resolve();
                                 }
-
-                                if (!allowedOperators.includes(operatorCode!)) {
-                                    return Promise.reject(`Код оператора "${operatorCode}" не підтримується.`);
-                                }
-
-                                return Promise.resolve();
+                                return Promise.reject('Неправильний формат номера телефону');
                             },
                         },
                     ]}
                 >
-                    <InputMask
-                        mask="+38 (099) 999 99 99"
-                        maskChar={null}
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                    >
-                        {(inputProps) => (
-                            <input
-                                {...inputProps}
-                                type="text"
-                                id="phone"
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="+38 (XXX) XXX XX XX"
-                            />
-                        )}
-                    </InputMask>
+                    <PhoneInput />
                 </Form.Item>
 
                 <Form.Item name="password" label="Пароль" rules={[{ required: true, message: 'Будь ласка, введіть пароль!' }]}>
