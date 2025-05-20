@@ -3,6 +3,7 @@ import { UserOutlined, LogoutOutlined, SettingOutlined, DashboardOutlined } from
 import { Link, useNavigate } from 'react-router-dom';
 import { getUser, logOut } from '../../../store/slices/userSlice'
 import { useAppDispatch, useAppSelector } from '../../../store/store';
+import { APP_ENV } from '../../../env';
 
 const CustomHeader = () => {
 
@@ -17,6 +18,8 @@ const CustomHeader = () => {
 
   const isAdmin = user?.roles.includes('Admin');
   const adminPrefix = (path: string) => isAdmin ? `/admin${path}` : path;
+  const avatarUrl = user?.image ? `${APP_ENV.IMAGES_100_URL}${user.image}` : null;
+  console.log('avatarUrl:', avatarUrl);
 
   const menuItems = [
     { key: 'dashboard', icon: <DashboardOutlined />, label: <Link to={adminPrefix('/')}>Dashboard</Link> },
@@ -30,7 +33,12 @@ const CustomHeader = () => {
       {user ? (
         <div className="flex items-center justify-end h-full px-6">
           <Dropdown menu={{ items: menuItems }}>
-            <Avatar size={42} icon={<UserOutlined />} className="cursor-pointer" />
+           <Avatar
+              size={42}
+              icon={!avatarUrl && <UserOutlined />}
+              src={avatarUrl || undefined}
+              className="cursor-pointer"
+            />
           </Dropdown>
         </div>
       ) : (
