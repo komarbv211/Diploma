@@ -1,4 +1,5 @@
-﻿using Core.DTOs.UsersDTO;
+﻿using Core.DTOs.PaginationDTOs;
+using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -19,9 +20,9 @@ namespace WebApiDiploma.Controllers.Admin
         }
 
         [HttpGet("users")]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll()
+        public async Task<ActionResult<PagedResultDto<UserDTO>>> GetAll([FromQuery] PagedRequestDto request)
         {
-            var users = await service.GetAllAsync();
+            var users = await service.GetAllAsync(request);
             return Ok(users);
         }
 

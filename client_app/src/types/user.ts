@@ -25,3 +25,21 @@ export interface IUserUpdateDTO {
     // інші поля
 }
   
+export interface PagedResultDto<T> {
+  items: T[];
+  currentPage: number;
+  pageSize: number;
+  totalCount: number;
+}
+
+export interface PagedRequestDto {
+  page?: number;
+  pageSize?: number;
+}
+
+export interface PaginationComponentProps {
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  onPageChange: (page: number, pageSize: number) => void;
+}
