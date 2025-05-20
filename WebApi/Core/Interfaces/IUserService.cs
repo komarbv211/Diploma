@@ -1,4 +1,5 @@
-﻿using Core.DTOs.UsersDTO;
+﻿using Core.DTOs.PaginationDTOs;
+using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
 
 namespace Core.Interfaces
@@ -6,7 +7,7 @@ namespace Core.Interfaces
     public interface IUserService
     {
 
-        Task<IEnumerable<UserDTO>> GetAllAsync();
+        Task<PagedResultDto<UserDTO>> GetAllAsync(PagedRequestDto request);
         Task<UserDTO> GetByIdAsync(long id);
         Task CreateUserAsync(UserCreateDTO dto);
         Task UpdateUserAsync(UserUpdateDTO dto);
