@@ -37,6 +37,7 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 //builder.Services.AddAutoMapper(typeof(AppProfile));
 builder.Services.AddScoped<IUserService, UserService>();//
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddWebApiServices();
 

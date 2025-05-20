@@ -13,5 +13,7 @@ namespace Core.Interfaces
         Task<AuthResponse> GenerateTokensAsync(UserEntity user);
         Task<AuthResponse> RefreshTokensAsync(string refreshToken);
         Task<AuthResponse> RegisterAsync(RegisterDto model);
+        Task ForgotPasswordAsync(ForgotPasswordDto model);
+        Task ResetPasswordAsync(ResetPasswordDto model);
     }
 }

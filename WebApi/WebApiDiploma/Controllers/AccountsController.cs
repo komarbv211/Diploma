@@ -84,5 +84,19 @@ namespace WebApiDiploma.Controllers
             }
             return Ok();
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
+        {
+            await accountService.ForgotPasswordAsync(model);
+            return Ok();
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
+        {
+            await accountService.ResetPasswordAsync(model);
+            return Ok();
+        }
     }
 }
