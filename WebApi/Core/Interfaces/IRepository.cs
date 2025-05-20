@@ -25,5 +25,10 @@ namespace Core.Interfaces
         Task<TEntity?> GetByID(object id);//
         Task<TEntity?> FirstOrDefaultAsync(ISpecification<TEntity> specification);
         Task AddRangeAsync(IEnumerable<TEntity> entities);
+
+        //Task<bool> ExistsByEmailAsync(string email);
+            //Task<TEntity> GetByIdAsync(int id);
+
+
     }
 }

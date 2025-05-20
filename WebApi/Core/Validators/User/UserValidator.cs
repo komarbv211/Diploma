@@ -1,5 +1,8 @@
 ﻿using Core.DTOs.UsersDTOs;
+using Core.Interfaces;
 using FluentValidation;
+using Infrastructure.Data;
+using Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +13,23 @@ namespace Core.Validators.User
 {
     public class UserValidator : AbstractValidator<UserCreateDTO>
     {
-        public UserValidator()
+             private readonly DbMakeUpContext _dbContext;
+        public UserValidator(DbMakeUpContext dbContext)
         {
-            RuleFor(user => user.FirstName)
+
+            _dbContext = dbContext;
+
+            RuleFor(user => user.Email)
+                .NotEmpty().WithMessage("Email is required.")
+                .EmailAddress().WithMessage("Email must be a valid email address.")
+                .Must(email => !_dbContext.Users.Any(u => u.Email == email))
+                .WithMessage("Email must be unique.");
+        
+
+
+
+
+        RuleFor(user => user.FirstName)
                 .NotEmpty().WithMessage("First name is required.")
                 .MinimumLength(2)
                 .MaximumLength(50).WithMessage("First name cannot exceed 50 characters.")
@@ -28,9 +45,17 @@ namespace Core.Validators.User
                 .Must(url => string.IsNullOrEmpty(url) || Uri.IsWellFormedUriString(url, UriKind.Absolute))
                 .WithMessage("Image must be a valid URL.");
 
-            RuleFor(user => user.Email)
-                .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Email must be a valid email address.");
+            //RuleFor(user => user.Email)
+            //    .NotEmpty().WithMessage("Email is required.")
+            //    .EmailAddress().WithMessage("Email must be a valid email address.");
+
+            //RuleFor(user => user.Email)
+            //.NotEmpty().WithMessage("Email is required.")
+            //.EmailAddress().WithMessage("Email must be a valid email address.")
+            //.MustAsync(async (email, cancellation) =>
+            //    !await userRepository.ExistsByEmailAsync(email))
+            //.WithMessage("Email must be unique.");
+
 
             RuleFor(user => user.PhoneNumber)
                 .Must(phone => string.IsNullOrEmpty(phone) ||
