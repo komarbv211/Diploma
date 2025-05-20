@@ -10,7 +10,32 @@ export interface GoogleJwtPayload extends JwtPayload {
 export interface GoogleResponse {
     credential: string;
 }
+export interface IGoogleLoginRequest {
+    googleAccessToken: string;  
+}
+export interface IGoogleRegister {
+    googleAccessToken: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    image?: File;
+}
 
+export interface GoogleProfile {
+    sub: string;
+    name: string;
+    given_name: string;
+    family_name: string;
+    picture: string;
+    email: string;
+    email_verified: boolean;
+    locale: string;
+}
+export interface IGoogleAuthProps {
+    open: boolean;
+    onClose: () => void;
+    token: string;
+  }
 export interface IUser {
     id: number;
     firstName: string;
@@ -56,22 +81,5 @@ export interface LoginButtonProps {
     icon: React.ReactNode;
 }
 
-export interface IGoogleLoginRequest {
-    googleAccessToken: string;  
-}
-export interface GoogleProfile {
-    sub: string;
-    name: string;
-    given_name: string;
-    family_name: string;
-    picture: string;
-    email: string;
-    email_verified: boolean;
-    locale: string;
-}
-export interface IGoogleAuthProps {
-    open: boolean;
-    onClose: () => void;
-    token: string;
-  }
+
 

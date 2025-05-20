@@ -33,13 +33,10 @@ const Login: React.FC = () => {
     };
 
     const onLoginGoogleResult = async (tokenGoogle: string) => {
-        if (!tokenGoogle) return;
-      
-        const formData = new FormData();
-        formData.append("GoogleAccessToken", tokenGoogle);
+        if (!tokenGoogle) return;    
     
         try {
-            const result = await confirmGoogleLogin(formData).unwrap();
+            const result = await confirmGoogleLogin({googleAccessToken: tokenGoogle!}).unwrap();
             if (result.isNewUser) {
                 navigate(`/google-register?token=${tokenGoogle}`);
             } else {
