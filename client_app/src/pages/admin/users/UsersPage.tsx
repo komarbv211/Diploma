@@ -4,12 +4,16 @@ import { DownOutlined, SearchOutlined } from '@ant-design/icons';
 import { IUser } from '../../../types/account';
 import dayjs from 'dayjs';
 import { useGetAllUsersQuery } from '../../../services/admin/userAdninApi';
+import PaginationComponent from '../../../components/pagination/PaginationComponent';
 
 const UsersPage = () => {
   const [searchText, setSearchText] = useState('');
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
-  const { data: users = [], isLoading, isError } = useGetAllUsersQuery();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const { data, isLoading, isError } = useGetAllUsersQuery({ page: currentPage, pageSize });
+  const users = data ?? { items: [], totalCount: 0 };
 
   if (isError) {
     message.error('Failed to fetch users');
@@ -62,12 +66,6 @@ const UsersPage = () => {
     },
   ];
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.firstName?.toLowerCase().includes(searchText.toLowerCase()) ||
-      user.lastName?.toLowerCase().includes(searchText.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchText.toLowerCase())
-  );
 
   return (
     <div style={{ padding: '20px' }}>
@@ -79,16 +77,27 @@ const UsersPage = () => {
       {isLoading ? (
         <Spin />
       ) : (
-        <Table
-          rowSelection={{
-            selectedRowKeys,
-            onChange: handleSelectChange,
-          }}
-          columns={columns}
-          dataSource={filteredUsers}
-          rowKey="id"
-          pagination={false}
-        />
+        <>
+          <Table<IUser>
+            rowSelection={{
+              selectedRowKeys,
+              onChange: handleSelectChange,
+            }}
+            columns={columns}
+            rowKey="id"
+            pagination={false}
+            dataSource={users.items}
+          />
+          <PaginationComponent
+            currentPage={currentPage}
+            pageSize={pageSize}
+            totalItems={users.totalCount}
+            onPageChange={(page, size) => {
+              setCurrentPage(page);
+              setPageSize(size);
+            }}
+          />
+        </>
       )}
     </div>
   );

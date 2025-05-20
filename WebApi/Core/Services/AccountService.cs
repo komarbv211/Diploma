@@ -12,6 +12,7 @@ using Core.DTOs.AuthorizationDTOs;
 using AutoMapper;
 using System.Data;
 using Core.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Core.Services
 {
@@ -21,6 +22,8 @@ namespace Core.Services
             IRepository<RefreshToken> tokenRepository,
             IRepository<UserEntity> userRepository,
             IImageService imageService,
+            IEmailService emailService,
+            IConfiguration configuration,
             IGoogleAuthService googleAuthService,
             IMapper mapper
       ) : IAccountService
@@ -279,6 +282,50 @@ namespace Core.Services
                 RefreshToken = await CreateRefreshToken(user.Id)
             };
         }
-       
+
+        public async Task ForgotPasswordAsync(ForgotPasswordDto model)
+        {
+            var user = await userManager.FindByEmailAsync(model.Email);
+
+            if (user == null)
+            {
+                throw new HttpException("Email not found", HttpStatusCode.NotFound);
+            }
+
+            
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                var resetUrl = configuration["ResetPasswordUrl"];
+                var callbackUrl = $"{resetUrl}?email={Uri.EscapeDataString(user.Email)}&token={Uri.EscapeDataString(token)}";
+
+                await emailService.SendEmailAsync(
+                    model.Email,
+                    "Скидання паролю",
+                    $"Токен для скидання пароля: {token}");
+           
+        }
+
+        public async Task ResetPasswordAsync(ResetPasswordDto model)
+        {
+            var user = await userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                throw new HttpException("Invalid email.", HttpStatusCode.BadRequest);
+            }
+
+            try
+            {
+                var result = await userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    throw new HttpException($"Password reset failed: {errors}", HttpStatusCode.BadRequest);
+                }
+            }
+            catch (Exception)
+            {
+                throw new HttpException("Failed to reset password.", HttpStatusCode.InternalServerError);
+            }
+        }
+
     }
 }

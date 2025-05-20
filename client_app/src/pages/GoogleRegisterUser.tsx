@@ -36,15 +36,11 @@ const GoogleRegisterUser = () => {
     const handleSubmit = async () => {
         try {
             const values = await form.validateFields();
-            const formData = new FormData();
-            formData.append("GoogleAccessToken", token!);
-            formData.append("FirstName", values.firstName);
-            formData.append("LastName", values.lastName);
-            formData.append("PhoneNumber", values.phone);
-            if (selectedImage) {
-                formData.append("Image", selectedImage);
-            }
-            await confirmGoogleRegister(formData);
+            await confirmGoogleRegister({
+                ...values,
+                googleAccessToken: token!,
+                image: selectedImage ?? undefined,
+            }).unwrap();
             navigate('/');
         } catch (error) {
             console.error("Помилка під час реєстрації:", error);
@@ -77,8 +73,8 @@ const GoogleRegisterUser = () => {
                             <Upload
                                 showUploadList={false}
                                 beforeUpload={(file) => {
-                                    handleImageChange(file as File); // Cast to File
-                                    return false; // Prevent automatic upload
+                                    handleImageChange(file as File);
+                                    return false;
                                 }}
                             >
                                 <Button
