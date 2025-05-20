@@ -41,7 +41,7 @@ export interface IUser {
     firstName: string;
     lastName: string;
     email: string;
-    photo: string;
+    image: string;
     roles: string[];
     exp: number;
 }
