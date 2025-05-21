@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.DTOs.PaginationDTOs;
 using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
 using Core.Interfaces;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiDiploma.Pagination;
 
 namespace Core.Services
 {
@@ -39,10 +41,20 @@ namespace Core.Services
             await _repository.SaveAsync();
         }
 
-        public async Task<IEnumerable<UserDTO>> GetAllAsync()
+        public async Task<PagedResultDto<UserDTO>> GetAllAsync(PagedRequestDto request)
         {
-            var users = await _repository.GetAllAsync();
-            return _mapper.Map<IEnumerable<UserDTO>>(users);
+            var users = _repository.GetAllQueryable();
+            var builder = new PaginationBuilder<UserEntity>(users);
+            var pagedResult = await builder.GetPageAsync(request.Page, request.PageSize);
+
+            var mappedItems = _mapper.Map<List<UserDTO>>(pagedResult.Items);
+
+            return new PagedResultDto<UserDTO>(
+                pagedResult.CurrentPage,
+                pagedResult.PageSize,
+                pagedResult.TotalCount,
+                mappedItems
+            );
         }
 
         public async Task<UserDTO> GetByIdAsync(long id)
@@ -50,7 +62,7 @@ namespace Core.Services
             var user = await _repository.GetByID(id);
             return _mapper.Map<UserDTO>(user);
         }
-       
+
         // Оновлення існуючої сутності
         public async Task UpdateUserAsync(UserUpdateDTO dto)
         {
