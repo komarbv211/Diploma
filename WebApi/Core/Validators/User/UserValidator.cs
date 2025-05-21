@@ -24,10 +24,6 @@ namespace Core.Validators.User
                 .EmailAddress().WithMessage("Email must be a valid email address.")
                 .Must(email => !_dbContext.Users.Any(u => u.Email == email))
                 .WithMessage("Email must be unique.");
-        
-
-
-
 
         RuleFor(user => user.FirstName)
                 .NotEmpty().WithMessage("First name is required.")
