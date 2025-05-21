@@ -1,10 +1,5 @@
 ﻿using Core.DTOs.UsersDTOs;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Validators.User
 {
@@ -37,16 +32,16 @@ namespace Core.Validators.User
                 .WithMessage("Phone number must be valid.");
 
             RuleFor(user => user.Password)
-           .NotEmpty()
-           .WithMessage("Пароль обов'язковий!")
-           .MinimumLength(6)
-           .WithMessage("Пароль має містити не менше 6 символів!")
-           .Matches("[A-Z]")
-           .WithMessage("Пароль має містити хоча б одну велику літеру!")
-           .Matches("[a-z]")
-           .WithMessage("Пароль має містити хоча б одну малу літеру!")
-           .Matches("[0-9]")
-           .WithMessage("Пароль має містити хоча б одну цифру!");
+                .NotEmpty()
+                .WithMessage("Пароль обов'язковий!")
+                .MinimumLength(6)
+                .WithMessage("Пароль має містити не менше 6 символів!")
+                .Matches("[A-Z]")
+                .WithMessage("Пароль має містити хоча б одну велику літеру!")
+                .Matches("[a-z]")
+                .WithMessage("Пароль має містити хоча б одну малу літеру!")
+                .Matches("[0-9]")
+                .WithMessage("Пароль має містити хоча б одну цифру!");
 
             RuleFor(user => user.ConfirmPassword)
                 .NotEmpty()
