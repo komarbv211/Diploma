@@ -1,11 +1,11 @@
-import { Spin } from 'antd'
+import { Spin } from 'antd';
 
 const Loader = () => {
   return (
     <div style={{ textAlign: 'center', marginTop: '4rem' }}>
-      <Spin tip="Завантаження..." size="large" />
+      <Spin size="large" />
     </div>
-  )
-}
+  );
+};
 
-export default Loader
+export default Loader;
