@@ -7,7 +7,7 @@ import { userAdminApi } from '../services/admin/userAdninApi';
 
 export const store = configureStore({
         reducer: {
-                user: userReducer,
+                account: userReducer,
                 [authApi.reducerPath]: authApi.reducer,
                 [userAdminApi.reducerPath]: userAdminApi.reducer,
                 [userApi.reducerPath]: userApi.reducer,
