@@ -6,17 +6,19 @@ namespace Core.Validators.User
 {
     public class UserValidator : AbstractValidator<UserCreateDTO>
     {
-             private readonly DbMakeUpContext _dbContext;
-        public UserValidator(DbMakeUpContext dbContext)
+             //private readonly DbMakeUpContext _dbContext;
+        public UserValidator()
         {
 
-            _dbContext = dbContext;
+            //_dbContext = dbContext;
 
-            RuleFor(user => user.Email)
-                .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Email must be a valid email address.")
-                .Must(email => !_dbContext.Users.Any(u => u.Email == email))
-                .WithMessage("Email must be unique.");
+            //RuleFor(user => user.Email)
+            //    .NotEmpty().WithMessage("Email is required.")
+            //    .EmailAddress().WithMessage("Email must be a valid email address.")
+            //    .Must(email => !_dbContext.Users.Any(u => u.Email == email))
+            //    .WithMessage("Email must be unique.");
+
+
 
         RuleFor(user => user.FirstName)
                 .NotEmpty().WithMessage("First name is required.")

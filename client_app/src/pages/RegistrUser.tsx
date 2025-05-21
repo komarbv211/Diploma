@@ -32,9 +32,9 @@ const RegistrUser: React.FC = () => {
             const response = await registerUser(values).unwrap();
             console.log("Користувача успішно зареєстровано", response);
             navigate("..");
-        } catch (error) {
-            console.error("Помилка при реєстрації", error);
-            message.error('Не вдалося зареєструватися. Спробуйте пізніше.');
+        } catch (error : any) {
+            console.error("Помилка при реєстрації", error.data.message);
+            message.error(error.data.message);
         }
     };
 
