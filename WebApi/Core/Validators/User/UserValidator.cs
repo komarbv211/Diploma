@@ -1,13 +1,26 @@
 ﻿using Core.DTOs.UsersDTOs;
+using Core.Interfaces;
 using FluentValidation;
 
 namespace Core.Validators.User
 {
     public class UserValidator : AbstractValidator<UserCreateDTO>
     {
+             //private readonly DbMakeUpContext _dbContext;
         public UserValidator()
         {
-            RuleFor(user => user.FirstName)
+
+            //_dbContext = dbContext;
+
+            //RuleFor(user => user.Email)
+            //    .NotEmpty().WithMessage("Email is required.")
+            //    .EmailAddress().WithMessage("Email must be a valid email address.")
+            //    .Must(email => !_dbContext.Users.Any(u => u.Email == email))
+            //    .WithMessage("Email must be unique.");
+
+
+
+        RuleFor(user => user.FirstName)
                 .NotEmpty().WithMessage("First name is required.")
                 .MinimumLength(2)
                 .MaximumLength(50).WithMessage("First name cannot exceed 50 characters.")
@@ -23,12 +36,22 @@ namespace Core.Validators.User
                 .Must(url => string.IsNullOrEmpty(url) || Uri.IsWellFormedUriString(url, UriKind.Absolute))
                 .WithMessage("Image must be a valid URL.");
 
-            RuleFor(user => user.Email)
-                .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Email must be a valid email address.");
+            //RuleFor(user => user.Email)
+            //    .NotEmpty().WithMessage("Email is required.")
+            //    .EmailAddress().WithMessage("Email must be a valid email address.");
+
+            //RuleFor(user => user.Email)
+            //.NotEmpty().WithMessage("Email is required.")
+            //.EmailAddress().WithMessage("Email must be a valid email address.")
+            //.MustAsync(async (email, cancellation) =>
+            //    !await userRepository.ExistsByEmailAsync(email))
+            //.WithMessage("Email must be unique.");
+
 
             RuleFor(user => user.PhoneNumber)
-                .Must(phone => string.IsNullOrEmpty(phone) || new System.Text.RegularExpressions.Regex(@"^\+?\d{10,15}$").IsMatch(phone))
+                .Must(phone => string.IsNullOrEmpty(phone) ||
+    new System.Text.RegularExpressions.Regex(@"^\+380\d{9,15}$").IsMatch(phone))
+                //.Must(phone => string.IsNullOrEmpty(phone) || new System.Text.RegularExpressions.Regex(@"^\+?\d{10,15}$").IsMatch(phone))
                 .WithMessage("Phone number must be valid.");
 
             RuleFor(user => user.Password)

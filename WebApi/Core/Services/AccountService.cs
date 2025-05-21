@@ -243,16 +243,23 @@ namespace Core.Services
 
         }
 
+
+
         public async Task<AuthResponse> RegisterAsync(RegisterDto model)
         {
-            var user = mapper.Map<UserEntity>(model);
+            var userWithSameEmail = await userManager.FindByEmailAsync(model.Email);
+            if (userWithSameEmail != null)
+            {
+                throw new HttpException("Користувач з такою електронною поштою вже існує", HttpStatusCode.BadRequest);
+            }
 
+            var user = mapper.Map<UserEntity>(model);
             var res = await userManager.CreateAsync(user, model.Password);
 
             if (!res.Succeeded)
             {
                 var errors = string.Join(", ", res.Errors.Select(e => e.Description));
-                throw new HttpException($"User creation failed: {errors}", HttpStatusCode.BadRequest);
+                throw new HttpException($"Не вдалося створити користувача: {errors}", HttpStatusCode.BadRequest);
             }
 
             await userManager.AddToRoleAsync(user, "User");

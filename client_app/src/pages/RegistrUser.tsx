@@ -2,21 +2,39 @@ import { Button, Form, Input, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { IUserRegisterRequest } from '../types/account.ts';
 import { useRegisterUserMutation } from '../services/authApi.ts';
+// import React, {useState} from 'react';
+// import InputMask from 'react-input-mask';
+import PhoneInput from "../components/PhoneInput.tsx";
 
 const RegistrUser: React.FC = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const [registerUser] = useRegisterUserMutation();
+    // const [phone, setPhone] = useState('');
 
+    // const allowedOperators = [
+    //     '050', '066', '095', '099', // Vodafone
+    //     '067', '068', '096', '097', '098', // Kyivstar
+    //     '063', '073', '093' // Lifecell
+    // ];
+
+
+    //const isValidPhone = /^\+380\d{9}$/.test(phone.replace(/\D/g, '') ? '+380' + phone.replace(/\D/g, '').slice(3) : '');
+
+    // const checkEmailExists = async (email: string): Promise<boolean> => {
+    //     const response = await fetch(`/api/check-email?email=${encodeURIComponent(email)}`);
+    //     const data = await response.json();
+    //     return data.exists; // true або false
+    // };
     const onFinish = async (values: IUserRegisterRequest) => {
         try {
             console.log("Register user", values);
             const response = await registerUser(values).unwrap();
             console.log("Користувача успішно зареєстровано", response);
             navigate("..");
-        } catch (error) {
-            console.error("Помилка при реєстрації", error);
-            message.error('Не вдалося зареєструватися. Спробуйте пізніше.');
+        } catch (error : any) {
+            console.error("Помилка при реєстрації", error.data.message);
+            message.error(error.data.message);
         }
     };
 
@@ -41,12 +59,48 @@ const RegistrUser: React.FC = () => {
                     <Input placeholder="Прізвище" />
                 </Form.Item>
 
-                <Form.Item name="email" label="Ваш Email" rules={[{ required: true, type: 'email', message: 'Будь ласка, введіть дійсну електронну адресу!' }]}>
+                <Form.Item
+                    // name="email" label="Ваш Email" rules={[{ required: true, type: 'email', message: 'Будь ласка, введіть дійсну електронну адресу!' }]}>
+                    name="email"
+                    label="Ваш Email"
+                    rules={[
+                        {
+                            required: true,
+                            type: 'email',
+                            message: 'Будь ласка, введіть дійсну електронну адресу!',
+                        },
+                        // {
+                        //     validator: async (_, value) => {
+                        //         if (!value) return Promise.resolve(); // якщо порожнє — не перевіряємо тут
+                        //         const exists = await checkEmailExists(value); // виклик API
+                        //         if (exists) {
+                        //             return Promise.reject(new Error('Ця електронна адреса вже використовується!'));
+                        //         }
+                        //         return Promise.resolve();
+                        //     },
+                        // },
+                    ]}
+                >
                     <Input placeholder="Ваш E-mail / login" />
                 </Form.Item>
 
-                <Form.Item name="phone" label="Номер телефону" rules={[{ required: true, pattern: /^\+?\d{10,15}$/, message: 'Будь ласка, введіть дійсний номер телефону!' }]}>
-                    <Input placeholder="Ваш номер телефону" />
+                <Form.Item
+                    name="phone"
+                    label="Номер телефону"
+                    rules={[
+                        { required: true, message: 'Введіть номер телефону' },
+                        {
+                            validator: (_, value) => {
+                                const regex_phone = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                                if (!value || regex_phone.test(value)) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject('Неправильний формат номера телефону');
+                            },
+                        },
+                    ]}
+                >
+                    <PhoneInput />
                 </Form.Item>
 
                 <Form.Item name="password" label="Пароль" rules={[{ required: true, message: 'Будь ласка, введіть пароль!' }]}>

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Graph.Models.TermStore;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -111,5 +112,19 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 
     //метод в асинхронному режимі додає колекцію entities до dbSet, який представляє набір об'єктів в Entity Framework.
     public async virtual Task AddRangeAsync(IEnumerable<TEntity> entities) => await dbSet.AddRangeAsync(entities);
+
+    //public async Task<bool> ExistsByEmailAsync(string email)
+    //{
+    //    using (var connection = new SqlConnection("your_connection_string"))
+    //    {
+    //        var command = new SqlCommand("SELECT COUNT(*) FROM Users WHERE Email = @Email", connection);
+    //        command.Parameters.AddWithValue("@Email", email);
+
+    //        await connection.OpenAsync();
+    //        int count = (int)await command.ExecuteScalarAsync();
+    //        return count > 0;
+    //    }
+    //}
+
 
 }
