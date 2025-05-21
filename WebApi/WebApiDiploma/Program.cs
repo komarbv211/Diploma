@@ -2,12 +2,13 @@
 using Core.Extensions;
 using Core.Models;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Infrastructure.Data;
 using Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using WebApiDiploma.Filters;
 using WebApiDiploma.ServiceExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -53,10 +54,21 @@ builder.Services.AddSwaggerJWT(); // +JWT
 // 7. CORS
 builder.Services.AddCorsPolicies();
 
+
+// Вимикаємо автоматичну валідацію через ModelState
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
+
 // 8. FluentValidation
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddMvc(options =>
+{
+    options.Filters.Add<ValidationFilter>();
+});
 
 // Build
 var app = builder.Build();
