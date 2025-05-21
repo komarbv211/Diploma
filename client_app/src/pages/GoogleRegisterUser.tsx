@@ -9,7 +9,7 @@ import PhoneInput from "../components/PhoneInput";
 
 const GoogleRegisterUser = () => {
     const [form] = Form.useForm();
-    const [confirmGoogleRegister] = useConfirmGoogleRegisterMutation();
+    const [confirmGoogleRegister, { isLoading }] = useConfirmGoogleRegisterMutation();
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const navigate = useNavigate();
     const location = useLocation();
@@ -134,7 +134,7 @@ const GoogleRegisterUser = () => {
                         <Button danger onClick={handleCancel}>
                             Скасувати
                         </Button>
-                        <Button type="primary" htmlType="submit" >
+                        <Button type="primary" htmlType="submit" loading={isLoading}>
                             Завершити Реєстрацію
                         </Button>
                     </div>

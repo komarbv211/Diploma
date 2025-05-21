@@ -56,9 +56,9 @@ const userSlice = createSlice({
     },
 });
 
-export const getUser = (state: RootState) => state.user.user;
-export const getAuth = (state: RootState) => state.user.auth;
-export const getToken = (state: RootState) => state.user.token;
+export const getUser = (state: RootState) => state.account.user;
+export const getAuth = (state: RootState) => state.account.auth;
+export const getToken = (state: RootState) => state.account.token;
 
 export const { setCredentials, logOut } = userSlice.actions
 export default userSlice.reducer

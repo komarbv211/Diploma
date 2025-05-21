@@ -7,7 +7,7 @@ export const createBaseQuery = (endpoint: string) => {
         baseUrl: `${APP_ENV.REMOTE_BASE_URL}/api/${endpoint}/`,
         prepareHeaders: (headers, { getState }) => {
             // Отримуємо токен з Redux-сховища
-            const token = (getState() as RootState).user.token; 
+            const token = (getState() as RootState).account.token; 
             // Виводимо токен
             console.log('[prepareHeaders] Token:', token);
             if (token) {

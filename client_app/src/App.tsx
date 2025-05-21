@@ -1,17 +1,19 @@
 import './index.css'
 import { Route, Routes } from 'react-router-dom'
+import { Suspense, lazy } from 'react'
 import Layout from './components/layouts/default/Layout.tsx'
-import Home from './pages/Home'
-import { AdminRoutes } from './routes/adminRoutes'
-import RegistrUser from "./pages/RegistrUser.tsx";
-import UserProfile from './pages/user/UserProfile.tsx'
-import LoginUser from "./pages/LoginUser.tsx";
-import GoogleRegisterUser from './pages/GoogleRegisterUser.tsx'
+import Loader from './components/Loader.tsx'
 
+const Home = lazy(() => import('./pages/Home'))
+const UserProfile = lazy(() => import('./pages/user/UserProfile.tsx'))
+const LoginUser = lazy(() => import('./pages/LoginUser.tsx'))
+const RegistrUser = lazy(() => import('./pages/RegistrUser.tsx'))
+const GoogleRegisterUser = lazy(() => import('./pages/GoogleRegisterUser.tsx'))
+const AdminRoutes = lazy(() => import('./routes/adminRoutes'))
 
 function App() {
   return (
-    <>
+    <Suspense fallback={<Loader/>}>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<Home />} />
@@ -23,8 +25,8 @@ function App() {
         <Route path="/registr/*" element={<RegistrUser />} />
 
         <Route path="/admin/*" element={<AdminRoutes />} />
-      </Routes >
-    </>
+      </Routes>
+    </Suspense>
   )
 }
 

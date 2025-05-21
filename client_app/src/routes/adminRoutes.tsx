@@ -15,3 +15,4 @@ export const AdminRoutes = () => {
     </Routes>
   );
 };
+export default AdminRoutes
