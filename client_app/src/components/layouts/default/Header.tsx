@@ -22,7 +22,7 @@ const CustomHeader = () => {
   console.log('avatarUrl:', avatarUrl);
 
   const menuItems = [
-    { key: 'dashboard', icon: <DashboardOutlined />, label: <Link to={adminPrefix('/')}>Dashboard</Link> },
+    ...(isAdmin ? [{ key: 'dashboard', icon: <DashboardOutlined />, label: <Link to={adminPrefix('/')}>Dashboard</Link> }] : []),
     { key: 'profile', icon: <UserOutlined />, label: <Link to={adminPrefix(`/profile/${user?.id}`)}>Profile</Link> },
     { key: 'settings', icon: <SettingOutlined />, label: <Link to={adminPrefix('/settings')}>Settings</Link> },
     { key: 'logout', icon: <LogoutOutlined />, label: <Link to="/" onClick={handleLogout}>Log Out</Link> },
