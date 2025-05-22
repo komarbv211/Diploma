@@ -1,20 +1,21 @@
 import { Layout, Typography, Row, Col, Divider, Button, Space, Input, Spin, } from 'antd';
 import { SettingOutlined, LogoutOutlined } from '@ant-design/icons';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useGetUserByIdQuery } from '../../services/userApi';
-import { logOut } from '../../store/slices/userSlice';
+import { getUser, logOut } from '../../store/slices/userSlice';
 import dayjs from 'dayjs';
+import { useAppSelector } from '../../store/store';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const AdminProfile = () => {
-  const { id } = useParams();
+  const client = useAppSelector(getUser);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { data: user, isLoading } = useGetUserByIdQuery(Number(id));
+  const { data: user, isLoading } = useGetUserByIdQuery(Number(client?.id));
 
   const handleLogout = () => {
     dispatch(logOut());
