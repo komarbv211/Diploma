@@ -5,11 +5,13 @@ import { useRegisterUserMutation } from '../services/authApi.ts';
 // import React, {useState} from 'react';
 // import InputMask from 'react-input-mask';
 import PhoneInput from "../components/PhoneInput.tsx";
+import {useState} from "react";
 
 const RegistrUser: React.FC = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const [registerUser] = useRegisterUserMutation();
+    const [phone, setPhone] = useState('+38 (050) ');
     // const [phone, setPhone] = useState('');
 
     // const allowedOperators = [
@@ -100,7 +102,13 @@ const RegistrUser: React.FC = () => {
                         },
                     ]}
                 >
-                    <PhoneInput />
+                    {/*<PhoneInput />*/}
+                    <h2>Введіть номер телефону</h2>
+                    <PhoneInput
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        onOperatorChange={(operator) => console.log('Вибрано оператора:', operator)}
+                    />
                 </Form.Item>
 
                 <Form.Item name="password" label="Пароль" rules={[{ required: true, message: 'Будь ласка, введіть пароль!' }]}>
