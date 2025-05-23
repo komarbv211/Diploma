@@ -87,11 +87,11 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 // 11. Swagger у Dev режимі
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 // 12. Middleware
 app.UseAuthentication();
