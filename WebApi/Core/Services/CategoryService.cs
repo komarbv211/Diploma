@@ -58,6 +58,14 @@ namespace Core.Services
         // Створення нової категорії
         public async Task CreateCategoryAsync(CategoryCreateDto dto)
         {
+            // Перевіряємо, чи існує категорія з таким ім'ям
+            bool categoryExists = await _categoryRepository.ExistsByNameAsync(dto.Name);
+
+            if (categoryExists)
+            {
+                throw new InvalidOperationException($"Category '{dto.Name}' already exists.");
+            }
+
             var category = _mapper.Map<CategoryEntity>(dto);
             await _categoryRepository.Insert(category);
             await _categoryRepository.SaveAsync();

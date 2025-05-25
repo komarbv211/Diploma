@@ -9,5 +9,10 @@ namespace Core.Interfaces
         Task<CategoryEntity?> GetCategoryWithChildrenAsync(long id);
         Task<IEnumerable<CategoryEntity>> GetRootCategoriesAsync();
         Task<CategoryEntity?> GetParentCategoryAsync(long categoryId);
+
+
+        // Додаємо метод для перевірки існування категорії за ім'ям
+        Task<bool> ExistsByNameAsync(string name);
+
     }
 }
