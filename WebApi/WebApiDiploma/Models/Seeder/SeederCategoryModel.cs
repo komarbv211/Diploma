@@ -1,8 +1,4 @@
-﻿using Infrastructure.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace WebApiDiploma.Models.Seeder
+﻿namespace WebApiDiploma.Models.Seeder
 {
     public class SeederCategoryModel
     {

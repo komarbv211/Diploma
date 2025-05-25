@@ -1,5 +1,4 @@
 ﻿using Core.DTOs.PaginationDTOs;
-using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
