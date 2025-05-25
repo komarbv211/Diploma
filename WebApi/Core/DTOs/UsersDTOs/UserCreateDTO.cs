@@ -16,6 +16,9 @@ public class UserCreateDTO
     public string Email { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; }
 
+    public string Password { get; set; }
+    public string ConfirmPassword { get; set; }
+
     // якщо не знадобиться видалимо.
     //public IEnumerable<int> Adverts { get; set; } = [];
     //public IEnumerable<int> FavoriteAdverts { get; set; } = [];
