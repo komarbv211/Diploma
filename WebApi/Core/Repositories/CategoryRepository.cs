@@ -105,4 +105,9 @@ public class CategoryRepository : Repository<CategoryEntity>, ICategoryRepositor
             .Where(c => c.ParentId == null)
             .ToListAsync();
     }
+
+     public async Task<bool> ExistsByNameAsync(string name)
+     {
+        return await context.Categories.AnyAsync(c => c.Name == name);
+     }
 }
