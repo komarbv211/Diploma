@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace WebApiDiploma.Models.Seeder
+﻿namespace WebApiDiploma.Models.Seeder
 {
     public class SeederProductImageModel
     {

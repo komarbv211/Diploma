@@ -2,10 +2,6 @@
 using Core.DTOs.CategoryDTOs;
 using Core.Interfaces;
 using Infrastructure.Entities;
-using Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Core.Services
 {

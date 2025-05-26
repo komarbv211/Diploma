@@ -1,9 +1,7 @@
 ﻿using Core.Exceptions;
 using Core.Interfaces;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Net;
-using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;

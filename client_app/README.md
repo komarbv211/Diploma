@@ -11,55 +11,59 @@ npm install react-input-mask
 npm install --save-dev @types/react-input-mask
 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# makeup-client-asp
 
-Currently, two official plugins are available:
+Create docker hub repository - publish
+```
+docker build -t makeup-client . 
+docker run -it --rm -p 5982:80 --name makeup-client_container makeup-client
+docker run -d --restart=always --name makeup-client_container -p 5982:80 makeup-client
+docker run -d --restart=always -v d:/volumes/makeup-asp/images:/app/Uploaded --name makeup-client_container -p 5982:80 makeup-client
+docker run -d --restart=always -v /volumes/makeup-asp/images:/app/Uploaded --name makeup-client_container -p 5982:80 makeup-client
+docker ps -a
+docker stop makeup-client_container
+docker rm makeup-client_container
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+docker images --all
+docker rmi makeup-client
 
-## Expanding the ESLint configuration
+docker login
+docker tag makeup-client:latest novakvova/makeup-client:latest
+docker push novakvova/makeup-client:latest
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+docker pull novakvova/makeup-client:latest
+docker ps -a
+docker run -d --restart=always --name makeup-client_container -p 5982:80 novakvova/makeup-client
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+docker run -d --restart=always -v /volumes/makeup-asp/images:/app/Uploaded --name makeup-client_container -p 5982:80 novakvova/makeup-client
+
+
+docker pull novakvova/makeup-client:latest
+docker images --all
+docker ps -a
+docker stop makeup-client_container
+docker rm makeup-client_container
+docker run -d --restart=always --name makeup-client_container -p 5982:80 novakvova/makeup-client
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+```nginx options /etc/nginx/sites-available/default
+server {
+    server_name   makeup.itstep.click *.makeup.itstep.click;
+    client_max_body_size 200M;
+    location / {
+       proxy_pass         http://localhost:5982;
+       proxy_http_version 1.1;
+       proxy_set_header   Upgrade $http_upgrade;
+       proxy_set_header   Connection keep-alive;
+       proxy_set_header   Host $host;
+       proxy_cache_bypass $http_upgrade;
+       proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_set_header   X-Forwarded-Proto $scheme;
+    }
+}
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+sudo systemctl restart nginx
+certbot
 ```
+

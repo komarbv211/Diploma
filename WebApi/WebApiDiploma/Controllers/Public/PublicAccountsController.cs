@@ -1,7 +1,6 @@
 ﻿using Core.DTOs.AuthorizationDTOs;
 using Core.Interfaces;
 using Core.Models.Authentication;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using RefreshRequest = Core.Models.Authentication.RefreshRequest;
 

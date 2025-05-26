@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Core.DTOs.CategoryDTOs
+﻿namespace Core.DTOs.CategoryDTOs
 {
     public class CategoryCreateDto
     {

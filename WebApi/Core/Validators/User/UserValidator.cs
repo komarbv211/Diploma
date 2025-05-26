@@ -1,5 +1,4 @@
 ﻿using Core.DTOs.UsersDTOs;
-using Core.Interfaces;
 using FluentValidation;
 
 namespace Core.Validators.User

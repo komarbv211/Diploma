@@ -13,13 +13,13 @@ using WebApiDiploma.ServiceExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Підключення бази даних
+// Підключення бази даних
 builder.Services.AddDbContext<DbMakeUpContext>(opt =>
 {
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-// 2. Identity
+// Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 {
     options.Stores.MaxLengthForKeys = 128;
@@ -32,26 +32,26 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 .AddEntityFrameworkStores<DbMakeUpContext>()
 .AddDefaultTokenProviders();
 
-// 3. Власні сервіси
+// Власні сервіси
 
 builder.Services.AddWebApiServices();
 builder.Services.AddCoreServices();
 
-// 4. Controllers
+// Controllers
 builder.Services.AddControllers();
 
-// 5. JWT автентифікація та авторизація
+// JWT автентифікація та авторизація
 builder.Services.AddJwtOptions(builder.Configuration);
 var jwtOpts = builder.Configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>()!;
 builder.Services.AddJwtAuthentication(jwtOpts);
 builder.Services.AddAuthorizationPolicies();
 
-// 6. Swagger
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(); // основний
 builder.Services.AddSwaggerJWT(); // +JWT
 
-// 7. CORS
+// CORS
 builder.Services.AddCorsPolicies();
 
 
@@ -62,7 +62,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
-// 8. FluentValidation
+// FluentValidation
 builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddMvc(options =>
@@ -73,10 +73,10 @@ builder.Services.AddMvc(options =>
 // Build
 var app = builder.Build();
 
-// 9. Обробка винятків
+// Обробка винятків
 app.UseMiddleware<ExceptionMiddleware>();
 
-// 10. Статичні файли
+// Статичні файли
 var dir = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration.GetValue<string>("ImagesDir") ?? "uploading");
 Directory.CreateDirectory(dir);
 
@@ -86,14 +86,13 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/images"
 });
 
-// 11. Swagger у Dev режимі
-if (app.Environment.IsDevelopment())
-{
+// Swagger у Dev режимі
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
 
-// 12. Middleware
+
+// Middleware
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("front-end-cors-policy");
@@ -101,8 +100,8 @@ app.UseCors("front-end-cors-policy");
 // 13. Маршрутизація
 app.MapControllers();
 
-// 14. Ініціалізація початкових даних
+// Ініціалізація початкових даних
 await app.SeedDataAsync();
 
-// 15. Запуск
+// Запуск
 app.Run();
