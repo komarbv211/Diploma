@@ -2,8 +2,12 @@
 using Core.DTOs.PaginationDTOs;
 using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
+using Core.Exceptions;
 using Core.Interfaces;
 using Infrastructure.Entities;
+using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System.Net;
 using WebApiDiploma.Pagination;
 
 namespace Core.Services
@@ -12,27 +16,91 @@ namespace Core.Services
     {
         private readonly IRepository<UserEntity> _repository;
         private readonly IMapper _mapper;
-
-        public UserService(IRepository<UserEntity> repository, IMapper mapper)
+        private readonly IImageService _imageService;
+        public UserService(IRepository<UserEntity> repository, IMapper mapper, IImageService imageService)
         {
             _repository = repository;
             _mapper = mapper;
+            _imageService = imageService;
         }
 
+
+        //public async Task CreateUserAsync(UserCreateDTO dto)
+        //{
+        //    var user = _mapper.Map<UserEntity>(dto);
+        //    user.UserName = user.Email;
+        //    await _repository.Insert(user);
+        //    await _repository.SaveAsync();
+        //}
 
         public async Task CreateUserAsync(UserCreateDTO dto)
         {
-            var user = _mapper.Map<UserEntity>(dto);
-            user.UserName = user.Email;
-            await _repository.Insert(user);
-            await _repository.SaveAsync();
+            try
+            {
+                var user = _mapper.Map<UserEntity>(dto);
+
+                await _repository.Insert(user);
+                await _repository.SaveAsync(); // Зберігаємо, щоб отримати UserId
+
+                // Збереження одного зображення, якщо воно є
+                if (dto.Image is not null)
+                {
+                    user.Image = await _imageService.SaveImageAsync(dto.Image); // Зберігаємо назву прямо в `UserEntity`
+                    await _repository.SaveAsync(); // Додаткове збереження після оновлення користувача
+                }
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new HttpException("Помилка при збереженні користувача в базі даних", HttpStatusCode.InternalServerError, dbEx);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Невідома помилка при створенні користувача", HttpStatusCode.InternalServerError, ex);
+            }
         }
+
+
+        //public async Task DeleteUserAsync(long id)
+        //{
+        //    await _repository.DeleteAsync(id);
+        //    await _repository.SaveAsync();
+        //}
 
         public async Task DeleteUserAsync(long id)
         {
-            await _repository.DeleteAsync(id);
-            await _repository.SaveAsync();
+            try
+            {
+                // Отримуємо користувача з його зображенням
+                var user = await _repository.GetByIdAsync(id);
+
+                if (user == null)
+                {
+                    throw new HttpException("Користувача не знайдено для видалення", HttpStatusCode.NotFound);
+                }
+
+                // Перевіряємо, чи є зображення у користувача
+                if (!string.IsNullOrEmpty(user.ImageName))
+                {
+                    _imageService.DeleteImageIfExists(user.ImageName); // Видаляємо зображення, якщо воно є
+                }
+
+                // Видаляємо користувача
+                await _repository.DeleteAsync(id);
+                await _repository.SaveAsync();
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new HttpException("Помилка при видаленні користувача з бази даних", HttpStatusCode.InternalServerError, dbEx);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Невідома помилка при видаленні користувача", HttpStatusCode.InternalServerError, ex);
+            }
         }
+
+
+
+
 
         public async Task<PagedResultDto<UserDTO>> GetAllAsync(PagedRequestDto request)
         {
