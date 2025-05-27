@@ -9,7 +9,7 @@ export const AdminRoutes = () => {
     <Routes>
       <Route element={<AdminLayout />}> 
         <Route index element={<Dashboard />} />         
-        <Route path='profile/:id' element={<AdminProfile />} />  
+        <Route path='profile' element={<AdminProfile />} />  
         <Route path="users" element={<UsersPage />} />
       </Route>
     </Routes>

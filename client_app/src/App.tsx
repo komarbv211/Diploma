@@ -17,7 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/profile/:id" element={<UserProfile />} />
+          <Route path="/profile" element={<UserProfile />} />
         </Route>
 
         <Route path="/google-register" element={<GoogleRegisterUser />} />
