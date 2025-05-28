@@ -120,8 +120,14 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     //    }
     //}
 
-    public async Task<UserEntity?>GetByIdAsync(long id)
-    {
-        return await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-    }
+    //public async Task<UserEntity?>GetByIdAsync(long id)
+    //{
+    //    return await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+    //}
+
+    //Task<TEntity> IRepository<TEntity>.GetByIdAsync(long id)
+    //{
+    //    return await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+    //   // throw new NotImplementedException();
+    //}
 }

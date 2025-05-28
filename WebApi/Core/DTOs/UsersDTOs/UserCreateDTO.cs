@@ -1,10 +1,12 @@
-﻿namespace Core.DTOs.UsersDTOs;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Core.DTOs.UsersDTOs;
 
 public class UserCreateDTO
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
-    public string? Image { get; set; }
+    public IFormFile? Image { get; set; }
     public string Email { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; }
 

@@ -26,7 +26,7 @@ namespace WebApiDiploma.Controllers.Admin
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] UserCreateDTO dto)
+        public async Task<ActionResult> Create([FromForm] UserCreateDTO dto)
         {
             await service.CreateUserAsync(dto);
             return Ok();

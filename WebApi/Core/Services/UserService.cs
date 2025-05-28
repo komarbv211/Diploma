@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
 using Core.DTOs.PaginationDTOs;
+using Core.DTOs.ProductsDTO;
 using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
 using Core.Exceptions;
 using Core.Interfaces;
 using Infrastructure.Entities;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Graph.Models;
 using System.Net;
 using WebApiDiploma.Pagination;
 
@@ -17,11 +20,13 @@ namespace Core.Services
         private readonly IRepository<UserEntity> _repository;
         private readonly IMapper _mapper;
         private readonly IImageService _imageService;
-        public UserService(IRepository<UserEntity> repository, IMapper mapper, IImageService imageService)
+        private readonly UserManager<UserEntity> _userManager;
+        public UserService(UserManager<UserEntity> userManager, IRepository<UserEntity> repository, IMapper mapper, IImageService imageService)
         {
             _repository = repository;
             _mapper = mapper;
             _imageService = imageService;
+            _userManager = userManager;
         }
 
 
@@ -39,15 +44,18 @@ namespace Core.Services
             {
                 var user = _mapper.Map<UserEntity>(dto);
 
-                await _repository.Insert(user);
-                await _repository.SaveAsync(); // Зберігаємо, щоб отримати UserId
-
                 // Збереження одного зображення, якщо воно є
                 if (dto.Image is not null)
                 {
                     user.Image = await _imageService.SaveImageAsync(dto.Image); // Зберігаємо назву прямо в `UserEntity`
                     await _repository.SaveAsync(); // Додаткове збереження після оновлення користувача
                 }
+                var result = await _userManager.CreateAsync(user, dto.Password);
+                if (result.Succeeded) {
+
+                }
+               
+
             }
             catch (DbUpdateException dbEx)
             {
@@ -57,6 +65,7 @@ namespace Core.Services
             {
                 throw new HttpException("Невідома помилка при створенні користувача", HttpStatusCode.InternalServerError, ex);
             }
+                await _repository.SaveAsync(); // Зберігаємо, щоб отримати UserId
         }
 
 
@@ -71,7 +80,7 @@ namespace Core.Services
             try
             {
                 // Отримуємо користувача з його зображенням
-                var user = await _repository.GetByIdAsync(id);
+                var user = await _repository.GetByID(id);
 
                 if (user == null)
                 {
@@ -79,9 +88,9 @@ namespace Core.Services
                 }
 
                 // Перевіряємо, чи є зображення у користувача
-                if (!string.IsNullOrEmpty(user.ImageName))
+                if (!string.IsNullOrEmpty(user.Image))
                 {
-                    _imageService.DeleteImageIfExists(user.ImageName); // Видаляємо зображення, якщо воно є
+                    _imageService.DeleteImageIfExists(user.Image); // Видаляємо зображення, якщо воно є
                 }
 
                 // Видаляємо користувача
@@ -118,23 +127,80 @@ namespace Core.Services
             );
         }
 
-        public async Task<UserDTO> GetByIdAsync(long id)
-        {
-            var user = await _repository.GetByID(id);
-            return _mapper.Map<UserDTO>(user);
-        }
+        //public async Task<UserDTO> GetByIdAsync(long id)
+        //{
+        //    var user = await _repository.GetByID(id);
+        //    return _mapper.Map<UserDTO>(user);
+        //}
 
-        // Оновлення існуючої сутності
-        public async Task UpdateUserAsync(UserUpdateDTO dto)
+         public async Task<UserDTO?> GetByIdAsync(long id)
         {
-            var user = await _repository.GetByID(dto.Id);
-            if (user != null)
+            try
             {
-                _mapper.Map(dto, user);
-                await _repository.Update(user);
-                await _repository.SaveAsync();
+                 var user = await _repository.GetByID(id);
+                    //.Include(p => p.Images)
+                    //.FirstOrDefaultAsync(p => p.Id == id);
+
+                if (user == null)
+                {
+                    throw new HttpException("Продукт не знайдений", HttpStatusCode.NotFound);
+                }
+
+                return _mapper.Map<UserDTO>(user);
+            }
+            catch (HttpException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Помилка при отриманні продукту", HttpStatusCode.InternalServerError, ex);
             }
         }
+
+
+        // Оновлення існуючої сутності
+        //public async Task UpdateUserAsync(UserUpdateDTO dto)
+        //{
+        //    var user = await _repository.GetByID(dto.Id);
+        //    if (user != null)
+        //    {
+        //        _mapper.Map(dto, user);
+        //        await _repository.Update(user);
+        //        await _repository.SaveAsync();
+        //    }
+        //}
+
+      public async Task UpdateUserAsync(UserUpdateDTO dto)
+          {
+              var user = await _repository.GetByID(dto.Id);
+              if (user == null)
+                  throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
+          
+              // Мапимо основні дані
+              _mapper.Map(dto, user);
+          
+              // Якщо є нове зображення
+              if (dto.Image != null && dto.Image.Length > 0)
+              {
+                  // Видаляємо старе, якщо воно є
+                  if (!string.IsNullOrEmpty(user.Image))
+                  {
+                      _imageService.DeleteImageIfExists(user.Image);
+                  }
+          
+                  // Зберігаємо нове
+                  var fileName = await _imageService.SaveImageAsync(dto.Image);
+                  user.Image = fileName;
+              }
+          
+              await _repository.Update(user);
+              await _repository.SaveAsync();
+          }
+
+
+
+
         public async Task<UserDTO?> GetByEmailAsync(string email)
         {
             var spec = new Core.Specifications.UserSpecs.ByEmailSpec(email);
