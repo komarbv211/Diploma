@@ -7,6 +7,18 @@ import { useRegisterUserMutation } from '../services/authApi.ts';
 import PhoneInput from "../components/PhoneInput.tsx";
 import {useState} from "react";
 
+interface ValidationErrors {
+    errors: {
+        [key: string]: string[];
+    };
+    message?: string;
+}
+
+interface ApiError {
+    data: ValidationErrors;
+    status: number;
+}
+
 const RegistrUser: React.FC = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
@@ -34,9 +46,22 @@ const RegistrUser: React.FC = () => {
             const response = await registerUser(values).unwrap();
             console.log("Користувача успішно зареєстровано", response);
             navigate("..");
-        } catch (error : any) {
-            console.error("Помилка при реєстрації", error.data.message);
-            message.error(error.data.message);
+        } catch (error: unknown) {
+            console.error("Помилка при реєстрації", error);
+            const apiError = error as ApiError;
+            if (apiError.data?.errors) {
+                // Handle validation errors
+                const validationErrors = apiError.data.errors;
+                for (const field in validationErrors) {
+                    const errors = validationErrors[field];
+                    errors.forEach((errorMessage: string) => {
+                        message.error(`${field}: ${errorMessage}`);
+                    });
+                }
+            } else {
+                // Handle other types of errors
+                message.error(apiError.data?.message || 'Помилка при реєстрації');
+            }
         }
     };
 
@@ -53,7 +78,9 @@ const RegistrUser: React.FC = () => {
                 onFinish={onFinish}
                 form={form}
             >
-                <Form.Item name="firstName" label="Ваше Ім'я" rules={[{ required: true, message: 'Будь ласка, введіть Ваше ім\'я!' }]}>
+                <Form.Item name="firstName" label="Ваше Ім'я" 
+                    //rules={[{ required: true, message: 'Будь ласка, введіть Ваше ім\'я!' }]}
+                    >
                     <Input placeholder="Ваше Ім'я" />
                 </Form.Item>
 
@@ -65,12 +92,12 @@ const RegistrUser: React.FC = () => {
                     // name="email" label="Ваш Email" rules={[{ required: true, type: 'email', message: 'Будь ласка, введіть дійсну електронну адресу!' }]}>
                     name="email"
                     label="Ваш Email"
-                    rules={[
-                        {
-                            required: true,
-                            type: 'email',
-                            message: 'Будь ласка, введіть дійсну електронну адресу!',
-                        },
+                    // rules={[
+                    //     {
+                    //         required: true,
+                    //         type: 'email',
+                    //         message: 'Будь ласка, введіть дійсну електронну адресу!',
+                    //     },
                         // {
                         //     validator: async (_, value) => {
                         //         if (!value) return Promise.resolve(); // якщо порожнє — не перевіряємо тут
@@ -81,7 +108,7 @@ const RegistrUser: React.FC = () => {
                         //         return Promise.resolve();
                         //     },
                         // },
-                    ]}
+                    //]}
                 >
                     <Input placeholder="Ваш E-mail / login" />
                 </Form.Item>
@@ -89,18 +116,18 @@ const RegistrUser: React.FC = () => {
                 <Form.Item
                     name="phone"
                     label="Номер телефону"
-                    rules={[
-                        { required: true, message: 'Введіть номер телефону' },
-                        {
-                            validator: (_, value) => {
-                                const regex_phone = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
-                                if (!value || regex_phone.test(value)) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject('Неправильний формат номера телефону');
-                            },
-                        },
-                    ]}
+                    // rules={[
+                    //     { required: true, message: 'Введіть номер телефону' },
+                    //     {
+                    //         validator: (_, value) => {
+                    //             const regex_phone = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                    //             if (!value || regex_phone.test(value)) {
+                    //                 return Promise.resolve();
+                    //             }
+                    //             return Promise.reject('Неправильний формат номера телефону');
+                    //         },
+                    //     },
+                    // ]}
                 >
                     {/*<PhoneInput />*/}
                     <h2>Введіть номер телефону</h2>
@@ -111,7 +138,9 @@ const RegistrUser: React.FC = () => {
                     />
                 </Form.Item>
 
-                <Form.Item name="password" label="Пароль" rules={[{ required: true, message: 'Будь ласка, введіть пароль!' }]}>
+                <Form.Item name="password" label="Пароль" 
+                //rules={[{ required: true, message: 'Будь ласка, введіть пароль!' }]}
+                >
                     <Input.Password placeholder="Пароль" />
                 </Form.Item>
 
@@ -119,17 +148,17 @@ const RegistrUser: React.FC = () => {
                     name="password1"
                     label="Перевірка пароля"
                     dependencies={['password1']}
-                    rules={[
-                        { required: true, message: 'Будь ласка, підтвердіть пароль!' },
-                        ({ getFieldValue }) => ({
-                            validator(_, value) {
-                                if (!value || getFieldValue('password') === value) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(new Error('Паролі не збігаються!'));
-                            },
-                        }),
-                    ]}
+                    // rules={[
+                    //     { required: true, message: 'Будь ласка, підтвердіть пароль!' },
+                    //     ({ getFieldValue }) => ({
+                    //         validator(_, value) {
+                    //             if (!value || getFieldValue('password') === value) {
+                    //                 return Promise.resolve();
+                    //             }
+                    //             return Promise.reject(new Error('Паролі не збігаються!'));
+                    //         },
+                    //     }),
+                    // ]}
                 >
                     <Input.Password placeholder="Підтвердіть пароль" />
                 </Form.Item>
