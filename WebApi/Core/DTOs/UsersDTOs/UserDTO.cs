@@ -1,4 +1,6 @@
-﻿namespace Core.DTOs.UsersDTOs
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Core.DTOs.UsersDTOs
 {
     public class UserDTO
     {
@@ -7,7 +9,7 @@
         public string? LastName { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime? LastActivity { get; set; } = DateTime.UtcNow;
-        public string? Image { get; set; }
+        public IFormFile? Image { get; set; }
         public string Email { get; set; } = string.Empty;
         public bool EmailConfirmed { get; set; }
         public bool PhoneNumberConfirmed { get; set; }

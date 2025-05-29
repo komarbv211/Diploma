@@ -1,6 +1,7 @@
 ﻿using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
 using Core.Interfaces;
+using Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,7 @@ namespace WebApiDiploma.Controllers.User
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDTO>> GetById(long id)
         {
+
             var user = await service.GetByIdAsync(id);
             if (user == null)
                 return NotFound();

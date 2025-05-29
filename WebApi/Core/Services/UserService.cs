@@ -50,6 +50,7 @@ namespace Core.Services
                     user.Image = await _imageService.SaveImageAsync(dto.Image); // Зберігаємо назву прямо в `UserEntity`
                     await _repository.SaveAsync(); // Додаткове збереження після оновлення користувача
                 }
+
                 var result = await _userManager.CreateAsync(user, dto.Password);
                 if (result.Succeeded) {
 
@@ -81,6 +82,12 @@ namespace Core.Services
             {
                 // Отримуємо користувача з його зображенням
                 var user = await _repository.GetByID(id);
+                //var user = await _userManager.FindByIdAsync(id.ToString());
+
+                //var user = await _userManager.Users.AnyAsync(u => u.Id == id);
+
+                //var userId = _userManager.GetUserId(User);
+                //var user = await _userManager.FindByIdAsync(userId);
 
                 if (user == null)
                 {
@@ -108,7 +115,38 @@ namespace Core.Services
         }
 
 
+        //public async Task DeleteUserAsync(long id)
+        //{
+        //    try
+        //    {
 
+        //        // Отримуємо користувача за його ID через UserManager
+        //        var user = await _userManager.FindByIdAsync(id.ToString());
+
+        //        if (user == null)
+        //        {
+        //            throw new HttpException("Користувача не знайдено для видалення", HttpStatusCode.NotFound);
+        //        }
+
+        //        // Перевіряємо, чи є у користувача зображення та видаляємо його
+        //        if (!string.IsNullOrEmpty(user.Image))
+        //        {
+        //            _imageService.DeleteImageIfExists(user.Image);
+        //        }
+
+        //        // Видаляємо користувача через UserManager
+        //        var result = await _userManager.DeleteAsync(user);
+
+        //        if (!result.Succeeded)
+        //        {
+        //            throw new HttpException("Помилка при видаленні користувача", HttpStatusCode.InternalServerError);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new HttpException("Невідома помилка при видаленні користувача", HttpStatusCode.InternalServerError, ex);
+        //    }
+        //}
 
 
         public async Task<PagedResultDto<UserDTO>> GetAllAsync(PagedRequestDto request)
@@ -127,36 +165,36 @@ namespace Core.Services
             );
         }
 
-        //public async Task<UserDTO> GetByIdAsync(long id)
-        //{
-        //    var user = await _repository.GetByID(id);
-        //    return _mapper.Map<UserDTO>(user);
-        //}
-
-         public async Task<UserDTO?> GetByIdAsync(long id)
+        public async Task<UserDTO> GetByIdAsync(long id)
         {
-            try
-            {
-                 var user = await _repository.GetByID(id);
-                    //.Include(p => p.Images)
-                    //.FirstOrDefaultAsync(p => p.Id == id);
-
-                if (user == null)
-                {
-                    throw new HttpException("Продукт не знайдений", HttpStatusCode.NotFound);
-                }
-
-                return _mapper.Map<UserDTO>(user);
-            }
-            catch (HttpException ex)
-            {
-                throw ex;
-            }
-            catch (Exception ex)
-            {
-                throw new HttpException("Помилка при отриманні продукту", HttpStatusCode.InternalServerError, ex);
-            }
+            var user = await _repository.GetByID(id);
+            return _mapper.Map<UserDTO>(user);
         }
+
+        // public async Task<UserDTO?> GetByIdAsync(long id)
+        //{
+        //    try
+        //    {
+        //         var user = await _repository.GetByID(id);
+        //            //.Include(p => p.Images)
+        //            //.FirstOrDefaultAsync(p => p.Id == id);
+
+        //        if (user == null)
+        //        {
+        //            throw new HttpException("Продукт не знайдений", HttpStatusCode.NotFound);
+        //        }
+
+        //        return _mapper.Map<UserDTO>(user);
+        //    }
+        //    catch (HttpException ex)
+        //    {
+        //        throw ex;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new HttpException("Помилка при отриманні продукту", HttpStatusCode.InternalServerError, ex);
+        //    }
+        //}
 
 
         // Оновлення існуючої сутності
@@ -171,7 +209,7 @@ namespace Core.Services
         //    }
         //}
 
-      public async Task UpdateUserAsync(UserUpdateDTO dto)
+        public async Task UpdateUserAsync(UserUpdateDTO dto)
           {
               var user = await _repository.GetByID(dto.Id);
               if (user == null)
