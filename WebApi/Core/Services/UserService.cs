@@ -222,23 +222,26 @@ namespace Core.Services
 
               if (user == null)
                   throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
-          
-              // Мапимо основні дані
-              _mapper.Map(dto, user);
-          
-              // Якщо є нове зображення
-              if (dto.Image != null && dto.Image.Length > 0)
+              string imagName = user.Image;
+            // Мапимо основні дані
+            _mapper.Map(dto, user);
+
+            // Якщо є нове зображення
+            if (dto.Image != null && dto.Image.Length > 0)
               {
                   // Видаляємо старе, якщо воно є
-                  if (!string.IsNullOrEmpty(user.Image))
+                  if (!string.IsNullOrEmpty(imagName))
                   {
-                      _imageService.DeleteImageIfExists(user.Image);
+                      _imageService.DeleteImageIfExists(imagName);
                   }
           
                   // Зберігаємо нове
                   var fileName = await _imageService.SaveImageAsync(dto.Image);
                   user.Image = fileName;
               }
+
+               //// Мапимо інші дані
+               // _mapper.Map(dto, user);
           
               await _repository.Update(user);
               await _repository.SaveAsync();
