@@ -27,9 +27,8 @@ namespace Core.Validators.Category
         .WithMessage("{PropertyName} must be unique.");
 
 
-        RuleFor(category => category.Image)
-           .Must(url => string.IsNullOrEmpty(url) || Uri.IsWellFormedUriString(url, UriKind.Absolute))
-           .WithMessage("Image must be a valid URL.");
+            RuleFor(category => category.Image);
+           
 
         RuleFor(x => x.Description)
               .NotEmpty()

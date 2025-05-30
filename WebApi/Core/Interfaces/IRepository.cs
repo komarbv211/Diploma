@@ -13,6 +13,7 @@ namespace Core.Interfaces
         Task SaveAsync();
         void Delete(object id);
         Task DeleteAsync(object id);
+        void DeleteRange(IEnumerable<TEntity> entities);
         Task<TEntity?> GetItemBySpec(ISpecification<TEntity> specification);
         Task Insert(TEntity entity);//
         Task Update(TEntity entity);//

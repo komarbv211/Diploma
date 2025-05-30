@@ -3,6 +3,7 @@ using Ardalis.Specification.EntityFrameworkCore;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1;
 
 namespace Infrastructure.Repositories;
 
@@ -68,6 +69,12 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         }
         dbSet.Remove(entityToDelete);
     }
+
+    public void DeleteRange(IEnumerable<TEntity> entities)
+    {
+        dbSet.RemoveRange(entities);
+    }
+
     public async Task<TEntity?> GetItemBySpec(ISpecification<TEntity> specification) =>
            await ApplySpecification(specification).FirstOrDefaultAsync();
     private IQueryable<TEntity> ApplySpecification(ISpecification<TEntity> specification)
