@@ -31,7 +31,7 @@ namespace WebApiDiploma.Controllers.User
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update([FromBody] UserUpdateDTO dto)
+        public async Task<ActionResult> Update([FromForm] UserUpdateDTO dto)
         {
             await service.UpdateUserAsync(dto);
             return NoContent();

@@ -94,14 +94,15 @@ namespace Core.Services
                     throw new HttpException("Користувача не знайдено для видалення", HttpStatusCode.NotFound);
                 }
 
-                // Перевіряємо, чи є зображення у користувача
-                if (!string.IsNullOrEmpty(user.Image))
-                {
-                    _imageService.DeleteImageIfExists(user.Image); // Видаляємо зображення, якщо воно є
-                }
+                //// Перевіряємо, чи є зображення у користувача
+                //if (!string.IsNullOrEmpty(user.Image))
+                //{
+                //    _imageService.DeleteImageIfExists(user.Image); // Видаляємо зображення, якщо воно є
+                //}
 
-                // Видаляємо користувача
-                await _repository.DeleteAsync(id);
+                //// Видаляємо користувача
+                //await _repository.DeleteAsync(id);
+                user.IsRemove = true;
                 await _repository.SaveAsync();
             }
             catch (DbUpdateException dbEx)
@@ -151,7 +152,8 @@ namespace Core.Services
 
         public async Task<PagedResultDto<UserDTO>> GetAllAsync(PagedRequestDto request)
         {
-            var users = _repository.GetAllQueryable();
+            var users = _repository.GetAllQueryable()
+                .Where(x=>!x.IsRemove);
             var builder = new PaginationBuilder<UserEntity>(users);
             var pagedResult = await builder.GetPageAsync(request.Page, request.PageSize);
 
@@ -167,7 +169,10 @@ namespace Core.Services
 
         public async Task<UserDTO> GetByIdAsync(long id)
         {
+            
             var user = await _repository.GetByID(id);
+            if(user.IsRemove)
+                user=null;
             return _mapper.Map<UserDTO>(user);
         }
 
@@ -212,6 +217,9 @@ namespace Core.Services
         public async Task UpdateUserAsync(UserUpdateDTO dto)
           {
               var user = await _repository.GetByID(dto.Id);
+              if(user.IsRemove)
+                user=null;
+
               if (user == null)
                   throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
           
@@ -241,9 +249,11 @@ namespace Core.Services
 
         public async Task<UserDTO?> GetByEmailAsync(string email)
         {
+
             var spec = new Core.Specifications.UserSpecs.ByEmailSpec(email);
             var user = await _repository.FirstOrDefaultAsync(spec);
-
+            if(user.IsRemove)
+                user=null;
             return user == null ? null : _mapper.Map<UserDTO>(user);
         }
 
