@@ -22,7 +22,7 @@ namespace Core.Interfaces
         Task AddRangeAsync(IEnumerable<TEntity> entities);
 
         //Task<bool> ExistsByEmailAsync(string email);
-            //Task<TEntity> GetByIdAsync(int id);
+        //Task<TEntity> GetByIdAsync(long id);
 
 
     }

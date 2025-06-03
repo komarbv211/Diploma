@@ -110,6 +110,12 @@ const Login: React.FC = () => {
                     title="Увійти через Google"
                     onLogin={onLoginGoogleResult}
                 />
+                 <div style={{ textAlign: 'center', marginTop: 16 }}>
+                    Немає акаунту?{' '}
+                    <Button type="link" onClick={() => navigate('/registr')} style={{ padding: 0, height: 'auto' }}>
+                        Зареєструватися
+                    </Button>
+                </div>
             </div>        
 
         </GoogleOAuthProvider>

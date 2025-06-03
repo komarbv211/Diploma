@@ -31,9 +31,9 @@ namespace Core.Validators.User
                 .MaximumLength(50).WithMessage("Last name cannot exceed 50 characters.")
                .Matches("[A-Z].*").WithMessage("{PropertyName} must starts with uppercase letter.");
 
-            RuleFor(user => user.Image)
-                .Must(url => string.IsNullOrEmpty(url) || Uri.IsWellFormedUriString(url, UriKind.Absolute))
-                .WithMessage("Image must be a valid URL.");
+            RuleFor(user => user.Image);
+                //.Must(url => string.IsNullOrEmpty(url) || Uri.IsWellFormedUriString(url, UriKind.Absolute))
+                //.WithMessage("Image must be a valid URL.");
 
             //RuleFor(user => user.Email)
             //    .NotEmpty().WithMessage("Email is required.")

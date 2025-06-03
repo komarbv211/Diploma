@@ -110,4 +110,8 @@ public class CategoryRepository : Repository<CategoryEntity>, ICategoryRepositor
      {
         return await context.Categories.AnyAsync(c => c.Name == name);
      }
+     //public async Task<CategoryEntity?> GetByIdAsync(long id)
+     //{
+     //    return await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+     //}
 }

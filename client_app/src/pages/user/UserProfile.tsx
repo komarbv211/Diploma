@@ -1,7 +1,7 @@
 import { UserOutlined, HomeOutlined, HistoryOutlined, GiftOutlined, DeleteOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { Layout, Menu, Input, Typography, Row, Col, Divider, Button, Space, Spin } from 'antd';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getAuth, logOut } from '../../store/slices/userSlice';
+import { useNavigate } from 'react-router-dom';
+import { getAuth, getUser, logOut } from '../../store/slices/userSlice';
 import { useGetUserByIdQuery } from '../../services/userApi';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../../store/store';
@@ -11,11 +11,11 @@ const { Content, Sider } = Layout;
 const { Title, Text } = Typography;
 
 const UserProfile = () => {
-  const { id } = useParams();
+  const client = useAppSelector(getUser);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
-  const { data: user, isLoading } = useGetUserByIdQuery(Number(id));
+  const { data: user, isLoading } = useGetUserByIdQuery(Number(client?.id));
   
   const auth = useAppSelector(getAuth);
   const isAdmin = auth.roles.includes('Admin');
