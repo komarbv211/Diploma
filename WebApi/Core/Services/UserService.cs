@@ -30,14 +30,6 @@ namespace Core.Services
         }
 
 
-        //public async Task CreateUserAsync(UserCreateDTO dto)
-        //{
-        //    var user = _mapper.Map<UserEntity>(dto);
-        //    user.UserName = user.Email;
-        //    await _repository.Insert(user);
-        //    await _repository.SaveAsync();
-        //}
-
         public async Task CreateUserAsync(UserCreateDTO dto)
         {
             try
@@ -70,24 +62,12 @@ namespace Core.Services
         }
 
 
-        //public async Task DeleteUserAsync(long id)
-        //{
-        //    await _repository.DeleteAsync(id);
-        //    await _repository.SaveAsync();
-        //}
-
         public async Task DeleteUserAsync(long id)
         {
             try
             {
                 // Отримуємо користувача з його зображенням
                 var user = await _repository.GetByID(id);
-                //var user = await _userManager.FindByIdAsync(id.ToString());
-
-                //var user = await _userManager.Users.AnyAsync(u => u.Id == id);
-
-                //var userId = _userManager.GetUserId(User);
-                //var user = await _userManager.FindByIdAsync(userId);
 
                 if (user == null)
                 {
@@ -116,38 +96,7 @@ namespace Core.Services
         }
 
 
-        //public async Task DeleteUserAsync(long id)
-        //{
-        //    try
-        //    {
-
-        //        // Отримуємо користувача за його ID через UserManager
-        //        var user = await _userManager.FindByIdAsync(id.ToString());
-
-        //        if (user == null)
-        //        {
-        //            throw new HttpException("Користувача не знайдено для видалення", HttpStatusCode.NotFound);
-        //        }
-
-        //        // Перевіряємо, чи є у користувача зображення та видаляємо його
-        //        if (!string.IsNullOrEmpty(user.Image))
-        //        {
-        //            _imageService.DeleteImageIfExists(user.Image);
-        //        }
-
-        //        // Видаляємо користувача через UserManager
-        //        var result = await _userManager.DeleteAsync(user);
-
-        //        if (!result.Succeeded)
-        //        {
-        //            throw new HttpException("Помилка при видаленні користувача", HttpStatusCode.InternalServerError);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new HttpException("Невідома помилка при видаленні користувача", HttpStatusCode.InternalServerError, ex);
-        //    }
-        //}
+       
 
 
         public async Task<PagedResultDto<UserDTO>> GetAllAsync(PagedRequestDto request)
@@ -176,44 +125,6 @@ namespace Core.Services
             return _mapper.Map<UserDTO>(user);
         }
 
-        // public async Task<UserDTO?> GetByIdAsync(long id)
-        //{
-        //    try
-        //    {
-        //         var user = await _repository.GetByID(id);
-        //            //.Include(p => p.Images)
-        //            //.FirstOrDefaultAsync(p => p.Id == id);
-
-        //        if (user == null)
-        //        {
-        //            throw new HttpException("Продукт не знайдений", HttpStatusCode.NotFound);
-        //        }
-
-        //        return _mapper.Map<UserDTO>(user);
-        //    }
-        //    catch (HttpException ex)
-        //    {
-        //        throw ex;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new HttpException("Помилка при отриманні продукту", HttpStatusCode.InternalServerError, ex);
-        //    }
-        //}
-
-
-        // Оновлення існуючої сутності
-        //public async Task UpdateUserAsync(UserUpdateDTO dto)
-        //{
-        //    var user = await _repository.GetByID(dto.Id);
-        //    if (user != null)
-        //    {
-        //        _mapper.Map(dto, user);
-        //        await _repository.Update(user);
-        //        await _repository.SaveAsync();
-        //    }
-        //}
-
         public async Task UpdateUserAsync(UserUpdateDTO dto)
           {
               var user = await _repository.GetByID(dto.Id);
@@ -222,6 +133,7 @@ namespace Core.Services
 
               if (user == null)
                   throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
+
               string imagName = user.Image;
             // Мапимо основні дані
             _mapper.Map(dto, user);
@@ -240,8 +152,6 @@ namespace Core.Services
                   user.Image = fileName;
               }
 
-               //// Мапимо інші дані
-               // _mapper.Map(dto, user);
           
               await _repository.Update(user);
               await _repository.SaveAsync();
