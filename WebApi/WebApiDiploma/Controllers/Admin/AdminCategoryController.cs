@@ -28,14 +28,14 @@ namespace WebApiDiploma.Controllers.Admin
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] CategoryCreateDto dto)
+        public async Task<ActionResult> Create([FromForm] CategoryCreateDto dto)
         {
             await _categoryService.CreateCategoryAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = dto.Name }, dto); 
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update([FromBody] CategoryUpdateDto dto)
+        public async Task<ActionResult> Update([FromForm] CategoryUpdateDto dto)
         {          
             await _categoryService.UpdateCategoryAsync(dto);
             return NoContent(); 

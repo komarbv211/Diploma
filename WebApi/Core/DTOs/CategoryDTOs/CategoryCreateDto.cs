@@ -1,4 +1,6 @@
-﻿namespace Core.DTOs.CategoryDTOs
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Core.DTOs.CategoryDTOs
 {
     public class CategoryCreateDto
     {
@@ -8,7 +10,7 @@
 
         public int Priority { get; set; } = 0;
 
-        public string? Image { get; set; }
+        public IFormFile? Image { get; set; }
 
         public string? Description { get; set; }
 
