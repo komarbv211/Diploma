@@ -1,4 +1,6 @@
-﻿namespace Core.DTOs.UsersDTOs
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Core.DTOs.UsersDTOs
 {
     public class UserDTO
     {

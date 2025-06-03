@@ -15,6 +15,8 @@ namespace Infrastructure.Entities
 
         public DateTime? LastActivity { get; set; } = DateTime.UtcNow;
 
+        public bool IsRemove {get ; set; }
+
         [StringLength(200)]
         public string? Image { get; set; }
 
