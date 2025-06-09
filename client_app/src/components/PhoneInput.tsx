@@ -190,36 +190,30 @@ const operatorOptions = [
     { code: '093', label: 'Lifecell (093)' },
 ];
 
-const PhoneInput: React.FC<PhoneInputProps> = ({
-                                                   value,
-                                                   onChange,
-                                                   onOperatorChange,
-                                                   ...rest
-                                               }) => {
+const PhoneInput: React.FC<PhoneInputProps> = ({ value = '', onChange, onOperatorChange, ...rest }) => {
     const [operator, setOperator] = React.useState('050');
-console.log("value", value);
-    // При ініціалізації або зміні value — оновлюємо оператор
-    React.useEffect(() => {
 
+    React.useEffect(() => {
         if (value) {
             const match = value.match(/\+38\s?\((\d{3})\)/);
             if (match && match[1] && operator !== match[1]) {
                 setOperator(match[1]);
             }
         }
-        // console.log("test"+value);
-    }, [value]);
+    }, [value, operator]);
 
     const handleOperatorChange = (newOperator: string) => {
         setOperator(newOperator);
-        if (onOperatorChange) {
-            onOperatorChange(newOperator);
-        }
+        onOperatorChange?.(newOperator);
 
+        // Витягуємо решту номера без коду оператора
         const restNumber = value?.replace(/^\+38\s?\(\d{3}\)\s?/, '') || '';
         const newValue = `+38 (${newOperator}) ${restNumber}`;
-        onChange?.({ target: { value: newValue } } as React.ChangeEvent<HTMLInputElement>);
+        onChange?.({
+            target: { value: newValue },
 
+
+        } as React.ChangeEvent<HTMLInputElement>);
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -227,9 +221,7 @@ console.log("value", value);
         const match = newValue.match(/\+38\s?\((\d{3})\)/);
         if (match && match[1] && operator !== match[1]) {
             setOperator(match[1]);
-            if (onOperatorChange) {
-                onOperatorChange(match[1]);
-            }
+            onOperatorChange?.(match[1]);
         }
         onChange?.(e);
     };
@@ -246,7 +238,7 @@ console.log("value", value);
                 }))}
             />
             <MaskedInput
-                name = "phone"
+                name="phone"
                 mask="+38 (000) 000-00-00"
                 value={value}
                 onChange={handleInputChange}

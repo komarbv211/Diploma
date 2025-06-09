@@ -253,13 +253,14 @@ namespace Core.Services
                 throw new HttpException("Користувач з такою електронною поштою вже існує", HttpStatusCode.BadRequest);
             }
 
-            var userWithSamePhone = userManager.Users.FirstOrDefault(u => u.PhoneNumber == model.PhoneNumber);
+            var userWithSamePhone = userManager.Users.FirstOrDefault(u => u.PhoneNumber == model.Phone);
             if (userWithSamePhone != null)
             {
                 throw new HttpException("Користувач з таким номером телефону вже існує", HttpStatusCode.BadRequest);
             }
 
             var user = mapper.Map<UserEntity>(model);
+                user.PhoneNumber = model.Phone;
             var res = await userManager.CreateAsync(user, model.Password);
 
             if (!res.Succeeded)

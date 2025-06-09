@@ -12,7 +12,8 @@ namespace Core.Mappers
         public UserProfile()
         {
             CreateMap<RegisterDto, UserEntity>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone));
 
             CreateMap<GoogleUserInfo, UserEntity>()
                 .ForMember(x => x.FirstName, opt => opt.MapFrom(x => x.Given_Name))

@@ -13,7 +13,7 @@ namespace Core.DTOs.AuthorizationDTOs
         [Required]
         public string? Email { get; set; } 
          [Required]
-        public string? PhoneNumber { get; set; }
+        public string? Phone { get; set; }
 
         [Required]
         public string? Password { get; set; }
