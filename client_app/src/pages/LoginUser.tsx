@@ -1,5 +1,5 @@
 import { Button, Form, Input, Modal } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { APP_ENV } from '../env';
 import {
@@ -99,6 +99,10 @@ const Login: React.FC = () => {
                         </Button>
                     </Form.Item>
                 </Form>
+
+                <div style={{ textAlign: 'center', margin: '10px 0' }}>
+                    <Link to="/forgot-password">Забули пароль?</Link>
+                </div>
 
                 <GoogleLoginButton
                     icon={<GoogleOutlined />}

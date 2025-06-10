@@ -4,11 +4,14 @@ import {
     IGoogleLoginRequest,
     IGoogleRegister,
     IUserLoginRequest,
-    IUserRegisterRequest
+    IUserRegisterRequest,
+    IForgotPasswordRequest,
+    IResetPasswordRequest
 } from '../types/account';
 import { createBaseQuery } from '../utilities/createBaseQuery';
 import { handleAuthQueryStarted } from '../utilities/handleAuthQueryStarted';
 import { serialize } from 'object-to-formdata';
+
 
 export const authApi = createApi({
     reducerPath: 'accountApi',
@@ -60,6 +63,27 @@ export const authApi = createApi({
                 method: 'GET',
             }),
         }),
+
+        forgotPassword: builder.mutation<void, IForgotPasswordRequest>({
+            query: (data) => ({
+                url: 'forgot-password',
+                method: 'POST',
+                body: { Email: data.email },
+            }),
+        }),
+
+        resetPassword: builder.mutation<void, IResetPasswordRequest>({
+            query: (data) => ({
+                url: 'reset-password',
+                method: 'POST',
+                body: {
+                    Email: data.email,
+                    Token: data.token,
+                    Password: data.password,
+                },
+            }),
+            invalidatesTags: ['AuthUser'],
+        }),
     }),
 });
 
@@ -69,4 +93,6 @@ export const {
     useConfirmGoogleLoginMutation,
     useConfirmGoogleRegisterMutation,
     useLazyCheckGoogleRegisteredQuery,
+    useForgotPasswordMutation,
+    useResetPasswordMutation,
 } = authApi;
