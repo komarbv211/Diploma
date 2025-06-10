@@ -13,6 +13,7 @@ namespace Core.Interfaces
         Task SaveAsync();
         void Delete(object id);
         Task DeleteAsync(object id);
+        void DeleteRange(IEnumerable<TEntity> entities);
         Task<TEntity?> GetItemBySpec(ISpecification<TEntity> specification);
         Task Insert(TEntity entity);//
         Task Update(TEntity entity);//
@@ -21,7 +22,7 @@ namespace Core.Interfaces
         Task AddRangeAsync(IEnumerable<TEntity> entities);
 
         //Task<bool> ExistsByEmailAsync(string email);
-            //Task<TEntity> GetByIdAsync(int id);
+        //Task<TEntity> GetByIdAsync(long id);
 
 
     }

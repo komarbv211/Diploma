@@ -10,19 +10,22 @@ const LoginUser = lazy(() => import('./pages/LoginUser.tsx'))
 const RegistrUser = lazy(() => import('./pages/RegistrUser.tsx'))
 const GoogleRegisterUser = lazy(() => import('./pages/GoogleRegisterUser.tsx'))
 const AdminRoutes = lazy(() => import('./routes/adminRoutes'))
+const NotFoundPage = lazy(() => import('./pages/common/NotFoundPage.tsx'))
 
 function App() {
   return (
-    <Suspense fallback={<Loader/>}>
+    <Suspense fallback={<Loader />}>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/profile/:id" element={<UserProfile />} />
-        </Route>
+          <Route path="/profile" element={<UserProfile />} />
 
-        <Route path="/google-register" element={<GoogleRegisterUser />} />
-        <Route path="/login/*" element={<LoginUser />} />
-        <Route path="/registr/*" element={<RegistrUser />} />
+          <Route path="/google-register" element={<GoogleRegisterUser />} />
+          <Route path="/login/*" element={<LoginUser />} />
+          <Route path="/registr/*" element={<RegistrUser />} />
+
+          <Route path='*' element={<NotFoundPage />} />
+        </Route>
 
         <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>
