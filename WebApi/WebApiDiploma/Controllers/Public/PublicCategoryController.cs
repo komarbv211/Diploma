@@ -30,6 +30,23 @@ namespace WebApiDiploma.Controllers.Public
                 return NotFound();
 
             return Ok(category);
+        }
+
+        [HttpGet("root")]
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetRootCategories()
+        {
+            var categories = await _categoryService.GetRootCategoriesAsync();
+            return Ok(categories);
+        }
+
+        [HttpGet("children/{id}")]
+        public async Task<ActionResult<CategoryDto>> GetChildrenById(long id)
+        {
+            var category = await _categoryService.GetChildrenAsync(id);
+            if (category == null)
+                return NotFound();
+
+            return Ok(category);
         }        
     }
 }
