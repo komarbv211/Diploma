@@ -1,83 +1,82 @@
-import { Button, Form, Input } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Button, Form, Input, Modal } from 'antd';
+import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { APP_ENV } from '../env';
-import { useConfirmGoogleLoginMutation, useLoginUserMutation } from '../services/authApi';
-import { GoogleOAuthProvider } from "@react-oauth/google";
+import {
+    useConfirmGoogleLoginMutation,
+    useLoginUserMutation,
+    useLazyCheckGoogleRegisteredQuery,
+} from '../services/authApi';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import GoogleLoginButton from '../components/buttons/GoogleLoginButton';
 import { GoogleOutlined } from '@ant-design/icons';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
-    const [loginUser] = useLoginUserMutation();  
-    const [errorMessage, setErrorMessage] = useState<string>('');     
-    const [confirmGoogleLogin] = useConfirmGoogleLoginMutation();     
 
-    
+    const [loginUser] = useLoginUserMutation();
+    const [confirmGoogleLogin] = useConfirmGoogleLoginMutation();
+    const [triggerCheckGoogleRegistered] = useLazyCheckGoogleRegisteredQuery();
+
+    const [errorMessage, setErrorMessage] = useState('');
+    const [showGoogleModal, setShowGoogleModal] = useState(false);
+
     const onFinish = async (values: { email: string; password: string }) => {
-        console.log('Надіслані дані для логіну:', values);
+        setErrorMessage('');
+
         try {
-            const response = await loginUser(values).unwrap();
-            console.log('Користувач успішно увійшов. Дані від сервера:', response);
+            const { data } = await triggerCheckGoogleRegistered(values.email);
+            console.log('Google registration check response:', data);
+
+            if (data?.isGoogleUser) {
+                setShowGoogleModal(true);
+                return;
+            }
+
+            await loginUser(values).unwrap();
             navigate('/');
-        } catch (error: unknown) {
-            const typedError = error as { data?: { message?: string }; status?: number };
-            console.error('Помилка при вході:', {
-                message: typedError?.data?.message,
-                status: typedError?.status,
-                details: typedError,
-            });
+        } catch (error) {
+            console.error('Login error:', error);
             setErrorMessage('Невірний email або пароль');
         }
     };
 
-    const onLoginGoogleResult = async (tokenGoogle: string) => {
-        if (!tokenGoogle) return;    
-    
+    const onLoginGoogleResult = async (googleToken: string) => {
+        if (!googleToken) return;
+
         try {
-            const result = await confirmGoogleLogin({googleAccessToken: tokenGoogle!}).unwrap();
-            if (result.isNewUser) {
-                navigate(`/google-register?token=${tokenGoogle}`);
-            } else {
-                navigate('/');
-            }
-        } catch (error: unknown) {
-            console.error('Помилка авторизації через Google:', error);
-            const typedError = error as { data?: { message?: string }; status?: number };
-    
-            if (typedError?.status === 401) {
-                setErrorMessage('Токен Google недійсний або протермінований');
-            } else if (typedError?.status === 400) {
-                setErrorMessage('Не вдалося виконати вхід. Спробуйте ще раз.');
-            } else {
-                setErrorMessage('Не вдалося увійти через Google. Спробуйте ще раз.');
-            }
+            const result = await confirmGoogleLogin({ googleAccessToken: googleToken }).unwrap();
+            navigate(result.isNewUser ? `/google-register?token=${googleToken}` : '/');
+        } catch (error) {
+            const typed = error as { status?: number };
+            setErrorMessage(
+                typed?.status === 401
+                    ? 'Токен Google недійсний або протермінований'
+                    : 'Не вдалося увійти через Google'
+            );
         }
-    }; 
-    
+    };
+
     return (
-        <GoogleOAuthProvider clientId={APP_ENV.CLIENT_ID}>            
-            <div style={{ maxWidth: 400, margin: '0 auto', padding: '20px' }}>
-                <Button onClick={() => navigate(-1)} type="default">
-                    Назад
-                </Button>
+        <GoogleOAuthProvider clientId={APP_ENV.CLIENT_ID}>
+            <div style={{ maxWidth: 400, margin: '0 auto', padding: 20 }}>
+                <Button onClick={() => navigate(-1)}>Назад</Button>
                 <h2>Вхід</h2>
 
                 <Form
+                    form={form}
+                    onFinish={onFinish}
                     labelCol={{ span: 6 }}
                     wrapperCol={{ span: 18 }}
                     layout="horizontal"
-                    style={{ maxWidth: 600 }}
-                    onFinish={onFinish}
-                    form={form}
                 >
                     <Form.Item
                         name="email"
                         label="Email"
                         rules={[
                             { required: true, message: 'Будь ласка, введіть email!' },
-                            { type: 'email', message: 'Будь ласка, введіть дійсний email!' },
+                            { type: 'email', message: 'Недійсний email' },
                         ]}
                     >
                         <Input placeholder="Ваш email" />
@@ -86,38 +85,49 @@ const Login: React.FC = () => {
                     <Form.Item
                         name="password"
                         label="Пароль"
-                        rules={[{ required: true, message: 'Будь ласка, введіть пароль!' }]}
+                        rules={[{ required: true, message: 'Введіть пароль!' }]}
                     >
                         <Input.Password placeholder="Ваш пароль" />
                     </Form.Item>
 
-                    {errorMessage && (
-                        <div style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</div>
-                    )}
+                    {errorMessage && <div style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</div>}
 
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button type="default" htmlType="reset">
-                            Скасувати
-                        </Button>
+                        <Button htmlType="reset">Скасувати</Button>
                         <Button type="primary" htmlType="submit">
                             Увійти
                         </Button>
                     </Form.Item>
                 </Form>
 
+                <div style={{ textAlign: 'center', margin: '10px 0' }}>
+                    <Link to="/forgot-password">Забули пароль?</Link>
+                </div>
+
                 <GoogleLoginButton
                     icon={<GoogleOutlined />}
                     title="Увійти через Google"
                     onLogin={onLoginGoogleResult}
                 />
-                 <div style={{ textAlign: 'center', marginTop: 16 }}>
-                    Немає акаунту?{' '}
-                    <Button type="link" onClick={() => navigate('/registr')} style={{ padding: 0, height: 'auto' }}>
-                        Зареєструватися
-                    </Button>
-                </div>
-            </div>        
 
+                <Modal
+                    open={showGoogleModal}
+                    onCancel={() => setShowGoogleModal(false)}
+                    footer={[
+                        <Button key="cancel" onClick={() => setShowGoogleModal(false)}>
+                            Скасувати
+                        </Button>,
+                        <GoogleLoginButton
+                            key="google"
+                            icon={<GoogleOutlined />}
+                            title="Увійти через Google"
+                            onLogin={onLoginGoogleResult}
+                        />,
+                    ]}
+                >
+                    <p>Цей email вже зареєстрований через Google. Будь ласка, увійдіть через Google.</p>
+                </Modal>
+            </div>
         </GoogleOAuthProvider>
     );
 };

@@ -64,7 +64,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
 // FluentValidation
 builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
-
+ 
 builder.Services.AddMvc(options =>
 {
     options.Filters.Add<ValidationFilter>();

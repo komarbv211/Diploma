@@ -81,5 +81,14 @@ export interface LoginButtonProps {
     icon: React.ReactNode;
 }
 
+export interface IForgotPasswordRequest {
+    email: string;
+}
+
+export interface IResetPasswordRequest {
+    email: string;
+    token: string;
+    password: string;
+}
 
 
