@@ -9,27 +9,31 @@ const UserProfile = lazy(() => import('./pages/user/UserProfile.tsx'))
 const LoginUser = lazy(() => import('./pages/LoginUser.tsx'))
 const RegistrUser = lazy(() => import('./pages/RegistrUser.tsx'))
 const GoogleRegisterUser = lazy(() => import('./pages/GoogleRegisterUser.tsx'))
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword.tsx'))
+const ResetPassword = lazy(() => import('./pages/ResetPassword.tsx')) // Додаємо імпорт ResetPassword
 const AdminRoutes = lazy(() => import('./routes/adminRoutes'))
 const NotFoundPage = lazy(() => import('./pages/common/NotFoundPage.tsx'))
 
 function App() {
   return (
-    <Suspense fallback={<Loader />}>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<UserProfile />} />
+      <Suspense fallback={<Loader />}>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/profile" element={<UserProfile />} />
 
-          <Route path="/google-register" element={<GoogleRegisterUser />} />
-          <Route path="/login/*" element={<LoginUser />} />
-          <Route path="/registr/*" element={<RegistrUser />} />
+            <Route path="/google-register" element={<GoogleRegisterUser />} />
+            <Route path="/login/*" element={<LoginUser />} />
+            <Route path="/registr/*" element={<RegistrUser />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} /> {/* Новий маршрут */}
 
-          <Route path='*' element={<NotFoundPage />} />
-        </Route>
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
 
-        <Route path="/admin/*" element={<AdminRoutes />} />
-      </Routes>
-    </Suspense>
+          <Route path="/admin/*" element={<AdminRoutes />} />
+        </Routes>
+      </Suspense>
   )
 }
 

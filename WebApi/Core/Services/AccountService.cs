@@ -292,23 +292,36 @@ namespace Core.Services
 
         public async Task ForgotPasswordAsync(ForgotPasswordDto model)
         {
+            // Перевірка, чи існує користувач із заданим email
             var user = await userManager.FindByEmailAsync(model.Email);
-
             if (user == null)
             {
-                throw new HttpException("Email not found", HttpStatusCode.NotFound);
+                throw new HttpException("Email не знайдено", HttpStatusCode.NotFound);
             }
 
-            
-                var token = await userManager.GeneratePasswordResetTokenAsync(user);
-                var resetUrl = configuration["ResetPasswordUrl"];
-                var callbackUrl = $"{resetUrl}?email={Uri.EscapeDataString(user.Email)}&token={Uri.EscapeDataString(token)}";
+            // Генерація токена для скидання пароля
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
+            // Перевірка конфігурації ResetPasswordUrl
+            var resetUrl = configuration["ResetPasswordUrl"];
+
+            // Кодування параметрів для URL
+            var encodedEmail = Uri.EscapeDataString(user.Email);
+            var encodedToken = Uri.EscapeDataString(token);
+            var callbackUrl = $"{resetUrl}/{encodedToken}"; // Форматуємо URL для клієнта, наприклад, /reset-password/{token}
+
+            // Надсилання листа з посиланням для скидання пароля
+            try
+            {
                 await emailService.SendEmailAsync(
                     model.Email,
                     "Скидання паролю",
-                    $"Токен для скидання пароля: {token}");
-           
+                    $"Для скидання пароля перейдіть за посиланням: <a href=\"{callbackUrl}\">Скинути пароль</a>");
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Не вдалося надіслати лист для скидання пароля.", HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         public async Task ResetPasswordAsync(ResetPasswordDto model)
@@ -333,6 +346,17 @@ namespace Core.Services
                 throw new HttpException("Failed to reset password.", HttpStatusCode.InternalServerError);
             }
         }
+
+        public async Task<bool> IsRegisteredWithGoogleAsync(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+                return false;
+
+            var logins = await userManager.GetLoginsAsync(user);
+            return logins.Any(login => login.LoginProvider == "Google");
+        }
+
 
     }
 }
