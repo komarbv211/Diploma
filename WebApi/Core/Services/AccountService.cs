@@ -260,7 +260,7 @@ namespace Core.Services
             }
 
             var user = mapper.Map<UserEntity>(model);
-                user.PhoneNumber = model.Phone;
+            //    user.PhoneNumber = model.Phone;
             var res = await userManager.CreateAsync(user, model.Password);
 
             if (!res.Succeeded)

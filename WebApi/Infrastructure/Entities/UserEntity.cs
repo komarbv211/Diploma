@@ -14,6 +14,8 @@ namespace Infrastructure.Entities
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
         public DateTime? LastActivity { get; set; } = DateTime.UtcNow;
+        
+        public string PhoneNumber {get; set;}
 
         public bool IsRemove {get ; set; }
 

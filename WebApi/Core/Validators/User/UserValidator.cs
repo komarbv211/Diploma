@@ -24,6 +24,7 @@ namespace Core.Validators.User
                 .MinimumLength(2)
                 .MaximumLength(50).WithMessage("First name cannot exceed 50 characters.")
                .Matches("[A-Z].*").WithMessage("{PropertyName} must starts with uppercase letter.");
+            //First name must start with uppercase letter.
 
             RuleFor(user => user.LastName)
                 .NotEmpty().WithMessage("Last name is required.")
