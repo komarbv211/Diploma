@@ -1,18 +1,25 @@
+import { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import Dashboard from '../pages/admin/Dashboard';
-import AdminProfile from '../pages/admin/AdminProfile';
-import UsersPage from '../pages/admin/users/UsersPage';
-import AdminLayout from '../components/layouts/admin/Layout';
-import CategoryList from '../pages/admin/categories/CategoryList';
+
+const AdminLayout = lazy(() => import('./../components/layouts/admin/Layout'))
+const Dashboard = lazy(() => import('./../pages/admin/Dashboard'))
+const AdminProfile = lazy(() => import('./../pages/admin/AdminProfile'))
+const UsersPage = lazy(() => import('./../pages/admin/users/UsersPage'))
+const CategoryList = lazy(() => import('./../pages/admin/categories/CategoryList'))
+const EditCategoryPage = lazy(() => import('./../pages/admin/categories/EditCategoryPage'))
 
 export const AdminRoutes = () => {
   return (
     <Routes>
-    <Route element={<AdminLayout />}>
+      <Route element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
         <Route path='profile' element={<AdminProfile />} />
         <Route path="users" element={<UsersPage />} />
-        <Route path="/categories" element={<CategoryList />} />
+        <Route path="categories">
+            <Route index element={<CategoryList />} />
+            {/* <Route path="create" element={<CreateCategoryPage />} /> */}
+            <Route path="edit/:id" element={<EditCategoryPage />} />
+        </Route>
       </Route>
     </Routes>
    

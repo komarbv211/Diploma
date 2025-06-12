@@ -1,25 +1,28 @@
 import { useState, useEffect } from 'react';
 import {
+  MenuProps,
   Table,
   Button,
-  Dropdown,
-  Menu,
+  Dropdown, 
   Input,
   Space,
   Spin,
   message,
+  notification,
   Image,
 } from 'antd';
 import {
-  DownOutlined,
   SearchOutlined,
   PlusOutlined,
+  MoreOutlined,
 } from '@ant-design/icons';
+import { Link} from "react-router-dom";
 import { ICategory } from '../../../types/category';
 import { useGetCategoryTreeQuery } from '../../../services/categoryApi';
 import PaginationComponent from '../../../components/pagination/PaginationComponent';
 import React from 'react';
 import { APP_ENV } from '../../../env';
+import { useDeleteCategoryMutation } from '../../../services/admin/categoryAdmnApi';
 
 const CategoryList = () => {
   const [searchText, setSearchText] = useState('');
@@ -28,6 +31,7 @@ const CategoryList = () => {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [loadingChildrenIds, setLoadingChildrenIds] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleteCategory] = useDeleteCategoryMutation();
 
   const pageSize = 10;
 
@@ -109,7 +113,30 @@ const CategoryList = () => {
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
-
+  const renderActions = (id: number) => {
+      const items: MenuProps["items"] = [
+          { key: "edit", label: <Link to={`edit/${id}`}>Редагувати</Link> },
+          { key: "delete", danger: true, label: <span onClick={() => handleDelete(id)}>Видалити</span> },
+      ];
+      return (
+          <Dropdown menu={{ items }} trigger={["click"]}>
+              <Button icon={<MoreOutlined />} shape="circle" />
+          </Dropdown>
+      );
+  };
+  const handleDelete = async (id: number) => {
+      try {
+          await deleteCategory(id).unwrap();
+          notification.success({
+              message: "Категорія видалена",
+              description: "Категорія успішно видалена!",
+          });
+      } catch {
+          notification.error({
+              message: "Помилка видалення категорії",
+          });
+      }
+  };
   const columns = [
     {
       title: 'Назва',
@@ -146,25 +173,8 @@ const CategoryList = () => {
     {
       title: 'Дії',
       key: 'actions',
-      render: (_: unknown, record: ICategory) => (
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item onClick={() => console.log('edit', record)}>
-                Редагувати
-              </Menu.Item>
-              <Menu.Item onClick={() => console.log('delete', record)}>
-                Видалити
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <Button>
-            Дії <DownOutlined />
-          </Button>
-        </Dropdown>
-      ),
-    },
+      render: (_: unknown, record: ICategory) => renderActions(record.id),
+    }
   ];
 
   return (

@@ -5,6 +5,7 @@ import { userApi } from '../services/userApi';
 import { authApi } from '../services/authApi';
 import { userAdminApi } from '../services/admin/userAdninApi';
 import { categoryApi } from '../services/categoryApi';
+import { categoryAdminApi } from '../services/admin/categoryAdmnApi';
 
 export const store = configureStore({
         reducer: {
@@ -13,13 +14,15 @@ export const store = configureStore({
                 [userAdminApi.reducerPath]: userAdminApi.reducer,
                 [userApi.reducerPath]: userApi.reducer,
                 [categoryApi.reducerPath]: categoryApi.reducer,
+                [categoryAdminApi.reducerPath]: categoryAdminApi.reducer,
         },
         middleware: (getDefaultMiddleware) =>
                 getDefaultMiddleware().concat(
                         authApi.middleware,
                         userAdminApi.middleware,
                         userApi.middleware,
-                        categoryApi.middleware
+                        categoryApi.middleware,
+                        categoryAdminApi.middleware
                 ),
 });
 
