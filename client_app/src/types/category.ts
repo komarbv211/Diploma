@@ -8,3 +8,16 @@ export interface ICategory {
   parentId: number | null;
   children?: ICategory[];
 }
+
+export interface ICategoryPostRequest {
+  name: string;
+  urlSlug: string;
+  priority: number;
+  description: string;
+  image: File|null;
+  parentId: number | null;  
+}
+
+export interface ICategoryPutRequest extends Partial<ICategoryPostRequest> {
+    id: number;
+}
