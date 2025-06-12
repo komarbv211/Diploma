@@ -17,7 +17,8 @@ const GoogleRegisterUser = () => {
     const { userInfo } = useGoogleUserInfo(token);
     const { Text } = Typography;
     const [errorMessage, setErrorMessage] = useState<string>(''); 
-    
+    const [isLoading, setIsLoading] = useState(false);
+
     useEffect(() => {
         if (userInfo) {
             form.setFieldsValue({
@@ -34,6 +35,7 @@ const GoogleRegisterUser = () => {
     };
 
     const handleSubmit = async () => {
+        setIsLoading(true);
         try {
             const values = await form.validateFields();
             const formData = new FormData();
@@ -56,6 +58,8 @@ const GoogleRegisterUser = () => {
             } else {
                 setErrorMessage('Не вдалося зареєструватися через Google. Спробуйте ще раз.');
             }
+        } finally {
+            setIsLoading(false);
         }
     };
     const handleCancel = () => {
@@ -138,7 +142,7 @@ const GoogleRegisterUser = () => {
                         <Button danger onClick={handleCancel}>
                             Скасувати
                         </Button>
-                        <Button type="primary" htmlType="submit" >
+                        <Button type="primary" htmlType="submit"  loading={isLoading}>
                             Завершити Реєстрацію
                         </Button>
                     </div>
