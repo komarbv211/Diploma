@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal } from 'antd';
+import { Button, Form, Input, Modal, Spin } from 'antd';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { APP_ENV } from '../env';
@@ -21,10 +21,12 @@ const Login: React.FC = () => {
 
     const [errorMessage, setErrorMessage] = useState('');
     const [showGoogleModal, setShowGoogleModal] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const onFinish = async (values: { email: string; password: string }) => {
         setErrorMessage('');
 
+        setIsLoading(true);
         try {
             const { data } = await triggerCheckGoogleRegistered(values.email);
             console.log('Google registration check response:', data);
@@ -39,6 +41,8 @@ const Login: React.FC = () => {
         } catch (error) {
             console.error('Login error:', error);
             setErrorMessage('Невірний email або пароль');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -64,41 +68,43 @@ const Login: React.FC = () => {
                 <Button onClick={() => navigate(-1)}>Назад</Button>
                 <h2>Вхід</h2>
 
-                <Form
-                    form={form}
-                    onFinish={onFinish}
-                    labelCol={{ span: 6 }}
-                    wrapperCol={{ span: 18 }}
-                    layout="horizontal"
-                >
-                    <Form.Item
-                        name="email"
-                        label="Email"
-                        rules={[
-                            { required: true, message: 'Будь ласка, введіть email!' },
-                            { type: 'email', message: 'Недійсний email' },
-                        ]}
+                <Spin spinning={isLoading} tip="Завантаження...">
+                    <Form
+                        form={form}
+                        onFinish={onFinish}
+                        labelCol={{ span: 6 }}
+                        wrapperCol={{ span: 18 }}
+                        layout="horizontal"
                     >
-                        <Input placeholder="Ваш email" />
-                    </Form.Item>
+                        <Form.Item
+                            name="email"
+                            label="Email"
+                            rules={[
+                                { required: true, message: 'Будь ласка, введіть email!' },
+                                { type: 'email', message: 'Недійсний email' },
+                            ]}
+                        >
+                            <Input placeholder="Ваш email" />
+                        </Form.Item>
 
-                    <Form.Item
-                        name="password"
-                        label="Пароль"
-                        rules={[{ required: true, message: 'Введіть пароль!' }]}
-                    >
-                        <Input.Password placeholder="Ваш пароль" />
-                    </Form.Item>
+                        <Form.Item
+                            name="password"
+                            label="Пароль"
+                            rules={[{ required: true, message: 'Введіть пароль!' }]}
+                        >
+                            <Input.Password placeholder="Ваш пароль" />
+                        </Form.Item>
 
-                    {errorMessage && <div style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</div>}
+                        {errorMessage && <div style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</div>}
 
-                    <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button htmlType="reset">Скасувати</Button>
-                        <Button type="primary" htmlType="submit">
-                            Увійти
-                        </Button>
-                    </Form.Item>
-                </Form>
+                        <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
+                            <Button htmlType="reset">Скасувати</Button>
+                            <Button type="primary" htmlType="submit">
+                                Увійти
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Spin>
 
                 <div style={{ textAlign: 'center', margin: '10px 0' }}>
                     <Link to="/forgot-password">Забули пароль?</Link>
