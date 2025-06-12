@@ -59,6 +59,14 @@ namespace WebApiDiploma.Controllers.Public
             }
         }
 
+        [HttpGet("is-registered-google")]
+        public async Task<IActionResult> IsRegisteredWithGoogle([FromQuery] string email)
+        {
+            var isGoogleUser = await accountService.IsRegisteredWithGoogleAsync(email);
+            return Ok(new { isGoogleUser });
+        }
+
+
         [HttpPost("refreshTokens")]
         public async Task<IActionResult> RefreshTokens([FromBody] RefreshRequest refreshRequest)
         {

@@ -89,6 +89,10 @@ namespace Core.Services
                 var newFileName = await _imageService.SaveImageAsync(dto.Image);
                 category.Image = newFileName;
             }
+            else {
+                category.Image = imageName;
+            };
+
             await _categoryRepository.Update(category);
             await _categoryRepository.SaveAsync();
         }
