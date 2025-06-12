@@ -36,11 +36,12 @@ namespace Core.Services
             {
                 var user = _mapper.Map<UserEntity>(dto);
 
+                user.UserName =user.Email;
                 // Збереження одного зображення, якщо воно є
                 if (dto.Image is not null)
                 {
                     user.Image = await _imageService.SaveImageAsync(dto.Image); // Зберігаємо назву прямо в `UserEntity`
-                    await _repository.SaveAsync(); // Додаткове збереження після оновлення користувача
+                    //await _repository.SaveAsync(); // Додаткове збереження після оновлення користувача
                 }
 
                 var result = await _userManager.CreateAsync(user, dto.Password);

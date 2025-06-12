@@ -10,27 +10,27 @@ namespace Core.Validators.Authorization
             RuleFor(x => x.FirstName)
                 .NotEmpty().WithMessage("First name is required.")
                 .MaximumLength(255)
-                .Matches("^[A-Z]").WithMessage("First name must start with uppercase letter.");
+                .Matches("^[A-Z]").WithMessage("Ім'я має починатись з великої літери.");
 
             RuleFor(x => x.LastName)
                 .NotEmpty().WithMessage("Last name is required.")
                 .MaximumLength(255)
-                .Matches("^[A-Z]").WithMessage("Last name must start with uppercase letter.");
+                .Matches("^[A-Z]").WithMessage("Прізвище має починатись з великої літери.");
 
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Invalid email address.");
+                .EmailAddress().WithMessage("Невірна електронна пошта.");
 
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Password is required.")
                 .MinimumLength(6)
-                .Matches("[A-Z]").WithMessage("Password must contain at least one uppercase letter.")
-                .Matches("[a-z]").WithMessage("Password must contain at least one lowercase letter.")
-                .Matches("[0-9]").WithMessage("Password must contain at least one number.");
+                .Matches("[A-Z]").WithMessage("Пароль повинен містити хоча б одну велику літеру.")
+                .Matches("[a-z]").WithMessage("Пароль повинен містити хоча б одну малу літеру.")
+                .Matches("[0-9]").WithMessage("Пароль повинен містити принаймні одну цифру.");
 
             RuleFor(x => x.Image)
                 .Must(uri => string.IsNullOrEmpty(uri) || Uri.IsWellFormedUriString(uri, UriKind.Absolute))
-                .WithMessage("Image must be a valid URL.");
+                .WithMessage("Зображення має бути дійсною URL-адресою.");
         }
     }
 }
