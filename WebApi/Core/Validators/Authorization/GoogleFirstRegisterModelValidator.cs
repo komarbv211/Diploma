@@ -16,9 +16,9 @@ namespace Core.Validators.Authorization
             RuleFor(x => x.LastName)
                 .MaximumLength(255).WithMessage("Last name cannot exceed 255 characters.");
 
-            RuleFor(x => x.PhoneNumber)
-                .Matches(@"^\+?[0-9]{7,15}$")
-                .When(x => !string.IsNullOrWhiteSpace(x.PhoneNumber))
+            RuleFor(x => x.Phone)
+                .Matches(@"^\+38\s?\(?\d{3}\)?\s?\d{3}-\d{2}-\d{2}$")
+                .When(x => !string.IsNullOrWhiteSpace(x.Phone))
                 .WithMessage("Invalid phone number format.");
 
             RuleFor(x => x.Image)

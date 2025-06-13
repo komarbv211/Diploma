@@ -36,6 +36,8 @@ const GoogleRegisterUser = () => {
     const handleSubmit = async () => {
         try {
             const values = await form.validateFields();
+            console.log("values google reg:", values);
+
             await confirmGoogleRegister({
                 ...values,
                 googleAccessToken: token!,

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace Core.Models.Authentication
 {
@@ -7,7 +8,7 @@ namespace Core.Models.Authentication
         public string GoogleAccessToken {  get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public IFormFile? Image { get; set; }
-        public string? PhoneNumber { get; set; }
+        public IFormFile? Image { get; set; }       
+        public string? Phone { get; set; }
     } 
 }

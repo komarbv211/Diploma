@@ -151,7 +151,7 @@ namespace Core.Services
             {
                 user.FirstName = model.FirstName ?? userInfo.Given_Name;
                 user.LastName = model.LastName ?? userInfo.Family_Name;
-                user.PhoneNumber = model.PhoneNumber;
+                user.PhoneNumber = model.Phone;
                 user.Email = userInfo.Email;
 
                 if (model.Image != null)
