@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import { Suspense, lazy } from 'react'
 import Layout from './components/layouts/default/Layout.tsx'
 import Loader from './components/Loader.tsx'
+import RequireAdmin from './routes/guards/RequireAdmin.tsx'
 
 const Home = lazy(() => import('./pages/Home'))
 const UserProfile = lazy(() => import('./pages/user/UserProfile.tsx'))
@@ -31,7 +32,10 @@ function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Route>
 
-          <Route path="/admin/*" element={<AdminRoutes />} />
+          <Route path="/admin/*" element={<RequireAdmin />}>
+            <Route path="*" element={<AdminRoutes />} />
+          </Route>
+
         </Routes>
       </Suspense>
   )
