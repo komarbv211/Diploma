@@ -1,93 +1,525 @@
-import { Layout, Typography, Row, Col, Divider, Button, Space, Input, Spin, } from 'antd';
-import { SettingOutlined, LogoutOutlined } from '@ant-design/icons';
+// import { Layout, Typography, Row, Col, Divider, Button, Space, Input, Spin, } from 'antd';
+// import { SettingOutlined, LogoutOutlined } from '@ant-design/icons';
+// import { useNavigate } from 'react-router-dom';
+// import { useDispatch } from 'react-redux';
+// import { useGetUserByIdQuery } from '../../services/userApi';
+// import { getUser, logOut } from '../../store/slices/userSlice';
+// import dayjs from 'dayjs';
+// import { useAppSelector } from '../../store/store';
+//
+// const { Content } = Layout;
+// const { Title, Text } = Typography;
+//
+// const AdminProfile = () => {
+//   const client = useAppSelector(getUser);
+//   const navigate = useNavigate();
+//   const dispatch = useDispatch();
+//
+//   const { data: user, isLoading } = useGetUserByIdQuery(Number(client?.id));
+//
+//   const handleLogout = () => {
+//     dispatch(logOut());
+//     navigate('/login');
+//   };
+//
+//   if (isLoading || !user) {
+//     return (
+//       <Content className="flex justify-center items-center min-h-[300px]">
+//         <Spin size="large" />
+//       </Content>
+//     );
+//   }
+//
+//   return (
+//     <Content className="pt-5 px-10">
+//       <Title level={3}>Профіль адміністратора</Title>
+//
+//       <Row gutter={40} className="mt-8">
+//         <Col span={12}>
+//           <Text strong className="block mb-2">Ім’я</Text>
+//           <Input size="large" defaultValue={user.firstName} />
+//           <Divider />
+//
+//           <Text strong className="block mb-2">Прізвище</Text>
+//           <Input size="large" defaultValue={user.lastName} />
+//           <Divider />
+//
+//           <Text strong className="block mb-2">E-mail</Text>
+//           <Input size="large" defaultValue={user.email} />
+//           <Divider />
+//
+//           <Text strong className="block mb-2">Дата народження</Text>
+//           <Input size="large" placeholder="дд.мм.рррр" />
+//           <Divider />
+//
+//           <Text strong className="block mb-2">Телефон</Text>
+//           <Input size="large" defaultValue={user.phoneNumber} />
+//         </Col>
+//
+//         <Col span={12}>
+//           <Text strong className="block mb-2">Старий пароль</Text>
+//           <Input.Password size="large" placeholder="********" />
+//           <Divider />
+//
+//           <Text strong className="block mb-2">Новий пароль</Text>
+//           <Input.Password size="large" placeholder="********" />
+//           <Divider />
+//
+//           <Text strong className="block mb-2">Підтвердження пароля</Text>
+//           <Input.Password size="large" placeholder="********" />
+//           <Divider />
+//
+//           <Text strong className="block mb-2">Роль</Text>
+//           <Input size="large" disabled defaultValue={'Адміністратор'} />
+//           <Divider />
+//
+//           <Text strong className="block mb-2">Останній вхід</Text>
+//           <Input size="large" disabled defaultValue={dayjs(user.lastActivity).format('DD.MM.YYYY HH:mm')} />
+//         </Col>
+//       </Row>
+//       <Divider />
+//
+//       <Space className="flex justify-center gap-[500px]">
+//         <Button danger icon={<LogoutOutlined />} onClick={handleLogout}>
+//           Вийти
+//         </Button>
+//         <Button type="primary" icon={<SettingOutlined />}>
+//           Зберегти зміни
+//         </Button>
+//       </Space>
+//     </Content>
+//   );
+// };
+//
+// export default AdminProfile;
+
+
+
+
+
+
+// import {
+//   Layout,
+//   Typography,
+//   Row,
+//   Col,
+//   Divider,
+//   Button,
+//   Space,
+//   Input,
+//   Spin,
+//   Upload,
+//   Avatar,
+//   Modal,
+//  // message,
+// } from 'antd';
+// import {
+//   SettingOutlined,
+//   LogoutOutlined,
+//   UploadOutlined,
+// } from '@ant-design/icons';
+// import { useNavigate } from 'react-router-dom';
+// import { useDispatch } from 'react-redux';
+// import { getUser, logOut } from '../../store/slices/userSlice';
+// import { useAppSelector } from '../../store/store';
+// import { useGetUserByIdQuery } from '../../services/userApi';
+// import dayjs from 'dayjs';
+// import React, {useEffect, useState} from 'react';
+// import ImageCropper from '../../components/images/ImageCropper';
+//
+// const { Content } = Layout;
+// const { Title, Text } = Typography;
+//
+// const AdminProfile: React.FC = () => {
+//   const client = useAppSelector(getUser);
+//   const navigate = useNavigate();
+//   const dispatch = useDispatch();
+//   const { data: user, isLoading } = useGetUserByIdQuery(Number(client?.id));
+//
+//   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+//   const [showCropper, setShowCropper] = useState(false);
+//   //const [croppedImage, setCroppedImage] = useState<string | null>(user?.avatarUrl || null);
+//   const [croppedImage, setCroppedImage] = useState<string | null>(null);
+//
+//   useEffect(() => {
+//     if (user?.image) {
+//       setCroppedImage(user.image);
+//     }
+//   }, [user]);
+//   const handleLogout = () => {
+//     dispatch(logOut());
+//     navigate('/login');
+//   };
+//
+//   const handleBeforeUpload = (file: File) => {
+//     const reader = new FileReader();
+//     reader.onload = () => {
+//       setAvatarPreview(reader.result as string);
+//       setShowCropper(true);
+//     };
+//     reader.readAsDataURL(file);
+//     return false;
+//   };
+//
+//   const handleCropped = async (cropped: string) => {
+//     setShowCropper(false);
+//     setCroppedImage(cropped);
+// /*
+//     try {
+//       const blob = await fetch(cropped).then(r => r.blob());
+//       const formData = new FormData();
+//       formData.append('avatar', blob, 'avatar.png');
+//
+//       const response = await fetch(`/api/users/${user?.id}/avatar`, {
+//         method: 'POST',
+//         body: formData,
+//       });
+//
+//       if (!response.ok) throw new Error('Upload failed');
+//       message.success('Аватар успішно оновлено!');
+//     } catch (error) {
+//       console.error(error);
+//       message.error('Помилка при завантаженні аватара');
+//     }
+//
+//  */
+//   };
+//
+//   const handleCancelCrop = () => {
+//     setShowCropper(false);
+//   };
+//
+//   if (isLoading || !user) {
+//     return (
+//         <Content className="flex justify-center items-center min-h-[300px]">
+//           <Spin size="large" />
+//         </Content>
+//     );
+//   }
+//
+//   return (
+//       <Content className="pt-5 px-10">
+//         <Title level={3}>Профіль адміністратора</Title>
+//
+//         {/* Аватар */}
+//         <div className="mb-6 flex gap-6 items-center">
+//           <Avatar size={100} src={croppedImage || user.image} />
+//           <Upload
+//               showUploadList={false}
+//               beforeUpload={handleBeforeUpload}
+//               accept="image/*"
+//           >
+//             <Button icon={<UploadOutlined />}>Оновити аватар</Button>
+//           </Upload>
+//         </div>
+//
+//         <Row gutter={40} className="mt-8">
+//           <Col span={12}>
+//             <Text strong className="block mb-2">Ім’я</Text>
+//             <Input size="large" defaultValue={user.firstName} />
+//             <Divider />
+//
+//             <Text strong className="block mb-2">Прізвище</Text>
+//             <Input size="large" defaultValue={user.lastName} />
+//             <Divider />
+//
+//             <Text strong className="block mb-2">E-mail</Text>
+//             <Input size="large" defaultValue={user.email} />
+//             <Divider />
+//
+//             <Text strong className="block mb-2">Дата народження</Text>
+//             <Input size="large" placeholder="дд.мм.рррр" />
+//             <Divider />
+//
+//             <Text strong className="block mb-2">Телефон</Text>
+//             <Input size="large" defaultValue={user.phoneNumber} />
+//           </Col>
+//
+//           <Col span={12}>
+//             <Text strong className="block mb-2">Старий пароль</Text>
+//             <Input.Password size="large" placeholder="********" />
+//             <Divider />
+//
+//             <Text strong className="block mb-2">Новий пароль</Text>
+//             <Input.Password size="large" placeholder="********" />
+//             <Divider />
+//
+//             <Text strong className="block mb-2">Підтвердження пароля</Text>
+//             <Input.Password size="large" placeholder="********" />
+//             <Divider />
+//
+//             <Text strong className="block mb-2">Роль</Text>
+//             <Input size="large" disabled defaultValue={'Адміністратор'} />
+//             <Divider />
+//
+//             <Text strong className="block mb-2">Останній вхід</Text>
+//             <Input size="large" disabled defaultValue={dayjs(user.lastActivity).format('DD.MM.YYYY HH:mm')} />
+//           </Col>
+//         </Row>
+//
+//         <Divider />
+//
+//         <Space className="flex justify-center gap-[500px]">
+//           <Button danger icon={<LogoutOutlined />} onClick={handleLogout}>
+//             Вийти
+//           </Button>
+//           <Button type="primary" icon={<SettingOutlined />}>
+//             Зберегти змниі
+//           </Button>
+//         </Space>
+//
+//         {/* Модальне вікно для обрізки */}
+//         <Modal
+//             open={showCropper}
+//             footer={null}
+//             onCancel={handleCancelCrop}
+//             width={600}
+//         >
+//           {avatarPreview && (
+//               <ImageCropper
+//                   image={avatarPreview}
+//                   aspectRatio={1}
+//                   onCrop={handleCropped}
+//                   onCancel={handleCancelCrop}
+//               />
+//           )}
+//         </Modal>
+//       </Content>
+//   );
+// };
+//
+// export default AdminProfile;
+
+
+
+
+
+
+//New
+import {
+  Layout,
+  Typography,
+  Row,
+  Col,
+  Divider,
+  Button,
+  Space,
+  Input,
+  Spin,
+  Upload,
+  Avatar,
+  Modal,
+  message,
+} from 'antd';
+import {
+  SettingOutlined,
+  LogoutOutlined,
+  UploadOutlined,
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { useGetUserByIdQuery } from '../../services/userApi';
 import { getUser, logOut } from '../../store/slices/userSlice';
-import dayjs from 'dayjs';
 import { useAppSelector } from '../../store/store';
+import { useGetUserByIdQuery } from '../../services/userApi';
+import dayjs from 'dayjs';
+import React, { useEffect, useState } from 'react';
+import ImageCropper from '../../components/images/ImageCropper';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
-const AdminProfile = () => {
+const AdminProfile: React.FC = () => {
   const client = useAppSelector(getUser);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const { data: user, isLoading } = useGetUserByIdQuery(Number(client?.id));
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [birthDate, setBirthDate] = useState('');
+  const [croppedImage, setCroppedImage] = useState<string | null>(null);
+
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [showCropper, setShowCropper] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.firstName || '');
+      setLastName(user.lastName || '');
+      setEmail(user.email || '');
+      setPhoneNumber(user.phoneNumber || '');
+      setBirthDate(user.birthDate || '');
+      setCroppedImage(user.image || null);
+    }
+  }, [user]);
 
   const handleLogout = () => {
     dispatch(logOut());
     navigate('/login');
   };
 
+  const handleBeforeUpload = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setAvatarPreview(reader.result as string);
+      setShowCropper(true);
+    };
+    reader.readAsDataURL(file);
+    return false;
+  };
+
+  const handleCropped = (cropped: string) => {
+    setCroppedImage(cropped);
+    setShowCropper(false);
+  };
+
+  const handleCancelCrop = () => {
+    setShowCropper(false);
+  };
+
+  const handleSave = async () => {
+    try {
+      const payload = {
+        id: user!.id,
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        birthDate,
+      };
+
+      // Збереження аватарки, якщо є нове зображення
+      /*
+      if (croppedImage && croppedImage.startsWith('data:image')) {
+        const blob = await fetch(croppedImage).then(res => res.blob());
+        const formData = new FormData();
+        formData.append('avatar', blob, 'avatar.png');
+
+        const avatarRes = await fetch(`http://localhost:5209/api/User/${user!.image}/avatar`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!avatarRes.ok) throw new Error('Помилка при збереженні аватару');
+      }
+*/
+      // Збереження профілю
+      const res = await fetch(`http://localhost:5209/api/User`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error('Помилка при збереженні профілю');
+      message.success('Зміни успішно збережено!');
+    } catch (error) {
+      console.error(error);
+      message.error('Помилка при збереженні');
+    }
+  };
+
   if (isLoading || !user) {
     return (
-      <Content className="flex justify-center items-center min-h-[300px]">
-        <Spin size="large" />
-      </Content>
+        <Content className="flex justify-center items-center min-h-[300px]">
+          <Spin size="large" />
+        </Content>
     );
   }
 
   return (
-    <Content className="pt-5 px-10">
-      <Title level={3}>Профіль адміністратора</Title>
+      <Content className="pt-5 px-10">
+        <Title level={3}>Профіль адміністратора</Title>
 
-      <Row gutter={40} className="mt-8">
-        <Col span={12}>
-          <Text strong className="block mb-2">Ім’я</Text>
-          <Input size="large" defaultValue={user.firstName} />
-          <Divider />
+        <div className="mb-6 flex gap-6 items-center">
+          <Avatar size={100} src={croppedImage || user.image} />
+          <Upload
+              showUploadList={false}
+              beforeUpload={handleBeforeUpload}
+              accept="image/*"
+          >
+            <Button icon={<UploadOutlined />}>Оновити аватар</Button>
+          </Upload>
+        </div>
 
-          <Text strong className="block mb-2">Прізвище</Text>
-          <Input size="large" defaultValue={user.lastName} />
-          <Divider />
+        <Row gutter={40} className="mt-8">
+          <Col span={12}>
+            <Text strong className="block mb-2">Ім’я</Text>
+            <Input size="large" value={firstName} onChange={e => setFirstName(e.target.value)} />
+            <Divider />
 
-          <Text strong className="block mb-2">E-mail</Text>
-          <Input size="large" defaultValue={user.email} />
-          <Divider />
+            <Text strong className="block mb-2">Прізвище</Text>
+            <Input size="large" value={lastName} onChange={e => setLastName(e.target.value)} />
+            <Divider />
 
-          <Text strong className="block mb-2">Дата народження</Text>
-          <Input size="large" placeholder="дд.мм.рррр" />
-          <Divider />
+            <Text strong className="block mb-2">E-mail</Text>
+            <Input size="large" value={email} onChange={e => setEmail(e.target.value)} />
+            <Divider />
 
-          <Text strong className="block mb-2">Телефон</Text>
-          <Input size="large" defaultValue={user.phoneNumber} />
-        </Col>
+            <Text strong className="block mb-2">Дата народження</Text>
+            <Input size="large" value={birthDate} onChange={e => setBirthDate(e.target.value)} />
+            <Divider />
 
-        <Col span={12}>
-          <Text strong className="block mb-2">Старий пароль</Text>
-          <Input.Password size="large" placeholder="********" />
-          <Divider />
+            <Text strong className="block mb-2">Телефон</Text>
+            <Input size="large" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} />
+          </Col>
 
-          <Text strong className="block mb-2">Новий пароль</Text>
-          <Input.Password size="large" placeholder="********" />
-          <Divider />
+          <Col span={12}>
+            <Text strong className="block mb-2">Старий пароль</Text>
+            <Input.Password size="large" placeholder="********" disabled />
+            <Divider />
 
-          <Text strong className="block mb-2">Підтвердження пароля</Text>
-          <Input.Password size="large" placeholder="********" />
-          <Divider />
+            <Text strong className="block mb-2">Новий пароль</Text>
+            <Input.Password size="large" placeholder="********" disabled />
+            <Divider />
 
-          <Text strong className="block mb-2">Роль</Text>
-          <Input size="large" disabled defaultValue={'Адміністратор'} />
-          <Divider />
+            <Text strong className="block mb-2">Підтвердження пароля</Text>
+            <Input.Password size="large" placeholder="********" disabled />
+            <Divider />
 
-          <Text strong className="block mb-2">Останній вхід</Text>
-          <Input size="large" disabled defaultValue={dayjs(user.lastActivity).format('DD.MM.YYYY HH:mm')} />
-        </Col>
-      </Row>
-      <Divider />
+            <Text strong className="block mb-2">Роль</Text>
+            <Input size="large" disabled defaultValue={'Адміністратор'} />
+            <Divider />
 
-      <Space className="flex justify-center gap-[500px]">
-        <Button danger icon={<LogoutOutlined />} onClick={handleLogout}>
-          Вийти
-        </Button>
-        <Button type="primary" icon={<SettingOutlined />}>
-          Зберегти зміни
-        </Button>
-      </Space>
-    </Content>
+            <Text strong className="block mb-2">Останній вхід</Text>
+            <Input
+                size="large"
+                disabled
+                defaultValue={dayjs(user.lastActivity).format('DD.MM.YYYY HH:mm')}
+            />
+          </Col>
+        </Row>
+
+        <Divider />
+
+        <Space className="flex justify-center gap-[500px]">
+          <Button danger icon={<LogoutOutlined />} onClick={handleLogout}>
+            Вийти
+          </Button>
+          <Button type="primary" icon={<SettingOutlined />} onClick={handleSave}>
+            Зберегти зміни
+          </Button>
+        </Space>
+
+        <Modal
+            open={showCropper}
+            footer={null}
+            onCancel={handleCancelCrop}
+            width={600}
+        >
+          {avatarPreview && (
+              <ImageCropper
+                  image={avatarPreview}
+                  aspectRatio={1}
+                  onCrop={handleCropped}
+                  onCancel={handleCancelCrop}
+              />
+          )}
+        </Modal>
+      </Content>
   );
 };
 

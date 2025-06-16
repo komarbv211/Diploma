@@ -254,7 +254,7 @@
 import React from 'react';
 import { Select } from 'antd';
 import MaskedInput from 'antd-mask-input';
-import { MaskedInputProps } from 'antd-mask-input/build/main/lib/MaskedInput';
+//import { MaskedInputProps } from 'antd-mask-input/build/main/lib/MaskedInput';
 
 interface PhoneInputProps {
     value?: string; // повний номер: +38 (код) ХХХ-ХХ-ХХ
