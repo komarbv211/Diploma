@@ -9,6 +9,7 @@ import { useUpdateCategoryMutation } from '../../../services/admin/categoryAdmnA
 import { useGetCategoryByIdQuery } from '../../../services/categoryApi';
 import { base64ToFile } from '../../../utilities/base64ToFile';
 import ImageCropper from '../../../components/images/ImageCropper';
+import { handleFormErrors } from '../../../utilities/handleApiErrors';
 
 const { Item } = Form;
 
@@ -38,42 +39,25 @@ const EditCategoryPage = () => {
     }, [category, form]);
 
     const onFinish = async (values: ICategoryPutRequest) => {
-    try {
-        values.id = Number(id);
-        values.image = imageFile;
+        try {
+            values.id = Number(id);
+            values.image = imageFile;
 
-        if (!values.image) {
-            delete values.image;
-        }
-
-        await updateCategory(values).unwrap();
-        message.success("Категорію оновлено");
-        navigate("..");
-    } catch (err: unknown) {
-        if (typeof err === "object" && err !== null && "status" in err && "data" in err) {
-            const errorObj = err as { status: number; data: { errors?: Record<string, string[]> } };
-            if (errorObj.status === 400 && errorObj.data.errors) {
-                const serverErrors = errorObj.data.errors;
-
-                const fieldErrors = Object.entries(serverErrors).map(([field, messages]) => ({
-                    name: field.charAt(0).toLowerCase() + field.slice(1),
-                    errors: messages,
-                }));
-
-                form.setFields(fieldErrors);
-                return;
+            if (!values.image) {
+                delete values.image;
             }
-        }
 
-        if (err instanceof Error) {
-            console.error("Помилка оновлення категорії:", err.message);
-        } else {
-            console.error("Невідома помилка оновлення категорії:", err);
+            await updateCategory(values).unwrap();
+            message.success("Категорію оновлено");
+            navigate("..");
+        } catch (error: any) {
+            form.setFields([
+                { name: 'firstName', errors: [] },
+                { name: 'lastName', errors: [] },
+            ]);
+            handleFormErrors(error, form);
         }
-
-        message.error("Не вдалося оновити категорію");
-    }
-};
+    };
 
 
     const handlePreview = (file: File) => {

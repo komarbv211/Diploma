@@ -9,7 +9,7 @@ namespace Core.Interfaces
         Task<CategoryEntity?> GetCategoryWithChildrenAsync(long id);
         Task<IEnumerable<CategoryEntity>> GetRootCategoriesAsync();
         Task<CategoryEntity?> GetParentCategoryAsync(long categoryId);
-
         Task<bool> ExistsByNameAsync(string name);
+        Task<bool> ExistsByNameExceptIdAsync(string name, long excludedId);
     }
 }

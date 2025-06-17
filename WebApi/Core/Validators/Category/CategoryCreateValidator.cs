@@ -1,20 +1,15 @@
 ﻿using Core.DTOs.CategoryDTOs;
 using Core.Interfaces;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Validators.Category
 {
-    public class CategoryValidator : AbstractValidator<CategoryCreateDto>
+    public class CategoryCreateValidator : AbstractValidator<CategoryCreateDto>
 {
 
     private readonly ICategoryRepository categoryRepository;
 
-    public CategoryValidator(ICategoryRepository category_Repository)
+    public CategoryCreateValidator(ICategoryRepository category_Repository)
     {
         categoryRepository = category_Repository;
 
@@ -27,7 +22,7 @@ namespace Core.Validators.Category
         .WithMessage("{PropertyName} must be unique.");
 
 
-            RuleFor(category => category.Image);
+        RuleFor(category => category.Image);
            
 
         RuleFor(x => x.Description)
