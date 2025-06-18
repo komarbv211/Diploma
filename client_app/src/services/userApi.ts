@@ -1,7 +1,9 @@
 // userApi.ts
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQuery } from '../utilities/createBaseQuery';
-import { IUserCreateDTO, IUserDTO, IUserUpdateDTO } from '../types/user';
+import { IUserCreateDTO, IUserDTO } from '../types/user';
+import {handleAuthQueryStarted} from "../utilities/handleAuthQueryStarted.ts";
+import {IAuthResponse} from "../types/account.ts";
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -30,12 +32,13 @@ export const userApi = createApi({
       }),
       invalidatesTags: ['Users'],
     }),
-    updateUser: builder.mutation<void, IUserUpdateDTO>({
-      query: (user) => ({
+    updateUser: builder.mutation<IAuthResponse, FormData>({
+      query: (formData) => ({
         url: '',
         method: 'PUT',
-        body: user,
+        body: formData,
       }),
+      onQueryStarted: handleAuthQueryStarted,
       invalidatesTags: ['Users'],
     }),
     deleteUser: builder.mutation<void, number>({

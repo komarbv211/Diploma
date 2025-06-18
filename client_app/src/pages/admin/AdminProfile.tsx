@@ -855,7 +855,7 @@ const AdminProfile: React.FC = () => {
       formData.append('birthDate', values.birthDate);
       if (croppedImage && croppedImage.startsWith('data:image')) {
         const blob = await fetch(croppedImage).then((res) => res.blob());
-        formData.append('avatar', blob, 'avatar.png');
+        formData.append('Image', blob, 'avatar.png');
       }
       
       await updateUser(formData).unwrap();
