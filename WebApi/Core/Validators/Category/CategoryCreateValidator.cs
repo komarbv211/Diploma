@@ -2,9 +2,9 @@
 using Core.Interfaces;
 using FluentValidation;
 
-namespace Core.Validators.Category
-{
-    public class CategoryCreateValidator : AbstractValidator<CategoryCreateDto>
+namespace Core.Validators.Category;
+
+public class CategoryCreateValidator : AbstractValidator<CategoryCreateDto>
 {
 
     private readonly ICategoryRepository categoryRepository;
@@ -14,23 +14,25 @@ namespace Core.Validators.Category
         categoryRepository = category_Repository;
 
         RuleFor(x => x.Name)
-        .NotEmpty()
-        .MinimumLength(2)
-        .Matches("[A-Z].*").WithMessage("{PropertyName} must start with an uppercase letter.")
-        .MustAsync(async (name, cancellation) => 
-            !await categoryRepository.ExistsByNameAsync(name))
-        .WithMessage("{PropertyName} must be unique.");
-
-
-        RuleFor(category => category.Image);
-           
+            .NotEmpty()
+            .WithMessage("Назва обов'язкова.")
+            .MinimumLength(2).WithMessage("Назва має містити щонайменше 2 символи.")
+            .Matches("^[А-ЯA-Z]").WithMessage("Назва має починатися з великої літери.")
+            .MustAsync(async (name, cancellation) => 
+                !await categoryRepository.ExistsByNameAsync(name))
+            .WithMessage("Назва має бути унікальною.");
 
         RuleFor(x => x.Description)
-              .NotEmpty()
-              .MinimumLength(2)
-              .Matches("[A-Z].*").WithMessage("{PropertyDescription} must starts with uppercase letter.");
+            .MinimumLength(2).When(x => !string.IsNullOrWhiteSpace(x.Description))
+            .WithMessage("Опис має містити щонайменше 2 символи.")
+            .Matches("^[А-ЯA-Z]").When(x => !string.IsNullOrWhiteSpace(x.Description))
+            .WithMessage("Опис має починатися з великої літери.");
+
+        RuleFor(category => category.Image)
+            .Must(file => file == null || file.Length <= 2 * 1024 * 1024)
+            .WithMessage("Розмір зображення не повинен перевищувати 2 МБ.");
 
     }
 
 }
-}
+
