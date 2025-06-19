@@ -161,6 +161,9 @@ namespace Core.Services
                 var fileName = await _imageService.SaveImageAsync(dto.Image);
                 user.Image = fileName;
             }
+            else {
+                user.Image = imagName;
+            };
 
 
             await _repository.Update(user);
