@@ -8,7 +8,11 @@ export const categoryAdminApi = createApi({
     reducerPath: 'categoryAdminApi',
     baseQuery: createBaseQuery('admin'),
     tagTypes: ['Categories'],
-    endpoints: (builder) => ({       
+    endpoints: (builder) => ({  
+        getCategoryByID: builder.query<ICategory, number>({
+            query: (id) => `category/${id}`,
+            providesTags: ['Categories'],
+        }),     
         createCategory: builder.mutation<ICategory, ICategoryPostRequest>({
             query: (newCategory) => {
                 try {
@@ -49,7 +53,8 @@ export const categoryAdminApi = createApi({
     }),
 });
 
-export const {     
+export const {   
+    useGetCategoryByIDQuery,  
     useCreateCategoryMutation,
     useUpdateCategoryMutation,
     useDeleteCategoryMutation,

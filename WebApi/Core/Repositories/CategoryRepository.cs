@@ -110,8 +110,13 @@ public class CategoryRepository : Repository<CategoryEntity>, ICategoryRepositor
      {
         return await context.Categories.AnyAsync(c => c.Name == name);
      }
-     //public async Task<CategoryEntity?> GetByIdAsync(long id)
-     //{
-     //    return await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-     //}
+    public async Task<bool> ExistsByNameExceptIdAsync(string name, long excludedId)
+    {
+        return await context.Categories
+            .AnyAsync(c => c.Name == name && c.Id != excludedId);
+    }
+    //public async Task<CategoryEntity?> GetByIdAsync(long id)
+    //{
+    //    return await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+    //}
 }
