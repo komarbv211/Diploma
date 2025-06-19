@@ -1,6 +1,7 @@
 ﻿using Core.DTOs.PaginationDTOs;
 using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
+using Core.Models.Authentication;
 
 namespace Core.Interfaces
 {
@@ -10,7 +11,7 @@ namespace Core.Interfaces
         Task<PagedResultDto<UserDTO>> GetAllAsync(PagedRequestDto request);
         Task<UserDTO> GetByIdAsync(long id);
         Task CreateUserAsync(UserCreateDTO dto);
-        Task UpdateUserAsync(UserUpdateDTO dto);
+        Task<AuthResponse> UpdateUserAsync(UserUpdateDTO dto);
         Task DeleteUserAsync(long id);
         Task<UserDTO?> GetByEmailAsync(string email);
 

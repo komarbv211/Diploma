@@ -33,8 +33,8 @@ namespace WebApiDiploma.Controllers.User
         [HttpPut]
         public async Task<ActionResult> Update([FromForm] UserUpdateDTO dto)
         {
-            await service.UpdateUserAsync(dto);
-            return NoContent();
+            var result = await service.UpdateUserAsync(dto);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]

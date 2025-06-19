@@ -10,6 +10,8 @@ export interface IUserDTO {
     emailConfirmed: boolean;
     phoneNumberConfirmed: boolean;
     twoFactorEnabled: boolean;
+
+    birthDate?: string;       // додано для дати народження, необов’язкове поле
 }
   
 export interface IUserCreateDTO {
