@@ -11,7 +11,7 @@ namespace Core.DTOs.UsersDTOs
         public DateTime? LastActivity { get; set; } = DateTime.UtcNow;
         public string? Image { get; set; }
         public string Email { get; set; } = string.Empty;
-        public DateTime? BirthDate {get; set;}
+        public string BirthDate {get; set;} = string.Empty;
         public bool EmailConfirmed { get; set; }
         public bool PhoneNumberConfirmed { get; set; }
         public bool TwoFactorEnabled { get; set; }

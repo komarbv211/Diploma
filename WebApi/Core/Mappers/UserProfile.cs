@@ -23,7 +23,9 @@ namespace Core.Mappers
                 .ForMember(x => x.EmailConfirmed, opt => opt.MapFrom(x => x.Email_Verified));
 
 
-            CreateMap<UserDTO, UserEntity>().ReverseMap();
+            CreateMap<UserDTO, UserEntity>();
+            CreateMap<UserEntity, UserDTO>()
+                .ForMember(x => x.BirthDate, opt => opt.MapFrom(x => x.BirthDate.Value.ToString("yyyy-mm-dd")));
             CreateMap<UserCreateDTO, UserEntity>().ReverseMap();
             CreateMap<UserUpdateDTO, UserEntity>().ReverseMap();
 

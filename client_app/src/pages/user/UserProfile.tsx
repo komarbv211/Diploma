@@ -181,6 +181,7 @@ const UserProfile = () => {
         birthDate: dayjs('1995-01-01'),
         //birthDate: user.birthDate ? dayjs(user.birthDate) : null,
       });
+      console.log("user", user);
 
       setCroppedImage(user.image ? `${APP_ENV.IMAGES_100_URL}${user.image}` : null);
     }
