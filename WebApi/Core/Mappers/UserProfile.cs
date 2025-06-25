@@ -25,7 +25,7 @@ namespace Core.Mappers
 
             CreateMap<UserDTO, UserEntity>();
             CreateMap<UserEntity, UserDTO>()
-                .ForMember(x => x.BirthDate, opt => opt.MapFrom(x => x.BirthDate.Value.ToString("yyyy-mm-dd")));
+                .ForMember(x => x.BirthDate, opt => opt.MapFrom(x => x.BirthDate.Value.ToString("yyyy-MM-dd")));
             CreateMap<UserCreateDTO, UserEntity>().ReverseMap();
             CreateMap<UserUpdateDTO, UserEntity>().ReverseMap();
 

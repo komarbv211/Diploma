@@ -137,6 +137,7 @@ import ImageCropper from '../../components/images/ImageCropper';
 import { APP_ENV } from '../../env';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
+import PhoneInput from "../../components/PhoneInput.tsx";
 
 const { Content, Sider } = Layout;
 const { Title, Text } = Typography;
@@ -173,15 +174,18 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (user) {
+
       form.setFieldsValue({
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         email: user.email || '',
         phoneNumber: user.phoneNumber || '',
-        birthDate: dayjs('1995-01-01'),
-        //birthDate: user.birthDate ? dayjs(user.birthDate) : null,
+       // birthDate: dayjs('1995-01-01'),
+        birthDate: user.birthDate ? dayjs(user.birthDate) : null,
+
+       // phone: user.phoneNumber || '', // маска має співпадати з цим форматом
       });
-      console.log("user", user);
+      console.log("user------", user);
 
       setCroppedImage(user.image ? `${APP_ENV.IMAGES_100_URL}${user.image}` : null);
     }
@@ -247,10 +251,10 @@ const UserProfile = () => {
       formData.append('lastName', values.lastName);
       formData.append('email', values.email);
       formData.append('phoneNumber', values.phoneNumber);
-      formData.append('birthDate', values.birthDate.format('YYYY.DD.MM'));
+      formData.append('birthDate', values.birthDate.format('YYYY-MM-DD'));
       // Форматуємо дату у формат YYYY-MM-DD, якщо вона є
       if (values.birthDate) {
-        formData.append('birthDate', values.birthDate.format('YYYY.DD.MM'));
+        formData.append('birthDate', values.birthDate.format('YYYY-MM-DD'));
       }
 
       if (croppedImage && croppedImage.startsWith('data:image')) {
@@ -329,12 +333,39 @@ const UserProfile = () => {
                 {/*  <Input size="large" type="date" />*/}
                 {/*</Form.Item>*/}
                 <Form.Item label="Дата народження" name="birthDate">
-                  <DatePicker size="large" format="YYYY.DD.MM" />
+                  <DatePicker size="large" format="YYYY-MM-DD" />
                 </Form.Item>
 
-                <Form.Item label="Телефон" name="phoneNumber">
-                  <Input size="large" />
+                <Form.Item
+                    name="phoneNumber"
+                    label="Номер телефону"
+                    rules={[
+                      { required: true, message: 'Введіть номер телефону' },
+                      {
+                        validator: (_, value) => {
+                          const regex_phone = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                          if (!value || regex_phone.test(value)) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(new Error('Неправильний формат номера телефону'));
+                        },
+                      },
+                    ]}
+                    getValueFromEvent={e => e.target.value}
+                >
+                  <PhoneInput
+                      value={form.getFieldValue('phoneNumber')}
+                      //     onChange={(val: any)=> {
+                      //     console.log("form", form.getFieldValue('phone'));
+                      //     console.log("ss",val)
+                      // } }
+                  />
                 </Form.Item>
+
+
+                {/*<Form.Item label="Телефон" name="phoneNumber">*/}
+                {/*  <Input size="large" />*/}
+                {/*</Form.Item>*/}
               </Col>
 
               <Col span={12}>

@@ -254,7 +254,6 @@
 import React from 'react';
 import { Select } from 'antd';
 import MaskedInput from 'antd-mask-input';
-//import { MaskedInputProps } from 'antd-mask-input/build/main/lib/MaskedInput';
 
 interface PhoneInputProps {
     value?: string; // повний номер: +38 (код) ХХХ-ХХ-ХХ
@@ -282,13 +281,24 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
                                                    onChange,
                                                    onOperatorChange,
                                                }) => {
-    // Витягуємо код оператора та номер без нього
-    const match = value.match(/\+38\s?\((\d{3})\)\s?(\d{3}-\d{2}-\d{2})?/);
-    const initialOperator = match?.[1] || '050';
-    const initialRest = match?.[2] || '';
+    // Розбиваємо value на оператор і решту номера
+    const parseValue = (val: string) => {
+        const match = val.match(/\+38\s?\((\d{3})\)\s?(\d{3}-\d{2}-\d{2})?/);
+        return {
+            operator: match?.[1] || '050',
+            rest: match?.[2] || '',
+        };
+    };
 
-    const [operator, setOperator] = React.useState(initialOperator);
-    const [restNumber, setRestNumber] = React.useState(initialRest);
+    const [operator, setOperator] = React.useState(() => parseValue(value).operator);
+    const [restNumber, setRestNumber] = React.useState(() => parseValue(value).rest);
+
+    // Оновлюємо стан, коли змінюється value пропс
+    React.useEffect(() => {
+        const { operator: newOperator, rest: newRest } = parseValue(value);
+        setOperator(newOperator);
+        setRestNumber(newRest);
+    }, [value]);
 
     const handleOperatorChange = (newOperator: string) => {
         setOperator(newOperator);
@@ -331,5 +341,6 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
 };
 
 export default PhoneInput;
+
 
 

@@ -135,6 +135,45 @@ namespace Core.Services
             return _mapper.Map<UserDTO>(user);
         }
 
+        /* public async Task<AuthResponse> UpdateUserAsync(UserUpdateDTO dto)
+         {
+             var user = await _repository.GetByID(dto.Id);
+             if (user.IsRemove)
+                 user = null;
+
+             if (user == null)
+                 throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
+
+             string imagName = user.Image;
+             string dataName = user.BirthDate.ToString();
+             // Мапимо основні дані
+             _mapper.Map(dto, user);
+
+             // Якщо є нове зображення
+             if (dto.Image != null && dto.Image.Length > 0)
+             {
+                 // Видаляємо старе, якщо воно є
+                 if (!string.IsNullOrEmpty(imagName))
+                 {
+                     _imageService.DeleteImageIfExists(imagName);
+                 }
+
+                 // Зберігаємо нове
+                 var fileName = await _imageService.SaveImageAsync(dto.Image);
+                 user.Image = fileName;
+             }
+             else {
+                 user.Image = imagName;
+             };
+
+
+             await _repository.Update(user);
+             await _repository.SaveAsync();
+
+             var result = await _accountService.GenerateTokensAsync(user);
+             return result;
+         }*/
+
         public async Task<AuthResponse> UpdateUserAsync(UserUpdateDTO dto)
         {
             var user = await _repository.GetByID(dto.Id);
@@ -145,26 +184,35 @@ namespace Core.Services
                 throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
 
             string imagName = user.Image;
+            // DateTime oldBirthDate = (DateTime)user.BirthDate;
+            //if (user.BirthDate.HasValue)
+            //{
+            //    user.BirthDate = DateTime.SpecifyKind(user.BirthDate.Value, DateTimeKind.Local);
+            //}
             // Мапимо основні дані
             _mapper.Map(dto, user);
+
+            //// Якщо дата не змінена (null або така сама), залишаємо стару
+            //if (dto.BirthDate == null || dto.BirthDate == oldBirthDate)
+            //{
+            //    user.BirthDate = oldBirthDate;
+            //}
 
             // Якщо є нове зображення
             if (dto.Image != null && dto.Image.Length > 0)
             {
-                // Видаляємо старе, якщо воно є
                 if (!string.IsNullOrEmpty(imagName))
                 {
                     _imageService.DeleteImageIfExists(imagName);
                 }
 
-                // Зберігаємо нове
                 var fileName = await _imageService.SaveImageAsync(dto.Image);
                 user.Image = fileName;
             }
-            else {
+            else
+            {
                 user.Image = imagName;
-            };
-
+            }
 
             await _repository.Update(user);
             await _repository.SaveAsync();
@@ -172,6 +220,7 @@ namespace Core.Services
             var result = await _accountService.GenerateTokensAsync(user);
             return result;
         }
+
 
 
 

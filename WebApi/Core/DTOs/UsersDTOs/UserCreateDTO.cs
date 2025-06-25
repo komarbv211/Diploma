@@ -11,6 +11,7 @@ public class UserCreateDTO
     public string? PhoneNumber { get; set; }
     public DateTime? BirthDate {get; set;}
 
+
     public string Password { get; set; }
     public string ConfirmPassword { get; set; }
 
