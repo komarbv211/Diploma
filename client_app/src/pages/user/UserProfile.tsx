@@ -176,6 +176,7 @@ const UserProfile = () => {
     if (user) {
 
       form.setFieldsValue({
+        
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         email: user.email || '',
@@ -185,6 +186,8 @@ const UserProfile = () => {
 
        // phone: user.phoneNumber || '', // маска має співпадати з цим форматом
       });
+      console.log("user.phoneNumber:", user.phoneNumber);
+console.log("form.getFieldValue('phoneNumber'):", form.getFieldValue('phoneNumber'));
       console.log("user------", user);
 
       setCroppedImage(user.image ? `${APP_ENV.IMAGES_100_URL}${user.image}` : null);
@@ -336,7 +339,7 @@ const UserProfile = () => {
                   <DatePicker size="large" format="YYYY-MM-DD" />
                 </Form.Item>
 
-                <Form.Item
+                {/* <Form.Item
                     name="phoneNumber"
                     label="Номер телефону"
                     rules={[
@@ -360,7 +363,28 @@ const UserProfile = () => {
                       //     console.log("ss",val)
                       // } }
                   />
-                </Form.Item>
+                </Form.Item> */}
+
+
+             <Form.Item
+  label="Номер телефону"
+  name="phoneNumber"
+  rules={[
+    { required: true, message: 'Введіть номер телефону' },
+    {
+      validator: (_, value) => {
+        const regex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+        if (!value || regex.test(value)) return Promise.resolve();
+        return Promise.reject(new Error('Невірний формат телефону'));
+      },
+    },
+  ]}
+>
+  <PhoneInput />
+</Form.Item>
+
+
+
 
 
                 {/*<Form.Item label="Телефон" name="phoneNumber">*/}

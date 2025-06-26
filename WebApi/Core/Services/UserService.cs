@@ -184,7 +184,7 @@ namespace Core.Services
                 throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
 
             string imagName = user.Image;
-            // DateTime oldBirthDate = (DateTime)user.BirthDate;
+            //DateTime oldBirthDate = (DateTime)user.BirthDate;
             //if (user.BirthDate.HasValue)
             //{
             //    user.BirthDate = DateTime.SpecifyKind(user.BirthDate.Value, DateTimeKind.Local);

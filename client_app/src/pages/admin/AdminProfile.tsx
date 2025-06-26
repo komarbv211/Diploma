@@ -767,7 +767,7 @@ import {
 } from '../../services/userApi';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
-import ImageCropper from '../../components/images/ImageeCroppr';
+import ImageCropper from '../../components/images/ImageCropper';
 import { APP_ENV } from '../../env';
 
 const { Content } = Layout;
