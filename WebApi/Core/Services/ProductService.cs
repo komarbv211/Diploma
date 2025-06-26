@@ -65,7 +65,7 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task CreateProductAsync(ProductCreateDto dto)
+    public async Task<ProductItemDto> CreateProductAsync(ProductCreateDto dto)
     {
         try
         {
@@ -86,6 +86,8 @@ public class ProductService : IProductService
                 await _imageRepository.AddRangeAsync(productImages);
                 await _imageRepository.SaveAsync();
             }
+            var model = await _productRepository.FirstOrDefaultAsync(new ProductWithImagesSpecification(product.Id));
+            return _mapper.Map<ProductItemDto>(model);
         }
         catch (DbUpdateException dbEx)
         {

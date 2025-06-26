@@ -39,6 +39,13 @@ namespace WebApiDiploma.Controllers.Public
             return Ok(categories);
         }
 
+        [HttpGet("names")]
+        public async Task<ActionResult<IEnumerable<CategoryNameDto>>> GetCategoryNames()
+        {
+            var names = await _categoryService.GetCategoriesNamesAsync();
+            return Ok(names);
+        }
+
         [HttpGet("children/{id}")]
         public async Task<ActionResult<CategoryDto>> GetChildrenById(long id)
         {

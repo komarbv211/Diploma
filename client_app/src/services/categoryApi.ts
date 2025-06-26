@@ -1,5 +1,5 @@
 import { createApi} from '@reduxjs/toolkit/query/react';
-import { ICategory } from '../types/category';
+import { ICategory, ICategoryName } from '../types/category';
 import { createBaseQuery } from '../utilities/createBaseQuery';
 
 export const categoryApi = createApi({
@@ -23,6 +23,10 @@ export const categoryApi = createApi({
             query: (parentId) => `children/${parentId}`,
             providesTags: ['Categories'],
         }),
+        getCategoriesNames: builder.query<ICategoryName[], void>({
+            query: () => `names`,
+            providesTags: ['Categories'],
+        }),
     }),
 });
 
@@ -30,5 +34,6 @@ export const {
     useGetCategoryTreeQuery, 
     useGetCategoryByIdQuery,
     useGetRootCategoriesQuery, 
-    useGetChildrenByIdQuery 
+    useGetChildrenByIdQuery, 
+    useGetCategoriesNamesQuery
 } = categoryApi;
