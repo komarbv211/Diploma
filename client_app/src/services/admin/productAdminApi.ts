@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQuery } from '../../utilities/createBaseQuery';
 import { IProduct, IProductPutRequest } from '../../types/product';
+import { serializeProduct } from '../../utilities/serialize';
 
 export const productAdminApi = createApi({
     reducerPath: 'productAdminApi',
@@ -16,13 +17,21 @@ export const productAdminApi = createApi({
             invalidatesTags: ["Products"],
         }),
         updateProduct: builder.mutation<IProduct, IProductPutRequest>({
-            query: ({ ...upd }) => ({
+    query: (updatedProduct) => {
+        try {
+            const formData = serializeProduct(updatedProduct);
+            return {
                 url: `product`,
                 method: 'PUT',
-                body: upd,
-            }),
-            invalidatesTags: ["Products"],
-        }),
+                body: formData,
+            };
+        } catch {
+            throw new Error("Error serializing the product data.");
+        }
+    },
+    invalidatesTags: ["Products"],
+}),
+
         deleteProduct: builder.mutation<void, number>({
             query: (id) => ({
                 url: `product/${id}`,
