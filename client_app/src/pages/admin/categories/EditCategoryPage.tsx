@@ -1,177 +1,199 @@
-import { Form, Input, Button, Upload, message, Spin } from 'antd';
-import { UploadOutlined, CloseOutlined } from '@ant-design/icons';
+import {
+  Form,
+  Input,
+  Button,
+  Upload,
+  message,
+  Spin,  
+  InputNumber,
+  Modal,
+  Select,
+} from 'antd';
+import {
+  UploadOutlined, 
+} from '@ant-design/icons';
 import TextArea from "antd/es/input/TextArea";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { ICategoryPutRequest } from '../../../types/category';
 import { APP_ENV } from '../../../env';
-import { useUpdateCategoryMutation } from '../../../services/admin/categoryAdmnApi';
-import { useGetCategoryByIdQuery } from '../../../services/categoryApi';
-import { base64ToFile } from '../../../utilities/base64ToFile';
+import { useGetCategoryByIDQuery, useUpdateCategoryMutation } from '../../../services/admin/categoryAdmnApi';
 import ImageCropper from '../../../components/images/ImageCropper';
+import { handleFormErrors } from '../../../utilities/handleApiErrors';
+import { ApiError } from '../../../types/errors';
+import { useGetRootCategoriesQuery } from '../../../services/categoryApi';
 
 const { Item } = Form;
 
 const EditCategoryPage = () => {
-    const { id } = useParams();
-    const { data: category, isLoading } = useGetCategoryByIdQuery(Number(id));
-    const [updateCategory] = useUpdateCategoryMutation();
-    const [form] = Form.useForm();
-    const navigate = useNavigate();
+const { id } = useParams();
+const { data: category, isLoading } = useGetCategoryByIDQuery(Number(id));
+const { data: categories } = useGetRootCategoriesQuery();
 
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
+const [updateCategory] = useUpdateCategoryMutation();
+const [form] = Form.useForm();
+const navigate = useNavigate();
 
-    useEffect(() => {
-        if (category) {
-            form.setFieldsValue({
-                name: category.name,
-                description: category.description,
-                urlSlug: category.urlSlug,
-                priority: category.priority,
-                parentId: category.parentId
-            });
-            if (category.image) {
-                setImageUrl(`${APP_ENV.IMAGES_100_URL}${category.image}`);
-            }
-        }
-    }, [category, form]);
+const [croppedImage, setCroppedImage] = useState<string | null>(null);
+const [imagePreview, setImagePreview] = useState<string | null>(null);
+const [showCropper, setShowCropper] = useState<boolean>(false);
 
-    const onFinish = async (values: ICategoryPutRequest) => {
-    try {
-        values.id = Number(id);
-        values.image = imageFile;
-
-        if (!values.image) {
-            delete values.image;
-        }
-
-        await updateCategory(values).unwrap();
-        message.success("Категорію оновлено");
-        navigate("..");
-    } catch (err: unknown) {
-        if (typeof err === "object" && err !== null && "status" in err && "data" in err) {
-            const errorObj = err as { status: number; data: { errors?: Record<string, string[]> } };
-            if (errorObj.status === 400 && errorObj.data.errors) {
-                const serverErrors = errorObj.data.errors;
-
-                const fieldErrors = Object.entries(serverErrors).map(([field, messages]) => ({
-                    name: field.charAt(0).toLowerCase() + field.slice(1),
-                    errors: messages,
-                }));
-
-                form.setFields(fieldErrors);
-                return;
-            }
-        }
-
-        if (err instanceof Error) {
-            console.error("Помилка оновлення категорії:", err.message);
-        } else {
-            console.error("Невідома помилка оновлення категорії:", err);
-        }
-
-        message.error("Не вдалося оновити категорію");
+useEffect(() => {
+if (category) {
+    form.setFieldsValue({
+        name: category.name,
+        description: category.description,
+        urlSlug: category.urlSlug,
+        priority: category.priority,
+        parentId: category.parentId
+    });
+    if (category.image) {
+        setCroppedImage(`${APP_ENV.IMAGES_100_URL}${category.image}`);
     }
+}
+}, [category, form]);
+
+const handleBeforeUpload = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+        setImagePreview(reader.result as string);
+        setShowCropper(true);
+    };
+    reader.readAsDataURL(file);
+    return false;
+};
+
+const handleCrop = (cropped: string) => {
+    setCroppedImage(cropped);
+    setShowCropper(false);
+};
+
+const handleCancelCrop = () => {
+    setShowCropper(false);
+};
+
+const onFinish = async (values: ICategoryPutRequest) => {
+  try {
+    values.id = Number(id);
+    
+    if (!values.parentId) {
+        values.parentId = null;
+    }
+
+    if (croppedImage && croppedImage.startsWith("data:image")) {
+      const blob = await fetch(croppedImage).then(res => res.blob());
+      values.image = new File([blob], "category.png", { type: blob.type });
+    } else {
+      delete values.image;
+    }
+
+    await updateCategory(values).unwrap();
+    message.success("Категорію оновлено");
+    navigate("..");
+  } catch (error: unknown) {
+    handleFormErrors(error as ApiError, form);
+  }
 };
 
 
-    const handlePreview = (file: File) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            setImageUrl(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-    };
+if (isLoading || !category) {
+    return <Spin size="large" />;
+}
 
-    const handleCrop = (croppedImage: string) => {
-        setImageUrl(croppedImage);
-        const croppedFile = base64ToFile(croppedImage, "cropped-category.png");
-        setImageFile(croppedFile);
-    };
+return (
+    <>
+        <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFinish}
+            initialValues={{ priority: 0 }}
+        >
+        <Item
+            label="Назва"
+            name="name"
+            rules={[{ required: true, message: "Введіть назву категорії" }]}
+        >
+            <Input />
+        </Item>
 
-    const handleCancel = () => {
-        setImageFile(null);
-        setImageUrl(null);
-    };
+        <Item
+            label="Опис"
+            name="description"
+        >
+            <TextArea rows={4} />
+        </Item>
 
-    if (isLoading) return <p>Завантаження...</p>;
+        <Item
+            label="URL Slug"
+            name="urlSlug"
+            rules={[{ required: true, message: "Введіть slug категорії" }]}
+        >
+            <Input />
+        </Item>
 
-    return (
-        <div className="max-w-xl mx-auto">
-            <h1 className="text-center text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 my-6">
-                Редагувати групу
-            </h1>
-            <Form form={form} onFinish={onFinish} layout="vertical">
-                <Item name="name" label="Назва групи" rules={[{ required: true, message: 'Будь ласка, введіть назву групи!' }]}>
-                    <Input placeholder="Назва" />
-                </Item>
-                <Item name="description" label="Опис">
-                    <TextArea rows={4} placeholder="Текст..." />
-                </Item>
-                <Item name="urlSlug" label="URL Slug">
-                    <Input placeholder="slug" />
-                </Item>
-                <Item name="priority" label="Пріоритет">
-                    <Input type="number" />
-                </Item>
-                <Item name="parentId" label="ID Батьківської категорії">
-                    <Input type="number" />
-                </Item>
+        <Item
+            label="Пріоритет"
+            name="priority"
+        >
+            <InputNumber min={0} />
+        </Item>
 
-                <Item label="Фото групи">
-                    <Spin spinning={false}>
-                        {imageUrl ? (
-                            <div className="mb-4 relative">
-                                <img src={imageUrl} alt="Категорія" className="w-full max-h-48 object-cover rounded-lg" />
-                            </div>
-                        ) : (
-                            <div className="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
-                                <span className="text-gray-400">Немає фото</span>
-                            </div>
-                        )}
-                    </Spin>
+        <Item
+            label="Батьківська категорія"
+            name="parentId"
+        >
+            <Select
+                allowClear
+                placeholder="Оберіть батьківську категорію"
+                options={categories?.map((cat) => ({
+                value: cat.id,
+                label: cat.name
+                }))}
+            />
+        </Item>
 
-                    <Upload
-                        beforeUpload={(file) => {
-                            setImageFile(file);
-                            handlePreview(file);
-                            return false;
-                        }}
-                        showUploadList={false}
-                    >
-                        <Button icon={<UploadOutlined />}>
-                            Вибрати фото
-                        </Button>
-                    </Upload>
+        <div className="mb-4">
+            {croppedImage && (
+            <div style={{ marginBottom: 8 }}>
+                <img
+                    src={croppedImage}
+                    alt="Зображення"
+                    style={{ maxWidth: '200px', height: 'auto', border: '1px solid #ccc' }}
+                />
+            </div>
+            )}
 
-                    {imageUrl && (
-                        <div className="mt-4">
-                            <ImageCropper
-                                image={imageUrl}
-                                onCrop={handleCrop}
-                                onCancel={handleCancel}
-                            />
-                        </div>
-                    )}
-
-                    {imageFile && (
-                        <div className="mt-4 flex gap-2">
-                            <Button type="default" onClick={handleCancel} icon={<CloseOutlined />}>
-                                Скасувати
-                            </Button>
-                        </div>
-                    )}
-                </Item>
-
-                <Item>
-                    <Button type="primary" htmlType="submit" block>
-                        Оновити групу
-                    </Button>
-                </Item>
-            </Form>
+            <Upload
+                showUploadList={false}
+                beforeUpload={handleBeforeUpload}
+                accept="image/*"
+            >
+            <Button icon={<UploadOutlined />}>Завантажити зображення</Button>
+            </Upload>
         </div>
-    );
+
+        <Button type="primary" htmlType="submit">
+            Зберегти
+        </Button>
+        </Form>
+
+        <Modal
+            open={showCropper}
+            footer={null}
+            onCancel={handleCancelCrop}
+            width={600}
+        >
+        {imagePreview && (
+            <ImageCropper
+            image={imagePreview}
+            aspectRatio={1}
+            onCrop={handleCrop}
+            onCancel={handleCancelCrop}
+            />
+        )}
+        </Modal>
+    </>
+);
 };
 
 export default EditCategoryPage;
