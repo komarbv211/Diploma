@@ -769,6 +769,8 @@ import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import ImageCropper from '../../components/images/ImageCropper';
 import { APP_ENV } from '../../env';
+import { DatePicker } from 'antd';
+import PhoneInput from "../../components/PhoneInput.tsx";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -809,7 +811,7 @@ const AdminProfile: React.FC = () => {
         lastName: user.lastName || '',
         email: user.email || '',
         phoneNumber: user.phoneNumber || '',
-        birthDate: user.birthDate || '',
+        birthDate: user.birthDate ? dayjs(user.birthDate) : null,
       });
 
       setCroppedImage(`${APP_ENV.IMAGES_100_URL}${user.image}`|| null);
@@ -906,13 +908,40 @@ const AdminProfile: React.FC = () => {
               <Input size="large" />
             </Form.Item>
 
+
             <Form.Item label="Дата народження" name="birthDate">
-              <Input size="large" />
+              <DatePicker size="large" format="YYYY-MM-DD" />
             </Form.Item>
 
-            <Form.Item label="Телефон" name="phoneNumber">
+
+
+            {/* <Form.Item label="Дата народження" name="birthDate">
               <Input size="large" />
+            </Form.Item> */}
+
+
+
+            <Form.Item
+              label="Номер телефону"
+              name="phoneNumber"
+              rules={[
+                { required: true, message: 'Введіть номер телефону' },
+                {
+                  validator: (_, value) => {
+                    const regex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                    if (!value || regex.test(value)) return Promise.resolve();
+                    return Promise.reject(new Error('Невірний формат телефону'));
+                  },
+                },
+              ]}
+            >
+              <PhoneInput />
             </Form.Item>
+
+
+            {/* <Form.Item label="Телефон" name="phoneNumber">
+              <Input size="large" />
+            </Form.Item> */}
           </Col>
 
           <Col span={12}>

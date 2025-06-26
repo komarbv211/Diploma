@@ -366,22 +366,22 @@ console.log("form.getFieldValue('phoneNumber'):", form.getFieldValue('phoneNumbe
                 </Form.Item> */}
 
 
-             <Form.Item
-  label="Номер телефону"
-  name="phoneNumber"
-  rules={[
-    { required: true, message: 'Введіть номер телефону' },
-    {
-      validator: (_, value) => {
-        const regex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
-        if (!value || regex.test(value)) return Promise.resolve();
-        return Promise.reject(new Error('Невірний формат телефону'));
-      },
-    },
-  ]}
->
-  <PhoneInput />
-</Form.Item>
+              <Form.Item
+                label="Номер телефону"
+                name="phoneNumber"
+                rules={[
+                  { required: true, message: 'Введіть номер телефону' },
+                  {
+                    validator: (_, value) => {
+                      const regex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                      if (!value || regex.test(value)) return Promise.resolve();
+                      return Promise.reject(new Error('Невірний формат телефону'));
+                    },
+                  },
+                ]}
+              >
+                <PhoneInput />
+              </Form.Item>
 
 
 
