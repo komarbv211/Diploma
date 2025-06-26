@@ -14,10 +14,15 @@ export interface ICategoryPostRequest {
   urlSlug: string;
   priority: number;
   description: string;
-  image: File|null;
-  parentId: number | null;  
+  image: File | null;
+  parentId: number | null;
 }
 
 export interface ICategoryPutRequest extends Partial<ICategoryPostRequest> {
-    id: number;
+  id: number;
+}
+
+export interface ICategoryName {
+  id: number;
+  name: string | null;
 }

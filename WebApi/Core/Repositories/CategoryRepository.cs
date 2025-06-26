@@ -1,4 +1,5 @@
-﻿using Core.Interfaces;
+﻿using Core.DTOs.CategoryDTOs;
+using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -106,12 +107,24 @@ public class CategoryRepository : Repository<CategoryEntity>, ICategoryRepositor
             .ToListAsync();
     }
 
-     public async Task<bool> ExistsByNameAsync(string name)
-     {
+    public async Task<bool> ExistsByNameAsync(string name)
+    {
         return await context.Categories.AnyAsync(c => c.Name == name);
-     }
-     //public async Task<CategoryEntity?> GetByIdAsync(long id)
-     //{
-     //    return await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-     //}
+    }
+
+    public async Task<IEnumerable<CategoryNameDto>> GetCategoriesNamesAsync()
+    {
+        return await dbSet
+            .Select(c => new CategoryNameDto
+            {
+                Id = c.Id,
+                Name = c.Name
+            })
+            .ToListAsync();
+    }
+
+    //public async Task<CategoryEntity?> GetByIdAsync(long id)
+    //{
+    //    return await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+    //}
 }

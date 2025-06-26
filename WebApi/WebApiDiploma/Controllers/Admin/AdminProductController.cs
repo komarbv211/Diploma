@@ -20,8 +20,8 @@ public class AdminProductController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromForm] ProductCreateDto dto)
     {
-        await _productService.CreateProductAsync(dto);
-        return Ok();
+        var prod = await _productService.CreateProductAsync(dto);
+        return CreatedAtAction(nameof(GetById), new { id = prod.Id }, prod);
     }
 
     [HttpPut]
@@ -31,11 +31,18 @@ public class AdminProductController : ControllerBase
         return Ok();
     }
 
-
     [HttpDelete("{id:long}")]
     public async Task<IActionResult> Delete(long id)
     {
         await _productService.DeleteProductAsync(id);
         return Ok();
+    }
+
+    [HttpGet("{id:long}")]
+    public async Task<ActionResult<ProductItemDto>> GetById(long id)
+    {
+        var product = await _productService.GetByIdAsync(id);
+        if (product == null) return NotFound();
+        return Ok(product);
     }
 }

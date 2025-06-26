@@ -93,9 +93,9 @@ app.UseStaticFiles(new StaticFileOptions
 
 
 // Middleware
+app.UseCors("front-end-cors-policy");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("front-end-cors-policy");
 
 // 13. Маршрутизація
 app.MapControllers();
