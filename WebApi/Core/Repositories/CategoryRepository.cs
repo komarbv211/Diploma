@@ -123,7 +123,7 @@ public class CategoryRepository : Repository<CategoryEntity>, ICategoryRepositor
             .ToListAsync();
     }
 
-     }
+     
     public async Task<bool> ExistsByNameExceptIdAsync(string name, long excludedId)
     {
         return await context.Categories
