@@ -125,7 +125,7 @@
 //
 // export default UserProfile;
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserOutlined, HomeOutlined, HistoryOutlined, GiftOutlined, DeleteOutlined, LogoutOutlined, SettingOutlined, UploadOutlined } from '@ant-design/icons';
 import { Layout, Menu, Input, Typography, Row, Col, Divider, Button, Space, Spin, Upload, Avatar, Modal, message, Form } from 'antd';
 import { useNavigate } from 'react-router-dom';
@@ -366,25 +366,56 @@ console.log("form.getFieldValue('phoneNumber'):", form.getFieldValue('phoneNumbe
                 </Form.Item> */}
 
 
-              <Form.Item
-                label="Номер телефону"
-                name="phoneNumber"
-                rules={[
-                  { required: true, message: 'Введіть номер телефону' },
-                  {
-                    validator: (_, value) => {
-                      const regex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
-                      if (!value || regex.test(value)) return Promise.resolve();
-                      return Promise.reject(new Error('Невірний формат телефону'));
-                    },
-                  },
-                ]}
-              >
-                <PhoneInput />
-              </Form.Item>
+              {/*<Form.Item*/}
+              {/*  label="Номер телефону"*/}
+              {/*  name="phoneNumber"*/}
+              {/*  rules={[*/}
+              {/*    { required: true, message: 'Введіть номер телефону' },*/}
+              {/*    {*/}
+              {/*      validator: (_, value) => {*/}
+              {/*        const regex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;*/}
+              {/*        if (!value || regex.test(value)) return Promise.resolve();*/}
+              {/*        return Promise.reject(new Error('Невірний формат телефону'));*/}
+              {/*      },*/}
+              {/*    },*/}
+              {/*  ]}*/}
+              {/*>*/}
+              {/*  <PhoneInput />*/}
+              {/*</Form.Item>*/}
 
 
-
+                <Form.Item
+                    label="Номер телефону"
+                    name="phoneNumber"
+                    rules={[
+                      { required: true, message: 'Введіть номер телефону' },
+                      {
+                        validator: (_, value) => {
+                          if (!value) {
+                            return Promise.reject(new Error('Введіть номер телефону'));
+                          }
+                          // Видаляємо всі _ (якщо є)
+                          const cleanedValue = value.replace(/_/g, '');
+                          if (cleanedValue.includes('_')) {
+                            return Promise.reject(new Error('Номер телефону не повністю введений'));
+                          }
+                          const regex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                          if (regex.test(cleanedValue)) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(new Error('Невірний формат телефону'));
+                        },
+                      },
+                    ]}
+                >
+                  <PhoneInput
+                      value={form.getFieldValue('phoneNumber')}
+                      onChange={(e) => {
+                        form.setFieldsValue({ phoneNumber: e.target.value });
+                        console.log('target', e.target.value);
+                      }}
+                  />
+                </Form.Item>
 
 
                 {/*<Form.Item label="Телефон" name="phoneNumber">*/}
