@@ -159,19 +159,6 @@ const UserProfile = () => {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
 
-  // useEffect(() => {
-  //   if (user) {
-  //     form.setFieldsValue({
-  //       firstName: user.firstName || '',
-  //       lastName: user.lastName || '',
-  //       email: user.email || '',
-  //       phoneNumber: user.phoneNumber || '',
-  //       birthDate: user.birthDate || '',
-  //     });
-  //     setCroppedImage(user.image ? `${APP_ENV.IMAGES_100_URL}${user.image}` : null);
-  //   }
-  // }, [user, form]);
-
   useEffect(() => {
     if (user) {
 
@@ -219,30 +206,6 @@ console.log("form.getFieldValue('phoneNumber'):", form.getFieldValue('phoneNumbe
     setShowCropper(false);
   };
 
-  // const handleSave = async () => {
-  //   try {
-  //     const values = await form.validateFields();
-  //
-  //     const formData = new FormData();
-  //     formData.append('id', user!.id.toString());
-  //     formData.append('firstName', values.firstName);
-  //     formData.append('lastName', values.lastName);
-  //     formData.append('email', values.email);
-  //     formData.append('phoneNumber', values.phoneNumber);
-  //     formData.append('birthDate', values.birthDate);
-  //
-  //     if (croppedImage && croppedImage.startsWith('data:image')) {
-  //       const blob = await fetch(croppedImage).then(res => res.blob());
-  //       formData.append('Image', blob, 'avatar.png');
-  //     }
-  //
-  //     await updateUser(formData).unwrap();
-  //     message.success('Зміни збережено');
-  //   } catch (error) {
-  //     console.error(error);
-  //     message.error('Помилка при збереженні');
-  //   }
-  // };
 
   const handleSave = async () => {
     try {
@@ -339,51 +302,6 @@ console.log("form.getFieldValue('phoneNumber'):", form.getFieldValue('phoneNumbe
                   <DatePicker size="large" format="YYYY-MM-DD" />
                 </Form.Item>
 
-                {/* <Form.Item
-                    name="phoneNumber"
-                    label="Номер телефону"
-                    rules={[
-                      { required: true, message: 'Введіть номер телефону' },
-                      {
-                        validator: (_, value) => {
-                          const regex_phone = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
-                          if (!value || regex_phone.test(value)) {
-                            return Promise.resolve();
-                          }
-                          return Promise.reject(new Error('Неправильний формат номера телефону'));
-                        },
-                      },
-                    ]}
-                    getValueFromEvent={e => e.target.value}
-                >
-                  <PhoneInput
-                      value={form.getFieldValue('phoneNumber')}
-                      //     onChange={(val: any)=> {
-                      //     console.log("form", form.getFieldValue('phone'));
-                      //     console.log("ss",val)
-                      // } }
-                  />
-                </Form.Item> */}
-
-
-              {/*<Form.Item*/}
-              {/*  label="Номер телефону"*/}
-              {/*  name="phoneNumber"*/}
-              {/*  rules={[*/}
-              {/*    { required: true, message: 'Введіть номер телефону' },*/}
-              {/*    {*/}
-              {/*      validator: (_, value) => {*/}
-              {/*        const regex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;*/}
-              {/*        if (!value || regex.test(value)) return Promise.resolve();*/}
-              {/*        return Promise.reject(new Error('Невірний формат телефону'));*/}
-              {/*      },*/}
-              {/*    },*/}
-              {/*  ]}*/}
-              {/*>*/}
-              {/*  <PhoneInput />*/}
-              {/*</Form.Item>*/}
-
-
                 <Form.Item
                     label="Номер телефону"
                     name="phoneNumber"
@@ -417,10 +335,6 @@ console.log("form.getFieldValue('phoneNumber'):", form.getFieldValue('phoneNumbe
                   />
                 </Form.Item>
 
-
-                {/*<Form.Item label="Телефон" name="phoneNumber">*/}
-                {/*  <Input size="large" />*/}
-                {/*</Form.Item>*/}
               </Col>
 
               <Col span={12}>
