@@ -1,3 +1,4 @@
+using Core.DTOs.CategoryDTOs;
 using Infrastructure.Entities;
 
 namespace Core.Interfaces
@@ -10,6 +11,7 @@ namespace Core.Interfaces
         Task<IEnumerable<CategoryEntity>> GetRootCategoriesAsync();
         Task<CategoryEntity?> GetParentCategoryAsync(long categoryId);
         Task<bool> ExistsByNameAsync(string name);
+        Task<IEnumerable<CategoryNameDto>> GetCategoriesNamesAsync();
         Task<bool> ExistsByNameExceptIdAsync(string name, long excludedId);
     }
 }

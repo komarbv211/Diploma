@@ -1,21 +1,38 @@
-import { useState, useEffect } from 'react';
-import { Table, Button, Dropdown, Menu, Input, Space, Spin, Image, Tag } from 'antd';
-import { DownOutlined, SearchOutlined, PlusOutlined } from '@ant-design/icons';
-import { IProduct } from '../../../types/product';
+import { useState, useEffect, useMemo } from 'react';
+import { Table, Button, Dropdown, Input, Space, Spin, Image, Tag, MenuProps, notification } from 'antd';
+import { SearchOutlined, PlusOutlined, MoreOutlined } from '@ant-design/icons';
+import { IProduct, IProductImageDto } from '../../../types/product';
 import { APP_ENV } from '../../../env';
 import PaginationComponent from '../../../components/pagination/PaginationComponent';
 import React from 'react';
 import { useGetAllProductsQuery } from '../../../services/productApi';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useGetCategoriesNamesQuery } from '../../../services/categoryApi';
+import { useDeleteProductMutation } from '../../../services/admin/productAdminApi';
+
+const filterProducts = (list: IProduct[], text: string) =>
+    list.filter(product => product.name?.toLowerCase().includes(text.toLowerCase()));
 
 const ProductList = () => {
     const [products, setProducts] = useState<IProduct[]>([]);
-    const [searchText, setSearchText] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    const [searchParams, setSearchParams] = useSearchParams();
 
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    const navigate = useNavigate();
+
+    const searchText = searchParams.get('search') || '';
+    const currentPage = Number(searchParams.get('page') || '1');
     const pageSize = 10;
 
     const { data: allProducts, isLoading } = useGetAllProductsQuery();
+    const [deleteProduct] = useDeleteProductMutation();
+    const { data: categoryNames } = useGetCategoriesNamesQuery();
+
+    const categoryMap = useMemo(() => {
+        const map = new Map<number, string>();
+        categoryNames?.forEach(cat => map.set(cat.id, cat?.name ?? ''));
+        return map;
+    }, [categoryNames]);
 
     useEffect(() => {
         if (allProducts) {
@@ -23,14 +40,46 @@ const ProductList = () => {
         }
     }, [allProducts]);
 
-    const filteredProducts = products.filter((product) =>
-        product.name.toLowerCase().includes(searchText.toLowerCase())
-    );
+    const filteredProducts = useMemo(() => filterProducts(products, searchText), [products, searchText]);
 
-    const pagedProducts = filteredProducts.slice(
-        (currentPage - 1) * pageSize,
-        currentPage * pageSize
-    );
+    const pagedProducts = useMemo(() => {
+        const start = (currentPage - 1) * pageSize;
+        return filteredProducts.slice(start, start + pageSize);
+    }, [filteredProducts, currentPage, pageSize]);
+
+    const handleDelete = async (id: number) => {
+        try {
+            await deleteProduct(id).unwrap();
+            setProducts(prev => {
+                const upd = prev.filter(p => p.id !== id);
+                const filtered = filterProducts(upd, searchText);
+                const total = filtered.length;
+                const maxPage = Math.max(1, Math.ceil(total / pageSize));
+                if (currentPage > maxPage) setSearchParams({ search: searchText, page: maxPage.toString() });
+                return upd;
+            });
+            notification.success({
+                message: "Продукт видалено",
+                description: "Продукт успішно видалено!",
+            });
+        } catch {
+            notification.error({
+                message: "Помилка видалення продукта",
+            });
+        }
+    };
+
+    const renderActions = (id: number) => {
+        const items: MenuProps["items"] = [
+            { key: "edit", label: <Link to={`edit/${id}`}>Редагувати</Link> },
+            { key: "delete", danger: true, label: <span onClick={() => handleDelete(id)}>Видалити</span> },
+        ];
+        return (
+            <Dropdown menu={{ items }} trigger={["click"]}>
+                <Button icon={<MoreOutlined />} shape="circle" />
+            </Dropdown>
+        );
+    };
 
     const columns = [
         {
@@ -52,46 +101,29 @@ const ProductList = () => {
             dataIndex: 'category',
             key: 'category',
             sorter: (a: IProduct, b: IProduct) =>
-                (a.category?.name || '').localeCompare(b.category?.name || ''),
-            render: (category: IProduct['category']) => (
-                <Tag color="blue">{category?.name || '—'}</Tag>
-            ),
+                (categoryMap.get(a.categoryId) ?? '').localeCompare(categoryMap.get(b.categoryId) ?? ''),
+            render: (_: any, cat: IProduct) => categoryMap.get(cat.categoryId) ?? <Tag color="blue">—</Tag>,
         },
         {
             title: 'Опис',
             dataIndex: 'description',
             key: 'description',
-            render: (desc: string) => desc.length > 80 ? desc.slice(0, 80) + '...' : desc,
+            render: (desc?: string) => desc ? (desc.length > 50 ? desc.slice(0, 50) + '...' : desc)
+                : <Tag color="blue">—</Tag>,
         },
         {
             title: 'Зображення',
-            dataIndex: 'imagePaths',
-            key: 'imagePaths',
-            render: (image: string) =>
-                image ? <Image width={60} src={`${APP_ENV.IMAGES_1200_URL}${image}`} />
-                    : <Tag color="blue">—</Tag>,
+            dataIndex: 'images',
+            key: 'images',
+            render: (images?: IProductImageDto[]) =>
+                !images?.length || !images[0]?.name
+                    ? <Tag color="blue">—</Tag>
+                    : <Image width={60} src={`${APP_ENV.IMAGES_1200_URL}${images[0].name}`} />
         },
         {
             title: 'Дії',
             key: 'actions',
-            render: (_: unknown, record: IProduct) => (
-                <Dropdown
-                    overlay={
-                        <Menu>
-                            <Menu.Item onClick={() => console.log('edit', record)}>
-                                Редагувати
-                            </Menu.Item>
-                            <Menu.Item onClick={() => console.log('delete', record)}>
-                                Видалити
-                            </Menu.Item>
-                        </Menu>
-                    }
-                >
-                    <Button>
-                        Дії <DownOutlined />
-                    </Button>
-                </Dropdown>
-            ),
+            render: (_: unknown, record: IProduct) => renderActions(record.id),
         },
     ];
 
@@ -102,23 +134,22 @@ const ProductList = () => {
                     placeholder="Пошук продукту"
                     prefix={<SearchOutlined />}
                     value={searchText}
-                    onChange={(e) => {
-                        setSearchText(e.target.value);
-                        setCurrentPage(1);
-                    }}
+                    onChange={(e) => { setSearchParams({ search: e.target.value, page: '1' }) }}
                     style={{ width: 200 }}
                 />
-                <Button type="primary" icon={<PlusOutlined />}>
+                <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/admin/products/create')}>
                     Додати продукт
                 </Button>
             </Space>
 
             {isLoading ? (
-                <Spin />
+                <div className="flex justify-center items-center h-[60vh]">
+                    <Spin size="large" />
+                </div>
             ) : (
                 <>
                     <Table<IProduct>
-                        rowKey="name"
+                        rowKey="id"
                         columns={columns}
                         dataSource={pagedProducts}
                         pagination={false}
@@ -132,7 +163,7 @@ const ProductList = () => {
                         currentPage={currentPage}
                         pageSize={pageSize}
                         totalItems={filteredProducts.length}
-                        onPageChange={setCurrentPage}
+                        onPageChange={(page) => setSearchParams({ search: searchText, page: page.toString() })}
                     />
                 </>
             )}

@@ -32,6 +32,12 @@ namespace Core.Services
             return category == null ? null : _mapper.Map<CategoryDto>(category);
         }
 
+        // Отримати назви всіх категорій
+        public async Task<List<CategoryNameDto>> GetCategoriesNamesAsync()
+        {
+            return (await _categoryRepository.GetCategoriesNamesAsync()).ToList();
+        }
+
         // Отримати категорію по слузі
         public async Task<CategoryDto?> GetBySlugAsync(string slug)
         {
@@ -61,7 +67,7 @@ namespace Core.Services
             if (dto.Image != null && dto.Image.Length > 0)
             {
                 var fileName = await _imageService.SaveImageAsync(dto.Image);
-                category.Image = fileName; 
+                category.Image = fileName;
             }
 
             await _categoryRepository.Insert(category);
@@ -89,9 +95,11 @@ namespace Core.Services
                 var newFileName = await _imageService.SaveImageAsync(dto.Image);
                 category.Image = newFileName;
             }
-            else {
+            else
+            {
                 category.Image = imageName;
-            };
+            }
+            ;
 
             await _categoryRepository.Update(category);
             await _categoryRepository.SaveAsync();
