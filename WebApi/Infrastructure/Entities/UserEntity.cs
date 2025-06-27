@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 
 namespace Infrastructure.Entities
 {
@@ -16,6 +18,9 @@ namespace Infrastructure.Entities
         public DateTime? LastActivity { get; set; } = DateTime.UtcNow;
         
         public string? PhoneNumber {get; set;}
+
+        [Column(TypeName = "date")]
+        public DateTime? BirthDate {get; set;}
 
         public bool IsRemove {get ; set; }
 

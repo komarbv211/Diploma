@@ -14,6 +14,9 @@ npm install --save-dev @types/react-input-mask
 # makeup-client-asp
 
 Create docker hub repository - publish
+
+npm install dayjs
+npm i react-datepicker
 ```
 docker build -t makeup-client . 
 docker run -it --rm -p 5982:80 --name makeup-client_container makeup-client

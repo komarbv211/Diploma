@@ -19,8 +19,8 @@ const CustomHeader = () => {
   const isAdmin = user?.roles.includes('Admin');
   const adminPrefix = (path: string) => isAdmin ? `/admin${path}` : path;
   const avatarUrl = user?.image ? `${APP_ENV.IMAGES_100_URL}${user.image}` : null;
-  console.log('avatarUrl:', avatarUrl);
-  console.log('user:', user);
+  //console.log('avatarUrl:', avatarUrl);
+  //console.log('user:', user);
 
   const menuItems = [
     ...(isAdmin ? [{ key: 'dashboard', icon: <DashboardOutlined />, label: <Link to={adminPrefix('/')}>Dashboard</Link> }] : []),
