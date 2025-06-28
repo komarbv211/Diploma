@@ -769,9 +769,11 @@ import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import ImageCropper from '../../components/images/ImageCropper';
 import { APP_ENV } from '../../env';
+import { DatePicker } from 'antd';
+import PhoneInput from "../../components/PhoneInput.tsx";
 
 const { Content } = Layout;
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const AdminProfile: React.FC = () => {
   const [form] = Form.useForm();
@@ -786,22 +788,6 @@ const AdminProfile: React.FC = () => {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
 
-  //  useEffect(() => {
-  //       if (category) {
-  //           form.setFieldsValue({
-  //               name: category.name,
-  //               description: category.description,
-  //               urlSlug: category.urlSlug,
-  //               priority: category.priority,
-  //               parentId: category.parentId
-  //           });
-  //           if (category.image) {
-  //               setImageUrl(`${APP_ENV.IMAGES_100_URL}${category.image}`);
-  //           }
-  //       }
-  //   }, [category, form]);
-
-
   useEffect(() => {
     if (user) {
       form.setFieldsValue({
@@ -809,7 +795,7 @@ const AdminProfile: React.FC = () => {
         lastName: user.lastName || '',
         email: user.email || '',
         phoneNumber: user.phoneNumber || '',
-        birthDate: user.birthDate || '',
+        birthDate: user.birthDate ? dayjs(user.birthDate) : null,
       });
 
       setCroppedImage(`${APP_ENV.IMAGES_100_URL}${user.image}`|| null);
@@ -906,13 +892,44 @@ const AdminProfile: React.FC = () => {
               <Input size="large" />
             </Form.Item>
 
+
             <Form.Item label="Дата народження" name="birthDate">
-              <Input size="large" />
+              <DatePicker size="large" format="YYYY-MM-DD" />
             </Form.Item>
 
-            <Form.Item label="Телефон" name="phoneNumber">
-              <Input size="large" />
+            <Form.Item
+                label="Номер телефону"
+                name="phoneNumber"
+                rules={[
+                  { required: true, message: 'Введіть номер телефону' },
+                  {
+                    validator: (_, value) => {
+                      if (!value) {
+                        return Promise.reject(new Error('Введіть номер телефону'));
+                      }
+                      // Видаляємо всі _ (якщо є)
+                      const cleanedValue = value.replace(/_/g, '');
+                      if (cleanedValue.includes('_')) {
+                        return Promise.reject(new Error('Номер телефону не повністю введений'));
+                      }
+                      const regex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                      if (regex.test(cleanedValue)) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error('Невірний формат телефону'));
+                    },
+                  },
+                ]}
+            >
+              <PhoneInput
+                  value={form.getFieldValue('phoneNumber')}
+                  onChange={(e) => {
+                    form.setFieldsValue({ phoneNumber: e.target.value });
+                    console.log('target', e.target.value);
+                  }}
+              />
             </Form.Item>
+            
           </Col>
 
           <Col span={12}>

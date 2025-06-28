@@ -9,6 +9,7 @@ public class UserCreateDTO
     public IFormFile? Image { get; set; }
     public string Email { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; }
+    public DateTime? BirthDate {get; set;}
 
 
     public string Password { get; set; }

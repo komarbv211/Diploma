@@ -163,173 +163,97 @@
 // export default PhoneInput;
 
 
-
-// import React from 'react';
-// import { Select } from 'antd';
-// import MaskedInput from 'antd-mask-input';
-// import { MaskedInputProps } from 'antd-mask-input/build/main/lib/MaskedInput';
-//
-// interface PhoneInputProps extends Omit<MaskedInputProps, 'mask'> {
-//     value?: string;
-//     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-//     onOperatorChange?: (operator: string) => void;
-// }
-//
-// const operatorOptions = [
-//     { code: '050', label: 'Vodafone (050)' },
-//     { code: '066', label: 'Vodafone (066)' },
-//     { code: '095', label: 'Vodafone (095)' },
-//     { code: '099', label: 'Vodafone (099)' },
-//     { code: '067', label: 'Kyivstar (067)' },
-//     { code: '068', label: 'Kyivstar (068)' },
-//     { code: '096', label: 'Kyivstar (096)' },
-//     { code: '097', label: 'Kyivstar (097)' },
-//     { code: '098', label: 'Kyivstar (098)' },
-//     { code: '063', label: 'Lifecell (063)' },
-//     { code: '073', label: 'Lifecell (073)' },
-//     { code: '093', label: 'Lifecell (093)' },
-// ];
-//
-// const PhoneInput: React.FC<PhoneInputProps> = ({ value = '', onChange, onOperatorChange, ...rest }) => {
-//     const [operator, setOperator] = React.useState('050');
-//
-//     React.useEffect(() => {
-//         if (value) {
-//             const match = value.match(/\+38\s?\((\d{3})\)/);
-//             if (match && match[1] && operator !== match[1]) {
-//                 setOperator(match[1]);
-//             }
-//         }
-//     }, [value, operator]);
-//
-//     const handleOperatorChange = (newOperator: string) => {
-//         setOperator(newOperator);
-//         onOperatorChange?.(newOperator);
-//
-//         // Витягуємо решту номера без коду оператора
-//         const restNumber = value?.replace(/^\+38\s?\(\d{3}\)\s?/, '') || '';
-//         const newValue = `+38 (${newOperator}) ${restNumber}`;
-//         onChange?.({
-//             target: { value: newValue },
-//
-//
-//         } as React.ChangeEvent<HTMLInputElement>);
-//     };
-//
-//     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//         const newValue = e.target.value;
-//         const match = newValue.match(/\+38\s?\((\d{3})\)/);
-//         if (match && match[1] && operator !== match[1]) {
-//             setOperator(match[1]);
-//             onOperatorChange?.(match[1]);
-//         }
-//         onChange?.(e);
-//     };
-//
-//     return (
-//         <div style={{ display: 'flex', gap: 8 }}>
-//             <Select
-//                 value={operator}
-//                 onChange={handleOperatorChange}
-//                 style={{ width: 180 }}
-//                 options={operatorOptions.map(({ code, label }) => ({
-//                     value: code,
-//                     label,
-//                 }))}
-//             />
-//             <MaskedInput
-//                 name="phone"
-//                 mask="+38 (000) 000-00-00"
-//                 value={value}
-//                 onChange={handleInputChange}
-//                 {...rest}
-//             />
-//         </div>
-//     );
-// };
-//
-// export default PhoneInput;
-
-
 import React from 'react';
-import { Select } from 'antd';
-import MaskedInput from 'antd-mask-input';
-//import { MaskedInputProps } from 'antd-mask-input/build/main/lib/MaskedInput';
+import { Select, Input } from 'antd';
 
 interface PhoneInputProps {
-    value?: string; // повний номер: +38 (код) ХХХ-ХХ-ХХ
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onOperatorChange?: (operator: string) => void;
+  value?: string; // формат: +38 (097) 123-45-67
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const operatorOptions = [
-    { code: '050', label: 'Vodafone (050)' },
-    { code: '066', label: 'Vodafone (066)' },
-    { code: '095', label: 'Vodafone (095)' },
-    { code: '099', label: 'Vodafone (099)' },
-    { code: '067', label: 'Kyivstar (067)' },
-    { code: '068', label: 'Kyivstar (068)' },
-    { code: '096', label: 'Kyivstar (096)' },
-    { code: '097', label: 'Kyivstar (097)' },
-    { code: '098', label: 'Kyivstar (098)' },
-    { code: '063', label: 'Lifecell (063)' },
-    { code: '073', label: 'Lifecell (073)' },
-    { code: '093', label: 'Lifecell (093)' },
+  { code: '050', label: 'Vodafone (050)' },
+  { code: '066', label: 'Vodafone (066)' },
+  { code: '095', label: 'Vodafone (095)' },
+  { code: '099', label: 'Vodafone (099)' },
+  { code: '067', label: 'Kyivstar (067)' },
+  { code: '068', label: 'Kyivstar (068)' },
+  { code: '096', label: 'Kyivstar (096)' },
+  { code: '097', label: 'Kyivstar (097)' },
+  { code: '098', label: 'Kyivstar (098)' },
+  { code: '063', label: 'Lifecell (063)' },
+  { code: '073', label: 'Lifecell (073)' },
+  { code: '093', label: 'Lifecell (093)' },
 ];
 
-const PhoneInput: React.FC<PhoneInputProps> = ({
-                                                   value = '',
-                                                   onChange,
-                                                   onOperatorChange,
-                                               }) => {
-    // Витягуємо код оператора та номер без нього
-    const match = value.match(/\+38\s?\((\d{3})\)\s?(\d{3}-\d{2}-\d{2})?/);
-    const initialOperator = match?.[1] || '050';
-    const initialRest = match?.[2] || '';
+// Розбиваємо value на оператор і залишок
+const parseValue = (val: string) => {
+  const match = val?.match(/\+38\s?\((\d{3})\)\s?([\d\-]*)/);
+  return {
+    operator: match?.[1] || '050',
+    rest: match?.[2] || '',
+  };
+};
 
-    const [operator, setOperator] = React.useState(initialOperator);
-    const [restNumber, setRestNumber] = React.useState(initialRest);
+const PhoneInput: React.FC<PhoneInputProps> = ({ value = '', onChange }) => {
+  const { operator, rest } = parseValue(value);
 
-    const handleOperatorChange = (newOperator: string) => {
-        setOperator(newOperator);
-        onOperatorChange?.(newOperator);
-        const newFullNumber = `+38 (${newOperator}) ${restNumber}`;
-        onChange?.({
-            target: { value: newFullNumber },
-        } as React.ChangeEvent<HTMLInputElement>);
-    };
+  // Функція, щоб прибрати всі нецифри і обмежити 7 цифр
+  const formatRestValue = (input: string) => {
+    // Залишаємо лише цифри
+    const digits = input.replace(/\D/g, '');
+    // Обрізаємо до максимум 7 цифр
+    return digits.slice(0, 7);
+  };
 
-    const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const number = e.target.value;
-        setRestNumber(number);
-        const newFullNumber = `+38 (${operator}) ${number}`;
-        onChange?.({
-            target: { value: newFullNumber },
-        } as React.ChangeEvent<HTMLInputElement>);
-    };
+  // Форматування в стилі xxx-xx-xx
+  const formatDisplay = (digits: string) => {
+    const part1 = digits.slice(0, 3);
+    const part2 = digits.slice(3, 5);
+    const part3 = digits.slice(5, 7);
+    let formatted = part1;
+    if (part2) formatted += '-' + part2;
+    if (part3) formatted += '-' + part3;
+    return formatted;
+  };
 
-    return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Select
-                value={operator}
-                onChange={handleOperatorChange}
-                style={{ width: 180 }}
-                options={operatorOptions.map(({ code, label }) => ({
-                    value: code,
-                    label,
-                }))}
-            />
-            <span>-</span>
-            <MaskedInput
-                mask="000-00-00"
-                value={restNumber}
-                onChange={handleNumberChange}
-                placeholder="___-__-__"
-            />
-        </div>
-    );
+  const handleOperatorChange = (newOperator: string) => {
+    const full = `+38 (${newOperator}) ${rest}`;
+    onChange?.({ target: { value: full } } as React.ChangeEvent<HTMLInputElement>);
+  };
+
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Отримуємо тільки цифри, обрізаємо до 7, форматумо для відображення
+    const formattedDigits = formatRestValue(e.target.value);
+    const formattedDisplay = formatDisplay(formattedDigits);
+
+    const full = `+38 (${operator}) ${formattedDisplay}`;
+    onChange?.({ target: { value: full } } as React.ChangeEvent<HTMLInputElement>);
+  };
+
+  return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Select
+            value={operator}
+            onChange={handleOperatorChange}
+            style={{ width: 180 }}
+            options={operatorOptions.map(({ code, label }) => ({
+              value: code,
+              label,
+            }))}
+        />
+        <span>-</span>
+        <Input
+            value={rest}
+            onChange={handleNumberChange}
+            placeholder="___-__-__"
+            maxLength={9} // максимум з урахуванням тире (7 цифр + 2 тире)
+        />
+      </div>
+  );
 };
 
 export default PhoneInput;
+
 
 
