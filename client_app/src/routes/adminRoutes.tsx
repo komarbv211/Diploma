@@ -1,7 +1,6 @@
 import { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-
 const AdminLayout = lazy(() => import('./../components/layouts/admin/Layout'))
 const Dashboard = lazy(() => import('./../pages/admin/Dashboard'))
 const AdminProfile = lazy(() => import('./../pages/admin/AdminProfile'))
@@ -14,12 +13,12 @@ const CreateProductPage = lazy(() => import('./../pages/admin/products/CreatePro
 const EditProductPage = lazy(() => import('../pages/admin/products/EditProductpage'))
 
 export const AdminRoutes = () => {
-    return (
-        <Routes>
-            <Route element={<AdminLayout />}>
-                <Route index element={<Dashboard />} />
-                <Route path="profile" element={<AdminProfile />} />
-                <Route path="users" element={<UsersPage />} />
+  return (
+    <Routes>
+      <Route element={<AdminLayout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="profile" element={<AdminProfile />} />
+        <Route path="users" element={<UsersPage />} />
 
         <Route path="categories">
           <Route index element={<CategoryList />} />
@@ -34,7 +33,6 @@ export const AdminRoutes = () => {
         </Route>
       </Route>
     </Routes>
-
   );
 };
 
