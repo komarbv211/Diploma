@@ -7,6 +7,7 @@ const Dashboard = lazy(() => import('./../pages/admin/Dashboard'))
 const AdminProfile = lazy(() => import('./../pages/admin/AdminProfile'))
 const UsersPage = lazy(() => import('./../pages/admin/users/UsersPage'))
 const CategoryList = lazy(() => import('./../pages/admin/categories/CategoryList'))
+const TestingList = lazy(() => import('./../pages/admin/testing/TestingList'))
 const EditCategoryPage = lazy(() => import('./../pages/admin/categories/EditCategoryPage'))
 const CreateCategoryPage = lazy(() => import('./../pages/admin/categories/CreateCategoryPage'))
 const ProductList = lazy(() => import('./../pages/admin/products/ProductList'))
@@ -24,6 +25,11 @@ export const AdminRoutes = () => {
           <Route index element={<CategoryList />} />
           <Route path="create" element={<CreateCategoryPage />} />
           <Route path="edit/:id" element={<EditCategoryPage />} />
+        </Route>
+
+        <Route path="testing">
+          <Route index element={<TestingList />} />
+          <Route path="create" element={<CreateCategoryPage />} />
         </Route>
 
         <Route path="products">

@@ -18,12 +18,13 @@ import {
 } from '@ant-design/icons';
 import { Link, useNavigate } from "react-router-dom";
 import { ICategory } from '../../../types/category';
+import { useGetCategoryTreeQuery } from '../../../services/admin/categoryAdmnApi';
 import PaginationComponent from '../../../components/pagination/PaginationComponent';
 import React from 'react';
 import { APP_ENV } from '../../../env';
-import { useDeleteCategoryMutation, useGetCategoryTreeQuery } from '../../../services/admin/categoryAdmnApi';
+import { useDeleteCategoryMutation } from '../../../services/admin/categoryAdmnApi';
 
-const CategoryList = () => {
+const TestingList = () => {
     const navigate = useNavigate();
 
     const [searchText, setSearchText] = useState('');
@@ -40,6 +41,8 @@ const CategoryList = () => {
         data: rootCategories,
         isLoading: isLoadingRoot,
     } = useGetCategoryTreeQuery();
+
+    console.log("rootCategories", rootCategories);
 
     useEffect(() => {
         if (rootCategories) {
@@ -194,13 +197,11 @@ const CategoryList = () => {
                     }}
                     style={{ width: 200 }}
                 />
-                <Button
+                <Link to="create"
                     type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => navigate('create')}
                 >
                     Додати категорію
-                </Button>
+                </Link>
             </Space>
 
             {isLoadingRoot && <Spin />}
@@ -209,7 +210,7 @@ const CategoryList = () => {
                 <Table<ICategory>
                     rowKey="id"
                     columns={columns}
-                    dataSource={pagedCategories}
+                    dataSource={rootCategories}
                     pagination={false}
                     rowSelection={{
                         selectedRowKeys,
@@ -253,4 +254,4 @@ const CategoryList = () => {
     );
 };
 
-export default CategoryList;
+export default TestingList;
