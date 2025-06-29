@@ -114,7 +114,7 @@ public class ProductService : IProductService
 
             _mapper.Map(dto, product);
             await _productRepository.Update(product);
-
+            await _productRepository.SaveAsync();
             await HandleProductImagesUpdateAsync(dto, product);
         }
         catch (HttpException)
@@ -130,7 +130,7 @@ public class ProductService : IProductService
     private async Task HandleProductImagesUpdateAsync(ProductUpdateDto dto, ProductEntity product)
     {
         var existingImages = product.Images!.ToDictionary(i => i.Name, i => i);
-        var updatedImages = new List<ProductImageEntity>();  
+        var updatedImages = new List<ProductImageEntity>();
 
         if (dto.image != null)
         {
@@ -138,17 +138,24 @@ public class ProductService : IProductService
             {
                 var formFile = dto.image[i];
 
-                if (formFile == null || formFile.Length == 0)
+                if (formFile == null)
                     continue;
 
-                if (existingImages.TryGetValue(formFile.FileName, out var existingImage))
+                if (formFile.ContentType == "old-image")
                 {
-                    existingImage.Priority = (short)i;
-                    updatedImages.Add(existingImage);
-                    await _imageRepository.Update(existingImage);                  
+                    // Це старе зображення, оновлюємо пріоритет
+                    var imageName = formFile.FileName;
+
+                    if (existingImages.TryGetValue(imageName, out var oldImage))
+                    {
+                        oldImage.Priority = (short)i;
+                        updatedImages.Add(oldImage);
+                        await _imageRepository.Update(oldImage);
+                    }
                 }
                 else
                 {
+                    // Нове зображення
                     var newFileName = await _imageService.SaveImageAsync(formFile);
                     var newImage = new ProductImageEntity
                     {
@@ -161,10 +168,12 @@ public class ProductService : IProductService
                 }
             }
         }
-        
+
+        // Видаляємо всі зображення, яких немає у списку оновлених
         var imagesToDelete = product.Images!
-                  .Where(img => !updatedImages.Any(u => u.Name == img.Name))
-                  .ToList();
+            .Where(img => !updatedImages.Any(updated => updated.Name == img.Name))
+            .ToList();
+
         foreach (var img in imagesToDelete)
         {
             _imageService.DeleteImageIfExists(img.Name);
