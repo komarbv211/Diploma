@@ -49,7 +49,24 @@ export const categoryAdminApi = createApi({
                 method: 'DELETE',
             }),
             invalidatesTags: ["Categories"],
-        }),       
+        }), 
+        
+        getCategoryTree: builder.query<ICategory[], void>({
+            query: () => 'category',
+            providesTags: ['Categories'],
+        }),
+        getRootCategories: builder.query<ICategory[], void>({
+            query: () => 'category/root',
+            providesTags: ['Categories'],
+        }),
+        getChildrenById: builder.query<ICategory[], number>({
+            query: (parentId) => `category/children/${parentId}`,
+            providesTags: ['Categories'],
+        }),
+        getCategoriesNames: builder.query<ICategoryName[], void>({
+            query: () => `category/names`,
+            providesTags: ['Categories'],
+        }),
     }),
 });
 
@@ -58,4 +75,8 @@ export const {
     useCreateCategoryMutation,
     useUpdateCategoryMutation,
     useDeleteCategoryMutation,
+    useGetCategoryTreeQuery,
+    useGetRootCategoriesQuery,
+    useGetChildrenByIdQuery,
+    useGetCategoriesNamesQuery,
 } = categoryAdminApi;
