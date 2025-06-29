@@ -47,5 +47,35 @@ namespace WebApiDiploma.Controllers.Admin
             await _categoryService.DeleteCategoryAsync(id);
             return NoContent(); 
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAll()
+        {
+            var categories = await _categoryService.GetCategoriesAsync();
+            return Ok(categories);
+        }
+        [HttpGet("root")]
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetRootCategories()
+        {
+            var categories = await _categoryService.GetRootCategoriesAsync();
+            return Ok(categories);
+        }
+
+        [HttpGet("names")]
+        public async Task<ActionResult<IEnumerable<CategoryNameDto>>> GetCategoryNames()
+        {
+            var names = await _categoryService.GetCategoriesNamesAsync();
+            return Ok(names);
+        }
+
+        [HttpGet("children/{id}")]
+        public async Task<ActionResult<CategoryDto>> GetChildrenById(long id)
+        {
+            var category = await _categoryService.GetChildrenAsync(id);
+            if (category == null)
+                return NotFound();
+
+            return Ok(category);
+        }
     }
 }
