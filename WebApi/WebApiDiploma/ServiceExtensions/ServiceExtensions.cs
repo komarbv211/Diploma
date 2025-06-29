@@ -9,7 +9,10 @@
                 options.AddPolicy(name: "front-end-cors-policy",
                     policy =>
                     {                      
-                        policy.WithOrigins("http://localhost:5173");                     
+                        policy.WithOrigins([
+                            "http://localhost:5173",
+                            "https://makeup.itstep.click"
+                            ]);                                          
                         //policy.AllowAnyOrigin();
                         policy.AllowAnyMethod();
                         policy.AllowAnyHeader();
