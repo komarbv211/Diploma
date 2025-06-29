@@ -125,7 +125,7 @@
 //
 // export default UserProfile;
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UserOutlined, HomeOutlined, HistoryOutlined, GiftOutlined, DeleteOutlined, LogoutOutlined, SettingOutlined, UploadOutlined } from '@ant-design/icons';
 import { Layout, Menu, Input, Typography, Row, Col, Divider, Button, Space, Spin, Upload, Avatar, Modal, message, Form } from 'antd';
 import { useNavigate } from 'react-router-dom';

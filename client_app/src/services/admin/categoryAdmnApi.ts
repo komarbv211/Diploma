@@ -1,6 +1,6 @@
 import { createApi} from '@reduxjs/toolkit/query/react';
 import { createBaseQuery } from '../../utilities/createBaseQuery';
-import { ICategory, ICategoryPostRequest, ICategoryPutRequest } from '../../types/category';
+import { ICategory, ICategoryPostRequest, ICategoryPutRequest, ICategoryName } from '../../types/category';
 import { serialize } from 'object-to-formdata';
 
 

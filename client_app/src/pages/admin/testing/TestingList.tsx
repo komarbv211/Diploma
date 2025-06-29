@@ -13,10 +13,9 @@ import {
 } from 'antd';
 import {
     SearchOutlined,
-    PlusOutlined,
     MoreOutlined,
 } from '@ant-design/icons';
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ICategory } from '../../../types/category';
 import { useGetCategoryTreeQuery } from '../../../services/admin/categoryAdmnApi';
 import PaginationComponent from '../../../components/pagination/PaginationComponent';
@@ -25,8 +24,6 @@ import { APP_ENV } from '../../../env';
 import { useDeleteCategoryMutation } from '../../../services/admin/categoryAdmnApi';
 
 const TestingList = () => {
-    const navigate = useNavigate();
-
     const [searchText, setSearchText] = useState('');
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
@@ -111,12 +108,6 @@ const TestingList = () => {
             .filter(Boolean) as ICategory[];
 
     const filteredCategories = filterCategories(categories);
-
-    // Застосовуємо пагінацію — беремо тільки категорії поточної сторінки
-    const pagedCategories = filteredCategories.slice(
-        (currentPage - 1) * pageSize,
-        currentPage * pageSize
-    );
 
     const renderActions = (id: number) => {
         const items: MenuProps["items"] = [
