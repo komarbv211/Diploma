@@ -313,9 +313,10 @@ namespace Core.Services
             var resetUrl = configuration["ResetPasswordUrl"];
 
             // Кодування параметрів для URL
-            var encodedEmail = Uri.EscapeDataString(user.Email);
+            //var encodedEmail = Uri.EscapeDataString(user.Email);
+            var encodedUserId = Uri.EscapeDataString(user.Id.ToString());
             var encodedToken = Uri.EscapeDataString(token);
-            var callbackUrl = $"{resetUrl}/{encodedToken}"; // Форматуємо URL для клієнта, наприклад, /reset-password/{token}
+            var callbackUrl = $"{resetUrl}/{encodedToken}?userId={encodedUserId}"; // Форматуємо URL для клієнта, наприклад, /reset-password/{token}
 
             // Надсилання листа з посиланням для скидання пароля
             try
