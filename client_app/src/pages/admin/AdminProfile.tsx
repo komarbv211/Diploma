@@ -838,7 +838,11 @@ const AdminProfile: React.FC = () => {
       formData.append('lastName', values.lastName);
       formData.append('email', values.email);
       formData.append('phoneNumber', values.phoneNumber);
-      formData.append('birthDate', values.birthDate);
+     // formData.append('birthDate', values.birthDate);
+      if (values.birthDate) {
+        formData.append('birthDate', values.birthDate.format('YYYY-MM-DD'));
+      }
+
       if (croppedImage && croppedImage.startsWith('data:image')) {
         const blob = await fetch(croppedImage).then((res) => res.blob());
         formData.append('Image', blob, 'avatar.png');
