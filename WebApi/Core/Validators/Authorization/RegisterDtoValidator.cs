@@ -7,22 +7,34 @@ namespace Core.Validators.Authorization
     {
         public RegisterDtoValidator()
         {
+            //RuleFor(x => x.FirstName)
+            //    .NotEmpty().WithMessage("First name is required.")
+            //    .MaximumLength(255)
+            //    .Matches("^[A-Z]").WithMessage("Ім'я має починатись з великої літери.");
+
             RuleFor(x => x.FirstName)
-                .NotEmpty().WithMessage("First name is required.")
-                .MaximumLength(255)
-                .Matches("^[A-Z]").WithMessage("Ім'я має починатись з великої літери.");
+                .NotEmpty().WithMessage("Ім'я є обов'язковим.")
+                .MaximumLength(255).WithMessage("Ім'я не може перевищувати 255 символів.")
+                .Matches(@"^[А-ЯІЇЄҐ][а-яіїєґ']+$").WithMessage("Ім'я має бути українською мовою і починатися з великої літери.");
+
+
+            //RuleFor(x => x.LastName)
+            //    .NotEmpty().WithMessage("Last name is required.")
+            //    .MaximumLength(255)
+            //    .Matches("^[A-Z]").WithMessage("Прізвище має починатись з великої літери.");
 
             RuleFor(x => x.LastName)
-                .NotEmpty().WithMessage("Last name is required.")
-                .MaximumLength(255)
-                .Matches("^[A-Z]").WithMessage("Прізвище має починатись з великої літери.");
+                .NotEmpty().WithMessage("Прізвище є обов'язковим.")
+                .MaximumLength(255).WithMessage("Прізвище не може перевищувати 255 символів.")
+                .Matches(@"^[А-ЯІЇЄҐ][а-яіїєґ']+$").WithMessage("Прізвище має бути українською мовою і починатися з великої літери.");
+
 
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Email is required.")
+                .NotEmpty().WithMessage("Необхідно вказати адресу електронної пошти.")
                 .EmailAddress().WithMessage("Невірна електронна пошта.");
 
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required.")
+                .NotEmpty().WithMessage("Необхідно ввести пароль.")
                 .MinimumLength(6)
                 .Matches("[A-Z]").WithMessage("Пароль повинен містити хоча б одну велику літеру.")
                 .Matches("[a-z]").WithMessage("Пароль повинен містити хоча б одну малу літеру.")
