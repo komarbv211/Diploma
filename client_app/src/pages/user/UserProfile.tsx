@@ -217,7 +217,8 @@ console.log("form.getFieldValue('phoneNumber'):", form.getFieldValue('phoneNumbe
       formData.append('lastName', values.lastName);
       formData.append('email', values.email);
       formData.append('phoneNumber', values.phoneNumber);
-      formData.append('birthDate', values.birthDate.format('YYYY-MM-DD'));
+      
+      //formData.append('birthDate', values.birthDate.format('YYYY-MM-DD'));
       // Форматуємо дату у формат YYYY-MM-DD, якщо вона є
       if (values.birthDate) {
         formData.append('birthDate', values.birthDate.format('YYYY-MM-DD'));
