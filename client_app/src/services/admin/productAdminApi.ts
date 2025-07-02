@@ -8,6 +8,16 @@ export const productAdminApi = createApi({
     baseQuery: createBaseQuery('admin'),
     tagTypes: ['Products'],
     endpoints: (builder) => ({
+        getAllProducts: builder.query<IProduct[], void>({
+            query: () => 'product',
+            providesTags: ['Products'],
+        }),
+
+        getProductById: builder.query<IProduct, number>({
+            query: (id) => `product/${id}`, 
+            providesTags: ['Products'],
+        }),
+
         createProduct: builder.mutation<IProduct, FormData>({
             query: (newProd) => ({
                 url: 'product',
@@ -16,21 +26,22 @@ export const productAdminApi = createApi({
             }),
             invalidatesTags: ["Products"],
         }),
+
         updateProduct: builder.mutation<IProduct, IProductPutRequest>({
-    query: (updatedProduct) => {
-        try {
-            const formData = serializeProduct(updatedProduct);
-            return {
-                url: `product`,
-                method: 'PUT',
-                body: formData,
-            };
-        } catch {
-            throw new Error("Error serializing the product data.");
-        }
-    },
-    invalidatesTags: ["Products"],
-}),
+            query: (updatedProduct) => {
+                try {
+                    const formData = serializeProduct(updatedProduct);
+                    return {
+                        url: `product`,
+                        method: 'PUT',
+                        body: formData,
+                    };
+                } catch {
+                    throw new Error("Error serializing the product data.");
+                }
+            },
+            invalidatesTags: ["Products"],
+        }),
 
         deleteProduct: builder.mutation<void, number>({
             query: (id) => ({
@@ -43,6 +54,8 @@ export const productAdminApi = createApi({
 });
 
 export const {
+    useGetAllProductsQuery, 
+    useGetProductByIdQuery,
     useCreateProductMutation,
     useUpdateProductMutation,
     useDeleteProductMutation,

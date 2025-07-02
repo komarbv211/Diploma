@@ -1,27 +1,23 @@
 import {useState, useEffect} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import {Button, Input, Upload, Select, Form} from "antd";
+import {Button, Input, Upload, Form} from "antd";
 import {PlusOutlined} from "@ant-design/icons";
 import Item from "antd/es/list/Item";
-import { useGetCategoryTreeQuery } from "../../../services/categoryApi";
-import { useGetProductByIdQuery } from "../../../services/productApi";
+import { useUpdateProductMutation, useGetProductByIdQuery } from "../../../services/admin/productAdminApi";
+import CategoryTreeSelect from '../../../components/category/CategoryTreeSelect';
 import { IProductPutRequest } from "../../../types/product";
 import { UploadFile } from "antd/es/upload/interface";
 import { APP_ENV } from "../../../env";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { handleFormErrors } from "../../../utilities/handleApiErrors";
 import { ApiError } from "../../../types/errors";
-import { useUpdateProductMutation } from "../../../services/admin/productAdminApi";
 
 const EditProductPage = () => {
     const {id} = useParams();
     const navigate = useNavigate();
     const {data: productData} = useGetProductByIdQuery(Number(id));
-    const {data: categories, isLoading: isCategoriesLoading, error: categoriesError} = useGetCategoryTreeQuery();
     const [updateProduct] = useUpdateProductMutation();
-
     const [form] = Form.useForm<IProductPutRequest>();
-
     const [fileList, setFileList] = useState<UploadFile[]>([]);
 
     useEffect(() => {
@@ -73,7 +69,7 @@ const EditProductPage = () => {
             handleFormErrors(error as ApiError, form);
         }
     }
-
+    
     return (
         <div className="max-w-lg mx-auto my-6">
             <h1 className="text-3xl font-bold mb-4">Редагування продукт</h1>
@@ -94,26 +90,18 @@ const EditProductPage = () => {
                     <Input placeholder="Ціна" />
                 </Form.Item>
 
-                {isCategoriesLoading ? (
-                    <p>Loading categories...</p>
-                ) : categoriesError ? (
-                    <p className="text-red-500">Failed to load categories</p>
-                ) : (
-                    <Form.Item
-                        label="Категорія"
-                        name="categoryId"
-                        htmlFor="categoryId"
-                        rules={[{required: true, message: "Це поле є обов'язковим!"}]}
-                    >
-                        <Select placeholder="Оберіть категорію: " options={categories?.map(category =>
-                        {
-                            return {
-                                value: category.id,
-                                label: category.name,
-                            };
-                        })}/>
-                    </Form.Item>
-                )}
+                <Form.Item
+                    label="Категорія"
+                    name="categoryId"
+                    htmlFor="categoryId"
+                    rules={[{required: true, message: "Це поле є обов'язковим!"}]}
+                >
+                    <CategoryTreeSelect
+                        placeholder="Оберіть категорію: "
+                        allowClear
+                        showSearch
+                    />
+                </Form.Item>
                 <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable droppableId="upload-list" direction="horizontal">
                         {(provided) => (
