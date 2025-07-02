@@ -5,10 +5,9 @@ import { IProduct, IProductImageDto } from '../../../types/product';
 import { APP_ENV } from '../../../env';
 import PaginationComponent from '../../../components/pagination/PaginationComponent';
 import React from 'react';
-import { useGetAllProductsQuery } from '../../../services/productApi';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useGetCategoriesNamesQuery } from '../../../services/categoryApi';
-import { useDeleteProductMutation } from '../../../services/admin/productAdminApi';
+import { useDeleteProductMutation, useGetAllProductsQuery } from '../../../services/admin/productAdminApi';
 
 const filterProducts = (list: IProduct[], text: string) =>
     list.filter(product => product.name?.toLowerCase().includes(text.toLowerCase()));
@@ -16,7 +15,6 @@ const filterProducts = (list: IProduct[], text: string) =>
 const ProductList = () => {
     const [products, setProducts] = useState<IProduct[]>([]);
     const [searchParams, setSearchParams] = useSearchParams();
-
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const navigate = useNavigate();
 
