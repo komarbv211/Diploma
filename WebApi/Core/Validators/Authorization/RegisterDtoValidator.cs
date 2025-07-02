@@ -12,10 +12,16 @@ namespace Core.Validators.Authorization
             //    .MaximumLength(255)
             //    .Matches("^[A-Z]").WithMessage("Ім'я має починатись з великої літери.");
 
+            //RuleFor(x => x.FirstName)
+            //    .NotEmpty().WithMessage("Ім'я є обов'язковим.")
+            //    .MaximumLength(255).WithMessage("Ім'я не може перевищувати 255 символів.")
+            //    .Matches(@"^[А-ЯІЇЄҐ][а-яіїєґ']+$").WithMessage("Ім'я має бути українською мовою і починатися з великої літери.");
+
             RuleFor(x => x.FirstName)
-                .NotEmpty().WithMessage("Ім'я є обов'язковим.")
-                .MaximumLength(255).WithMessage("Ім'я не може перевищувати 255 символів.")
-                .Matches(@"^[А-ЯІЇЄҐ][а-яіїєґ']+$").WithMessage("Ім'я має бути українською мовою і починатися з великої літери.");
+                  .NotEmpty().WithMessage("Ім'я є обов'язковим.")
+                  .MaximumLength(255).WithMessage("Ім'я не може перевищувати 255 символів.")
+                  .Matches(@"^([А-ЯІЇЄҐ][а-яіїєґ']+|[A-Z][a-z]+)$")
+                  .WithMessage("Ім'я має бути українською або англійською мовою і починатися з великої літери.");
 
 
             //RuleFor(x => x.LastName)
@@ -26,7 +32,8 @@ namespace Core.Validators.Authorization
             RuleFor(x => x.LastName)
                 .NotEmpty().WithMessage("Прізвище є обов'язковим.")
                 .MaximumLength(255).WithMessage("Прізвище не може перевищувати 255 символів.")
-                .Matches(@"^[А-ЯІЇЄҐ][а-яіїєґ']+$").WithMessage("Прізвище має бути українською мовою і починатися з великої літери.");
+                .Matches(@"^([А-ЯІЇЄҐ][а-яіїєґ']+|[A-Z][a-z]+)$")
+                .WithMessage("Прізвище має бути українською мовою і починатися з великої літери.");
 
 
             RuleFor(x => x.Email)
