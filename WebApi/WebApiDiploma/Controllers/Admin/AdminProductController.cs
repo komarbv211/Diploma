@@ -17,6 +17,13 @@ public class AdminProductController : ControllerBase
         _productService = productService;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<List<ProductItemDto>>> GetAll()
+    {
+        var products = await _productService.GetProductsAsync();
+        return Ok(products);
+    } 
+
     [HttpPost]
     public async Task<IActionResult> Create([FromForm] ProductCreateDto dto)
     {
