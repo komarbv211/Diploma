@@ -334,10 +334,10 @@ namespace Core.Services
 
         public async Task ResetPasswordAsync(ResetPasswordDto model)
         {
-            var user = await userManager.FindByEmailAsync(model.Email);
+            var user = await userManager.FindByIdAsync(model.Id.ToString());
             if (user == null)
             {
-                throw new HttpException("Invalid email.", HttpStatusCode.BadRequest);
+                throw new HttpException("Користувача не знайдено.", HttpStatusCode.BadRequest);
             }
 
             try
@@ -346,14 +346,15 @@ namespace Core.Services
                 if (!result.Succeeded)
                 {
                     var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                    throw new HttpException($"Password reset failed: {errors}", HttpStatusCode.BadRequest);
+                    throw new HttpException($"Не вдалося скинути пароль: {errors}", HttpStatusCode.BadRequest);
                 }
             }
             catch (Exception)
             {
-                throw new HttpException("Failed to reset password.", HttpStatusCode.InternalServerError);
+                throw new HttpException("Помилка під час скидання пароля.", HttpStatusCode.InternalServerError);
             }
         }
+
 
         public async Task<bool> IsRegisteredWithGoogleAsync(string email)
         {
