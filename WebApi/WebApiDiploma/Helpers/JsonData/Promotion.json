@@ -1,0 +1,27 @@
+//Seed Promotion data
+[
+  {
+    "Name": "Літній розпродаж",
+    "Description": "20% знижка на категорію Жіноча парфумерія",
+    "DiscountType": "Percent",
+    "DiscountValue": 20,
+    "Image": "https://u.makeup.com.ua/4/4p/4p6g2uz7zjxe.jpg",
+    "StartDate": "2025-07-01T00:00:00",
+    "EndDate": "2025-07-30T00:00:00",
+    "IsActive": true,
+    "CategoryId": 1,
+    "ProductIds": []
+  },
+  {
+    "Name": "Знижка по догляду за очима",
+    "Description": "100 грн знижки на вибрані товари",
+    "DiscountType": "Fixed",
+    "DiscountValue": 100,
+    "Image": "https://u.makeup.com.ua/j/ju/ju9vwvqwvzeg.jpg",
+    "StartDate": "2025-07-02T00:00:00",
+    "EndDate": "2025-07-29T00:00:00",
+    "IsActive": true,
+    "CategoryId": null,
+    "ProductIds": [ 2 ]
+  }
+]
