@@ -8,7 +8,7 @@ import {
     Modal,
     Select,
 } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import TextArea from 'antd/es/input/TextArea';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -63,7 +63,7 @@ const CreateCategoryPage = () => {
 
             await createCategory(values).unwrap();
             message.success('Категорію створено');
-            navigate('..'); // Повернення назад (наприклад, до списку)
+            navigate('..');
         } catch (error: unknown) {
             handleFormErrors(error as ApiError, form);
         }
@@ -71,6 +71,15 @@ const CreateCategoryPage = () => {
 
     return (
         <>
+            <Button
+                type="link"
+                icon={<ArrowLeftOutlined />}
+                onClick={() => navigate(-1)}
+                style={{ marginBottom: 16 }}
+            >
+                Назад
+            </Button>
+
             <Form
                 form={form}
                 layout="vertical"
@@ -80,8 +89,15 @@ const CreateCategoryPage = () => {
                 <Item
                     label="Назва"
                     name="name"
-                    rules={[{ required: true, message: 'Введіть назву категорії' },
-                        { validator: (_, value) => Promise[value?.trim() ? 'resolve' : 'reject'](new Error('Назва не може бути лише з пробілів')) }]}
+                    rules={[
+                        { required: true, message: 'Введіть назву категорії' },
+                        {
+                            validator: (_, value) =>
+                                Promise[value?.trim() ? 'resolve' : 'reject'](
+                                    new Error('Назва не може бути лише з пробілів')
+                                ),
+                        },
+                    ]}
                 >
                     <Input />
                 </Item>

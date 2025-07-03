@@ -86,7 +86,7 @@ export interface IForgotPasswordRequest {
 }
 
 export interface IResetPasswordRequest {
-    email: string;
+    id: number;
     token: string;
     password: string;
 }

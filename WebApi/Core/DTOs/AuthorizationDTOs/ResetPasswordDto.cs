@@ -5,8 +5,7 @@ namespace Core.DTOs.AuthorizationDTOs
     public class ResetPasswordDto
     {
         [Required]
-        [EmailAddress] 
-        public string Email { get; set; }
+        public long Id { get; set; }
 
         [Required]
         public string Token { get; set; }

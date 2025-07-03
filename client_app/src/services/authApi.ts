@@ -77,9 +77,9 @@ export const authApi = createApi({
                 url: 'reset-password',
                 method: 'POST',
                 body: {
-                    Email: data.email,
-                    Token: data.token,
-                    Password: data.password,
+                    id: data.id,
+                    token: data.token,
+                    password: data.password,
                 },
             }),
             invalidatesTags: ['AuthUser'],
