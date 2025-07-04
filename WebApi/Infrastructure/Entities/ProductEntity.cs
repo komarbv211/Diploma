@@ -22,7 +22,7 @@ namespace Infrastructure.Entities
         // 🔗 Зв'язок з акціями (багато до багатьох)
         //public virtual ICollection<PromotionEntity>? Promotions { get; set; }
 
-        //public virtual ICollection<PromotionProductEntity>? PromotionProducts { get; set; }
+        public virtual ICollection<PromotionProductEntity>? PromotionProducts { get; set; }
 
 
     }

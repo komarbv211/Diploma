@@ -551,7 +551,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Infrastructure.Entities.PromotionEntity", b =>
                 {
                     b.HasOne("Infrastructure.Entities.CategoryEntity", "Category")
-                        .WithMany()
+                        .WithMany("Promotions")
                         .HasForeignKey("CategoryId");
 
                     b.HasOne("Infrastructure.Entities.DiscountTypeEntity", "DiscountType")
@@ -568,13 +568,13 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Infrastructure.Entities.PromotionProductEntity", b =>
                 {
                     b.HasOne("Infrastructure.Entities.ProductEntity", "Product")
-                        .WithMany()
+                        .WithMany("PromotionProducts")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Infrastructure.Entities.PromotionEntity", "Promotion")
-                        .WithMany()
+                        .WithMany("PromotionProducts")
                         .HasForeignKey("PromotionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -655,11 +655,20 @@ namespace Infrastructure.Migrations
                     b.Navigation("Children");
 
                     b.Navigation("Products");
+
+                    b.Navigation("Promotions");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.ProductEntity", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("PromotionProducts");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.PromotionEntity", b =>
+                {
+                    b.Navigation("PromotionProducts");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.RoleEntity", b =>

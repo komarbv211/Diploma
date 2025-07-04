@@ -46,7 +46,7 @@ namespace Infrastructure.Entities
         //public virtual ICollection<ProductEntity>? Products { get; set; }
 
 
-       // public virtual ICollection<PromotionProductEntity>? PromotionProducts { get; set; }
+        public virtual ICollection<PromotionProductEntity>? PromotionProducts { get; set; }
 
 
 

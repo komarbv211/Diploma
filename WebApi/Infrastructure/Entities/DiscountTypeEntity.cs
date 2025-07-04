@@ -21,5 +21,7 @@ namespace Infrastructure.Entities
         // Якщо DiscountType = "Fixed", то це сума в валюті (наприклад, 100 грн)
         [Required]
         public decimal Amount { get; set; } 
+
+        
     }
 }

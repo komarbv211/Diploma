@@ -35,11 +35,6 @@ namespace Infrastructure.Data
                     .IsRequired();
             });
 
-            // Багато-до-багатьох: Promotions <-> Products
-            //builder.Entity<PromotionEntity>()
-            //    .HasMany(p => p.Products)
-            //    .WithMany(p => p.Promotions)
-            //    .UsingEntity(j => j.ToTable("PromotionProducts"));
 
         }
 
