@@ -17,7 +17,7 @@ namespace Infrastructure.Data
         public DbSet<ProductImageEntity> ProductImages { get; set; }
         public DbSet<DiscountTypeEntity> DiscountTypes { get; set; }
         public DbSet<PromotionEntity> Promotions { get; set; }
-
+        public DbSet<PromotionProductEntity> PromotionProducts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
