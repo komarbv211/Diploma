@@ -15,7 +15,8 @@ namespace Infrastructure.Data
         public DbSet<CategoryEntity> Categories { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<ProductImageEntity> ProductImages { get; set; }
-        public DbSet<PromotionEntity> Promotions { get; set; }
+        public DbSet<DiscountTypeEntity> DiscountTypes { get; set; }
+        //public DbSet<PromotionEntity> Promotions { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -35,10 +36,10 @@ namespace Infrastructure.Data
             });
 
             // Багато-до-багатьох: Promotions <-> Products
-            builder.Entity<PromotionEntity>()
-                .HasMany(p => p.Products)
-                .WithMany(p => p.Promotions)
-                .UsingEntity(j => j.ToTable("PromotionProducts"));
+            //builder.Entity<PromotionEntity>()
+            //    .HasMany(p => p.Products)
+            //    .WithMany(p => p.Promotions)
+            //    .UsingEntity(j => j.ToTable("PromotionProducts"));
 
         }
 

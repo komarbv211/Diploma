@@ -25,5 +25,5 @@ public class CategoryEntity : BaseEntity<long>
     public virtual ICollection<ProductEntity>? Products { get; set; }
     public virtual ICollection<CategoryEntity> Children { get; set; } = [];
     // 🔗 Акції, які стосуються цієї категорії
-    public virtual ICollection<PromotionEntity>? Promotions { get; set; }
+   // public virtual ICollection<PromotionEntity>? Promotions { get; set; }
 }

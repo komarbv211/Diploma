@@ -20,7 +20,10 @@ namespace Infrastructure.Entities
         public virtual ICollection<ProductImageEntity>? Images { get; set; }
 
         // 🔗 Зв'язок з акціями (багато до багатьох)
-        public virtual ICollection<PromotionEntity>? Promotions { get; set; }
+        //public virtual ICollection<PromotionEntity>? Promotions { get; set; }
+
+        //public virtual ICollection<PromotionProductEntity>? PromotionProducts { get; set; }
+
 
     }
 }
