@@ -1,4 +1,5 @@
 ﻿using Ardalis.Specification;
+using System.Linq.Expressions;
 
 namespace Core.Interfaces
 {
@@ -21,6 +22,7 @@ namespace Core.Interfaces
         Task<TEntity?> FirstOrDefaultAsync(ISpecification<TEntity> specification);
         Task AddRangeAsync(IEnumerable<TEntity> entities);
 
+        Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
         //Task<bool> ExistsByEmailAsync(string email);
         //Task<TEntity> GetByIdAsync(long id);
 
