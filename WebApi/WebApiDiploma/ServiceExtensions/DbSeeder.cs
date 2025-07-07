@@ -283,8 +283,8 @@ namespace WebApiDiploma.ServiceExtensions
                                 Name = model.Name,
                                 Description = model.Description,
                                 Image = model.Image,
-                                StartDate = model.StartDate,
-                                EndDate = model.EndDate,
+                                StartDate = model.StartDate.ToUniversalTime(),
+                                EndDate = model.EndDate.ToUniversalTime(),
                                 IsActive = model.IsActive,
                                 CategoryId = model.CategoryId,           // Якщо вказано — акція для всієї категорії
                                 DiscountTypeId = discountType.Id         // Зв’язок з DiscountTypeEntity
