@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DbMakeUpContext))]
-    partial class DbMakeUpContextModelSnapshot : ModelSnapshot
+    [Migration("20250704162550_Create PromotionProduct")]
+    partial class CreatePromotionProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -551,7 +554,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Infrastructure.Entities.PromotionEntity", b =>
                 {
                     b.HasOne("Infrastructure.Entities.CategoryEntity", "Category")
-                        .WithMany("Promotions")
+                        .WithMany()
                         .HasForeignKey("CategoryId");
 
                     b.HasOne("Infrastructure.Entities.DiscountTypeEntity", "DiscountType")
@@ -568,13 +571,13 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Infrastructure.Entities.PromotionProductEntity", b =>
                 {
                     b.HasOne("Infrastructure.Entities.ProductEntity", "Product")
-                        .WithMany("PromotionProducts")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Infrastructure.Entities.PromotionEntity", "Promotion")
-                        .WithMany("PromotionProducts")
+                        .WithMany()
                         .HasForeignKey("PromotionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -655,20 +658,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Children");
 
                     b.Navigation("Products");
-
-                    b.Navigation("Promotions");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.ProductEntity", b =>
                 {
                     b.Navigation("Images");
-
-                    b.Navigation("PromotionProducts");
-                });
-
-            modelBuilder.Entity("Infrastructure.Entities.PromotionEntity", b =>
-                {
-                    b.Navigation("PromotionProducts");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.RoleEntity", b =>

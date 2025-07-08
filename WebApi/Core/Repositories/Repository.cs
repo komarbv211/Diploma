@@ -5,6 +5,7 @@ using Infrastructure.Data;
 using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Repositories;
 
@@ -113,6 +114,13 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 
     //метод в асинхронному режимі додає колекцію entities до dbSet, який представляє набір об'єктів в Entity Framework.
     public async virtual Task AddRangeAsync(IEnumerable<TEntity> entities) => await dbSet.AddRangeAsync(entities);
+
+
+    // Метод FirstOrDefaultAsync з лямбдою
+    public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return await context.Set<TEntity>().FirstOrDefaultAsync(predicate);
+    }
 
     //public async Task<bool> ExistsByEmailAsync(string email)
     //{

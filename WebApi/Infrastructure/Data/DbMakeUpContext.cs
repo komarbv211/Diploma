@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace Infrastructure.Data
 {
@@ -14,6 +15,9 @@ namespace Infrastructure.Data
         public DbSet<CategoryEntity> Categories { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<ProductImageEntity> ProductImages { get; set; }
+        public DbSet<DiscountTypeEntity> DiscountTypes { get; set; }
+        public DbSet<PromotionEntity> Promotions { get; set; }
+        public DbSet<PromotionProductEntity> PromotionProducts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -30,6 +34,8 @@ namespace Infrastructure.Data
                     .HasForeignKey(u => u.UserId)
                     .IsRequired();
             });
+
+
         }
 
     }
