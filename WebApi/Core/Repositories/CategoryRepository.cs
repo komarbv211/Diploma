@@ -4,7 +4,7 @@ using Infrastructure.Data;
 using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Repositories;
+namespace Core.Repositories;
 
 public class CategoryRepository : Repository<CategoryEntity>, ICategoryRepository
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Core.Interfaces;
 using Core.Services;
-using Infrastructure.Repositories;
+using Core.Repositories;
 
 namespace Core.Extensions
 {
@@ -17,6 +17,8 @@ namespace Core.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IPromotionRepository, PromotionRepository>();
+            services.AddScoped<IPromotionService, PromotionService>();
         }
     }
 }

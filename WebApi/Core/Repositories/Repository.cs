@@ -2,12 +2,10 @@
 using Ardalis.Specification.EntityFrameworkCore;
 using Core.Interfaces;
 using Infrastructure.Data;
-using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1;
 using System.Linq.Expressions;
 
-namespace Infrastructure.Repositories;
+namespace Core.Repositories;
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 {
