@@ -1,6 +1,6 @@
 ﻿using Core.Interfaces;
 using Core.Services;
-using Infrastructure.Repositories;
+using Core.Repositories;
 
 namespace WebApiDiploma.ServiceExtensions
 {

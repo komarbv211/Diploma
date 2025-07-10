@@ -1,18 +1,14 @@
 ﻿using AutoMapper;
 using Core.DTOs.PaginationDTOs;
-using Core.DTOs.ProductsDTO;
 using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
 using Core.Exceptions;
 using Core.Interfaces;
 using Core.Models.Authentication;
 using Infrastructure.Entities;
-using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Graph.Models;
 using System.Net;
-using System.Security.Claims;
 using WebApiDiploma.Pagination;
 
 namespace Core.Services
