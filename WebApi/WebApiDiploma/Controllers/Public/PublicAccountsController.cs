@@ -12,10 +12,12 @@ namespace WebApiDiploma.Controllers.Public
     public class PublicAccountsController : ControllerBase
     {
         private readonly IAccountService accountService;
+        private readonly ICookieService _cookieService;
 
-        public PublicAccountsController(IAccountService accountsService)
+        public PublicAccountsController(IAccountService accountsService, ICookieService cookieService)
         {
             accountService = accountsService;
+            _cookieService = cookieService;
         }
 
         //[HttpPost("login")]
@@ -32,13 +34,7 @@ namespace WebApiDiploma.Controllers.Public
             var refreshToken = authResponse.RefreshToken;
 
             // Зберігаємо refresh токен у cookie
-            Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = false, // true у продакшені, false локально 
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddDays(7)
-            });
+            _cookieService.AppendRefreshTokenCookie(Response, refreshToken);
 
             return Ok(authResponse);
         }
@@ -108,15 +104,9 @@ namespace WebApiDiploma.Controllers.Public
                 return Unauthorized();
 
             var result = await accountService.RefreshTokensAsync(refreshToken);
-                        
+
             // Оновити refresh token у cookie
-            Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = false,// true у продакшені, false локально
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddDays(7)
-            });
+            _cookieService.AppendRefreshTokenCookie(Response, result.RefreshToken);
 
             return Ok(new
             {
@@ -127,11 +117,10 @@ namespace WebApiDiploma.Controllers.Public
         [HttpPost("logout")]
         public async Task<IActionResult> LogOut([FromBody] LogoutModel? logoutModel)
         {
-            
             if (logoutModel is not null && logoutModel.RefreshToken is not null)
             {
                 await accountService.LogoutAsync(logoutModel.RefreshToken);
-                Response.Cookies.Delete("refreshToken");
+                _cookieService.DeleteRefreshTokenCookie(Response);
             }
             return Ok();
         }

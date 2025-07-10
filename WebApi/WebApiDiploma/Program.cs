@@ -1,5 +1,6 @@
 ﻿using Core.Exceptions;
 using Core.Extensions;
+using Core.Interfaces;
 using Core.Models;
 using FluentValidation;
 using Infrastructure.Data;
@@ -36,6 +37,7 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 
 builder.Services.AddWebApiServices();
 builder.Services.AddCoreServices();
+builder.Services.AddScoped<ICookieService, CookieServiceExtensions>();
 
 // Controllers
 builder.Services.AddControllers();

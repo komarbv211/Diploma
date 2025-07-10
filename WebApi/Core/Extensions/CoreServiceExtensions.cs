@@ -16,7 +16,7 @@ namespace Core.Extensions
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
-            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IEmailService, EmailService>();            
         }
     }
 }
