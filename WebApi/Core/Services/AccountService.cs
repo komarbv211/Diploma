@@ -356,15 +356,15 @@ namespace Core.Services
         }
 
 
-        public async Task<bool> IsRegisteredWithGoogleAsync(string email)
-        {
-            var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
-                return false;
+        //public async Task<bool> IsRegisteredWithGoogleAsync(string email)
+        //{
+        //    var user = await userManager.FindByEmailAsync(email);
+        //    if (user == null)
+        //        return false;
 
-            var logins = await userManager.GetLoginsAsync(user);
-            return logins.Any(login => login.LoginProvider == "Google");
-        }
+        //    var logins = await userManager.GetLoginsAsync(user);
+        //    return logins.Any(login => login.LoginProvider == "Google");
+        //}
 
 
     }
