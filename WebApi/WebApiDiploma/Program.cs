@@ -97,7 +97,7 @@ app.UseCors("front-end-cors-policy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// 13. Маршрутизація
+// Маршрутизація
 app.MapControllers();
 
 // Ініціалізація початкових даних

@@ -84,6 +84,15 @@ export const authApi = createApi({
             }),
             invalidatesTags: ['AuthUser'],
         }),
+        refreshToken: builder.mutation<IAuthResponse, void>({
+            query: () => ({
+                url: 'refresh',
+                method: 'POST',
+            }),
+            onQueryStarted: handleAuthQueryStarted,
+            invalidatesTags: ['AuthUser'],
+        }),
+
     }),
 });
 
@@ -95,4 +104,5 @@ export const {
     useLazyCheckGoogleRegisteredQuery,
     useForgotPasswordMutation,
     useResetPasswordMutation,
+    useRefreshTokenMutation,
 } = authApi;

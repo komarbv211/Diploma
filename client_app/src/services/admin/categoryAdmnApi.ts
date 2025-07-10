@@ -1,12 +1,12 @@
 import { createApi} from '@reduxjs/toolkit/query/react';
-import { createBaseQuery } from '../../utilities/createBaseQuery';
+import { createBaseQueryWithReauth } from '../../utilities/createBaseQuery';
 import { ICategory, ICategoryPostRequest, ICategoryPutRequest, ICategoryName } from '../../types/category';
 import { serialize } from 'object-to-formdata';
 
 
 export const categoryAdminApi = createApi({
     reducerPath: 'categoryAdminApi',
-    baseQuery: createBaseQuery('admin'),
+    baseQuery: createBaseQueryWithReauth('admin'),
     tagTypes: ['Categories'],
     endpoints: (builder) => ({  
         getCategoryByID: builder.query<ICategory, number>({
