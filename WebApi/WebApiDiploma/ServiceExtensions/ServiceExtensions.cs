@@ -16,6 +16,7 @@
                         //policy.AllowAnyOrigin();
                         policy.AllowAnyMethod();
                         policy.AllowAnyHeader();
+
                     });
             });
         }
