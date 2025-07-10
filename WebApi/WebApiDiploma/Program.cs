@@ -1,5 +1,6 @@
 ﻿using Core.Exceptions;
 using Core.Extensions;
+using Core.Interfaces;
 using Core.Models;
 using FluentValidation;
 using Infrastructure.Data;
@@ -36,6 +37,7 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 
 builder.Services.AddWebApiServices();
 builder.Services.AddCoreServices();
+builder.Services.AddScoped<ICookieService, CookieService>();
 
 // Controllers
 builder.Services.AddControllers();
@@ -97,7 +99,7 @@ app.UseCors("front-end-cors-policy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// 13. Маршрутизація
+// Маршрутизація
 app.MapControllers();
 
 // Ініціалізація початкових даних

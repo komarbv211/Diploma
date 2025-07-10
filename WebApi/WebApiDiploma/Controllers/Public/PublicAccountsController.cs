@@ -1,6 +1,7 @@
 ﻿using Core.DTOs.AuthorizationDTOs;
 using Core.Interfaces;
 using Core.Models.Authentication;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using RefreshRequest = Core.Models.Authentication.RefreshRequest;
 
@@ -11,16 +12,30 @@ namespace WebApiDiploma.Controllers.Public
     public class PublicAccountsController : ControllerBase
     {
         private readonly IAccountService accountService;
+        private readonly ICookieService _cookieService;
 
-        public PublicAccountsController(IAccountService accountsService)
+        public PublicAccountsController(IAccountService accountsService, ICookieService cookieService)
         {
             accountService = accountsService;
+            _cookieService = cookieService;
         }
 
+        //[HttpPost("login")]
+        //public async Task<IActionResult> Login([FromBody] AuthRequest model)
+        //{
+        //    var authResponse = await accountService.LoginAsync(model);
+        //    return Ok(authResponse);
+        //}
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AuthRequest model)
         {
-            var authResponse = await accountService.LoginAsync(model);
+            var authResponse = await accountService.LoginAsync(model);         
+
+            var refreshToken = authResponse.RefreshToken;
+
+            // Зберігаємо refresh токен у cookie
+            _cookieService.AppendRefreshTokenCookie(Response, refreshToken);
+
             return Ok(authResponse);
         }
 
@@ -67,27 +82,45 @@ namespace WebApiDiploma.Controllers.Public
         //}
 
 
-        [HttpPost("refreshTokens")]
-        public async Task<IActionResult> RefreshTokens([FromBody] RefreshRequest refreshRequest)
+        //[HttpPost("refreshTokens")]
+        //public async Task<IActionResult> RefreshTokens([FromBody] RefreshRequest refreshRequest)
+        //{
+        //    string token;
+
+        //    if (refreshRequest is not null && refreshRequest.RefreshToken is not null)
+        //    {
+        //        token = refreshRequest.RefreshToken;
+        //    }
+        //    else return Unauthorized();
+        //    var authResponse = await accountService.RefreshTokensAsync(token);
+        //    return Ok(authResponse);
+        //}
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh()
         {
-            string token;
-           
-            if (refreshRequest is not null && refreshRequest.RefreshToken is not null)
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            if (string.IsNullOrEmpty(refreshToken))
+                return Unauthorized();
+
+            var result = await accountService.RefreshTokensAsync(refreshToken);
+
+            // Оновити refresh token у cookie
+            _cookieService.AppendRefreshTokenCookie(Response, result.RefreshToken);
+
+            return Ok(new
             {
-                token = refreshRequest.RefreshToken;
-            }
-            else return Unauthorized();
-            var authResponse = await accountService.RefreshTokensAsync(token);
-            return Ok(authResponse);
+                accessToken = result.AccessToken
+            });
         }
 
         [HttpPost("logout")]
         public async Task<IActionResult> LogOut([FromBody] LogoutModel? logoutModel)
         {
-            
             if (logoutModel is not null && logoutModel.RefreshToken is not null)
             {
                 await accountService.LogoutAsync(logoutModel.RefreshToken);
+                _cookieService.DeleteRefreshTokenCookie(Response);
             }
             return Ok();
         }

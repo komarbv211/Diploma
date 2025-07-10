@@ -1,13 +1,13 @@
 // userApi.ts
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { createBaseQuery } from '../utilities/createBaseQuery';
+import { createBaseQueryWithReauth } from '../utilities/createBaseQuery';
 import { IUserCreateDTO, IUserDTO } from '../types/user';
 import {handleAuthQueryStarted} from "../utilities/handleAuthQueryStarted.ts";
 import {IAuthResponse} from "../types/account.ts";
 
 export const userApi = createApi({
   reducerPath: 'userApi',
-  baseQuery: createBaseQuery('User'),
+  baseQuery: createBaseQueryWithReauth('User'),
   tagTypes: ['Users'],
   endpoints: (builder) => ({    
     getUserById: builder.query<IUserDTO, number>({
