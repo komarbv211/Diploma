@@ -37,7 +37,7 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 
 builder.Services.AddWebApiServices();
 builder.Services.AddCoreServices();
-builder.Services.AddScoped<ICookieService, CookieServiceExtensions>();
+builder.Services.AddScoped<ICookieService, CookieService>();
 
 // Controllers
 builder.Services.AddControllers();

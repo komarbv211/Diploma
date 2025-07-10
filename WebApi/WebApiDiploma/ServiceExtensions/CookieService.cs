@@ -2,12 +2,12 @@
 
 namespace WebApiDiploma.ServiceExtensions;
 
-public class CookieServiceExtensions : ICookieService
+public class CookieService : ICookieService
 {
     private readonly IConfiguration _config;
     private readonly IWebHostEnvironment _env;
 
-    public CookieServiceExtensions(IConfiguration config, IWebHostEnvironment env)
+    public CookieService(IConfiguration config, IWebHostEnvironment env)
     {
         _config = config;
         _env = env;
