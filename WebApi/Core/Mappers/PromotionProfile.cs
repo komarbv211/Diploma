@@ -8,6 +8,7 @@ public class PromotionProfile : Profile
 {
     public PromotionProfile()
     {
+        CreateMap<PromotionCreateDto, PromotionEntity>();
         CreateMap<PromotionUpdateDto, PromotionEntity>();
     }
 }
