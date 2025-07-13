@@ -1,6 +1,8 @@
 ﻿using Core.DTOs.PaginationDTOs;
 using Core.DTOs.UsersDTOs;
 using Core.Interfaces;
+using Core.Models.Search;
+using Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +33,13 @@ namespace WebApiDiploma.Controllers.Admin
             await service.CreateUserAsync(dto);
             return Ok();
         }
+
+        //[HttpGet("search")]
+        //public async Task<IActionResult> SearchUsers([FromQuery] UserSearchModel model)
+        //{
+        //    var result = await service.SearchUsersAsync(model);
+        //    return Ok(result);
+        //}
 
     }
 
