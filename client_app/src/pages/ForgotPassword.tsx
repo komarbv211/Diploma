@@ -2,6 +2,8 @@ import { Button, Form, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useForgotPasswordMutation } from '../services/authApi';
+import { handleFormErrors } from '../utilities/handleApiErrors';
+import { ApiError } from '../types/errors';
 
 const ForgotPassword: React.FC = () => {
     const navigate = useNavigate();
@@ -18,9 +20,8 @@ const ForgotPassword: React.FC = () => {
             await forgotPassword({ email: values.email }).unwrap();
             setSuccessMessage('Посилання для скидання пароля відправлено на ваш email!');
             form.resetFields();
-        } catch (error) {
-            console.error('Forgot password error:', error);
-            setErrorMessage('Не вдалося відправити посилання. Перевірте email або спробуйте пізніше.');
+        } catch (error: unknown) {
+            handleFormErrors(error as ApiError, form);
         }
     };
 

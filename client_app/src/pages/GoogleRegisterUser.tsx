@@ -6,6 +6,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useConfirmGoogleRegisterMutation } from "../services/authApi";
 import PhoneInput from "../components/PhoneInput";
+import { handleFormErrors } from '../utilities/handleApiErrors';
+import { ApiError } from '../types/errors';
 
 const GoogleRegisterUser = () => {
     const [form] = Form.useForm();
@@ -16,7 +18,6 @@ const GoogleRegisterUser = () => {
     const token = new URLSearchParams(location.search).get("token");
     const { userInfo } = useGoogleUserInfo(token);
     const { Text } = Typography;
-    const [errorMessage, setErrorMessage] = useState<string>(''); 
     
     useEffect(() => {
         if (userInfo) {
@@ -44,16 +45,8 @@ const GoogleRegisterUser = () => {
                 image: selectedImage ?? undefined,
             }).unwrap();
             navigate('/');
-        } catch (error) {
-            console.error("Помилка під час реєстрації:", error);
-            const typedError = error as { data?: { message?: string }; status?: number };
-            if (typedError?.status === 401) {
-                setErrorMessage('Токен Google недійсний або протермінований');
-            } else if (typedError?.status === 400) {
-                setErrorMessage('Помилка при реєстрації через Google. Спробуйте ще раз.');
-            } else {
-                setErrorMessage('Не вдалося зареєструватися через Google. Спробуйте ще раз.');
-            }
+        } catch (error: unknown) {
+            handleFormErrors(error as ApiError, form);
         }
     };
     const handleCancel = () => {
@@ -128,9 +121,6 @@ const GoogleRegisterUser = () => {
                     <PhoneInput />
                 </Form.Item>
 
-                {errorMessage && (
-                        <div style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</div>
-                    )}
                 <Form.Item>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                         <Button danger onClick={handleCancel}>
