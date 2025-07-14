@@ -34,12 +34,12 @@ namespace WebApiDiploma.Controllers.Admin
             return Ok();
         }
 
-        //[HttpGet("search")]
-        //public async Task<IActionResult> SearchUsers([FromQuery] UserSearchModel model)
-        //{
-        //    var result = await service.SearchUsersAsync(model);
-        //    return Ok(result);
-        //}
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchUsers([FromQuery] UserSearchModel model)
+        {
+            var result = await service.SearchUsersAsync(model);
+            return Ok(result);
+        }
 
     }
 
