@@ -1,5 +1,5 @@
 import { useGoogleLogin } from '@react-oauth/google';
-import { Button } from 'antd';
+import styles from '../../styles/googleButton.module.css';
 import { LoginButtonProps } from '../../types/account';
 
 const GoogleLoginButton: React.FC<LoginButtonProps> = ({ onLogin, title, icon }) => {
@@ -15,9 +15,10 @@ const GoogleLoginButton: React.FC<LoginButtonProps> = ({ onLogin, title, icon })
     });
 
     return (
-        <Button icon={icon} onClick={() => login()}>
-            {title}
-        </Button>
+        <button className={styles.googleButton} onClick={() => login()} type="button">
+            <span className={styles.googleButtonIcon}>{icon}</span>
+            <span className={styles.googleButtonText}>{title}</span>
+        </button>
     );
 };
 

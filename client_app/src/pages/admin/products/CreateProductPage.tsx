@@ -13,6 +13,8 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-ki
 import { closestCenter, DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
 import { RcFile } from 'antd/es/upload';
 import DraggableUploadListItem from '../../../components/draggable/DraggableUploadListItem';
+import { handleFormErrors } from '../../../utilities/handleApiErrors';
+import { ApiError } from '../../../types/errors';
 
 const { Item } = Form;
 
@@ -42,8 +44,8 @@ const CreateProductPage = () => {
             await createProduct(formData).unwrap();
             message.success('Продукт успішно створено!');
             navigate('/admin/products');
-        } catch (err: any) {
-            message.error(err?.data?.message || 'Не вдалося створити продукт');
+        } catch (error: unknown) {
+            handleFormErrors(error as ApiError, form);
         }
     };
 
