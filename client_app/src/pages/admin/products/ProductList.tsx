@@ -6,11 +6,18 @@ import { APP_ENV } from '../../../env';
 import PaginationComponent from '../../../components/pagination/PaginationComponent';
 import React from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { useGetCategoriesNamesQuery } from '../../../services/categoryApi';
+import { useGetCategoryTreeQuery } from '../../../services/categoryApi';
 import { useDeleteProductMutation, useGetAllProductsQuery } from '../../../services/admin/productAdminApi';
 
 const filterProducts = (list: IProduct[], text: string) =>
     list.filter(product => product.name?.toLowerCase().includes(text.toLowerCase()));
+
+// Додаю тип для категорій з parentId
+interface ICategoryWithParent {
+  id: number;
+  name: string | null;
+  parentId: number | null;
+}
 
 const ProductList = () => {
     const [products, setProducts] = useState<IProduct[]>([]);
@@ -24,13 +31,29 @@ const ProductList = () => {
 
     const { data: allProducts, isLoading } = useGetAllProductsQuery();
     const [deleteProduct] = useDeleteProductMutation();
-    const { data: categoryNames } = useGetCategoriesNamesQuery();
+    // Отримуємо всі категорії з parentId одним запитом
+    const { data: categories } = useGetCategoryTreeQuery();
 
+    // Створюємо мапу категорій для швидкого пошуку
     const categoryMap = useMemo(() => {
-        const map = new Map<number, string>();
-        categoryNames?.forEach(cat => map.set(cat.id, cat?.name ?? ''));
+        const map = new Map<number, ICategoryWithParent>();
+        categories?.forEach(cat => map.set(cat.id, cat as ICategoryWithParent));
         return map;
-    }, [categoryNames]);
+    }, [categories]);
+
+    // Функція для отримання імені батьківської категорії
+    const getParentCategoryName = (categoryId: number): string | undefined => {
+        const category = categoryMap.get(categoryId);
+        if (!category || !category.parentId) return undefined;
+        const parent = categoryMap.get(category.parentId);
+        return parent?.name ?? undefined;
+    };
+
+    // Функція для отримання імені дочірньої категорії
+    const getChildCategoryName = (categoryId: number): string | undefined => {
+        const child = categoryMap.get(categoryId);
+        return child?.name ?? undefined;
+    };
 
     useEffect(() => {
         if (allProducts) {
@@ -96,11 +119,19 @@ const ProductList = () => {
         },
         {
             title: 'Категорія',
-            dataIndex: 'category',
-            key: 'category',
-            sorter: (a: IProduct, b: IProduct) =>
-                (categoryMap.get(a.categoryId) ?? '').localeCompare(categoryMap.get(b.categoryId) ?? ''),
-            render: (_: any, cat: IProduct) => categoryMap.get(cat.categoryId) ?? <Tag color="blue">—</Tag>,
+            key: 'parentCategory',
+            render: (_: unknown, product: IProduct) => {
+                const parentName = getParentCategoryName(product.categoryId);
+                return parentName ? parentName : <Tag color="blue">—</Tag>;
+            },
+        },
+        {
+            title: 'Підкатегорія',
+            key: 'childCategory',
+            render: (_: unknown, product: IProduct) => {
+                const childName = getChildCategoryName(product.categoryId);
+                return childName ? childName : <Tag color="blue">—</Tag>;
+            },
         },
         {
             title: 'Опис',

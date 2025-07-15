@@ -1,5 +1,5 @@
 import {useState, useEffect} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {Button, Input, Upload, Form} from "antd";
 import {PlusOutlined} from "@ant-design/icons";
 import Item from "antd/es/list/Item";
@@ -71,7 +71,13 @@ const EditProductPage = () => {
     }
     
     return (
+        <>
+        <Link to="/admin/products">
+            <Button type="default" onClick={() => navigate(-1)}>Назад</Button>
+        </Link>
         <div className="max-w-lg mx-auto my-6">
+            
+                
             <h1 className="text-3xl font-bold mb-4">Редагування продукт</h1>
             <Form
                 form={form}
@@ -153,6 +159,7 @@ const EditProductPage = () => {
                 </Item>
             </Form>
         </div>
+        </>
     );
 };
 
