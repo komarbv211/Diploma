@@ -234,10 +234,12 @@ namespace Core.Services
 
         public async Task<SearchResult<UserEntity>> SearchUsersAsync(UserSearchModel model)
         {
-           var query = _userManager.Users
-             .Include(u => u.UserRoles)
-             .ThenInclude(ur => ur.Role)
-             .AsQueryable();
+            var query = _userManager.Users
+              .Include(u => u.UserRoles)
+              .ThenInclude(ur => ur.Role)
+              .AsQueryable();
+
+            //var query = _userManager.Users.AsQueryable();
 
             // 🔍 Фільтрація по імені
             if (!string.IsNullOrWhiteSpace(model.Name))
@@ -261,12 +263,13 @@ namespace Core.Services
                 query = query.Where(u => u.LastActivity <= model.GetParsedEndDate());
             }
 
-                    if (model.Roles != null && model.Roles.Any())
-        {
-            var roles = model.Roles.Where(x=>!string.IsNullOrEmpty(x));
-            if(roles.Count() > 0)
-                query = query.Where(user => roles.Any(role => user.UserRoles.Select(x=>x.Role.Name).Contains(role)));
-        }
+            //            if (model.Roles != null && model.Roles.Any())
+            //{
+            //    var roles = model.Roles.Where(x=>!string.IsNullOrEmpty(x));
+            //    if(roles.Count() > 0)
+            //        query = query.Where(user => roles.Any(role => user.UserRoles.Select(x=>x.Role.Name).Contains(role)));
+            //}
+            int items = query.Count();
             // 🧑‍⚖️ Фільтрація по ролях
             //if (model.Roles != null && model.Roles.Any())
             //{
@@ -278,6 +281,57 @@ namespace Core.Services
             //            user.UserRoles.Any(ur => roles.Contains(ur.Role.Name)));
             //    }
             //}
+
+
+
+
+
+            if (model.Roles != null && model.Roles.Any())
+            {
+                var roles = model.Roles.Where(x => !string.IsNullOrEmpty(x));
+                if (roles.Count() > 0)
+                    query = query.Where(user => roles.Any(role => user.UserRoles.Select(x => x.Role.Name).Contains(role)));
+            }
+
+
+
+
+
+            items = query.Count();
+
+            //if (model.Roles != null && model.Roles.Any())
+            //{
+            //    var roles = model.Roles
+            //        .Where(x => !string.IsNullOrWhiteSpace(x))
+            //        .Select(x => x.ToLower())
+            //        .ToList();
+
+            //    if (roles.Count > 0)
+            //    {
+            //        query = query
+            //            .Include(u => u.UserRoles)
+            //                .ThenInclude(ur => ur.Role)
+            //            .Where(user =>
+            //                user.UserRoles.Any(ur => roles.Contains(ur.Role.Name.ToLower())));
+            //    }
+            //}
+
+            //            if (model.Roles != null && model.Roles.Any())
+            //{
+            //    var roles = model.Roles
+            //        .Where(x => !string.IsNullOrWhiteSpace(x))
+            //        .Select(x => x.Trim().ToLower())
+            //        .ToList();
+
+            //    if (roles.Any())
+            //    {
+            //        query = query.Where(user =>
+            //            user.UserRoles.Any(ur => roles.Contains(ur.Role.Name.ToLower())));
+            //    }
+            //}
+
+
+
 
             // 🔢 Загальна кількість
             var totalCount = await query.CountAsync();
