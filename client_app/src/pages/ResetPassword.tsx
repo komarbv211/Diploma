@@ -2,6 +2,8 @@ import { Button, Form, Input } from 'antd';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { useResetPasswordMutation } from '../services/authApi';
+import { handleFormErrors } from '../utilities/handleApiErrors';
+import { ApiError } from '../types/errors';
 
 const ResetPassword: React.FC = () => {
     const navigate = useNavigate();
@@ -40,9 +42,8 @@ const ResetPassword: React.FC = () => {
             setSuccessMessage('Пароль успішно скинуто! Перенаправляємо на вхід...');
             form.resetFields();
             setTimeout(() => navigate('/login'), 2000);
-        } catch (error) {
-            console.error('Помилка скидання пароля:', error);
-            setErrorMessage('Не вдалося скинути пароль. Спробуйте ще раз.');
+        } catch (error: unknown) {
+            handleFormErrors(error as ApiError, form);
         }
     };
 

@@ -10,6 +10,8 @@ import {
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import GoogleLoginButton from '../components/buttons/GoogleLoginButton';
 import { GoogleOutlined } from '@ant-design/icons';
+import { handleFormErrors } from '../utilities/handleApiErrors';
+import { ApiError } from '../types/errors';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
@@ -38,9 +40,8 @@ const Login: React.FC = () => {
 
             await loginUser(values).unwrap();
             navigate('/');
-        } catch (error) {
-            console.error('Login error:', error);
-            setErrorMessage('Невірний email або пароль');
+        } catch (error: unknown) {
+            handleFormErrors(error as ApiError, form);
         } finally {
             setIsLoading(false);
         }
