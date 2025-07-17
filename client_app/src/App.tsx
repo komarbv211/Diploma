@@ -1,4 +1,6 @@
 import './index.css';
+import './index.scss';
+import './App.scss';
 import { Route, Routes } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import Layout from './components/layouts/default/Layout.tsx';
@@ -8,7 +10,7 @@ import AuthWatcher from './components/AuthWatcher';
 
 const Home = lazy(() => import('./pages/Home'));
 const UserProfile = lazy(() => import('./pages/user/UserProfile.tsx'));
-const LoginUser = lazy(() => import('./pages/LoginUser.tsx'));
+const LoginUser = lazy(() => import('./pages/login/LoginUser.tsx'));
 const RegistrUser = lazy(() => import('./pages/RegistrUser.tsx'));
 const GoogleRegisterUser = lazy(() => import('./pages/GoogleRegisterUser.tsx'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword.tsx'));
