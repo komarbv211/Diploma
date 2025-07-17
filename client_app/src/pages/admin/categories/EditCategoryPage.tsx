@@ -13,7 +13,7 @@ import {
   UploadOutlined, 
 } from '@ant-design/icons';
 import TextArea from "antd/es/input/TextArea";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { ICategoryPutRequest } from '../../../types/category';
 import { APP_ENV } from '../../../env';
@@ -102,6 +102,9 @@ if (isLoading || !category) {
 
 return (
     <>
+        <Link to="/admin/categories">
+            <Button type="default" onClick={() => navigate(-1)}>Назад</Button>
+        </Link>
         <Form
             form={form}
             layout="vertical"

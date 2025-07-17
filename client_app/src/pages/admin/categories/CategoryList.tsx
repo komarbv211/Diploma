@@ -11,11 +11,7 @@ import {
     notification,
     Image,
 } from 'antd';
-import {
-    SearchOutlined,
-    PlusOutlined,
-    MoreOutlined,
-} from '@ant-design/icons';
+import { SearchOutlined, PlusOutlined, MoreOutlined, CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from "react-router-dom";
 import { ICategory } from '../../../types/category';
 import PaginationComponent from '../../../components/pagination/PaginationComponent';
@@ -230,10 +226,12 @@ const CategoryList = () => {
                                     type="link"
                                     size="small"
                                     onClick={(e) => onExpand(record, e)}
-                                    style={{ marginLeft: 12 }}
-                                >
-                                    {expanded ? '-' : '+'}
-                                </Button>
+                                    style={{ marginLeft: 0, paddingLeft: 0 }}
+                                    icon={expanded
+                                        ? <CaretDownOutlined style={{ fontSize: 20 }} />
+                                        : <CaretRightOutlined style={{ fontSize: 20 }} />
+                                    }
+                                />
                             );
                         },
                     }}
