@@ -1,5 +1,5 @@
 import { useGoogleLogin } from '@react-oauth/google';
-import styles from '../../styles/googleButton.module.css';
+import styles from '../buttons/googleButton.module.scss';
 import { LoginButtonProps } from '../../types/account';
 
 const GoogleLoginButton: React.FC<LoginButtonProps> = ({ onLogin, title, icon }) => {

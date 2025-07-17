@@ -1,3 +1,6 @@
+@use '../../styles/_variables.scss' as *;
+@use '../../styles/_mixins.scss' as *;
+
 .googleButton {
   display: flex;
   flex-direction: row;
@@ -7,15 +10,15 @@
   gap: 8px;
   width: 454px;
   height: 57px;
-  background: #8A0149;
-  border-radius: 15px;
+  background: $pink2;
+  border-radius: $radius-xl;
   cursor: pointer;
   border: none;
   transition: background 0.2s;
 }
 
 .googleButton:hover {
-  background: #6a0136;
+  background: darken($pink2, 10%);
 }
 
 .googleButtonIcon {
@@ -29,14 +32,14 @@
 .googleButtonText {
   width: 290px;
   height: 27px;
-  font-family: 'Manrope', sans-serif;
+  font-family: $font-manrope;
   font-style: normal;
   font-weight: 500;
   font-size: 20px;
   line-height: 27px;
-  color: #FFF7F3;
+  color: $beige2;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-} 
+}
