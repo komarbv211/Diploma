@@ -31,6 +31,6 @@ namespace Infrastructure.Entities
 
 
         //public virtual ICollection<OrderEntity> Orders { get; set; }
-        public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
+        public virtual ICollection<UserRoleEntity>? UserRoles { get; set; }
     }
 }

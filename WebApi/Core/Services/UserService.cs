@@ -235,8 +235,8 @@ namespace Core.Services
         public async Task<SearchResult<UserEntity>> SearchUsersAsync(UserSearchModel model)
         {
             var query = _userManager.Users
-              .Include(u => u.UserRoles)
-              .ThenInclude(ur => ur.Role)
+              //.Include(u => u.UserRoles)
+              //.ThenInclude(ur => ur.Role)
               .AsQueryable();
 
             //var query = _userManager.Users.AsQueryable();
@@ -286,11 +286,16 @@ namespace Core.Services
 
 
 
-            if (model.Roles != null && model.Roles.Any())
+            //if (model.Roles != null && model.Roles.Any())
+            //{
+            //    var roles = model.Roles.Where(x => !string.IsNullOrEmpty(x));
+            //    if (roles.Count() > 0)
+            //        query = query.Where(user => roles.Any(role => user.UserRoles.Select(x => x.Role.Name).Contains(role)));
+            //}
+
+            if (model?.Roles != null && model.Roles.Any())
             {
-                var roles = model.Roles.Where(x => !string.IsNullOrEmpty(x));
-                if (roles.Count() > 0)
-                    query = query.Where(user => roles.Any(role => user.UserRoles.Select(x => x.Role.Name).Contains(role)));
+                query = query.Where(u => u.UserRoles.Any(ur => model.Roles.Contains(ur.Role.Name)));
             }
 
 

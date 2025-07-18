@@ -1,11 +1,15 @@
 ﻿using Infrastructure.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 
 namespace Infrastructure.Data
 {
-    public class DbMakeUpContext : IdentityDbContext<UserEntity, RoleEntity, long>
+    public class DbMakeUpContext : //IdentityDbContext<UserEntity, RoleEntity, long>
+        IdentityDbContext<UserEntity, RoleEntity, long,
+        IdentityUserClaim<long>, UserRoleEntity, IdentityUserLogin<long>,
+        IdentityRoleClaim<long>, IdentityUserToken<long>>
     {
 
 
