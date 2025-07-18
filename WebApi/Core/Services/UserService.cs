@@ -252,6 +252,7 @@ namespace Core.Services
                     u.LastName.ToLower().Contains(nameFilter));
             }
 
+
             // 📅 Фільтрація по датах
             if (model?.StartDate != null)
             {
@@ -263,78 +264,13 @@ namespace Core.Services
                 query = query.Where(u => u.LastActivity <= model.GetParsedEndDate());
             }
 
-            //            if (model.Roles != null && model.Roles.Any())
-            //{
-            //    var roles = model.Roles.Where(x=>!string.IsNullOrEmpty(x));
-            //    if(roles.Count() > 0)
-            //        query = query.Where(user => roles.Any(role => user.UserRoles.Select(x=>x.Role.Name).Contains(role)));
-            //}
-            int items = query.Count();
+
+
             // 🧑‍⚖️ Фільтрація по ролях
-            //if (model.Roles != null && model.Roles.Any())
-            //{
-            //    var roles = model.Roles.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-
-            //    if (roles.Count > 0)
-            //    {
-            //        query = query.Where(user =>
-            //            user.UserRoles.Any(ur => roles.Contains(ur.Role.Name)));
-            //    }
-            //}
-
-
-
-
-
-            //if (model.Roles != null && model.Roles.Any())
-            //{
-            //    var roles = model.Roles.Where(x => !string.IsNullOrEmpty(x));
-            //    if (roles.Count() > 0)
-            //        query = query.Where(user => roles.Any(role => user.UserRoles.Select(x => x.Role.Name).Contains(role)));
-            //}
-
             if (model?.Roles != null && model.Roles.Any())
             {
                 query = query.Where(u => u.UserRoles.Any(ur => model.Roles.Contains(ur.Role.Name)));
             }
-
-
-
-
-
-            items = query.Count();
-
-            //if (model.Roles != null && model.Roles.Any())
-            //{
-            //    var roles = model.Roles
-            //        .Where(x => !string.IsNullOrWhiteSpace(x))
-            //        .Select(x => x.ToLower())
-            //        .ToList();
-
-            //    if (roles.Count > 0)
-            //    {
-            //        query = query
-            //            .Include(u => u.UserRoles)
-            //                .ThenInclude(ur => ur.Role)
-            //            .Where(user =>
-            //                user.UserRoles.Any(ur => roles.Contains(ur.Role.Name.ToLower())));
-            //    }
-            //}
-
-            //            if (model.Roles != null && model.Roles.Any())
-            //{
-            //    var roles = model.Roles
-            //        .Where(x => !string.IsNullOrWhiteSpace(x))
-            //        .Select(x => x.Trim().ToLower())
-            //        .ToList();
-
-            //    if (roles.Any())
-            //    {
-            //        query = query.Where(user =>
-            //            user.UserRoles.Any(ur => roles.Contains(ur.Role.Name.ToLower())));
-            //    }
-            //}
-
 
 
 
@@ -363,6 +299,29 @@ namespace Core.Services
                 query = query.OrderBy(u => u.Id); // default
             }
 
+            //// 📄 Безпечна пагінація
+            //var safeItemsPerPage = model.ItemPerPAge < 1 ? 10 : model.ItemPerPAge;
+            //var totalPages = (int)Math.Ceiling(totalCount / (double)safeItemsPerPage);
+            //var safePage = Math.Min(Math.Max(1, model.Page), Math.Max(1, totalPages));
+
+            //// ↕️ Сортування (динамічне через EF.Property)
+            //var allowedSortFields = new[] { "Id", "Email", "Name", "Role", "CreatedAt" };
+
+            //if (!string.IsNullOrWhiteSpace(model.SortBy) && allowedSortFields.Contains(model.SortBy))
+            //{
+            //    query = model.SortDesc
+            //        ? query.OrderByDescending(u => EF.Property<object>(u, model.SortBy))
+            //        : query.OrderBy(u => EF.Property<object>(u, model.SortBy));
+            //}
+            //else
+            //{
+            //    query = query.OrderBy(u => u.Id); // default
+            //}
+
+
+
+
+
             // 🔄 Завантаження користувачів з пагінацією
             var users = await query
                 .Skip((safePage - 1) * safeItemsPerPage)
@@ -370,18 +329,6 @@ namespace Core.Services
                 .ToListAsync();
 
             // 📦 Результат
-            //return new SearchResult<UserEntity>
-            //{
-            //    Items = users,
-            //    Pagination = new PaginationModel
-            //    {
-            //        TotalCount = totalCount,
-            //        TotalPages = totalPages,
-            //        ItemsPerPage = safeItemsPerPage,
-            //        CurrentPage = safePage
-            //    }
-            //};
-
             return new SearchResult<UserEntity>
             {
                 Items = users,
