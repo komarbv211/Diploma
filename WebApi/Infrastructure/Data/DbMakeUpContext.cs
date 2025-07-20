@@ -8,7 +8,7 @@ namespace Infrastructure.Data
 {
     public class DbMakeUpContext : //IdentityDbContext<UserEntity, RoleEntity, long>
         IdentityDbContext<UserEntity, RoleEntity, long,
-        IdentityUserClaim<long>, UserRoleEntity, IdentityUserLogin<long>,
+        IdentityUserClaim<long>, UserRoleEntity, UserLoginEntity,
         IdentityRoleClaim<long>, IdentityUserToken<long>>
     {
 
@@ -39,6 +39,13 @@ namespace Infrastructure.Data
                     .IsRequired();
             });
 
+            builder.Entity<UserLoginEntity>(b =>
+            {
+                b.HasOne(l => l.User)
+                    .WithMany(u => u.UserLogins)
+                    .HasForeignKey(l => l.UserId)
+                    .IsRequired();
+            });
 
 
         }

@@ -20,7 +20,7 @@ namespace WebApiDiploma.Controllers.Admin
         public AdminUserController(IUserService services, ILogger<AdminUserController> logger)
         {
             service = services;
-             _logger = logger;
+            _logger = logger;
         }
 
         [HttpGet("users")]
@@ -45,20 +45,20 @@ namespace WebApiDiploma.Controllers.Admin
         //}
 
         [HttpGet("search")]
-public async Task<IActionResult> SearchUsers([FromQuery] UserSearchModel model)
-{
-    if (model.Roles != null && model.Roles.Any())
-    {
-        _logger.LogInformation("Roles from query: {Roles}", string.Join(", ", model.Roles));
-    }
-    else
-    {
-        _logger.LogInformation("No roles provided in the query.");
-    }
+        public async Task<IActionResult> SearchUsers([FromQuery] UserSearchModel model)
+        {
+            if (model.Roles != null && model.Roles.Any())
+            {
+                _logger.LogInformation("Roles from query: {Roles}", string.Join(", ", model.Roles));
+            }
+            else
+            {
+                _logger.LogInformation("No roles provided in the query.");
+            }
 
-    var result = await service.SearchUsersAsync(model);
-    return Ok(result);
-}
+            var result = await service.SearchUsersAsync(model);
+            return Ok(result);
+        }
 
 
     }

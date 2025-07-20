@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Core.DTOs.PaginationDTOs;
 using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
 using Core.Exceptions;
 using Core.Interfaces;
+using Core.Models.AdminUser;
 using Core.Models.Authentication;
 using Core.Models.Search;
 using Infrastructure.Entities;
@@ -232,7 +234,7 @@ namespace Core.Services
             return user == null ? null : _mapper.Map<UserDTO>(user);
         }
 
-        public async Task<SearchResult<UserEntity>> SearchUsersAsync(UserSearchModel model)
+        public async Task<SearchResult<AdminUserItemModel>> SearchUsersAsync(UserSearchModel model)
         {
             var query = _userManager.Users
               //.Include(u => u.UserRoles)
@@ -326,19 +328,20 @@ namespace Core.Services
             var users = await query
                 .Skip((safePage - 1) * safeItemsPerPage)
                 .Take(safeItemsPerPage)
+                .ProjectTo<AdminUserItemModel>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
             // 📦 Результат
-            return new SearchResult<UserEntity>
+            return new SearchResult<AdminUserItemModel>
             {
                 Items = users,
-                Pagination = new PagedResultDto<UserEntity>
+                Pagination = new PagedResultDto<AdminUserItemModel>
                 {
                     CurrentPage = safePage,
                     PageSize = safeItemsPerPage,
                     TotalCount = totalCount,
                     TotalPages = totalPages,
-                    Items = users
+                    //Items = users
                 }
             };
         }

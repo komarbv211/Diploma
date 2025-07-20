@@ -1,6 +1,7 @@
 ﻿using Core.DTOs.PaginationDTOs;
 using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
+using Core.Models.AdminUser;
 using Core.Models.Authentication;
 using Core.Models.Search;
 using Infrastructure.Entities;
@@ -17,7 +18,7 @@ namespace Core.Interfaces
         Task DeleteUserAsync(long id);
         Task<UserDTO?> GetByEmailAsync(string email);
 
-        Task<SearchResult<UserEntity>> SearchUsersAsync(UserSearchModel model);
+        Task<SearchResult<AdminUserItemModel>> SearchUsersAsync(UserSearchModel model);
 
         //Task<IEnumerable<UserDTO>> Get(bool isAdmin = false);
         //Task<IEnumerable<UserDTO>> GetLocked();
