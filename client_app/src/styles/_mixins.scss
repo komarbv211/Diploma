@@ -1,0 +1,17 @@
+//_mixins.scss
+// Міксин для медіа-запитів
+@mixin respond($breakpoint) {
+  @if $breakpoint == xs { @media (max-width: $breakpoint-xs) { @content; } }
+  @else if $breakpoint == sm { @media (max-width: $breakpoint-sm) { @content; } }
+  @else if $breakpoint == md { @media (max-width: $breakpoint-md) { @content; } }
+  @else if $breakpoint == lg { @media (max-width: $breakpoint-lg) { @content; } }
+  @else if $breakpoint == xl { @media (max-width: $breakpoint-xl) { @content; } }
+  @else if $breakpoint == xxl { @media (max-width: $breakpoint-2xl) { @content; } }
+}
+
+// Міксин для центрування flex
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} 

@@ -17,6 +17,7 @@ import { handleFormErrors } from '../../../utilities/handleApiErrors';
 import { ApiError } from '../../../types/errors';
 import type { DragEndEvent } from '@dnd-kit/core';
 
+
 const { Item } = Form;
 
 const CreateProductPage = () => {

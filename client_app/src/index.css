@@ -1,7 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-.child-category-row {
-  background-color: #e0f7f9 !important; /* світлобірюзовий */
+html, body, #root {
+    width: 100vw;
+    overflow-x: hidden;
 }

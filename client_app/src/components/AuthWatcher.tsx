@@ -12,6 +12,8 @@ const PUBLIC_PATHS = [
   '/registr',
   '/forgot-password',
   '/reset-password/:token',
+  '/google-register',
+  '*',
   // додайте інші публічні сторінки
 ];
 
