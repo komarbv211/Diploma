@@ -4,8 +4,7 @@ namespace Infrastructure.Entities
 {
     public class UserRoleEntity : IdentityUserRole<long>
     {
-       
-        public virtual UserEntity User { get; set; } = new ();
-        public virtual RoleEntity Role { get; set; } = new ();
+        public virtual UserEntity? User { get; set; }
+        public virtual RoleEntity? Role { get; set; }
     }
 }

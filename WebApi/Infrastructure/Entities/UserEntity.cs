@@ -29,8 +29,8 @@ namespace Infrastructure.Entities
 
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new HashSet<RefreshToken>();
 
-
+        public virtual ICollection<UserLoginEntity>? UserLogins { get; set; }
         //public virtual ICollection<OrderEntity> Orders { get; set; }
-        public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
+        public virtual ICollection<UserRoleEntity>? UserRoles { get; set; }
     }
 }
