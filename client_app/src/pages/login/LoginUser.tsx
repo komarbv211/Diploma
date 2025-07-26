@@ -14,9 +14,8 @@ import GoogleLoginButton from '../../components/buttons/GoogleLoginButton';
 import MailIcon from '../../components/icons/MailIcon';
 import EyeIcon from '../../components/icons/EyeIcon';
 import GoogleIcon from '../../components/icons/GoogleIcon';
-import StarDecoration from '../../components/decorations/StarDecoration';
 import gradients from './loginUserGradients.module.scss';
-
+import StarDecoration from '../../components/decorations/StarDecoration';
 const Login: React.FC = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
@@ -63,54 +62,50 @@ const Login: React.FC = () => {
     };
 
     return (
-        <GoogleOAuthProvider clientId={APP_ENV.CLIENT_ID}>
-            <div className="absolute min-h-screen w-screen bg-beige2 overflow-x-hidden overflow-y-auto flex flex-col items-center justify-center">
-                {/* Декоративний градієнт */}
-                <div className={gradients.loginPage__gradient} />
-                {/* Фонове зображення */}
-                <img
-                    src="/flowers-bg.png"
-                    className="absolute top-[-112px] left-[762px] w-[calc(100vw-762px)] h-[1304px] object-cover z-10 hidden xl:block"
-                    alt="background"
-                />
-                {/* Форма логіну */}
-                <div
-                  className="
-                    absolute
-                    box-border flex flex-col items-center  
-                    bg-white border-2 border-solid border-gray-300
-                    rounded-[15px] pt-[40px] pr-[60px] pb-[40px] pl-[60px]
-                    gap-[37px] z-30 font-manrope lg:absolute
-                    lg:left-[0px] lg:top-[126px] lg:w-[574px] lg:h-[710px]
-                    md:static md:ml-[188px] md:mt-[58px] md:w-[574px] md:h-[710px]
-                    sm:static sm:mx-auto sm:w-[90vw] sm:p-6 sm:gap-6
-                    xs:static xs:mx-auto xs:w-[95vw] xs:p-4 xs:gap-4
-                  "
-                  
-                    style={{ 
-                        overflow: 'hidden',
-                        borderWidth: '2px',
-                        borderStyle: 'solid',
-                        borderImage: 'linear-gradient(149.91deg, #1A3D83, #8AA8D2 100%) 1'
-                    }}
-                >
-                  <h2
-                    className="w-full max-w-[454px] h-[44px]
-                      font-manrope font-semibold text-[32px] leading-[44px] text-center text-black
-                      mb-0"
-                  >
-                    Ласкаво просимо!
-                  </h2>
+  <GoogleOAuthProvider clientId={APP_ENV.CLIENT_ID}>
+    <div className="flex w-full min-h-screen items-center justify-center bg-beige2">
+       {/* Декоративний градієнт */}
+       <div className={gradients.loginPage__gradient + " absolute inset-0 z-0"} />
+          {/* Фонове зображення */}
+          <img
+            src="/flowers-bg.png"
+            className="absolute right-0 top-0 w-[60%] h-full object-cover z-0 hidden lg:block"
+            alt="background"
+          />
+          {/* Форма логіну */}
+          <div className="relative flex w-full max-w-sm mx-auto  rounded-lg  lg:max-w-6xl ">
+          {/* Зірка вгорі зліва */}
+          <StarDecoration
+            width={107}
+            height={127}
+            className="absolute  z-20 top-[-30.5px] left-[-20px] hidden xl:block"
+          />
 
-                  <Spin spinning={isLoading} tip="Завантаження...">
-                    <Form
-                      form={form}
-                      onFinish={onFinish}
-                      layout="vertical"
-                      className="flex flex-col items-start gap-5 w-full max-w-[454px]"
-                    >
-                      {/* Email */}
-                      <Form.Item
+          {/* Зірка внизу справа */}
+          <StarDecoration
+            width={107}
+            height={127}
+            className="absolute z-20 bottom-[-31px] right-[556.5px] hidden lg:block "
+          />
+
+        <div className="relative  px-6 py-8 md:px-8  xs:max-w-[450px] md:max-w-[574px] z-10 xs:translate-x-[-7%] md:translate-x-[-20%] lg:translate-x-[40%] xl:translate-x-0 ">
+          <div className="p-[2.5px] rounded-[15px] h-[712px] bg-gradient-to-br from-blue2 to-blueLight">
+            <div className="bg-white rounded-[14px] xs:max-w-[450px] md:max-w-[574px] xl:w-full h-full px-6 py-8 md:px-8">
+         
+            <h1 className="w-[454px] h-[44px] font-manrope font-semibold text-[32px] leading-[44px] text-black text-center">
+  Ласкаво просимо!
+</h1>
+
+          <Spin spinning={isLoading} tip="Завантаження...">
+            <Form
+              form={form}
+              onFinish={onFinish}
+              layout="vertical"
+              className="space-y-4"
+            >
+              {/* Email */}
+              <div className="flex flex-col items-start gap-[20px]">
+              <Form.Item
                         name="email"
                         label={
                           <span className="font-manrope font-medium text-[20px] leading-[27px] text-black">
@@ -126,7 +121,7 @@ const Login: React.FC = () => {
                         <Input
                           className="w-full h-[52px] px-[15px] py-0 font-manrope font-medium text-[16px] leading-[22px] text-gray-600 border border-gray rounded-[15px] bg-white focus:border-blue-500 focus:shadow-none"
                           placeholder="Електронна пошта або ім'я користувача"
-                          suffix={<MailIcon className="w-5 h-5 text-gray-600" />}
+                          suffix={<MailIcon className="w-5 h-5 text-gray" />}
                         />
                       </Form.Item>
 
@@ -145,8 +140,11 @@ const Login: React.FC = () => {
                       </Form.Item>
 
                       {errorMessage && (
-                        <div className="text-red-600 text-sm font-medium mt-1">{errorMessage}</div>
+                        <div className="text-danger text-sm font-medium mt-1 font-manrope">
+                          {errorMessage}
+                        </div>
                       )}
+
 
                       <div
                         className="
@@ -167,36 +165,39 @@ const Login: React.FC = () => {
                           Забули пароль?
                         </Link>
                       </div>
-
-                      <Button
-                        type="primary"
-                        htmlType="submit"
-                        className="
-                          flex flex-row justify-center items-center
-                          p-[15px] gap-[10px] w-full max-w-[454px] h-[63px]
-                          bg-pink rounded-[15px] mt-4 shadow-none border-none
-                        "
-                      >
-                        <span className="font-manrope font-semibold text-[24px] leading-[33px] text-beige2 text-center">
-                          Вхід
-                        </span>
-                      </Button>
-                    </Form>
-                  </Spin>
-                  {/* Або Google */}
-                  <div className="flex flex-row justify-between items-center w-full max-w-[128px] h-[22px] gap-1 my-4">
-                    <div className="w-[43px] border-t border-gray-600" />
-                    <span className="font-manrope font-medium text-base text-gray-600 text-center">або</span>
-                    <div className="w-[43px] border-t border-gray-600" />
-                  </div>
-                  <div className="flex flex-row justify-center items-center p-4 gap-2 w-full max-w-[454px] h-[57px] bg-pink2 rounded-xl mt-4">
+                      </div>
+              <div className="pt-[15px]">
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="
+                  flex flex-row justify-center items-center
+                  p-[15px] gap-[10px] w-full max-w-[454px] h-[63px]
+                  bg-pink rounded-[15px]  shadow-none border-none
+                "
+              >
+                <span className="font-manrope font-semibold text-[24px] leading-[33px] text-beige2 text-center">
+                  Вхід
+                </span>
+              </Button>
+              </div>
+            </Form>
+          </Spin>
+          {/* Google login */}
+          <div className="flex items-center justify-between m-8 ml-20 mr-20">
+            <span className="w-1/3 border-b dark:border-gray md:w-1/3"></span>
+            <span className="text-[16px] text-gray ">або</span>
+            <span className="w-1/3 border-b dark:border-gray md:w-1/3"></span>
+          </div>
+          
+          <div className="flex flex-row justify-center items-center p-4 gap-2 w-full max-w-[454px] h-[57px] bg-pink2 rounded-xl mt-6">
                     <GoogleLoginButton
                       icon={<GoogleIcon />}
                       title="Увійдіть за допомогою Google"
                       onLogin={onLoginGoogleResult}
                     />
                   </div>
-                  <div className="flex flex-row justify-between items-center w-full max-w-[454px] h-[27px] gap-5 mt-4">
+                  <div className="flex flex-row justify-between items-center w-full max-w-[454px] h-[27px] gap-5 mt-6">
                     <span className="font-manrope font-medium text-lg text-black text-center">Немає облікового запису?</span>
                     <Link
                       to="/registr"
@@ -205,31 +206,29 @@ const Login: React.FC = () => {
                       Зареєструватися
                     </Link>
                   </div>
-                  <Modal
-                    open={showGoogleModal}
-                    onCancel={() => setShowGoogleModal(false)}
-                    footer={[
-                      <Button key="cancel" onClick={() => setShowGoogleModal(false)}>
-                        Скасувати
-                      </Button>,
-                      <GoogleLoginButton
-                        key="google"
-                        icon={<GoogleIcon />}
-                        title="Увійти через Google"
-                        onLogin={onLoginGoogleResult}
-                      />,
-                    ]}
-                  >
-                    <p>Цей email вже зареєстрований через Google. Будь ласка, увійдіть через Google.</p>
-                  </Modal>
-                </div>
-               
-            {/* Декоративні зірки у кутах */}
-            <StarDecoration width={107} height={127} style={{ position: 'absolute', top: 120, left: 135, zIndex: 40 }} className="hidden md:block" />
-            <StarDecoration width={107} height={127} style={{ position: 'absolute', top: 829, left: 708, zIndex: 40 }} className="hidden md:block" />
+          <Modal
+            open={showGoogleModal}
+            onCancel={() => setShowGoogleModal(false)}
+            footer={[
+              <Button key="cancel" onClick={() => setShowGoogleModal(false)}>
+                Скасувати
+              </Button>,
+              <GoogleLoginButton
+                key="google"
+                icon={<GoogleIcon />}
+                title="Увійти через Google"
+                onLogin={onLoginGoogleResult}
+              />,
+            ]}
+          >
+            <p>Цей email вже зареєстрований через Google. Будь ласка, увійдіть через Google.</p>
+          </Modal>
         </div>
-    </GoogleOAuthProvider>
-    );
+      </div>
+      </div>
+      </div></div>
+  </GoogleOAuthProvider>
+);
 };
 
 export default Login;
