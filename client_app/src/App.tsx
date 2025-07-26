@@ -28,12 +28,13 @@ function App() {
               <Route index element={<Home />} />
               <Route path="profile" element={<UserProfile />} />
               <Route path="google-register" element={<GoogleRegisterUser />} />
-              <Route path="login/*" element={<LoginUser />} />
+              
               <Route path="registr/*" element={<RegistrUser />} />
               <Route path="forgot-password" element={<ForgotPassword />} />
               <Route path="reset-password/:token" element={<ResetPassword />} />
               <Route path="*" element={<NotFoundPage />} />
             </Route>
+            <Route path="login/*" element={<LoginUser />} />
 
             <Route path="/admin/*" element={<RequireAdmin />}>
               <Route path="*" element={<AdminRoutes />} />
