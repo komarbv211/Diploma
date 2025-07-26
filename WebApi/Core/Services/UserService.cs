@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Core.DTOs.PaginationDTOs;
 using Core.DTOs.UsersDTO;
 using Core.DTOs.UsersDTOs;
 using Core.Exceptions;
 using Core.Interfaces;
+using Core.Models.AdminUser;
 using Core.Models.Authentication;
+using Core.Models.Search;
 using Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -231,5 +234,116 @@ namespace Core.Services
             return user == null ? null : _mapper.Map<UserDTO>(user);
         }
 
+        public async Task<SearchResult<AdminUserItemModel>> SearchUsersAsync(UserSearchModel model)
+        {
+            var query = _userManager.Users
+              //.Include(u => u.UserRoles)
+              //.ThenInclude(ur => ur.Role)
+              .AsQueryable();
+
+            //var query = _userManager.Users.AsQueryable();
+
+            // 🔍 Фільтрація по імені
+            if (!string.IsNullOrWhiteSpace(model.Name))
+            {
+                string nameFilter = model.Name.Trim().ToLower().Normalize();
+
+                query = query.Where(u =>
+                    (u.FirstName + " " + u.LastName).ToLower().Contains(nameFilter) ||
+                    u.FirstName.ToLower().Contains(nameFilter) ||
+                    u.LastName.ToLower().Contains(nameFilter));
+            }
+
+
+            // 📅 Фільтрація по датах
+            if (model?.StartDate != null)
+            {
+                query = query.Where(u => u.CreatedDate >= model.GetParsedStartDate());
+            }
+
+            if (model?.EndDate != null)
+            {
+                query = query.Where(u => u.LastActivity <= model.GetParsedEndDate());
+            }
+
+
+
+            // 🧑‍⚖️ Фільтрація по ролях
+            if (model?.Roles != null && model.Roles.Any())
+            {
+                query = query.Where(u => u.UserRoles.Any(ur => model.Roles.Contains(ur.Role.Name)));
+            }
+
+
+
+            // 🔢 Загальна кількість
+            var totalCount = await query.CountAsync();
+
+            // 📄 Пейджинг
+            var safeItemsPerPage = model.ItemPerPAge < 1 ? 10 : model.ItemPerPAge;
+            var totalPages = (int)Math.Ceiling(totalCount / (double)safeItemsPerPage);
+            var safePage = Math.Min(Math.Max(1, model.Page), Math.Max(1, totalPages));
+
+            // ↕️ Сортування
+            if (!string.IsNullOrWhiteSpace(model.SortBy))
+            {
+                bool desc = model.SortDesc;
+                query = model.SortBy switch
+                {
+                    "FirstName" => desc ? query.OrderByDescending(u => u.FirstName) : query.OrderBy(u => u.FirstName),
+                    "LastName" => desc ? query.OrderByDescending(u => u.LastName) : query.OrderBy(u => u.LastName),
+                    "Email" => desc ? query.OrderByDescending(u => u.Email) : query.OrderBy(u => u.Email),
+                    _ => query.OrderBy(u => u.Id)
+                };
+            }
+            else
+            {
+                query = query.OrderBy(u => u.Id); // default
+            }
+
+            //// 📄 Безпечна пагінація
+            //var safeItemsPerPage = model.ItemPerPAge < 1 ? 10 : model.ItemPerPAge;
+            //var totalPages = (int)Math.Ceiling(totalCount / (double)safeItemsPerPage);
+            //var safePage = Math.Min(Math.Max(1, model.Page), Math.Max(1, totalPages));
+
+            //// ↕️ Сортування (динамічне через EF.Property)
+            //var allowedSortFields = new[] { "Id", "Email", "Name", "Role", "CreatedAt" };
+
+            //if (!string.IsNullOrWhiteSpace(model.SortBy) && allowedSortFields.Contains(model.SortBy))
+            //{
+            //    query = model.SortDesc
+            //        ? query.OrderByDescending(u => EF.Property<object>(u, model.SortBy))
+            //        : query.OrderBy(u => EF.Property<object>(u, model.SortBy));
+            //}
+            //else
+            //{
+            //    query = query.OrderBy(u => u.Id); // default
+            //}
+
+
+
+
+
+            // 🔄 Завантаження користувачів з пагінацією
+            var users = await query
+                .Skip((safePage - 1) * safeItemsPerPage)
+                .Take(safeItemsPerPage)
+                .ProjectTo<AdminUserItemModel>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            // 📦 Результат
+            return new SearchResult<AdminUserItemModel>
+            {
+                Items = users,
+                Pagination = new PagedResultDto<AdminUserItemModel>
+                {
+                    CurrentPage = safePage,
+                    PageSize = safeItemsPerPage,
+                    TotalCount = totalCount,
+                    TotalPages = totalPages,
+                    //Items = users
+                }
+            };
+        }
     }
 }

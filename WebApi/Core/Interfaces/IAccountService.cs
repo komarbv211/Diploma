@@ -1,5 +1,7 @@
 ﻿using Core.DTOs.AuthorizationDTOs;
+using Core.DTOs.PaginationDTOs;
 using Core.Models.Authentication;
+using Core.Models.Search;
 using Infrastructure.Entities;
 
 namespace Core.Interfaces
@@ -15,6 +17,7 @@ namespace Core.Interfaces
         Task<AuthResponse> RegisterAsync(RegisterDto model);
         Task ForgotPasswordAsync(ForgotPasswordDto model);
         Task ResetPasswordAsync(ResetPasswordDto model);
+        //Task<SearchResult<UserEntity>> SearchUsersAsync(UserSearchModel model);
         //Task<bool> IsRegisteredWithGoogleAsync(string email);
     }
 }

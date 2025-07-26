@@ -2,6 +2,7 @@
 {
     public class PagedResultDto<TEntityDto>
     {
+        public PagedResultDto() { }
         public PagedResultDto(int page, int pageSize, int totalCount, List<TEntityDto> items)
         {
             CurrentPage = page;
