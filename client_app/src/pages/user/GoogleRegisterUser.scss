@@ -1,0 +1,83 @@
+.google-title{
+//  width: 511px;
+//   height: 33px;
+//   align-self: stretch;
+
+//   color: var(--black, #000);
+//   text-align: center;
+
+//   font-family: 'Manrope', sans-serif;
+//   font-size: 24px;
+//   font-style: normal;
+//   font-weight: 600;
+//   line-height: 33px; /* Це дорівнює height — вирівнює по вертикалі */
+
+//   display: flex;
+//   align-items: center;     /* Вертикальне вирівнювання тексту */
+//   justify-content: center; /* Горизонтальне вирівнювання тексту */
+
+width: 100%;
+  text-align: center;
+  font-size: 23px;
+  font-weight: 600;
+  font-family: 'Manrope', sans-serif;
+  line-height: 33px;
+  white-space: nowrap; /* ⬅️ запобігає переносу */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.flex-column-block {
+  width: 511px;
+  height: 240px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+
+  align-self: stretch;
+}
+
+.custom-label {
+  color: var(--black, #000);
+  font-family: 'Manrope', sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.profile-upload-block {
+  width: 511px;
+  height: 193px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+}
+
+.profile-image-wrapper {
+  width: 193px;
+  height: 193px;
+  border-radius: 193px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 193px;
+  display: block;
+}
+
+.profile-upload-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
