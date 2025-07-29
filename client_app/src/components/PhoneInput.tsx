@@ -162,13 +162,14 @@
 //
 // export default PhoneInput;
 
-
 import React from 'react';
 import { Select, Input } from 'antd';
+import PhoneIcon from './icons/PhoneIcon';
 
 interface PhoneInputProps {
   value?: string; // формат: +38 (097) 123-45-67
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
 }
 
 const operatorOptions = [
@@ -195,7 +196,7 @@ const parseValue = (val: string) => {
   };
 };
 
-const PhoneInput: React.FC<PhoneInputProps> = ({ value = '', onChange }) => {
+const PhoneInput: React.FC<PhoneInputProps> = ({ value = '', onChange, className}) => {
   const { operator, rest } = parseValue(value);
 
   // Функція, щоб прибрати всі нецифри і обмежити 7 цифр
@@ -232,28 +233,27 @@ const PhoneInput: React.FC<PhoneInputProps> = ({ value = '', onChange }) => {
   };
 
   return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className="form-input">
         <Select
             value={operator}
             onChange={handleOperatorChange}
-            style={{ width: 180 }}
             options={operatorOptions.map(({ code, label }) => ({
               value: code,
               label,
             }))}
-        />
-        <span>-</span>
+            className={className}
+            />
         <Input
             value={rest}
             onChange={handleNumberChange}
-            placeholder="___-__-__"
-            maxLength={9} // максимум з урахуванням тире (7 цифр + 2 тире)
+            suffix={<PhoneIcon/>}
+            placeholder="00 00 000"
+            maxLength={9}
+            className={className}
+            bordered={false}
         />
       </div>
   );
 };
 
 export default PhoneInput;
-
-
-

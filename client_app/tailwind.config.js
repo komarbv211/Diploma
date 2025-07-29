@@ -12,6 +12,8 @@ export default {
         pink2: '#8A0149',
         blue2: '#1A3D83',
         gray: '#666666',
+        g: '#9F9F9F',
+        black: '#000',
       },
       fontFamily: {
         manrope: ['Manrope', 'sans-serif'],
