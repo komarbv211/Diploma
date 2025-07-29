@@ -50,7 +50,7 @@ const RegistrUser: React.FC = () => {
 
           <Form
             layout="vertical"
-            className="flex flex-col w-full items-start gap-[15px] max-w-[604px] py-[40px] px-[60px] form-container"
+            className="flex flex-col w-full items-start gap-[12px] max-w-[604px] py-[20px] px-[40px] form-container"
             onFinish={onFinish}
             form={form}
             initialValues={{ phone: '+38 (050) ' }}
@@ -147,7 +147,7 @@ const RegistrUser: React.FC = () => {
 
             <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
               {/* <Button type="primary" htmlType="submit">Зареєструватися</Button> */}
-              <Button className="w-full max-w-[454px] h-[63px] bg-pink rounded-[15px] mt-4 shadow-none border-none">
+              <Button className="w-full max-w-[455px] h-[47px] bg-pink rounded-[15px] mt-4 shadow-none border-none">
                 <span className="font-manrope font-semibold text-[20px] leading-normal text-beige2 text-center">
                   Зареєструватися
                 </span>

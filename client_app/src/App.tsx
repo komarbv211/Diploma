@@ -24,12 +24,12 @@ function App() {
         <AuthWatcher />
         <Suspense fallback={<Loader />}>
           <Routes>
+              <Route path="registr/*" element={<RegistrUser />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="profile" element={<UserProfile />} />
               <Route path="google-register" element={<GoogleRegisterUser />} />
               <Route path="login/*" element={<LoginUser />} />
-              <Route path="registr/*" element={<RegistrUser />} />
               <Route path="forgot-password" element={<ForgotPassword />} />
               <Route path="reset-password/:token" element={<ResetPassword />} />
               <Route path="*" element={<NotFoundPage />} />
