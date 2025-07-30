@@ -68,6 +68,7 @@ const GoogleRegisterUser = () => {
 //     }
 //   };
 // тест
+//test 
   const handleBeforeUpload = (file: File) => {
     const reader = new FileReader();
     reader.onload = () => {
