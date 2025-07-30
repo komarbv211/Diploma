@@ -8,13 +8,12 @@
   align-items: center;
   padding: 15px;
   gap: 8px;
-  width: 454px;
-  height: 57px;
+  width: 100%;
+  height: 49px;
   background: $pink2;
   border-radius: $radius-xl;
   cursor: pointer;
   border: none;
-  transition: background 0.2s;
 }
 
 .googleButton:hover {
