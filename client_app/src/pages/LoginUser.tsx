@@ -101,7 +101,7 @@ const Login: React.FC = () => {
                   form={form}
                 >
                   {/* Email */}
-                  <div className="flex flex-col items-start gap-[20px]">
+                  <div className="flex flex-col items-start gap-[12px]">
                     <Form.Item
                       name="email"
                       label={<span className="form-label">Email</span>}
@@ -150,7 +150,7 @@ const Login: React.FC = () => {
                     <div
                       className="
                           flex flex-row justify-between items-center
-                          w-full max-w-[454px] h-[18px] gap-[80px] mt-2
+                          w-full max-w-[454px] h-[18px] gap-[12px] mt-2
                         "
                     >
                       <label className="form-label">
@@ -169,12 +169,14 @@ const Login: React.FC = () => {
                     htmlType="submit"
                     className="remember-button"
                   >
-                    <span className="remember-button-text">Вхід</span>
+                    <span className="remember-button-text gap-[12px]">
+                      Вхід
+                    </span>
                   </Button>
                 </Form>
               </Spin>
               {/* Google login */}
-              <div className="flex items-center justify-between m-8 ml-20 mr-20">
+              <div className="flex items-center justify-between m-4 ml-[8rem] mr-[8rem]">
                 <span className="w-1/3 border-b dark:border-gray md:w-1/3"></span>
                 <span className="text-[16px] text-gray ">або</span>
                 <span className="w-1/3 border-b dark:border-gray md:w-1/3"></span>
@@ -188,12 +190,12 @@ const Login: React.FC = () => {
                 />
               </div>
               <div className="flex flex-row justify-between items-center w-full max-w-[100%] h-[27px] gap-5 mt-6">
-                <span className="font-manrope font-medium text-lg text-black text-center">
+                <span className="font-manrope font-medium text-[18px] text-black text-center">
                   Немає облікового запису?
                 </span>
                 <Link
                   to="/registr"
-                  className="font-manrope font-medium text-lg text-blue2 text-center cursor-pointer"
+                  className="font-manrope font-medium text-[18px] text-blue2 text-center cursor-pointer hover:text-hover_blue"
                 >
                   Зареєструватися
                 </Link>
