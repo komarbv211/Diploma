@@ -241,7 +241,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({ value = '', onChange, className
               value: code,
               label,
             }))}
-            className={className}
+            className={'h-0'}
             />
         <Input
             value={rest}

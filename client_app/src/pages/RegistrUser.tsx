@@ -31,144 +31,130 @@ const RegistrUser: React.FC = () => {
 
   return (
     <>
+      <div className="flex flex-col lg:flex-row min-h-screen">
+        <div className="flex w-full lg:w-[50vw] justify-center items-center bg-beige2 p-4">
 
-      {/* <div className="flex justify-center items-center bg-beige2"> */}
-      <div className="flex w-screen h-screen overflow-hidden">
+          <div className="form-container">
+            <div className="bg-white rounded-[13px] py-[20px] px-[40px]">
 
-        <div className="relative w-3/6 flex justify-center items-center bg-beige2">
-          {/* <StarDecoration
-                        width={107}
-                        height={127}
-                        className="absolute top-[2%] left-[3%] z-10"
-                    />
+              <Form
+                layout="vertical"
+                className=""
+                onFinish={onFinish}
+                form={form}
+                initialValues={{ phone: '+38 (050) ' }}
+              >
+                <h2 className="form-title">Зареєструватися</h2>
+                <Form.Item name="firstName" label={<span className="form-label">Ім’я</span>}
+                  rules={[{ required: true, message: 'Будь ласка, введіть Ваше ім\’я!' }]}>
+                  <Input placeholder="Ім'я користувача" className="form-input" suffix={<AccountBox />} />
+                </Form.Item>
 
-                    <StarDecoration
-                        width={107}
-                        height={127}
-                        className="absolute -bottom-[0%] right-[4%] z-10"
-                    /> */}
+                <Form.Item name="lastName" label={<span className="form-label">Прізвище</span>}>
+                  <Input placeholder="Прізвище" className="form-input" suffix={<AccountBox />} />
+                </Form.Item>
 
-          <Form
-            layout="vertical"
-            className="flex flex-col w-full items-start gap-[12px] max-w-[604px] py-[20px] px-[40px] form-container"
-            onFinish={onFinish}
-            form={form}
-            initialValues={{ phone: '+38 (050) ' }}
-          >
-            <h2 className="form-title">Зареєструватися</h2>
-            <Form.Item name="firstName" label={<span className="form-label">Ім’я</span>}
-              rules={[{ required: true, message: 'Будь ласка, введіть Ваше ім\’я!' }]}
-            >
-              <Input placeholder="Ім'я користувача" className="form-input" suffix={<AccountBox />} />
-            </Form.Item>
+                <Form.Item
+                  name="email"
+                  label={<span className="form-label">Email</span>}
+                  rules={[
+                    { required: true, type: 'email', message: 'Будь ласка, введіть дійсну електронну адресу!' },
+                  ]}
+                >
+                  <Input placeholder="Ваш E-mail / login" className="form-input" suffix={<MailIcon />} />
+                </Form.Item>
 
-            <Form.Item name="lastName" label={<span className="form-label">Прізвище</span>}>
-              <Input placeholder="Прізвище" className="form-input" suffix={<AccountBox />} />
-            </Form.Item>
+                <Form.Item
+                  name="phone"
+                  label={<span className="form-label">Номер телефону</span>}
+                  rules={[
+                    { required: true, message: 'Введіть номер телефону' },
+                    {
+                      validator: (_, value) => {
+                        const regex_phone = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                        if (!value || regex_phone.test(value)) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('Неправильний формат номера телефону'));
+                      },
+                    },
+                  ]}
+                  getValueFromEvent={e => e.target.value}
+                >
+                  <PhoneInput
+                  //     onChange={(val: any)=> {
+                  //     console.log("form", form.getFieldValue('phone'));
+                  //     console.log("ss",val)
+                  // } }
+                  />
+                </Form.Item>
 
-            <Form.Item
-              name="email"
-              label={<span className="form-label">Email</span>}
-              rules={[
-                { required: true, type: 'email', message: 'Будь ласка, введіть дійсну електронну адресу!' },
-              ]}
-            >
-              <Input placeholder="Ваш E-mail / login" className="form-input" suffix={<MailIcon />} />
-            </Form.Item>
+                <Form.Item
+                  name="password"
+                  label={<span className="form-label">Пароль</span>}
+                  rules={[{ required: true, message: 'Будь ласка, введіть пароль!' }]}
+                >
+                  <Input.Password placeholder="Пароль" className="form-input"
+                    iconRender={(visible) => (visible ? <EyeIcon /> : <EyeOffIcon />)}
+                  />
+                </Form.Item>
 
-            <Form.Item
-              name="phone"
-              label={<span className="form-label">Номер телефону</span>}
-              rules={[
-                { required: true, message: 'Введіть номер телефону' },
-                {
-                  validator: (_, value) => {
-                    const regex_phone = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
-                    if (!value || regex_phone.test(value)) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('Неправильний формат номера телефону'));
-                  },
-                },
-              ]}
-              getValueFromEvent={e => e.target.value}
-            >
-              <PhoneInput
+                <Form.Item
+                  name="password1"
+                  label={<span className="form-label">Перевірка пароля</span>}
+                  dependencies={['password']}
+                  rules={[
+                    { required: true, message: 'Будь ласка, підтвердіть пароль!' },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue('password') === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('Паролі не збігаються!'));
+                      },
+                    }),
+                  ]}
+                >
+                  <Input.Password placeholder="Підтвердіть пароль" className="form-input"
+                    iconRender={(visible) => (visible ? <EyeIcon /> : <EyeOffIcon />)}
+                  />
+                </Form.Item>
 
-              //     onChange={(val: any)=> {
-              //     console.log("form", form.getFieldValue('phone'));
-              //     console.log("ss",val)
-              // } }
-              />
-            </Form.Item>
+                <p className="w-full text-[14px] text-gray font-manrope text-base font-medium underline text-center pt-[4px] pb-[12px]">
+                  Натискаючи кнопку «Зареєструватися», ви погоджуєтеся з <br />
+                  <a href="/terms">
+                    Умовами використання
+                  </a>
+                  &nbsp;та&nbsp;
+                  <a href="/privacy">
+                    Політикою конфіденційності
+                  </a>
+                </p>
 
-            <Form.Item
-              name="password"
-              label={<span className="form-label">Пароль</span>}
-              rules={[{ required: true, message: 'Будь ласка, введіть пароль!' }]}
-            >
-              <Input.Password placeholder="Пароль" className="form-input"
-                iconRender={(visible) => (visible ? <EyeIcon /> : <EyeOffIcon />)}
-              />
-            </Form.Item>
+                <Form.Item>
+                  <Button className='btn-pink'>
+                    <span>
+                      Зареєструватися
+                    </span>
+                  </Button>
+                </Form.Item>
 
-            <Form.Item
-              name="password1"
-              label={<span className="form-label">Перевірка пароля</span>}
-              dependencies={['password']}
-              rules={[
-                { required: true, message: 'Будь ласка, підтвердіть пароль!' },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue('password') === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('Паролі не збігаються!'));
-                  },
-                }),
-              ]}
-            >
-              <Input.Password placeholder="Підтвердіть пароль" className="form-input"
-                iconRender={(visible) => (visible ? <EyeIcon /> : <EyeOffIcon />)}
-              />
-            </Form.Item>
-
-            <p className="w-full max-w-[604px] mx-auto text-gray font-manrope text-base font-medium underline text-center">
-              Натискаючи кнопку «Зареєструватися», ви погоджуєтеся з&nbsp;
-              <a href="/terms">
-                Умовами використання
-              </a>
-              &nbsp;та&nbsp;
-              <a href="/privacy">
-                Політикою конфіденційності
-              </a>
-            </p>
-
-
-            <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
-              {/* <Button type="primary" htmlType="submit">Зареєструватися</Button> */}
-              <Button className="w-full max-w-[455px] h-[47px] bg-pink rounded-[15px] mt-4 shadow-none border-none">
-                <span className="font-manrope font-semibold text-[20px] leading-normal text-beige2 text-center">
-                  Зареєструватися
-                </span>
-              </Button>
-            </Form.Item>
-
-            <div className="flex flex-row justify-between items-center w-full max-w-[454px] h-[27px] gap-5 mt-4">
-              <span className="font-manrope font-medium text-lg text-black text-center">Немає облікового запису?</span>
-              <Link to="/login" className="font-manrope font-medium text-lg text-blue2 text-center cursor-pointer">
-                Увійти
-              </Link>
+                <div className="font-manrope text-[18px] flex justify-between pt-[8px]">
+                  <span>Вже маєте обліковий запис?</span>
+                  <Link to="/login" className='text-blue2'>
+                    Увійти
+                  </Link>
+                </div>
+              </Form>
             </div>
-          </Form>
+          </div>
         </div>
-        <div className="relative w-3/6 h-screen overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/images/register-flowers-bg.png')] bg-cover bg-center z-0" />
-          {/* Градієнт поверх */}
+
+        <div className="hidden lg:block fixed top-0 right-0 w-[50vw] h-full bg-cover bg-center bg-[url('/images/register-flowers-bg.png')]">
           <div className="absolute inset-0 bg-gradient-to-r from-beige2 to-transparent z-10" />
         </div>
-      </div>
 
+      </div>
     </>
   );
 };

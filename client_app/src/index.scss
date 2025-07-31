@@ -9,31 +9,45 @@
 }
 
 .form-container {
-  @apply rounded-[15px] border-2 border-blue2 bg-white;
+  @apply rounded-xl bg-white p-[2px] w-full max-w-[535px];
+  background: linear-gradient(150deg, #1A3D83 0%, #8AA8D2 100%);
 }
 
 .form-title {
-  @apply w-full font-manrope font-semibold text-[32px] leading-normal text-center text-black mb-0;
+  @apply text-center font-manrope text-[24px] font-semibold leading-normal text-black mb-[16px];
 }
 
 .form-label {
-  @apply text-black font-manrope text-[14px] font-medium leading-normal;
+  @apply text-black font-manrope text-[18px] font-medium leading-normal;
 }
 
 .form-input {
-  @apply flex p-[10px] justify-between items-center self-stretch rounded-xl border border-gray text-gray placeholder:text-g font-manrope text-[14px] font-medium leading-normal;
+  @apply flex p-[10px] justify-between items-center self-stretch rounded-xl border border-gray text-gray placeholder:text-g font-manrope text-[14px] font-medium leading-normal w-full;
+}
+
+.btn-pink {
+  @apply p-[10px] bg-pink rounded-xl border-pink w-full h-[49px] text-[20px] text-white font-semibold;
+}
+
+.btn-pink:hover {
+  @apply bg-white text-pink font-semibold;
 }
 
 /* Ant styles*/
 .ant-form-item {
-  margin-bottom: 0;
-  width: 100%;
+  margin-bottom: 12px;
 }
 
+/* for phone number */
 .ant-select-selector {
   /* all: unset !important; */
   @apply flex p-[15px] justify-between items-center rounded-xl border-gray text-gray placeholder:text-g font-manrope text-[14px] font-medium leading-normal !important;
-  width: 100%;
-  box-sizing: border-box;
-  cursor: pointer;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0px !important;
+  color: black !important;
+}
+
+.ant-input-affix-wrapper.ant-input-borderless {
+  padding: 0 !important;
 }
