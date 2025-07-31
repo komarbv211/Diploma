@@ -15,7 +15,7 @@ import AmoonIcon from "../components/icons/AmoonIcon";
 import AccountBoxIcon from "../components/icons/AccountBoxIcon";
 
 
-import VectorPhoneIcon from "../components/icons/VectorPhoneIcon";
+import VectorPhoneIcon from "../components/icons/PhoneIcon";
 // import MailIcon from "@/components/icons/MailIcon";
 import StarDecoration from '../../src/components/decorations/StarDecoration';
 // import '../../src/pages/user/GoogleRegisterUser.scss';
@@ -110,15 +110,15 @@ const GoogleRegisterUser = () => {
   return (
 
     <div className="flex w-full min-h-screen items-center justify-center bg-beige2">
-      {/* Декоративний градієнт */}
-      <div className="absolute inset-0 left-[45%] bg-gradient-to-r from-beige2  z-10" />
+     
       {/* Фонове зображення */}
       <img
         src="/amir-seilsepour-unsplash-2.png"
         className="absolute right-0 top-0 w-[55%] h-full object-cover z-0 hidden lg:block"
         alt="background"
       />
-     
+      {/* Декоративний градієнт */}
+      <div className="absolute inset-0 left-[45%] bg-gradient-to-r from-beige2  z-0" />
 
       {/* Форма логіну */}
       <div className="relative flex w-full max-w-sm mx-auto  rounded-lg  lg:max-w-6xl ">
@@ -126,18 +126,17 @@ const GoogleRegisterUser = () => {
         <StarDecoration
           width={72}
           height={86}
-          className="absolute  z-20 top-[-10.5px] left-[-3.5px] hidden xl:block"
+          className="absolute  z-20 top-[-41.5px] left-[-34.5px] hidden xl:block"
         />
 
         {/* Зірка внизу справа */}
         <StarDecoration
           width={72}
           height={86}
-          className="absolute z-20 bottom-[-10px] right-[574.5px] hidden lg:block "
+          className="absolute z-20 bottom-[-42px] right-[582.5px] hidden lg:block "
         />
 
-        <div className="relative  px-6 py-8 md:px-8  xs:max-w-[100%] md:max-w-[574px] z-10 xs:translate-x-[-7%] md:translate-x-[-20%] lg:translate-x-[40%] xl:translate-x-0 ">
-          <div className="form-container xs:max-w-[100%] md:max-w-[574px] xl:w-full h-full px-6 py-8 md:px-8">
+                 <div className="form-container xs:max-w-[100%] md:max-w-[] w-[535px]  h-full px-6 py-8 md:px-8 z-20 xs:translate-x-[-7%] md:translate-x-[-20%] lg:translate-x-[40%] xl:translate-x-0">
 
 
 
@@ -188,12 +187,15 @@ const GoogleRegisterUser = () => {
                   </div>
                 </Form.Item>
               </div>
+              <div className='text-black font-manrope text-[20px] font-medium leading-normal'>
               <Text  className="email-text" strong>Email: {userInfo?.email}</Text>
+              </div>
 
 
-<div className="h-[235px] self-stretch">
+{/* <div className="h-[235px] self-stretch">
   {/* Вміст контейнера */}
-  <div className="custom-container">
+  {/* <div className="custom-container">
+              </div> */}
 
               <Form.Item name="firstName" label={<span className="form-label">Ім'я</span>}  rules={[{ required: true }]}>
                 <Input 
@@ -210,8 +212,8 @@ const GoogleRegisterUser = () => {
   }
                  />
               </Form.Item>
-                 </div>
- <div className="custom-container">
+ {/* <div className="custom-container">
+   </div> */}
 
               <Form.Item name="lastName" label={<span className="form-label">Прізвище</span>}>
                 <Input
@@ -227,41 +229,35 @@ suffix={
   }
                  />
               </Form.Item>
-                 </div>
- <div className="custom-container">
+ {/* <div className="custom-container">
+   </div> */}
 
-              <Form.Item
-                name="phone"
-                label={<span className="form-label">Номер телефону</span>}
-                rules={[
-                  { required: true, message: 'Введіть номер телефону' },
-                  {
-                    validator: (_, value) => {
-                      const regex_phone = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
-                      if (!value || regex_phone.test(value)) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject('Неправильний формат номера телефону');
+                <Form.Item
+                  name="phone"
+                  label={<span className="form-label">Номер телефону</span>}
+                  rules={[
+                    { required: true, message: 'Введіть номер телефону' },
+                    {
+                      validator: (_, value) => {
+                        const regex_phone = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                        if (!value || regex_phone.test(value)) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('Неправильний формат номера телефону'));
+                      },
                     },
-                  },
-                ]}
+                  ]}
+                  getValueFromEvent={e => e.target.value}
                 >
-             <div  className="relative w-full max-h-[235px] overflow-auto">
-  <PhoneInput
-    country={'ua'}
-    inputClass="form-input pr-10" // додаємо відступ справа для іконки
-    containerClass="w-full"
-    placeholder="Ваш номер"
-  />
+                  <PhoneInput
+                  //     onChange={(val: any)=> {
+                  //     console.log("form", form.getFieldValue('phone'));
+                  //     console.log("ss",val)
+                  // } }
+                  />
+                </Form.Item>
 
-  <VectorPhoneIcon
-    className="absolute right-3 top-1/2 -translate-y-1/2 w-[17.387px] h-[17.11px] fill-gray-500 pointer-events-none"
-  />
-</div>
-              </Form.Item>
-                  </div>
-
-                </div>
+                {/* </div>  */}
               <Form.Item>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                   <Button danger onClick={handleCancel}>
@@ -299,7 +295,6 @@ suffix={
         </div>
 
       </div>
-    </div>
   );
 };
 
