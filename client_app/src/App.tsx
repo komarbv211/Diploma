@@ -17,6 +17,9 @@ const ForgotPassword = lazy(() => import("./pages/ForgotPassword.tsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 const AdminRoutes = lazy(() => import("./routes/adminRoutes"));
 const NotFoundPage = lazy(() => import("./pages/common/NotFoundPage.tsx"));
+const PasswordUpdatedPage = lazy(
+  () => import("./pages/PasswordUpdatedPage.tsx")
+);
 
 function App() {
   return (
@@ -28,14 +31,13 @@ function App() {
             <Route index element={<Home />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="google-register" element={<GoogleRegisterUser />} />
-
-            <Route path="registr/*" element={<RegistrUser />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="reset-password/:token" element={<ResetPassword />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
           <Route path="login/*" element={<LoginUser />} />
-
+          <Route path="registr/*" element={<RegistrUser />} />
+          <Route path="reset-password/:token" element={<ResetPassword />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="/password-updated" element={<PasswordUpdatedPage />} />
           <Route path="/admin/*" element={<RequireAdmin />}>
             <Route path="*" element={<AdminRoutes />} />
           </Route>
