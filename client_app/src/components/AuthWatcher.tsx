@@ -1,19 +1,20 @@
 // src/components/AuthWatcher.tsx
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { RootState } from '../store/store';
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+import { RootState } from "../store/store";
 
 // Додайте всі публічні шляхи, які не потребують авторизації
 const PUBLIC_PATHS = [
-  '/',
-  '/about',
-  '/login',
-  '/registr',
-  '/forgot-password',
-  '/reset-password/:token',
-  '/google-register',
-  '*',
+  "/",
+  "/about",
+  "/login",
+  "/registr",
+  "/forgot-password",
+  "/reset-password/:token",
+  "/google-register",
+  "*",
+  "/password-updated",
   // додайте інші публічні сторінки
 ];
 
@@ -25,7 +26,7 @@ const AuthWatcher = () => {
   useEffect(() => {
     // Якщо токен зник і шлях не публічний — редірект
     if (!token && !PUBLIC_PATHS.includes(location.pathname)) {
-      navigate('/login');
+      navigate("/login");
     }
   }, [token, navigate, location.pathname]);
 
