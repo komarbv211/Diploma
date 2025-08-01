@@ -34,9 +34,11 @@ const RegistrUser: React.FC = () => {
       <div className="flex flex-col lg:flex-row min-h-screen">
         <div className="flex w-full lg:w-[50vw] justify-center items-center bg-beige2 p-4">
 
-          <div className="form-container">
-            <div className="bg-white rounded-[13px] py-[20px] px-[40px]">
+          <div className="form-container relative">
+            <StarDecoration width={72} height={83} className="absolute z-20 -top-10 -left-9 hidden md:block" />
+            <StarDecoration width={72} height={83} className="absolute z-20 -bottom-10 -right-9 hidden md:block" />
 
+            <div className="bg-white rounded-[13px] py-[20px] px-[40px]">
               <Form
                 layout="vertical"
                 className=""
@@ -81,7 +83,7 @@ const RegistrUser: React.FC = () => {
                   ]}
                   getValueFromEvent={e => e.target.value}
                 >
-                  <PhoneInput
+                  <PhoneInput // TODO: provide more suitable width
                   //     onChange={(val: any)=> {
                   //     console.log("form", form.getFieldValue('phone'));
                   //     console.log("ss",val)
