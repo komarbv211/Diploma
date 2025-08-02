@@ -111,7 +111,7 @@ const HorizontalNavigation: React.FC = () => {
           {rootCategories.map((category) => (
             <li
               key={category.id}
-              className={`relative px-3 md:px-3 h-full flex items-center cursor-pointer transition-all duration-300 border-b-2 border-transparent hover:bg-gray-50 hover:border-pink2 flex-shrink-0 ${
+              className={`relative px-2.5 md:px-2.5 h-full flex items-center cursor-pointer transition-all duration-300 border-b-2 border-transparent hover:bg-gray-50 hover:border-pink2 flex-shrink-0 ${
                 hoveredCategory === category.id ? "bg-gray-50 border-pink2" : ""
               }`}
               onMouseEnter={() => handleCategoryMouseEnter(category.id)}
