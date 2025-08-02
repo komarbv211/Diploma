@@ -17,6 +17,7 @@ export default {
         black: '#000',        
         danger: 'rgba(255, 77, 79, 1)',
         hover_blue:'#69b1ff',
+        light_purple:'#C89FB8',
       },
       
       fontFamily: {

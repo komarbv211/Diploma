@@ -15,6 +15,7 @@ const PUBLIC_PATHS = [
   "/google-register",
   "*",
   "/password-updated",
+  "/categories/${e.key}",
   // додайте інші публічні сторінки
 ];
 
