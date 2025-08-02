@@ -59,7 +59,7 @@ const CustomHeader = () => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 h-20 bg-white shadow-sm z-50 flex items-center justify-between px-10">
+      <header className="fixed top-0 left-0 right-0 h-20 bg-white  flex items-center justify-between px-10">
         {/* Логотип */}
         <Link to="/" className="flex-none w-[310px] h-[58px] order-0 ">
           <img
@@ -135,7 +135,7 @@ const CustomHeader = () => {
           </div>
         </div>
       </header>
-      
+
       {/* Горизонтальна навігація */}
       <div className="mt-20">
         <HorizontalNavigation />
