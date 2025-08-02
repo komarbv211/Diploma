@@ -73,7 +73,7 @@ const CustomHeader = () => {
           <Form.Item name="search">
             <Input
               placeholder="Пошук"
-              className="flex p-[5px] pl-[15px] justify-between items-center self-stretch rounded-xl border-[1px] border-black text-gray placeholder:text- font-manrope text-[20px] font-medium leading-normal"
+              className="flex p-[5px] pl-[15px] justify-between items-center self-stretch rounded-xl border-[1px] border-black text-gray placeholder:font-manrope placeholder:text-[20px] placeholder:font-medium leading-normal"
               suffix={<SearchIcon />}
             />
           </Form.Item>
