@@ -17,9 +17,6 @@ const ForgotPassword = lazy(() => import("./pages/ForgotPassword.tsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 const AdminRoutes = lazy(() => import("./routes/adminRoutes"));
 const NotFoundPage = lazy(() => import("./pages/common/NotFoundPage.tsx"));
-const CategoryMenu = lazy(
-  () => import("./components/layouts/default/CategoryMenu.tsx")
-);
 const PasswordUpdatedPage = lazy(
   () => import("./pages/PasswordUpdatedPage.tsx")
 );
@@ -41,8 +38,6 @@ function App() {
           <Route path="reset-password/:token" element={<ResetPassword />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="/password-updated" element={<PasswordUpdatedPage />} />
-          <Route path="/categories/${e.key}" element={<CategoryMenu />} />
-
           <Route path="/admin/*" element={<RequireAdmin />}>
             <Route path="*" element={<AdminRoutes />} />
           </Route>

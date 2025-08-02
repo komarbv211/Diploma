@@ -72,4 +72,10 @@
     z-index: -1;
   }
 }
+.nav-wrapper {
+  @apply relative bg-white border-b border-gray z-40 shadow-sm;
+}
 
+.nav-inner {
+  @apply max-w-6xl mx-auto relative;
+}
