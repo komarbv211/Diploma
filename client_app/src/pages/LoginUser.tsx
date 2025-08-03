@@ -90,9 +90,8 @@ const Login: React.FC = () => {
             className="absolute z-20 bottom-[-42px] right-[542.5px] hidden lg:block "
           />
 
-          <div className="relative  px-6 py-8 md:px-8  xs:max-w-[100%] md:max-w-[574px] z-10 xs:translate-x-[-7%] md:translate-x-[-20%] lg:translate-x-[40%] xl:translate-x-0 ">
-            <div className="form-container xs:max-w-[100%] md:max-w-[574px] xl:w-full h-full px-6 py-8 md:px-8">
-              <h1 className="form-title">Ласкаво просимо!</h1>
+          <div className="form-container xs:max-w-[100%] md:max-w-[] w-[574px]  h-full px-6 py-8 md:px-8 z-20 xs:translate-x-[-7%] md:translate-x-[-20%] lg:translate-x-[40%] xl:translate-x-0">
+            <h1 className="form-title">Ласкаво просимо!</h1>
 
             <Spin spinning={isLoading} tip="Завантаження...">
               <Form
@@ -219,7 +218,6 @@ const Login: React.FC = () => {
             </Modal>
           </div>
         </div>
-      </div>
       </div>
     </GoogleOAuthProvider>
   );
