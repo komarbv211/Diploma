@@ -15,10 +15,15 @@ export const productApi = createApi({
             query: (id) => `${id}`, 
             providesTags: ['Products'],
         }),
+        getProductsByCategory: builder.query<IProduct[], number>({
+            query: (categoryId) => `category/${categoryId}`,
+            providesTags: ['Products'],
+        }),
     }),
 });
 
 export const { 
     useGetAllProductsQuery, 
     useGetProductByIdQuery,
+    useGetProductsByCategoryQuery,
 } = productApi;

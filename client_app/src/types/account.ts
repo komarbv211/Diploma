@@ -66,6 +66,7 @@ export interface IUserState {
     token: string | null;
     auth: IUserAuth;
     refreshToken?: string | null;
+    isLoggingOut?: boolean;
 }
 
 export interface IUserAuth {

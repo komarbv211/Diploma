@@ -70,7 +70,7 @@ const AdminProfile: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(logOut());
-    navigate('/login');
+    navigate('/');
   };
 
   const handleBeforeUpload = (file: File) => {
