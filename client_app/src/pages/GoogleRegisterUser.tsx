@@ -1,7 +1,6 @@
 // pages/GoogleRegisterUser.tsx
 import 'react-phone-input-2/lib/style.css'; // обов’язково
 import { Form, Input, Upload, Button, Typography, Modal } from "antd";
-import { UploadOutlined } from '@ant-design/icons';
 import { useGoogleUserInfo } from "../hooks/useGoogleUserInfo";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -13,7 +12,6 @@ import { handleFormErrors } from '../utilities/handleApiErrors';
 import { ApiError } from '../types/errors';
 import AmoonIcon from "../components/icons/AmoonIcon";
 import AccountBoxIcon from "../components/icons/AccountBoxIcon";
-import VectorPhoneIcon from "../components/icons/PhoneIcon";
 import StarDecoration from '../../src/components/decorations/StarDecoration';
 
 
@@ -116,12 +114,13 @@ const GoogleRegisterUser = () => {
 
 
             {/* Контент з відступами */}
-            <h2 className="google-title">Підтвердження Google-реєстрації</h2>
+            <h1 className="form-title">Підтвердження Google-реєстрації</h1>
             <Form form={form} layout="vertical" onFinish={handleSubmit}>
               <div className="flex-column-block">
 
 
-                <Form.Item label={<span className="form-label">Фото профілю</span>}>
+                <Form.Item 
+                label={<span className="form-label">Фото профілю</span>}>
 
                   <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4 mt-5">
                     <div
@@ -148,7 +147,7 @@ const GoogleRegisterUser = () => {
                       <Button
                          className="remember-photo-button w-full"
                         >
-                        <span className="remember-button-photo gap-[12px]"> Змінити фото</span>
+                        <span className="text-black font-manrope text-[14px] font-medium leading-normal"> Змінити фото</span>
                         <AmoonIcon style={{
                           width: '20px',
                           height: '20px',
