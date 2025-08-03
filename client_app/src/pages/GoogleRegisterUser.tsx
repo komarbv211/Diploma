@@ -146,7 +146,7 @@ const GoogleRegisterUser = () => {
 
 
                       <Button
-                         className="remember-photo-button w-full sm:w-auto"
+                         className="remember-photo-button w-full"
                         >
                         <span className="remember-button-photo gap-[12px]"> Змінити фото</span>
                         <AmoonIcon style={{
