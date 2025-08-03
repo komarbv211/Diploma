@@ -43,6 +43,14 @@
   @apply flex justify-center items-center p-[15px] sm:mt-[20px] xs:mt-[20px] gap-[12px] w-full max-w-[100%] h-[49px] bg-pink rounded-[15px] shadow-none border-none;
 }
 
+.remember-buttonn {
+  @apply flex items-center justify-center p-[15px] bg-pink rounded-[15px] shadow-none border-none w-full;
+}
+
+.remember-photo-button{
+   @apply flex w-[296px] p-[10px] justify-between items-center rounded-[15px] border border-[#666];
+}
+
 .remember-button-text {
   @apply font-manrope font-semibold text-[25px] leading-[33px] text-beige2 text-center;
 }

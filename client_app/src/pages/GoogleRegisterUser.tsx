@@ -13,14 +13,8 @@ import { handleFormErrors } from '../utilities/handleApiErrors';
 import { ApiError } from '../types/errors';
 import AmoonIcon from "../components/icons/AmoonIcon";
 import AccountBoxIcon from "../components/icons/AccountBoxIcon";
-
-
 import VectorPhoneIcon from "../components/icons/PhoneIcon";
-// import MailIcon from "@/components/icons/MailIcon";
 import StarDecoration from '../../src/components/decorations/StarDecoration';
-// import '../../src/pages/user/GoogleRegisterUser.scss';
-
-
 
 
 const GoogleRegisterUser = () => {
@@ -50,25 +44,6 @@ const GoogleRegisterUser = () => {
   }, [userInfo, form]);
 
 
-// const onFinish = async (values: { email: string; password: string }) => {
-//     setErrorMessage("");
-//     setIsLoading(true);
-//     try {
-//       const { data } = await triggerCheckGoogleRegistered(values.email);
-//       if (data?.isGoogleUser) {
-//         setShowGoogleModal(true);
-//         return;
-//       }
-//       await loginUser(values).unwrap();
-//       navigate("/");
-//     } catch {
-//       setErrorMessage("Невірний email або пароль");
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-// тест
-//test 
   const handleBeforeUpload = (file: File) => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -148,10 +123,9 @@ const GoogleRegisterUser = () => {
 
                 <Form.Item label={<span className="form-label">Фото профілю</span>}>
 
-
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-5">
+                  <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4 mt-5">
                     <div
-                      className="rounded-full bg-cover bg-center"
+                      className="rounded-full bg-cover bg-center flex-shrink-0"
                       style={{
                         width: '193px',
                         height: '193px',
@@ -169,12 +143,11 @@ const GoogleRegisterUser = () => {
                       accept="image/*"
                       beforeUpload={handleBeforeUpload}
                     >
-                      {/* <Button icon={<UploadOutlined />} className="h-[40px] sm:mt-0 mt-4">
-        Змінити фото
-      </Button> */}
+
 
                       <Button
-                        className="remember-photo-button">
+                         className="remember-photo-button w-full sm:w-auto"
+                        >
                         <span className="remember-button-photo gap-[12px]"> Змінити фото</span>
                         <AmoonIcon style={{
                           width: '20px',
@@ -191,12 +164,6 @@ const GoogleRegisterUser = () => {
               <Text  className="email-text" strong>Email: {userInfo?.email}</Text>
               </div>
 
-
-{/* <div className="h-[235px] self-stretch">
-  {/* Вміст контейнера */}
-  {/* <div className="custom-container">
-              </div> */}
-
               <Form.Item name="firstName" label={<span className="form-label">Ім'я</span>}  rules={[{ required: true }]}>
                 <Input 
                  placeholder="Ваше Ім'я"
@@ -212,8 +179,7 @@ const GoogleRegisterUser = () => {
   }
                  />
               </Form.Item>
- {/* <div className="custom-container">
-   </div> */}
+
 
               <Form.Item name="lastName" label={<span className="form-label">Прізвище</span>}>
                 <Input
@@ -229,8 +195,7 @@ suffix={
   }
                  />
               </Form.Item>
- {/* <div className="custom-container">
-   </div> */}
+ 
 
                 <Form.Item
                   name="phone"
@@ -257,22 +222,29 @@ suffix={
                   />
                 </Form.Item>
 
-                {/* </div>  */}
               <Form.Item>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                  <Button danger onClick={handleCancel}>
-                    Скасувати
-                  </Button>
-                  <Button type="primary" htmlType="submit" loading={isLoading}>
-                    Завершити Реєстрацію
-                  </Button>
-                </div>
-              </Form.Item>
-{/* {errorMessage && (
-                      <div className="text-danger text-sm font-medium mt-1 font-manrope">
-                        {errorMessage}
-                      </div>
-                    )} */}
+  <div className="w-full">
+    <div className="flex flex-wrap items-start sm:items-center gap-4 mt-5 min-w-0">
+      <Button
+        className="remember-button sm:w-[120px] w-full"
+        danger
+        onClick={handleCancel}
+      >
+        <span className="form-label">Скасувати</span>
+      </Button>
+
+      <Button
+        type="primary"
+        htmlType="submit"
+        loading={isLoading}
+        className="remember-button sm:flex-1 w-full"
+      >
+        <span className="remember-button-text">Завершити Реєстрацію</span>
+      </Button>
+    </div>
+  </div>
+</Form.Item>
+
             </Form>
             <Modal open={showCropper} footer={null} onCancel={handleCancelCrop} width={600}>
               {avatarPreview && (
