@@ -43,8 +43,21 @@
   @apply flex justify-center items-center p-[15px] sm:mt-[20px] xs:mt-[20px] gap-[12px] w-full max-w-[100%] h-[49px] bg-pink rounded-[15px] shadow-none border-none;
 }
 
-.remember-button-text {
-  @apply font-manrope font-semibold text-[25px] leading-[33px] text-beige2 text-center;
+.remember-photo-button{
+   @apply  flex justify-center items-center p-[15px] sm:mt-[20px] xs:mt-[20px] gap-[12px] w-[260px] h-[49px] rounded-[15px] shadow-none border-gray;
+}
+
+.ant-select-selector {
+  /* all: unset !important; */
+  @apply flex p-[15px] justify-between items-center rounded-xl border-gray text-gray placeholder:text-g font-manrope text-[14px] font-medium leading-normal !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0px !important;
+  color: black !important;
+}
+
+.ant-input-affix-wrapper.ant-input-borderless {
+  padding: 0 !important;
 }
 .gradient-border {
   position: relative;

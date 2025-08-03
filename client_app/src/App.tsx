@@ -30,7 +30,6 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="profile" element={<UserProfile />} />
-            <Route path="google-register" element={<GoogleRegisterUser />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
           <Route path="login/*" element={<LoginUser />} />
@@ -38,6 +37,7 @@ function App() {
           <Route path="reset-password/:token" element={<ResetPassword />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="/password-updated" element={<PasswordUpdatedPage />} />
+          <Route path="google-register" element={<GoogleRegisterUser />} />
           <Route path="/admin/*" element={<RequireAdmin />}>
             <Route path="*" element={<AdminRoutes />} />
           </Route>
