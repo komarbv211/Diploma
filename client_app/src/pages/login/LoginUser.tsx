@@ -69,7 +69,7 @@ const Login: React.FC = () => {
         <div className={gradients.loginPage__gradient} />
         {/* Фонове зображення */}
         <img
-          src="images/flowers-bg.png"
+          src="/flowers-bg.png"
           className="absolute top-[-112px] left-[762px] w-[calc(100vw-762px)] h-[1304px] object-cover z-10 hidden xl:block"
           alt="background"
         />

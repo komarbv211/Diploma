@@ -1,4 +1,5 @@
 //index.scss  
+@use './styles/_variables.scss' as *;
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,8 +10,7 @@
 }
 
 .form-container {
-  @apply rounded-xl bg-white p-[2px] w-full max-w-[535px];
-  background: linear-gradient(150deg, #1A3D83 0%, #8AA8D2 100%);
+    @apply rounded-[15px] gradient-border bg-white;
 }
 
 .form-title {
@@ -22,15 +22,11 @@
 }
 
 .form-input {
-  @apply flex p-[10px] justify-between items-center self-stretch rounded-xl border border-gray text-gray placeholder:text-g font-manrope text-[14px] font-medium leading-normal w-full;
+  @apply flex p-[10px] justify-between items-center self-stretch rounded-xl border border-gray text-gray placeholder:text-gray font-manrope text-[14px] font-medium leading-normal;
 }
 
 .btn-pink {
   @apply p-[10px] bg-pink rounded-xl border-pink w-full h-[49px] text-[20px] text-white font-semibold;
-}
-
-.btn-pink:hover {
-  @apply bg-white border-pink text-pink font-semibold !important;
 }
 
 /* Ant styles*/
@@ -41,7 +37,7 @@
 /* for phone number */
 .ant-select-selector {
   /* all: unset !important; */
-  @apply flex p-[15px] justify-between items-center rounded-xl border-gray text-gray placeholder:text-g font-manrope text-[14px] font-medium leading-normal !important;
+  @apply flex p-[15px] justify-between items-center rounded-xl border-gray text-gray placeholder:text-gray font-manrope text-[14px] font-medium leading-normal !important;
   border: none !important;
   box-shadow: none !important;
   padding: 0px !important;
@@ -50,4 +46,42 @@
 
 .ant-input-affix-wrapper.ant-input-borderless {
   padding: 0 !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.gradient-border {
+  position: relative;
+  border-radius: 15px;
+  z-index: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    background: linear-gradient(149.91deg, $blue2 0%, $light-purple 100%);
+    border-radius: inherit;
+
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+
+    z-index: -1;
+  }
 }
