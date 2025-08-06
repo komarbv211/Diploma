@@ -10,7 +10,7 @@
 }
 
 .form-container {
-    @apply rounded-[15px] gradient-border bg-white;
+  @apply rounded-[15px] gradient-border bg-white;
 }
 
 .form-title {
@@ -48,16 +48,17 @@
   padding: 0 !important;
 }
 
+.remember-button {
+  @apply flex justify-center items-center p-[15px] sm:mt-[20px] xs:mt-[20px] gap-[12px] w-full max-w-[100%] h-[49px] bg-pink rounded-[15px] shadow-none border-none;
+}
 
+.remember-button-text {
+  @apply font-manrope font-semibold text-[25px] leading-[33px] text-beige2 text-center;
+}
 
-
-
-
-
-
-
-
-
+.remember-photo-button{
+   @apply  flex justify-center items-center p-[15px] sm:mt-[20px] xs:mt-[20px] gap-[12px] w-[260px] h-[49px] rounded-[15px] shadow-none border-gray;
+}
 
 .gradient-border {
   position: relative;
@@ -84,4 +85,11 @@
 
     z-index: -1;
   }
+}
+.nav-wrapper {
+  @apply relative bg-white;
+}
+
+.nav-inner {
+  @apply max-w-6xl mx-auto relative;
 }
