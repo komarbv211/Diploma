@@ -15,6 +15,7 @@ export const handleAuthQueryStarted = async (
 ) => {
   try {
     const { data } = await queryFulfilled;
+    console.log('Auth query fulfilled:', data);
     if (data.accessToken) {
       dispatch(setCredentials({
         token: data.accessToken,       

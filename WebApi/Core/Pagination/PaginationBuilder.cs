@@ -17,4 +17,7 @@ namespace WebApiDiploma.Pagination
             return new PagedResultDto<TEntity>(page, pageSize, totalCount, items);
         }
     }
+
+
+
 }

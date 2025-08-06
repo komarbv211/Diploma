@@ -1,11 +1,11 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { createBaseQuery } from '../../utilities/createBaseQuery';
+import { createBaseQueryWithReauth } from '../../utilities/createBaseQuery';
 import { IProduct, IProductPutRequest } from '../../types/product';
 import { serializeProduct } from '../../utilities/serialize';
 
 export const productAdminApi = createApi({
     reducerPath: 'productAdminApi',
-    baseQuery: createBaseQuery('admin'),
+    baseQuery: createBaseQueryWithReauth('admin'),
     tagTypes: ['Products'],
     endpoints: (builder) => ({
         getAllProducts: builder.query<IProduct[], void>({

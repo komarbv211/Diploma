@@ -1,11 +1,15 @@
 ﻿using Infrastructure.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 
 namespace Infrastructure.Data
 {
-    public class DbMakeUpContext : IdentityDbContext<UserEntity, RoleEntity, long>
+    public class DbMakeUpContext : //IdentityDbContext<UserEntity, RoleEntity, long>
+        IdentityDbContext<UserEntity, RoleEntity, long,
+        IdentityUserClaim<long>, UserRoleEntity, UserLoginEntity,
+        IdentityRoleClaim<long>, IdentityUserToken<long>>
     {
 
 
@@ -32,6 +36,14 @@ namespace Infrastructure.Data
                 ur.HasOne(ur => ur.User)
                     .WithMany(r => r.UserRoles)
                     .HasForeignKey(u => u.UserId)
+                    .IsRequired();
+            });
+
+            builder.Entity<UserLoginEntity>(b =>
+            {
+                b.HasOne(l => l.User)
+                    .WithMany(u => u.UserLogins)
+                    .HasForeignKey(l => l.UserId)
                     .IsRequired();
             });
 

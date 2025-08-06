@@ -18,6 +18,7 @@
     "@reduxjs/toolkit": "^2.6.1",
     "antd": "^5.26.0",
     "antd-mask-input": "^2.0.7",
+    "async-mutex": "^0.5.0",
     "axios": "^1.9.0",
     "cropperjs": "^1.6.2",
     "dayjs": "^1.11.13",
@@ -27,8 +28,10 @@
     "react-datepicker": "^8.4.0",
     "react-dom": "^18.3.1",
     "react-input-mask": "^2.0.4",
+    "react-phone-input-2": "^2.15.1",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.3.0"
+    "react-router-dom": "^7.3.0",
+    "sass": "^1.89.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
@@ -42,6 +45,7 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
     "postcss": "^8.5.3",
+    "sass-embedded": "^1.89.2",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",

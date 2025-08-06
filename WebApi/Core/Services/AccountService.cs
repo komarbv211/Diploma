@@ -13,6 +13,9 @@ using AutoMapper;
 using System.Data;
 using Core.Models;
 using Microsoft.Extensions.Configuration;
+using Core.DTOs.PaginationDTOs;
+using Core.Models.Search;
+using WebApiDiploma.Pagination;
 
 namespace Core.Services
 {
@@ -355,16 +358,116 @@ namespace Core.Services
             }
         }
 
+        //public async Task<SearchResult<UserEntity>> SearchUsersAsync(UserSearchModel model)
+        //{
+        //    var query = userManager.Users
+        //     .Include(u => u.UserRoles)
+        //     .ThenInclude(ur => ur.Role)
+        //     .AsQueryable();
 
-        public async Task<bool> IsRegisteredWithGoogleAsync(string email)
-        {
-            var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
-                return false;
+        //    // 🔍 Фільтрація по імені
+        //    if (!string.IsNullOrWhiteSpace(model.Name))
+        //    {
+        //        string nameFilter = model.Name.Trim().ToLower().Normalize();
 
-            var logins = await userManager.GetLoginsAsync(user);
-            return logins.Any(login => login.LoginProvider == "Google");
-        }
+        //        query = query.Where(u =>
+        //            (u.FirstName + " " + u.LastName).ToLower().Contains(nameFilter) ||
+        //            u.FirstName.ToLower().Contains(nameFilter) ||
+        //            u.LastName.ToLower().Contains(nameFilter));
+        //    }
+
+        //    // 📅 Фільтрація по датах
+        //    if (model?.StartDate != null)
+        //    {
+        //        query = query.Where(u => u.CreatedDate >= model.StartDate);
+        //    }
+
+        //    if (model?.EndDate != null)
+        //    {
+        //        query = query.Where(u => u.CreatedDate <= model.EndDate);
+        //    }
+
+        //    // 🧑‍⚖️ Фільтрація по ролях
+        //    if (model.Roles != null && model.Roles.Any())
+        //    {
+        //        var roles = model.Roles.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+        //        if (roles.Count > 0)
+        //        {
+        //            query = query.Where(user =>
+        //                user.UserRoles.Any(ur => roles.Contains(ur.Role.Name)));
+        //        }
+        //    }
+
+        //    // 🔢 Загальна кількість
+        //    var totalCount = await query.CountAsync();
+
+        //    // 📄 Пейджинг
+        //    var safeItemsPerPage = model.ItemPerPAge < 1 ? 10 : model.ItemPerPAge;
+        //    var totalPages = (int)Math.Ceiling(totalCount / (double)safeItemsPerPage);
+        //    var safePage = Math.Min(Math.Max(1, model.Page), Math.Max(1, totalPages));
+
+        //    // ↕️ Сортування
+        //    if (!string.IsNullOrWhiteSpace(model.SortBy))
+        //    {
+        //        bool desc = model.SortDesc;
+        //        query = model.SortBy switch
+        //        {
+        //            "FirstName" => desc ? query.OrderByDescending(u => u.FirstName) : query.OrderBy(u => u.FirstName),
+        //            "LastName" => desc ? query.OrderByDescending(u => u.LastName) : query.OrderBy(u => u.LastName),
+        //            "Email" => desc ? query.OrderByDescending(u => u.Email) : query.OrderBy(u => u.Email),
+        //            _ => query.OrderBy(u => u.Id)
+        //        };
+        //    }
+        //    else
+        //    {
+        //        query = query.OrderBy(u => u.Id); // default
+        //    }
+
+        //    // 🔄 Завантаження користувачів з пагінацією
+        //    var users = await query
+        //        .Skip((safePage - 1) * safeItemsPerPage)
+        //        .Take(safeItemsPerPage)
+        //        .ToListAsync();
+
+        //    // 📦 Результат
+        //    //return new SearchResult<UserEntity>
+        //    //{
+        //    //    Items = users,
+        //    //    Pagination = new PaginationModel
+        //    //    {
+        //    //        TotalCount = totalCount,
+        //    //        TotalPages = totalPages,
+        //    //        ItemsPerPage = safeItemsPerPage,
+        //    //        CurrentPage = safePage
+        //    //    }
+        //    //};
+
+        //    return new SearchResult<UserEntity>
+        //    {
+        //        Items = users,
+        //        Pagination = new PagedResultDto<UserEntity>
+        //        {
+        //            CurrentPage = safePage,
+        //            PageSize = safeItemsPerPage,
+        //            TotalCount = totalCount,
+        //            TotalPages = totalPages,
+        //            Items = users
+        //        }
+        //    };
+
+        //}
+
+
+        //public async Task<bool> IsRegisteredWithGoogleAsync(string email)
+        //{
+        //    var user = await userManager.FindByEmailAsync(email);
+        //    if (user == null)
+        //        return false;
+
+        //    var logins = await userManager.GetLoginsAsync(user);
+        //    return logins.Any(login => login.LoginProvider == "Google");
+        //}
 
 
     }

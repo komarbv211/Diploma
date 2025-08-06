@@ -1,0 +1,98 @@
+//index.scss  
+@use './styles/_variables.scss' as *;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.child-category-row {
+  background-color: #e0f7f9 !important;
+  /* світлобірюзовий */
+}
+
+.form-container {
+  @apply rounded-[15px] gradient-border bg-white;
+}
+
+.form-title {
+  @apply w-full font-manrope font-semibold text-[27px] leading-normal text-center text-black mb-0;
+}
+
+.form-label {
+  @apply text-black font-manrope text-[16px] font-medium leading-normal;
+}
+
+.form-input {
+  @apply flex p-[10px] justify-between items-center self-stretch rounded-xl border border-gray text-gray placeholder:text-g font-manrope text-[14px] font-medium leading-normal;
+}
+
+/* Ant styles*/
+.ant-form-item {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.ant-select-selector {
+  /* all: unset !important; */
+  @apply flex p-[15px] justify-between items-center rounded-xl border-gray text-gray placeholder:text-g font-manrope text-[14px] font-medium leading-normal !important;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.remember-button {
+  @apply flex justify-center items-center p-[15px] sm:mt-[20px] xs:mt-[20px] gap-[12px] w-full max-w-[100%] h-[49px] bg-pink rounded-[15px] shadow-none border-none;
+}
+
+.remember-button-text {
+  @apply font-manrope font-semibold text-[25px] leading-[33px] text-beige2 text-center;
+}
+
+.remember-photo-button{
+   @apply  flex justify-center items-center p-[15px] sm:mt-[20px] xs:mt-[20px] gap-[12px] w-[260px] h-[49px] rounded-[15px] shadow-none border-gray;
+}
+
+.ant-select-selector {
+  /* all: unset !important; */
+  @apply flex p-[15px] justify-between items-center rounded-xl border-gray text-gray placeholder:text-g font-manrope text-[14px] font-medium leading-normal !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0px !important;
+  color: black !important;
+}
+
+.ant-input-affix-wrapper.ant-input-borderless {
+  padding: 0 !important;
+}
+.gradient-border {
+  position: relative;
+  border-radius: 15px;
+  z-index: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    background: linear-gradient(149.91deg, $blue2 0%, $light-purple 100%);
+    border-radius: inherit;
+
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+
+    z-index: -1;
+  }
+}
+.nav-wrapper {
+  @apply relative bg-white;
+}
+
+.nav-inner {
+  @apply max-w-6xl mx-auto relative;
+}

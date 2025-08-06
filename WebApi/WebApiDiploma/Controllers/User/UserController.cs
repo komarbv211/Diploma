@@ -52,6 +52,7 @@ namespace WebApiDiploma.Controllers.User
             return Ok(user);
         }
 
+
         //[HttpPost("register")]
         //public async Task<ActionResult> Register(UserDTO user)
         //{
