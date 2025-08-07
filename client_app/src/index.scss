@@ -14,29 +14,38 @@
 }
 
 .form-title {
-  @apply w-full font-manrope font-semibold text-[27px] leading-normal text-center text-black mb-0;
+  @apply text-center font-manrope text-[24px] font-semibold leading-normal text-black mb-[16px];
 }
 
 .form-label {
-  @apply text-black font-manrope text-[16px] font-medium leading-normal;
+  @apply text-black font-manrope text-[18px] font-medium leading-normal;
 }
 
 .form-input {
-  @apply flex p-[10px] justify-between items-center self-stretch rounded-xl border border-gray text-gray placeholder:text-g font-manrope text-[14px] font-medium leading-normal;
+  @apply flex p-[10px] justify-between items-center self-stretch rounded-xl border border-gray text-gray placeholder:text-gray font-manrope text-[14px] font-medium leading-normal;
+}
+
+.btn-pink {
+  @apply p-[10px] bg-pink rounded-xl border-pink w-full h-[49px] text-[20px] text-white font-semibold;
 }
 
 /* Ant styles*/
 .ant-form-item {
-  margin-bottom: 0;
-  width: 100%;
+  margin-bottom: 12px;
 }
 
+/* for phone number */
 .ant-select-selector {
   /* all: unset !important; */
-  @apply flex p-[15px] justify-between items-center rounded-xl border-gray text-gray placeholder:text-g font-manrope text-[14px] font-medium leading-normal !important;
-  width: 100%;
-  box-sizing: border-box;
-  cursor: pointer;
+  @apply flex p-[15px] justify-between items-center rounded-xl border-gray text-gray placeholder:text-gray font-manrope text-[14px] font-medium leading-normal !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0px !important;
+  color: black !important;
+}
+
+.ant-input-affix-wrapper.ant-input-borderless {
+  padding: 0 !important;
 }
 
 .remember-button {
@@ -47,17 +56,8 @@
   @apply font-manrope font-semibold text-[25px] leading-[33px] text-beige2 text-center;
 }
 
-.ant-select-selector {
-  /* all: unset !important; */
-  @apply flex p-[15px] justify-between items-center rounded-xl border-gray text-gray placeholder:text-g font-manrope text-[14px] font-medium leading-normal !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0px !important;
-  color: black !important;
-}
-
-.ant-input-affix-wrapper.ant-input-borderless {
-  padding: 0 !important;
+.remember-photo-button{
+   @apply  flex justify-center items-center p-[15px] sm:mt-[20px] xs:mt-[20px] gap-[12px] w-[260px] h-[49px] rounded-[15px] shadow-none border-gray;
 }
 .gradient-border {
   position: relative;
@@ -92,6 +92,6 @@
 .nav-inner {
   @apply max-w-6xl mx-auto relative;
 }
-.cart-container {
-  @apply rounded-xl bg-white p-[1px] w-[408px] max-w-[408px];
+.serch-header-input{
+  @apply flex p-[5px] pl-[15px] h-12 w-[660px] justify-between items-center self-stretch rounded-xl border-[1px] border-black text-gray placeholder:font-manrope leading-normal  !important;
 }

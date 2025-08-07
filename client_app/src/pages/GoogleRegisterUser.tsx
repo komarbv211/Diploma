@@ -131,7 +131,7 @@ const GoogleRegisterUser = () => {
                     accept="image/*"
                     beforeUpload={handleBeforeUpload}
                   >
-                    <Button className="flex justify-center items-center p-[15px] sm:mt-[20px] xs:mt-[20px] gap-[12px] w-[260px] h-[49px] rounded-[15px] shadow-none border-gray">
+                    <Button className="flex justify-center items-center p-[15px] sm:mt-[20px] xs:mt-[20px] gap-[12px] w-[260px] h-[40px] rounded-[15px] shadow-none border-gray">
                       <span className="text-black font-manrope text-[14px] font-medium leading-normal">
                         {" "}
                         Змінити фото

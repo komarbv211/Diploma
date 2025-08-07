@@ -72,16 +72,13 @@ const CustomHeader = () => {
           />
         </Link>
         {/* Пошук */}
-        <div className="relative flex flex-row items-center justify-between px-4 py-3 gap-[38px] w-[660px] h-[52px] ">
-          <Form.Item name="search">
-            <Input
-              placeholder="Пошук"
-              className="flex p-[5px] pl-[15px] justify-between items-center self-stretch rounded-xl border-[1px] border-black text-gray placeholder:font-manrope placeholder:text-[20px] placeholder:font-medium leading-normal"
-              suffix={<SearchIcon />}
-            />
-          </Form.Item>
-        </div>
-
+        <Form.Item name="search">
+          <Input
+            placeholder="Пошук"
+            className="serch-header-input serch-header-input"
+            suffix={<SearchIcon />}
+          />
+        </Form.Item>
         {/* Користувач і кошик */}
         <div className="flex items-center gap-8">
           {user ? (

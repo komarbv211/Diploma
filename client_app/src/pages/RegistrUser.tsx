@@ -1,124 +1,203 @@
 // export default RegistrUser;
 
-import { Button, Form, Input } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import { IUserRegisterRequest } from '../types/account.ts';
-import { useRegisterUserMutation } from '../services/authApi.ts';
+import { Button, Form, Input } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { IUserRegisterRequest } from "../types/account.ts";
+import { useRegisterUserMutation } from "../services/authApi.ts";
 import PhoneInput from "../components/PhoneInput.tsx";
 import { handleFormErrors } from "../utilities/handleApiErrors.ts";
-import { ApiError } from '../types/errors';
+import { ApiError } from "../types/errors";
+import AccountBox from "../components/icons/AccountBoxIcon.tsx";
+import MailIcon from "../components/icons/MailIcon.tsx";
+import EyeIcon from "../components/icons/EyeIcon.tsx";
+import EyeOffIcon from "../components/icons/EyeOffIcon.tsx";
+import StarDecoration from "../components/decorations/StarDecoration.tsx";
 
 const RegistrUser: React.FC = () => {
-    const navigate = useNavigate();
-    const [form] = Form.useForm();
-    const [registerUser] = useRegisterUserMutation();
+  const navigate = useNavigate();
+  const [form] = Form.useForm();
+  const [registerUser] = useRegisterUserMutation();
 
-    const onFinish = async (values: IUserRegisterRequest) => {
-        try {
-            // values.phone тепер містить актуальний номер телефону
-            const response = await registerUser(values).unwrap();
-            console.log("Користувача успішно зареєстровано", response);
-            navigate("..");
-        } catch (error: unknown) {
-            handleFormErrors(error as ApiError, form);
-        }
-    };
+  const onFinish = async (values: IUserRegisterRequest) => {
+    try {
+      // values.phone тепер містить актуальний номер телефону
+      const response = await registerUser(values).unwrap();
+      console.log("Користувача успішно зареєстровано", response);
+      navigate("..");
+    } catch (error: unknown) {
+      handleFormErrors(error as ApiError, form);
+    }
+  };
 
-    return (
-        <>
-            <Button onClick={() => navigate(-1)} type="default">Назад</Button>
-            <h2>Реєстрація нового користувача</h2>
+  return (
+    <>
+      <div className="flex w-full min-h-screen justify-center bg-beige2 py-12">
+        <div className="hidden lg:block fixed top-0 right-0 w-[50vw] h-full bg-cover bg-center bg-[url('/amir-seilsepour-unsplash-2.png')]">
+          <div className="absolute inset-0 bg-gradient-to-r from-beige2 to-transparent z-10" />
+        </div>
 
+        {/* Форма реєстрації */}
+        <div className="relative flex w-full max-w-sm mx-auto rounded-lg lg:max-w-6xl ">
+          <StarDecoration
+            width={72}
+            height={86}
+            className="absolute  z-20 top-[-42.5px] left-[-34.5px] hidden xl:block"
+          />
+          <StarDecoration
+            width={72}
+            height={86}
+            className="absolute z-20 bottom-[-42px] right-[542.5px] hidden lg:block "
+          />
+
+          <div className="form-container xs:max-w-[100%] w-[574px] bg-beige2 h-full px-6 py-8 md:px-8 z-20 xs:translate-x-[-7%] md:translate-x-[-20%] lg:translate-x-[40%] xl:translate-x-0">
+            <p className="form-title">Зареєструватися</p>
             <Form
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 14 }}
-                layout="horizontal"
-                style={{ maxWidth: 600 }}
-                onFinish={onFinish}
-                form={form}
-                initialValues={{ phone: '+38 (050) ' }}
+              layout="vertical"
+              className=""
+              onFinish={onFinish}
+              form={form}
+              initialValues={{ phone: "+38 (050) " }}
             >
-                <Form.Item
-                    name="firstName"
-                    label="Ваше Ім'я"
-                    rules={[{ required: true, message: 'Будь ласка, введіть Ваше ім\'я!' }]}
-                >
-                    <Input placeholder="Ваше Ім'я" />
-                </Form.Item>
+              <Form.Item
+                name="firstName"
+                label={<span className="form-label">Ім’я</span>}
+                rules={[
+                  { required: true, message: "Будь ласка, введіть Ваше ім’я!" },
+                ]}
+              >
+                <Input
+                  placeholder="Ім'я користувача"
+                  className="form-input"
+                  suffix={<AccountBox />}
+                />
+              </Form.Item>
 
-                <Form.Item name="lastName" label="Ваше Прізвище">
-                    <Input placeholder="Прізвище" />
-                </Form.Item>
+              <Form.Item
+                name="lastName"
+                label={<span className="form-label">Прізвище</span>}
+              >
+                <Input
+                  placeholder="Прізвище"
+                  className="form-input"
+                  suffix={<AccountBox />}
+                />
+              </Form.Item>
 
-                <Form.Item
-                    name="email"
-                    label="Ваш Email"
-                    rules={[
-                        { required: true, type: 'email', message: 'Будь ласка, введіть дійсну електронну адресу!' },
-                    ]}
-                >
-                    <Input placeholder="Ваш E-mail / login" />
-                </Form.Item>
+              <Form.Item
+                name="email"
+                label={<span className="form-label">Email</span>}
+                rules={[
+                  {
+                    required: true,
+                    type: "email",
+                    message: "Будь ласка, введіть дійсну електронну адресу!",
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="Ваш E-mail / login"
+                  className="form-input"
+                  suffix={<MailIcon />}
+                />
+              </Form.Item>
 
-                <Form.Item
-                    name="phone"
-                    label="Номер телефону"
-                    rules={[
-                        { required: true, message: 'Введіть номер телефону' },
-                        {
-                            validator: (_, value) => {
-                                const regex_phone = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
-                                if (!value || regex_phone.test(value)) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(new Error('Неправильний формат номера телефону'));
-                            },
-                        },
-                    ]}
-                    getValueFromEvent={e => e.target.value}
-                >
-                    <PhoneInput
-                    //     onChange={(val: any)=> {
-                    //     console.log("form", form.getFieldValue('phone'));
-                    //     console.log("ss",val)
-                    // } }
-                    />
-                </Form.Item>
+              <Form.Item
+                name="phone"
+                label={<span className="form-label">Номер телефону</span>}
+                rules={[
+                  { required: true, message: "Введіть номер телефону" },
+                  {
+                    validator: (_, value) => {
+                      const regex_phone =
+                        /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                      if (!value || regex_phone.test(value)) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error("Неправильний формат номера телефону")
+                      );
+                    },
+                  },
+                ]}
+                getValueFromEvent={(e) => e.target.value}
+              >
+                <PhoneInput // TODO: provide more suitable width
+                //     onChange={(val: any)=> {
+                //     console.log("form", form.getFieldValue('phone'));
+                //     console.log("ss",val)
+                // } }
+                />
+              </Form.Item>
 
-                <Form.Item
-                    name="password"
-                    label="Пароль"
-                    rules={[{ required: true, message: 'Будь ласка, введіть пароль!' }]}
-                >
-                    <Input.Password placeholder="Пароль" />
-                </Form.Item>
+              <Form.Item
+                name="password"
+                label={<span className="form-label">Пароль</span>}
+                rules={[
+                  { required: true, message: "Будь ласка, введіть пароль!" },
+                ]}
+              >
+                <Input.Password
+                  placeholder="Пароль"
+                  className="form-input"
+                  iconRender={(visible) =>
+                    visible ? <EyeIcon /> : <EyeOffIcon />
+                  }
+                />
+              </Form.Item>
 
-                <Form.Item
-                    name="password1"
-                    label="Перевірка пароля"
-                    dependencies={['password']}
-                    rules={[
-                        { required: true, message: 'Будь ласка, підтвердіть пароль!' },
-                        ({ getFieldValue }) => ({
-                            validator(_, value) {
-                                if (!value || getFieldValue('password') === value) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(new Error('Паролі не збігаються!'));
-                            },
-                        }),
-                    ]}
-                >
-                    <Input.Password placeholder="Підтвердіть пароль" />
-                </Form.Item>
+              <Form.Item
+                name="password1"
+                label={<span className="form-label">Перевірка пароля</span>}
+                dependencies={["password"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Будь ласка, підтвердіть пароль!",
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("password") === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error("Паролі не збігаються!"));
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password
+                  placeholder="Підтвердіть пароль"
+                  className="form-input"
+                  iconRender={(visible) =>
+                    visible ? <EyeIcon /> : <EyeOffIcon />
+                  }
+                />
+              </Form.Item>
 
-                <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
-                    <Button type="default" htmlType="reset" style={{ marginRight: 10 }}>Скасувати</Button>
-                    <Button type="primary" htmlType="submit">Реєстрація</Button>
-                </Form.Item>
+              <p className="w-full text-[14px] text-gray font-manrope text-base font-medium underline text-center pt-[4px] pb-[12px]">
+                Натискаючи кнопку «Зареєструватися», ви погоджуєтеся з <br />
+                <a href="/terms">Умовами використання</a>
+                &nbsp;та&nbsp;
+                <a href="/privacy">Політикою конфіденційності</a>
+              </p>
+
+              <Form.Item>
+                <Button className="btn-pink">
+                  <span>Зареєструватися</span>
+                </Button>
+              </Form.Item>
+
+              <div className="font-manrope text-[18px] flex justify-between pt-[8px]">
+                <span>Вже маєте обліковий запис?</span>
+                <Link to="/login" className="text-blue2">
+                  Увійти
+                </Link>
+              </div>
             </Form>
-        </>
-    );
+          </div>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default RegistrUser;
