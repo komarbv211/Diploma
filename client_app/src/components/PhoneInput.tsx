@@ -162,7 +162,6 @@
 //
 // export default PhoneInput;
 
-
 import React from 'react';
 import { Select, Input } from 'antd';
 import PhoneIcon from './icons/PhoneIcon';
@@ -234,7 +233,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({ value = '', onChange, className
   };
 
   return (
-       <div className="form-input">
+      <div className="form-input">
         <Select
             value={operator}
             onChange={handleOperatorChange}
@@ -258,6 +257,3 @@ const PhoneInput: React.FC<PhoneInputProps> = ({ value = '', onChange, className
 };
 
 export default PhoneInput;
-
-
-

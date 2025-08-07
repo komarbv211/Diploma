@@ -101,7 +101,7 @@ const Login: React.FC = () => {
                 form={form}
               >
                 {/* Email */}
-                <div className="flex flex-col items-start gap-[12px]">
+                {/* <div className="flex flex-col items-start gap-[12px]"> */}
                   <Form.Item
                     name="email"
                     label={<span className="form-label">Email</span>}
@@ -161,7 +161,7 @@ const Login: React.FC = () => {
                       Забули пароль?
                     </Link>
                   </div>
-                </div>
+                {/* </div> */}
                 <Button
                   type="primary"
                   htmlType="submit"
