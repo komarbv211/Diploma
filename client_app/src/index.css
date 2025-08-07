@@ -4,23 +4,23 @@ html, body, #root {
     width: 100vw;
     overflow-x: hidden;
 }
+.serch-header-input input::placeholder {
+  font-size: 20px;
+}
 
 input::placeholder {
   font-family: 'Manrope', sans-serif;
-  font-size: 20px;
-  font-weight: 500;
 }
 .ant-input,
 .ant-input-password input {
   font-family: 'Manrope', sans-serif !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
   line-height: normal !important;
 }
 .ant-form-item-explain-error {
   font-family: 'Manrope', sans-serif;
-  font-size: 13px;
-  font-weight: 400;
   color: #ff4d4f; 
   line-height: 1.5;
+}
+.ant-select.ant-select-in-form-item {
+    width: 40%;
 }

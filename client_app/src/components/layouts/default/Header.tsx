@@ -10,13 +10,16 @@ import { getUser, logOut } from "../../../store/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { APP_ENV } from "../../../env";
 import { UserIcon, CartIcon, SearchIcon } from "../../icons";
-import { HorizontalNavigation } from "../../navigation";
+import HorizontalNavigation from "../../navigation/HorizontalNavigation";
+import { useLocation } from "react-router-dom";
 
 const CustomHeader = () => {
   const user = useAppSelector(getUser);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const isAdmin = user?.roles.includes("Admin");
+  const location = useLocation();
+  const isAdminPath = location.pathname.startsWith("/admin");
 
   const handleLogout = () => {
     console.log("Header: Logout initiated");
@@ -69,16 +72,13 @@ const CustomHeader = () => {
           />
         </Link>
         {/* Пошук */}
-        <div className="relative flex flex-row items-center justify-between px-4 py-3 gap-[38px] w-[660px] h-[52px] ">
-          <Form.Item name="search">
-            <Input
-              placeholder="Пошук"
-              className="flex p-[5px] pl-[15px] justify-between items-center self-stretch rounded-xl border-[1px] border-black text-gray placeholder:font-manrope placeholder:text-[20px] placeholder:font-medium leading-normal"
-              suffix={<SearchIcon />}
-            />
-          </Form.Item>
-        </div>
-
+        <Form.Item name="search">
+          <Input
+            placeholder="Пошук"
+            className="serch-header-input serch-header-input"
+            suffix={<SearchIcon />}
+          />
+        </Form.Item>
         {/* Користувач і кошик */}
         <div className="flex items-center gap-8">
           {user ? (
@@ -137,9 +137,11 @@ const CustomHeader = () => {
       </header>
 
       {/* Горизонтальна навігація */}
-      <div className="mt-20">
-        <HorizontalNavigation />
-      </div>
+      {!isAdminPath && (
+        <div className="mt-20">
+          <HorizontalNavigation />
+        </div>
+      )}
     </>
   );
 };

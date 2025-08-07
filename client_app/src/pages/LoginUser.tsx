@@ -101,67 +101,64 @@ const Login: React.FC = () => {
                 form={form}
               >
                 {/* Email */}
-                {/* <div className="flex flex-col items-start gap-[12px]"> */}
-                  <Form.Item
-                    name="email"
-                    label={<span className="form-label">Email</span>}
-                    rules={[
-                      {
-                        required: true,
-                        type: "email",
-                        message:
-                          "Будь ласка, введіть дійсну електронну адресу!",
-                      },
-                    ]}
-                  >
-                    <Input
-                      placeholder="Ваш E-mail / login"
-                      className="form-input"
-                      suffix={<MailIcon />}
-                    />
-                  </Form.Item>
+                <Form.Item
+                  name="email"
+                  label={<span className="form-label">Email</span>}
+                  rules={[
+                    {
+                      required: true,
+                      type: "email",
+                      message: "Будь ласка, введіть дійсну електронну адресу!",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Електронна пошта або ім'я користувача"
+                    className="form-input"
+                    suffix={<MailIcon />}
+                  />
+                </Form.Item>
 
-                  {/* Пароль */}
-                  <Form.Item
-                    name="password"
-                    label={<span className="form-label">Пароль</span>}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Будь ласка, введіть пароль!",
-                      },
-                    ]}
-                  >
-                    <Input.Password
-                      placeholder="Пароль"
-                      className="form-input"
-                      iconRender={(visible) =>
-                        visible ? <EyeIcon /> : <EyeOffIcon />
-                      }
-                    />
-                  </Form.Item>
+                {/* Пароль */}
+                <Form.Item
+                  name="password"
+                  label={<span className="form-label">Пароль</span>}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Будь ласка, введіть пароль!",
+                    },
+                  ]}
+                >
+                  <Input.Password
+                    placeholder="Ваш пароль"
+                    className="form-input"
+                    iconRender={(visible) =>
+                      visible ? <EyeIcon /> : <EyeOffIcon />
+                    }
+                  />
+                </Form.Item>
 
-                  {errorMessage && (
-                    <div className="text-danger text-sm font-medium mt-1 font-manrope">
-                      {errorMessage}
-                    </div>
-                  )}
+                {errorMessage && (
+                  <div className="text-danger text-sm font-medium mt-1 font-manrope">
+                    {errorMessage}
+                  </div>
+                )}
 
-                  <div
-                    className="
+                <div
+                  className="
                           flex flex-row justify-between items-center
                           w-full max-w-[454px] h-[18px] gap-[12px] mt-2
                         "
-                  >
-                    <label className="form-label">
-                      <input type="checkbox" className="form-label" />
-                      <span className="form-label  ml-1">Запам’ятати мене</span>
-                    </label>
-                    <Link to="/forgot-password" className="form-label">
-                      Забули пароль?
-                    </Link>
-                  </div>
-                {/* </div> */}
+                >
+                  <label className="form-label">
+                    <input type="checkbox" className="form-label" />
+                    <span className="form-label  ml-1">Запам’ятати мене</span>
+                  </label>
+                  <Link to="/forgot-password" className="form-label">
+                    Забули пароль?
+                  </Link>
+                </div>
                 <Button
                   type="primary"
                   htmlType="submit"
