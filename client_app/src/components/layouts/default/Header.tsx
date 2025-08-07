@@ -10,13 +10,16 @@ import { getUser, logOut } from "../../../store/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { APP_ENV } from "../../../env";
 import { UserIcon, CartIcon, SearchIcon } from "../../icons";
-import { HorizontalNavigation } from "../../navigation";
+import HorizontalNavigation from "../../navigation/HorizontalNavigation";
+import { useLocation } from "react-router-dom";
 
 const CustomHeader = () => {
   const user = useAppSelector(getUser);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const isAdmin = user?.roles.includes("Admin");
+  const location = useLocation();
+  const isAdminPath = location.pathname.startsWith("/admin");
 
   const handleLogout = () => {
     console.log("Header: Logout initiated");
@@ -137,9 +140,11 @@ const CustomHeader = () => {
       </header>
 
       {/* Горизонтальна навігація */}
-      <div className="mt-20">
-        <HorizontalNavigation />
-      </div>
+      {!isAdminPath && (
+        <div className="mt-20">
+          <HorizontalNavigation />
+        </div>
+      )}
     </>
   );
 };

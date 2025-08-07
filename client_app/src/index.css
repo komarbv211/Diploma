@@ -24,3 +24,6 @@ input::placeholder {
   color: #ff4d4f; 
   line-height: 1.5;
 }
+.ant-select.ant-select-in-form-item {
+    width: 40%;
+}

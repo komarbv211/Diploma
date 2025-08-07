@@ -21,14 +21,14 @@ const GoogleRegisterUser = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
-
-  // const [errorMessage, setErrorMessage] = useState("");
-
   const navigate = useNavigate();
   const location = useLocation();
   const token = new URLSearchParams(location.search).get("token");
   const { userInfo } = useGoogleUserInfo(token);
   const { Text } = Typography;
+  const profileImageUrl = selectedImage
+    ? URL.createObjectURL(selectedImage)
+    : userInfo?.picture || "/default-avatar.png";
 
   useEffect(() => {
     if (userInfo) {
@@ -112,19 +112,15 @@ const GoogleRegisterUser = () => {
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
             <div className="flex-column-block">
               <Form.Item
-                label={<span className="form-label">Фото профілю</span>}
+                label={<span className="form-label mt-2">Фото профілю</span>}
               >
-                <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4 mt-5">
+                <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4 mt-1">
                   <div
                     className="rounded-full bg-cover bg-center flex-shrink-0"
                     style={{
                       width: "193px",
                       height: "193px",
-                      backgroundImage: `url(${
-                        selectedImage
-                          ? URL.createObjectURL(selectedImage)
-                          : userInfo?.picture
-                      })`,
+                      backgroundImage: `url("${profileImageUrl}")`,
                       backgroundRepeat: "no-repeat",
                       backgroundColor: "lightgray", // fallback
                     }}
@@ -135,7 +131,7 @@ const GoogleRegisterUser = () => {
                     accept="image/*"
                     beforeUpload={handleBeforeUpload}
                   >
-                    <Button className="remember-photo-button w-full">
+                    <Button className="flex justify-center items-center p-[15px] sm:mt-[20px] xs:mt-[20px] gap-[12px] w-[260px] h-[49px] rounded-[15px] shadow-none border-gray">
                       <span className="text-black font-manrope text-[14px] font-medium leading-normal">
                         {" "}
                         Змінити фото
