@@ -121,12 +121,7 @@ const RegistrUser: React.FC = () => {
                 ]}
                 getValueFromEvent={(e) => e.target.value}
               >
-                <PhoneInput // TODO: provide more suitable width
-                //     onChange={(val: any)=> {
-                //     console.log("form", form.getFieldValue('phone'));
-                //     console.log("ss",val)
-                // } }
-                />
+                <PhoneInput />
               </Form.Item>
 
               <Form.Item
@@ -181,7 +176,7 @@ const RegistrUser: React.FC = () => {
               </p>
 
               <Form.Item>
-                <Button className="btn-pink">
+                <Button className="btn-pink" type="primary" htmlType="submit">
                   <span>Зареєструватися</span>
                 </Button>
               </Form.Item>
