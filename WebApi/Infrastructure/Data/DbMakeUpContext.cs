@@ -22,7 +22,7 @@ namespace Infrastructure.Data
         public DbSet<DiscountTypeEntity> DiscountTypes { get; set; }
         public DbSet<PromotionEntity> Promotions { get; set; }
         public DbSet<PromotionProductEntity> PromotionProducts { get; set; }
-
+        public DbSet<ProductRatingEntity> ProductRatings { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -46,8 +46,24 @@ namespace Infrastructure.Data
                     .HasForeignKey(l => l.UserId)
                     .IsRequired();
             });
+            // Конфігурація для рейтингу
+            builder.Entity<ProductRatingEntity>(pr =>
+            {
+                pr.HasKey(r => r.Id);
 
+                pr.HasOne(r => r.Product)
+                    .WithMany(p => p.Ratings)
+                    .HasForeignKey(r => r.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
+                pr.HasOne(r => r.User)
+                    .WithMany(u => u.Ratings)
+                    .HasForeignKey(r => r.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Забороняємо дублювання рейтингу від одного користувача для одного продукту
+                pr.HasIndex(r => new { r.ProductId, r.UserId }).IsUnique();
+            });
         }
 
     }

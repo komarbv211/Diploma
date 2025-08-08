@@ -34,6 +34,7 @@ public class ProductService : IProductService
         {
             var products = await _productRepository.GetAllQueryable()
                 .Include(p => p.Images)
+                .Include(p => p.Ratings)
                 .ToListAsync();
 
             return _mapper.Map<List<ProductItemDto>>(products);
@@ -212,4 +213,5 @@ public class ProductService : IProductService
             throw new HttpException("Невідома помилка при видаленні продукту", HttpStatusCode.InternalServerError, ex);
         }
     }
+
 }
