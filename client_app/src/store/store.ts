@@ -8,6 +8,7 @@ import { categoryApi } from '../services/categoryApi';
 import { categoryAdminApi } from '../services/admin/categoryAdmnApi';
 import { productApi } from '../services/productApi';
 import { productAdminApi } from '../services/admin/productAdminApi';
+import { productRatingApi } from '../services/productRatingApi ';
 
 
 export const store = configureStore({
@@ -20,6 +21,7 @@ export const store = configureStore({
                 [categoryAdminApi.reducerPath]: categoryAdminApi.reducer,
                 [productApi.reducerPath]: productApi.reducer,
                 [productAdminApi.reducerPath]: productAdminApi.reducer,
+                [productRatingApi.reducerPath]: productRatingApi.reducer,
         },
         middleware: (getDefaultMiddleware) =>
                 getDefaultMiddleware().concat(
@@ -30,6 +32,7 @@ export const store = configureStore({
                         categoryAdminApi.middleware,
                         productApi.middleware,
                         productAdminApi.middleware,
+                        productRatingApi.middleware,
                 ),
 });
 
