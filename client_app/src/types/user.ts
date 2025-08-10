@@ -12,6 +12,7 @@ export interface IUserDTO {
     twoFactorEnabled: boolean;
 
     birthDate?: string;       // додано для дати народження, необов’язкове поле
+    roles: string; 
 }
   
 export interface IUserCreateDTO {
@@ -37,6 +38,10 @@ export interface PagedResultDto<T> {
 export interface PagedRequestDto {
   page?: number;
   pageSize?: number;
+  //додав
+   sortBy?: string;     // ✅ додай це
+  sortDesc?: boolean;  // ✅ і це
+   searchName?: string; // 🔁 Замість "name"
 }
 
 export interface PaginationComponentProps {
@@ -45,3 +50,40 @@ export interface PaginationComponentProps {
   totalItems: number;
   onPageChange: (page: number, pageSize: number) => void;
 }
+
+// src/types/user.ts  тест
+export interface IUser {
+  id: number;
+  fullName: string;
+  email: string;
+  image?: string;
+  isLoginGoogle?: boolean;
+  isLoginPassword?: boolean;
+  createdDate: string;
+  lastActivity: string;
+  roles: string; 
+}
+
+// types/user.ts
+export interface IUserListResponse {
+  items: IUser[];
+  totalCount: number;
+}
+
+// interface IUserFromServer {
+//   id: number;
+//   fullName: string;
+//   email: string;
+//   image?: string;
+//   isLoginGoogle?: boolean;
+//   isLoginPassword?: boolean;
+//   lastActivity: string;
+//   createdDate: string;
+// }
+// interface UserSearchParams {
+//   page: number;
+//   pageSize: number;
+//   sortBy?: string;
+//   sortDesc?: boolean;
+//   name?: string;
+// }

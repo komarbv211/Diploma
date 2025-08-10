@@ -17,6 +17,7 @@ Create docker hub repository - publish
 
 npm install dayjs
 npm i react-datepicker
+npm install use-debounce
 ```
 docker build -t makeup-client . 
 docker run -it --rm -p 5982:80 --name makeup-client_container makeup-client
