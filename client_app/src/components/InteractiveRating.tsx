@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useAppSelector } from "../store/store"; // підкоригуй шлях під себе
+import { getUser } from "../store/slices/userSlice";
 
 type InteractiveRatingProps = {
   productId: number;
-  userRating?: number; // рейтинг від 0 до 5 (може бути дробовим)
+  userRating?: number;
   onRate?: (rating: number) => Promise<void>;
   size?: number;
 };
@@ -12,6 +14,7 @@ const InteractiveRating: React.FC<InteractiveRatingProps> = ({
   onRate,
   size = 24,
 }) => {
+  const user = useAppSelector(getUser);
   const [hoverRating, setHoverRating] = useState(0);
   const [currentRating, setCurrentRating] = useState(userRating);
   const starsCount = 5;
@@ -21,13 +24,16 @@ const InteractiveRating: React.FC<InteractiveRatingProps> = ({
   }, [userRating]);
 
   const handleClick = async (rating: number) => {
+    if (!user) {
+      alert("Ви повинні увійти, щоб оцінити продукт");
+      return; // не змінюємо рейтинг
+    }
     setCurrentRating(rating);
     if (onRate) {
       await onRate(rating);
     }
   };
 
-  // Функція для обчислення, скільки % заповнення у зірці i
   const getFillPercent = (starIndex: number) => {
     const diff = (hoverRating || currentRating) - starIndex + 1;
     if (diff >= 1) return 100;
@@ -35,7 +41,6 @@ const InteractiveRating: React.FC<InteractiveRatingProps> = ({
     return 0;
   };
 
-  // Відмалюємо зірку з градієнтом відповідно до fillPercent
   const StarPartial = ({
     size,
     fillPercent,
@@ -72,8 +77,9 @@ const InteractiveRating: React.FC<InteractiveRatingProps> = ({
 
   return (
     <div
-      className="flex gap-1 select-none cursor-pointer"
+      className="flex gap-1 select-none"
       onMouseLeave={() => setHoverRating(0)}
+      style={{ cursor: user ? "pointer" : "default" }}
     >
       {[...Array(starsCount)].map((_, i) => {
         const starIndex = i + 1;
@@ -83,12 +89,12 @@ const InteractiveRating: React.FC<InteractiveRatingProps> = ({
           <div
             key={starIndex}
             onClick={() => handleClick(starIndex)}
-            onMouseEnter={() => setHoverRating(starIndex)}
-            role="button"
-            tabIndex={0}
+            onMouseEnter={() => user && setHoverRating(starIndex)}
+            role={user ? "button" : undefined}
+            tabIndex={user ? 0 : -1}
             aria-label={`Rate ${starIndex} star`}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
+              if ((e.key === "Enter" || e.key === " ") && user) {
                 handleClick(starIndex);
               }
             }}

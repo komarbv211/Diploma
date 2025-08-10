@@ -10,8 +10,9 @@ type Props = {
   oldPrice?: number;
   image: string;
   productId: number;
-  userId: number; // Додано userId
+  userId: number;
   userRating?: number;
+  onRated?: () => void;
 };
 
 const ProductCard: React.FC<Props> = ({
@@ -23,13 +24,20 @@ const ProductCard: React.FC<Props> = ({
   productId,
   userId,
   userRating = 0,
+  onRated,
 }) => {
   const [rateProduct] = useRateProductMutation();
 
   const handleRate = async (rating: number) => {
+    if (!userId) {
+      alert("Ви повинні увійти, щоб оцінити продукт");
+      return;
+    }
     try {
       await rateProduct({ productId, rating, userId }).unwrap();
-      // Тут можна додати локальне оновлення або refetch даних, якщо потрібно
+      if (onRated) {
+        onRated();
+      }
     } catch (error) {
       console.error("Помилка при рейтингу товару", error);
     }

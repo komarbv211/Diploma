@@ -7,7 +7,7 @@ import { useAppSelector } from "../store/store";
 import { getUser } from "../store/slices/userSlice";
 
 const Home: React.FC = () => {
-  const { data: products, isLoading } = useGetAllProductsQuery();
+  const { data: products, isLoading, refetch } = useGetAllProductsQuery();
   const { data: categories } = useGetCategoryTreeQuery();
   const user = useAppSelector(getUser);
 
@@ -35,6 +35,7 @@ const Home: React.FC = () => {
                   ? APP_ENV.IMAGES_1200_URL + product.images[0].name
                   : ""
               }
+              onRated={() => refetch()}
             />
           </div>
         ))}

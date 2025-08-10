@@ -10,7 +10,7 @@ interface RateProductRequest {
 export const productRatingApi = createApi({
   reducerPath: 'productRatingApi',
   baseQuery: createBaseQuery('productRating'),
-  tagTypes: ['ProductRating', 'Products'],
+  tagTypes: ['Products'],
   endpoints: (builder) => ({
     rateProduct: builder.mutation<void, RateProductRequest>({
       query: ({ productId, rating, userId }) => ({
@@ -18,7 +18,7 @@ export const productRatingApi = createApi({
         method: 'POST',
         body: { productId, rating, userId }, 
       }),
-      invalidatesTags: ['Products', 'ProductRating'],
+      invalidatesTags: ['Products'],
     }),
   }),
 });
