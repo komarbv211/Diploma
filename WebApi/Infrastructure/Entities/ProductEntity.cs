@@ -23,7 +23,11 @@ namespace Infrastructure.Entities
         //public virtual ICollection<PromotionEntity>? Promotions { get; set; }
 
         public virtual ICollection<PromotionProductEntity>? PromotionProducts { get; set; }
+        public virtual ICollection<ProductRatingEntity>? Ratings { get; set; }
 
+        // Додані властивості рейтингу 
+        public long? RatingsCount { get; set; }
+        public double? AverageRating { get; set; }
 
     }
 }
