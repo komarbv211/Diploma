@@ -33,16 +33,18 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQueryWithReauth } from '../../utilities/createBaseQuery';
 import { PagedRequestDto, PagedResultDto } from '../../types/user';
 import { IUser } from '../../types/account';
+import dayjs from 'dayjs';
 
 export const userAdminApi = createApi({
   reducerPath: 'userAdminApi',
   baseQuery: createBaseQueryWithReauth('admin'),
   tagTypes: ['Users'],
   endpoints: (builder) => ({
-    getAllUsers: builder.query<PagedResultDto<IUser>, PagedRequestDto & { searchName?: string, searchRoles?: string }>({
+    getAllUsers: builder.query<PagedResultDto<IUser>, PagedRequestDto & { searchName?: string,
+       searchRoles?: string, startDate?: string, endDate?:string, dateField?: string }>({
 
       
-      query: ({ page = 1, pageSize = 10, sortBy, sortDesc, searchName, searchRoles }) => {
+      query: ({ page = 1, pageSize = 10, sortBy, sortDesc, searchName, searchRoles, startDate, endDate,dateField  }) => {
 
         console.log("search role", searchRoles)
         const params = new URLSearchParams();
@@ -52,6 +54,9 @@ export const userAdminApi = createApi({
         if (sortDesc !== undefined) params.append('SortDesc', sortDesc.toString());
         if (searchName && searchName.trim() !== '') params.append('Name', searchName.trim());
         if (searchRoles && searchRoles.trim() !== '') params.append('Roles', searchRoles.trim());
+        if (startDate) params.append('StartDate', startDate);
+if (endDate) params.append('EndDate', endDate);
+if (dateField) params.append('DateField', dateField);
 
         return {
           url: 'user/search',

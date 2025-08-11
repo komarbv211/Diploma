@@ -566,12 +566,16 @@ import type {
   TableCurrentDataSource,
 } from "antd/es/table/interface";
 import { DownOutlined, SearchOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useGetAllUsersQuery } from "../../../services/admin/userAdninApi";
 import PaginationComponent from "../../../components/pagination/PaginationComponent";
 import { IUser } from "../../../types/user";
 import { useDebounce } from "use-debounce";
+import { DatePicker } from "antd";
+// import type { RangeValue } from 'rc-picker/lib/interface';
+// import dayjs, { Dayjs } from "dayjs";
+
 
 dayjs.extend(customParseFormat);
 
@@ -602,6 +606,10 @@ const parseFullName = (fullName: string) => {
 const UsersPage: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [searchRoles, setSearchRoles] = useState("");
+
+  const [dateField, setDateField] = useState<"createdDate" | "lastActivity">("createdDate");
+  const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
+const { RangePicker } = DatePicker;
   // const [searchField, setSearchField] = useState<"name" | "email" | "roles">("name");
   const [debouncedSearchText] = useDebounce(searchText, 500);
   const [debouncedSearchRoles] = useDebounce(searchRoles, 500);
@@ -618,6 +626,12 @@ const UsersPage: React.FC = () => {
     sortDesc,
     searchName: debouncedSearchText,
     searchRoles: debouncedSearchRoles,
+    startDate: dateRange?.[0]?.format("DD.MM.YYYY"),
+  endDate: dateRange?.[1]?.format("DD.MM.YYYY"),
+  dateField: dateField === "createdDate" ? "CreatedDate" : "LastActivity",
+  //   startDate: dateRange && dateRange[0] ? dateRange[0].format("YYYY-MM-DD") : undefined,
+  // endDate: dateRange && dateRange[1] ? dateRange[1].format("YYYY-MM-DD") : undefined,
+  // dateField: dateField === "createdDate" ? "CreatedDate" : "LastActivity",
     // ...(searchField === "name" && { searchName: debouncedSearchText }),
     // ...(searchField === "email" && { searchEmail: debouncedSearchText }),
     // ...(searchField === "roles" && { searchRoles: debouncedSearchRoles }),
@@ -744,24 +758,8 @@ const UsersPage: React.FC = () => {
         <Space
             style={{ width: "100%", justifyContent: "space-between", marginBottom: 20 }}
         >
-          <Space>
-            {/*<Select*/}
-            {/*    value={searchField}*/}
-            {/*    onChange=*/}
-            {/*        {*/}
-
-            {/*  (value) =>*/}
-            {/*    {*/}
-            {/*      setSearchField(value); //find by role*/}
-            {/*      //setSearchText(value);*/}
-            {/*    }*/}
-            {/*}*/}
-            {/*    style={{ width: 120 }}*/}
-            {/*>*/}
-            {/*  <Select.Option value="name">Name</Select.Option>*/}
-            {/*  <Select.Option value="email">Email</Select.Option>*/}
-            {/*  <Select.Option value="roles">Role</Select.Option>*/}
-            {/*</Select>*/}
+          {/* <Space>
+            
             <Select
                 placeholder="Select role"
                 // value={searchRoles}
@@ -779,7 +777,48 @@ const UsersPage: React.FC = () => {
                 onChange={handleSearch}
                 style={{ width: 200 }}
             />
-          </Space>
+          </Space> */}
+
+          <Space>
+  <Select
+    placeholder="Select role"
+    onChange={(value) => setSearchRoles(value)}
+    style={{ width: 150 }}
+  >
+    <Select.Option value="Admin">Administrator</Select.Option>
+    <Select.Option value="User">User</Select.Option>
+  </Select>
+
+  <Input
+    placeholder="Search"
+    prefix={<SearchOutlined />}
+    value={searchText}
+    onChange={handleSearch}
+    style={{ width: 200 }}
+  />
+
+  <Select
+    value={dateField}
+    onChange={(value) => {
+      setDateField(value);
+      setCurrentPage(1);
+    }}
+    style={{ width: 180 }}
+  >
+    <Select.Option value="createdDate">Дата створення</Select.Option>
+    <Select.Option value="lastActivity">Остання активність</Select.Option>
+  </Select>
+
+  <RangePicker
+    value={dateRange}
+    onChange={(dates) => {
+      setDateRange(dates);
+      setCurrentPage(1);
+    }}
+    format="DD.MM.YYYY"
+  />
+</Space>
+
 
           <Button type="primary">Add User</Button>
         </Space>
