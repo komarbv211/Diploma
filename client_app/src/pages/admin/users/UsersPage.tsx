@@ -601,8 +601,10 @@ const parseFullName = (fullName: string) => {
 
 const UsersPage: React.FC = () => {
   const [searchText, setSearchText] = useState("");
-  const [searchField, setSearchField] = useState<"name" | "email" | "roles">("name");
+  const [searchRoles, setSearchRoles] = useState("");
+  // const [searchField, setSearchField] = useState<"name" | "email" | "roles">("name");
   const [debouncedSearchText] = useDebounce(searchText, 500);
+  const [debouncedSearchRoles] = useDebounce(searchRoles, 500);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -614,9 +616,11 @@ const UsersPage: React.FC = () => {
     pageSize,
     sortBy,
     sortDesc,
-    ...(searchField === "name" && { searchName: debouncedSearchText }),
-    ...(searchField === "email" && { searchEmail: debouncedSearchText }),
-    ...(searchField === "roles" && { searchRoles: debouncedSearchText }),
+    searchName: debouncedSearchText,
+    searchRoles: debouncedSearchRoles,
+    // ...(searchField === "name" && { searchName: debouncedSearchText }),
+    // ...(searchField === "email" && { searchEmail: debouncedSearchText }),
+    // ...(searchField === "roles" && { searchRoles: debouncedSearchRoles }),
   });
 
   const users = data ?? { items: [], totalCount: 0 };
@@ -741,22 +745,31 @@ const UsersPage: React.FC = () => {
             style={{ width: "100%", justifyContent: "space-between", marginBottom: 20 }}
         >
           <Space>
-            <Select
-                value={searchField}
-                onChange=
-                    {
+            {/*<Select*/}
+            {/*    value={searchField}*/}
+            {/*    onChange=*/}
+            {/*        {*/}
 
-              (value) =>
-                {
-                  setSearchField(value); //find by role
-                  //setSearchText(value);
-                }
-            }
-                style={{ width: 120 }}
+            {/*  (value) =>*/}
+            {/*    {*/}
+            {/*      setSearchField(value); //find by role*/}
+            {/*      //setSearchText(value);*/}
+            {/*    }*/}
+            {/*}*/}
+            {/*    style={{ width: 120 }}*/}
+            {/*>*/}
+            {/*  <Select.Option value="name">Name</Select.Option>*/}
+            {/*  <Select.Option value="email">Email</Select.Option>*/}
+            {/*  <Select.Option value="roles">Role</Select.Option>*/}
+            {/*</Select>*/}
+            <Select
+                placeholder="Select role"
+                // value={searchRoles}
+                onChange={(value) => setSearchRoles(value)}
+                style={{ width: 200 }}
             >
-              <Select.Option value="name">Name</Select.Option>
-              <Select.Option value="email">Email</Select.Option>
-              <Select.Option value="roles">Role</Select.Option>
+              <Select.Option value="Admin">Administrator</Select.Option>
+              <Select.Option value="User">User</Select.Option>
             </Select>
 
             <Input
