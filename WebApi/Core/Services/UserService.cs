@@ -237,8 +237,8 @@ namespace Core.Services
         public async Task<SearchResult<AdminUserItemModel>> SearchUsersAsync(UserSearchModel model)
         {
             var query = _userManager.Users
-              .Include(u => u.UserRoles)
-              .ThenInclude(ur => ur.Role)
+              //.Include(u => u.UserRoles)
+              //.ThenInclude(ur => ur.Role)
               .AsQueryable();
         
 

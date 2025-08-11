@@ -39,16 +39,19 @@ export const userAdminApi = createApi({
   baseQuery: createBaseQueryWithReauth('admin'),
   tagTypes: ['Users'],
   endpoints: (builder) => ({
-    getAllUsers: builder.query<PagedResultDto<IUser>, PagedRequestDto & { searchName?: string }>({
+    getAllUsers: builder.query<PagedResultDto<IUser>, PagedRequestDto & { searchName?: string, searchRoles?: string }>({
 
       
-      query: ({ page = 1, pageSize = 10, sortBy, sortDesc, searchName }) => {
+      query: ({ page = 1, pageSize = 10, sortBy, sortDesc, searchName, searchRoles }) => {
+
+        console.log("search role", searchRoles)
         const params = new URLSearchParams();
         params.append('Page', page.toString());
         params.append('ItemPerPAge', pageSize.toString());  // саме так, як очікує бекенд
         if (sortBy) params.append('SortBy', sortBy);
         if (sortDesc !== undefined) params.append('SortDesc', sortDesc.toString());
         if (searchName && searchName.trim() !== '') params.append('Name', searchName.trim());
+        if (searchRoles && searchRoles.trim() !== '') params.append('Roles', searchRoles.trim());
 
         return {
           url: 'user/search',

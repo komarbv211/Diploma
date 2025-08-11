@@ -275,6 +275,279 @@
 // export default UsersPage;
 
 
+
+
+
+
+
+
+
+
+
+//
+// import React, { useState, useMemo } from "react";
+// import {
+//   Table,
+//   Button,
+//   Dropdown,
+//   Menu,
+//   Input,
+//   Space,
+//   Spin,
+//   message,
+// } from "antd";
+// import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+// import dayjs from "dayjs";
+// import customParseFormat from "dayjs/plugin/customParseFormat";
+// import { useGetAllUsersQuery } from "../../../services/admin/userAdninApi";
+// import PaginationComponent from "../../../components/pagination/PaginationComponent";
+// import { IUser } from "../../../types/user";
+// import { useDebounce } from "use-debounce"; // ✅ додаємо debounce
+//
+// dayjs.extend(customParseFormat);
+//
+// // Тип розширеного користувача для таблиці
+// interface IUserExtended extends IUser {
+//   firstName: string;
+//   lastName: string;
+//   createdDateObj: dayjs.Dayjs;
+//   lastActivityObj: dayjs.Dayjs;
+// }
+//
+// const fieldMap: Record<string, string> = {
+//   firstName: "FirstName",
+//   lastName: "LastName",
+//   email: "Email",
+//   roles: "Roles",
+//   createdDateObj: "CreatedDate",
+//   lastActivityObj: "LastActivity",
+// };
+//
+//
+//
+// // Розбиття fullName на firstName і lastName
+// const parseFullName = (fullName: string) => {
+//   const parts = fullName.trim().split(" ");
+//   const firstName = parts[0] || "";
+//   const lastName = parts.slice(1).join(" ") || "";
+//   return { firstName, lastName };
+// };
+//
+// const UsersPage = () => {
+//   const [searchText, setSearchText] = useState("");
+//
+//
+//   const [searchField, setSearchField] = useState<"name" | "email" | "roles">("name");
+//
+//   const [debouncedSearchText] = useDebounce(searchText, 500); // ✅ debounce 500ms
+//   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [pageSize, setPageSize] = useState(10);
+//   const [sortBy, setSortBy] = useState<string | undefined>();
+//   const [sortDesc, setSortDesc] = useState<boolean>(false);
+//
+//   const { data, isError, isLoading } = useGetAllUsersQuery({
+//     page: currentPage,
+//     pageSize,
+//     sortBy,
+//     sortDesc,
+//     // searchName: debouncedSearchText, // ✅ використовуємо debounce версію
+//     ...(searchField === "name" && { searchName: debouncedSearchText }),
+//     ...(searchField === "email" && { searchEmail: debouncedSearchText }),
+//     ...(searchField === "roles" && { searchRoles: debouncedSearchText }),
+//   });
+//
+//
+//   const users = data ?? { items: [], totalCount: 0 };
+//
+//   if (isError) {
+//     message.error("Не вдалося завантажити користувачів");
+//   }
+//
+//   // Обробка даних для таблиці
+//   const dataSource = useMemo<IUserExtended[]>(() => {
+//      console.log("users.items", users.items); // 👈 перевір, чи є `role`
+//     return users.items.map((user: IUser) => {
+//       const { firstName, lastName } = parseFullName(user.fullName);
+//       return {
+//         ...user,
+//         firstName,
+//         lastName,
+//          role: user.roles?.[0] || "Unknown", // ✅ Витягуємо першу роль
+//         createdDateObj: dayjs(user.createdDate, "DD.MM.YYYY HH:mm:ss"),
+//         lastActivityObj: dayjs(user.lastActivity, "DD.MM.YYYY HH:mm:ss"),
+//       };
+//     });
+//   }, [users]);
+//
+//   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     setSearchText(e.target.value); // 🔁 оновлюємо searchText
+//   };
+//
+//   const handleSelectChange = (keys: React.Key[]) => {
+//     setSelectedRowKeys(keys);
+//   };
+//
+//   const handleAction = (action: string, record: IUserExtended) => {
+//     console.log(`Action: ${action}`, record);
+//   };
+//
+//   // const handleTableChange = (_: any, __: any, sorter: any) => {
+//   //   if (sorter?.field) {
+//   //     setSortBy(sorter.field);
+//   //     setSortDesc(sorter.order === "descend");
+//   //   }
+//   // };
+//
+// //   const handleTableChange = (_: any, __: any, sorter: any) => {
+// //   const backendField = fieldMap[sorter.field];
+// //    console.log("🔍 sorter.field:", sorter.field);         // <-- додай
+// //   console.log("➡️ Sending sortBy:", backendField);       // <-- додай
+// //   if (backendField) {
+// //     setSortBy(backendField);
+// //     setSortDesc(sorter.order === "descend");
+// //   } else {
+// //     setSortBy(undefined);
+// //   }
+// // };
+//
+// const handleTableChange = (_: any, __: any, sorter: any) => {
+//   const backendField = fieldMap[sorter.field];
+//   console.log("🟡 sorter.field:", sorter.field);        // debug
+//   console.log("🟢 sending SortBy:", backendField);      // debug
+//   if (backendField) {
+//     setSortBy(backendField);
+//     setSortDesc(sorter.order === "descend");
+//   } else {
+//     setSortBy(undefined);
+//   }
+// };
+//
+//   const columns = [
+//     {
+//       title: "First Name",
+//       dataIndex: "firstName",
+//       key: "firstName",
+//       sorter: true,
+//     },
+//     {
+//       title: "Last Name",
+//       dataIndex: "lastName",
+//       key: "lastName",
+//       sorter: true,
+//     },
+//     {
+//       title: "Email",
+//       dataIndex: "email",
+//       key: "email",
+//       sorter: true,
+//     },
+//     {
+//   title: "Role",
+//   dataIndex: "role",
+//   key: "role",
+//   sorter: true,
+//    render: (role: string) => role === "admin" ? "Administrator" : role,
+//   //  sorter: (a: IUserExtended, b: IUserExtended) => a.roles.localeCompare(b.roles),
+//   // render: (role: string) => role === "admin" ? "Administrator" : role,
+// },
+//     {
+//       title: "Created Date",
+//       dataIndex: "createdDateObj",
+//       key: "createdDate",
+//       sorter: true,
+//       render: (date: dayjs.Dayjs) =>
+//         date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-",
+//     },
+//     {
+//       title: "Last Activity",
+//       dataIndex: "lastActivityObj",
+//       key: "lastActivity",
+//       sorter: true,
+//       render: (date: dayjs.Dayjs) =>
+//         date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-",
+//     },
+//     {
+//       title: "Actions",
+//       key: "actions",
+//       render: (_: any, record: IUserExtended) => (
+//         <Dropdown
+//           overlay={
+//             <Menu>
+//               <Menu.Item onClick={() => handleAction("edit", record)}>
+//                 Edit
+//               </Menu.Item>
+//               <Menu.Item onClick={() => handleAction("delete", record)}>
+//                 Delete
+//               </Menu.Item>
+//             </Menu>
+//           }
+//         >
+//           <Button>
+//             Actions <DownOutlined />
+//           </Button>
+//         </Dropdown>
+//       ),
+//     },
+//   ];
+//
+//   return (
+//     <div style={{ padding: "20px" }}>
+//       <Space
+//         style={{ width: "100%", justifyContent: "space-between", marginBottom: 20 }}
+//       >
+//         <Select
+//             value={searchField}
+//             onChange={(value) => setSearchField(value)}
+//             style={{ width: 120 }}
+//         >
+//           <Select.Option value="name">Name</Select.Option>
+//           <Select.Option value="email">Email</Select.Option>
+//           <Select.Option value="roles">Role</Select.Option>
+//         </Select>
+//         <Input
+//           placeholder="Search"
+//           prefix={<SearchOutlined />}
+//           value={searchText}
+//           onChange={handleSearch}
+//           style={{ width: 200 }}
+//         />
+//         <Button type="primary">Add User</Button>
+//       </Space>
+//
+//       {isLoading ? (
+//         <Spin />
+//       ) : (
+//         <>
+//           <Table
+//             rowSelection={{
+//               selectedRowKeys,
+//               onChange: handleSelectChange,
+//             }}
+//             columns={columns}
+//             rowKey="id"
+//             pagination={false}
+//             dataSource={dataSource}
+//             onChange={handleTableChange}
+//           />
+//           <PaginationComponent
+//             currentPage={currentPage}
+//             pageSize={pageSize}
+//             totalItems={users.totalCount}
+//             onPageChange={(page, size) => {
+//               setCurrentPage(page);
+//               setPageSize(size);
+//             }}
+//           />
+//         </>
+//       )}
+//     </div>
+//   );
+// };
+//
+// export default UsersPage;
+
+
 import React, { useState, useMemo } from "react";
 import {
   Table,
@@ -285,37 +558,40 @@ import {
   Space,
   Spin,
   message,
+  Select,
 } from "antd";
+import type {
+  TablePaginationConfig,
+  SorterResult,
+  TableCurrentDataSource,
+} from "antd/es/table/interface";
 import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useGetAllUsersQuery } from "../../../services/admin/userAdninApi";
 import PaginationComponent from "../../../components/pagination/PaginationComponent";
 import { IUser } from "../../../types/user";
-import { useDebounce } from "use-debounce"; // ✅ додаємо debounce
+import { useDebounce } from "use-debounce";
 
 dayjs.extend(customParseFormat);
 
-// Тип розширеного користувача для таблиці
 interface IUserExtended extends IUser {
   firstName: string;
   lastName: string;
   createdDateObj: dayjs.Dayjs;
   lastActivityObj: dayjs.Dayjs;
+  role: string; // ✅ потрібно для колонок таблиці
 }
 
 const fieldMap: Record<string, string> = {
   firstName: "FirstName",
   lastName: "LastName",
   email: "Email",
-  roles: "Roles",
+  role: "Roles",
   createdDateObj: "CreatedDate",
   lastActivityObj: "LastActivity",
 };
 
-
-
-// Розбиття fullName на firstName і lastName
 const parseFullName = (fullName: string) => {
   const parts = fullName.trim().split(" ");
   const firstName = parts[0] || "";
@@ -323,9 +599,10 @@ const parseFullName = (fullName: string) => {
   return { firstName, lastName };
 };
 
-const UsersPage = () => {
+const UsersPage: React.FC = () => {
   const [searchText, setSearchText] = useState("");
-  const [debouncedSearchText] = useDebounce(searchText, 500); // ✅ debounce 500ms
+  const [searchField, setSearchField] = useState<"name" | "email" | "roles">("name");
+  const [debouncedSearchText] = useDebounce(searchText, 500);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -337,9 +614,10 @@ const UsersPage = () => {
     pageSize,
     sortBy,
     sortDesc,
-    searchName: debouncedSearchText, // ✅ використовуємо debounce версію
+    ...(searchField === "name" && { searchName: debouncedSearchText }),
+    ...(searchField === "email" && { searchEmail: debouncedSearchText }),
+    ...(searchField === "roles" && { searchRoles: debouncedSearchText }),
   });
-  
 
   const users = data ?? { items: [], totalCount: 0 };
 
@@ -347,16 +625,14 @@ const UsersPage = () => {
     message.error("Не вдалося завантажити користувачів");
   }
 
-  // Обробка даних для таблиці
   const dataSource = useMemo<IUserExtended[]>(() => {
-     console.log("users.items", users.items); // 👈 перевір, чи є `role`
     return users.items.map((user: IUser) => {
       const { firstName, lastName } = parseFullName(user.fullName);
       return {
         ...user,
         firstName,
         lastName,
-         role: user.roles?.[0] || "Unknown", // ✅ Витягуємо першу роль
+        role: user.roles?.[0] || "Unknown",
         createdDateObj: dayjs(user.createdDate, "DD.MM.YYYY HH:mm:ss"),
         lastActivityObj: dayjs(user.lastActivity, "DD.MM.YYYY HH:mm:ss"),
       };
@@ -364,7 +640,7 @@ const UsersPage = () => {
   }, [users]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value); // 🔁 оновлюємо searchText
+    setSearchText(e.target.value);
   };
 
   const handleSelectChange = (keys: React.Key[]) => {
@@ -375,36 +651,23 @@ const UsersPage = () => {
     console.log(`Action: ${action}`, record);
   };
 
-  // const handleTableChange = (_: any, __: any, sorter: any) => {
-  //   if (sorter?.field) {
-  //     setSortBy(sorter.field);
-  //     setSortDesc(sorter.order === "descend");
-  //   }
-  // };
+  const handleTableChange = (
+      _: TablePaginationConfig,
+      __: Record<string, (string | number)[] | null>,
+      sorter: SorterResult<IUserExtended> | SorterResult<IUserExtended>[],
+      ___: TableCurrentDataSource<IUserExtended>
+  ) => {
+    const singleSorter = Array.isArray(sorter) ? sorter[0] : sorter;
+    const field = singleSorter?.field as string;
+    const backendField = fieldMap[field];
 
-//   const handleTableChange = (_: any, __: any, sorter: any) => {
-//   const backendField = fieldMap[sorter.field];
-//    console.log("🔍 sorter.field:", sorter.field);         // <-- додай
-//   console.log("➡️ Sending sortBy:", backendField);       // <-- додай
-//   if (backendField) {
-//     setSortBy(backendField);
-//     setSortDesc(sorter.order === "descend");
-//   } else {
-//     setSortBy(undefined);
-//   }
-// };
-
-const handleTableChange = (_: any, __: any, sorter: any) => {
-  const backendField = fieldMap[sorter.field];
-  console.log("🟡 sorter.field:", sorter.field);        // debug
-  console.log("🟢 sending SortBy:", backendField);      // debug
-  if (backendField) {
-    setSortBy(backendField);
-    setSortDesc(sorter.order === "descend");
-  } else {
-    setSortBy(undefined);
-  }
-};
+    if (backendField) {
+      setSortBy(backendField);
+      setSortDesc(singleSorter.order === "descend");
+    } else {
+      setSortBy(undefined);
+    }
+  };
 
   const columns = [
     {
@@ -426,21 +689,19 @@ const handleTableChange = (_: any, __: any, sorter: any) => {
       sorter: true,
     },
     {
-  title: "Role",
-  dataIndex: "role",
-  key: "role",
-  sorter: true,
-   render: (role: string) => role === "admin" ? "Administrator" : role,
-  //  sorter: (a: IUserExtended, b: IUserExtended) => a.roles.localeCompare(b.roles),
-  // render: (role: string) => role === "admin" ? "Administrator" : role,
-},
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      sorter: true,
+      render: (role: string) => (role === "admin" ? "Administrator" : role),
+    },
     {
       title: "Created Date",
       dataIndex: "createdDateObj",
       key: "createdDate",
       sorter: true,
       render: (date: dayjs.Dayjs) =>
-        date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-",
+          date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-",
     },
     {
       title: "Last Activity",
@@ -448,75 +709,97 @@ const handleTableChange = (_: any, __: any, sorter: any) => {
       key: "lastActivity",
       sorter: true,
       render: (date: dayjs.Dayjs) =>
-        date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-",
+          date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-",
     },
     {
       title: "Actions",
       key: "actions",
-      render: (_: any, record: IUserExtended) => (
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item onClick={() => handleAction("edit", record)}>
-                Edit
-              </Menu.Item>
-              <Menu.Item onClick={() => handleAction("delete", record)}>
-                Delete
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <Button>
-            Actions <DownOutlined />
-          </Button>
-        </Dropdown>
+      render: (_: unknown, record: IUserExtended) => (
+          <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item onClick={() => handleAction("edit", record)}>
+                    Edit
+                  </Menu.Item>
+                  <Menu.Item onClick={() => handleAction("delete", record)}>
+                    Delete
+                  </Menu.Item>
+                </Menu>
+              }
+          >
+            <Button>
+              Actions <DownOutlined />
+            </Button>
+          </Dropdown>
       ),
     },
   ];
 
   return (
-    <div style={{ padding: "20px" }}>
-      <Space
-        style={{ width: "100%", justifyContent: "space-between", marginBottom: 20 }}
-      >
-        <Input
-          placeholder="Search"
-          prefix={<SearchOutlined />}
-          value={searchText}
-          onChange={handleSearch}
-          style={{ width: 200 }}
-        />
-        <Button type="primary">Add User</Button>
-      </Space>
+      <div style={{ padding: "20px" }}>
+        <Space
+            style={{ width: "100%", justifyContent: "space-between", marginBottom: 20 }}
+        >
+          <Space>
+            <Select
+                value={searchField}
+                onChange=
+                    {
 
-      {isLoading ? (
-        <Spin />
-      ) : (
-        <>
-          <Table
-            rowSelection={{
-              selectedRowKeys,
-              onChange: handleSelectChange,
-            }}
-            columns={columns}
-            rowKey="id"
-            pagination={false}
-            dataSource={dataSource}
-            onChange={handleTableChange}
-          />
-          <PaginationComponent
-            currentPage={currentPage}
-            pageSize={pageSize}
-            totalItems={users.totalCount}
-            onPageChange={(page, size) => {
-              setCurrentPage(page);
-              setPageSize(size);
-            }}
-          />
-        </>
-      )}
-    </div>
+              (value) =>
+                {
+                  setSearchField(value); //find by role
+                  //setSearchText(value);
+                }
+            }
+                style={{ width: 120 }}
+            >
+              <Select.Option value="name">Name</Select.Option>
+              <Select.Option value="email">Email</Select.Option>
+              <Select.Option value="roles">Role</Select.Option>
+            </Select>
+
+            <Input
+                placeholder="Search"
+                prefix={<SearchOutlined />}
+                value={searchText}
+                onChange={handleSearch}
+                style={{ width: 200 }}
+            />
+          </Space>
+
+          <Button type="primary">Add User</Button>
+        </Space>
+
+        {isLoading ? (
+            <Spin />
+        ) : (
+            <>
+              <Table
+                  rowSelection={{
+                    selectedRowKeys,
+                    onChange: handleSelectChange,
+                  }}
+                  columns={columns}
+                  rowKey="id"
+                  pagination={false}
+                  dataSource={dataSource}
+                  //onChange={handleTableChange}
+              />
+              <PaginationComponent
+                  currentPage={currentPage}
+                  pageSize={pageSize}
+                  totalItems={users.totalCount}
+                  onPageChange={(page, size) => {
+                    setCurrentPage(page);
+                    setPageSize(size);
+                  }}
+              />
+            </>
+        )}
+      </div>
   );
 };
 
 export default UsersPage;
+
