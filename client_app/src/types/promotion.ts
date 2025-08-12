@@ -1,10 +1,10 @@
 export interface IPromotion {
     id: number;
     name: string;
-    description?: string;
-    imageUrl?: string;
-    startDate: string; // ISO string (Date)
-    endDate: string;   // ISO string (Date)
+    description?: string | null;
+    imageUrl?: string | null;
+    startDate: string;       // ISO string
+    endDate: string;         // ISO string
     isActive: boolean;
     categoryId?: number | null;
     categoryName?: string | null;
@@ -16,16 +16,27 @@ export interface IPromotion {
 
 export interface IPromotionPostRequest {
     name: string;
-    description?: string;
-    image?: File | null;
-    startDate: string; // ISO string
-    endDate: string;   // ISO string
-    isActive: boolean;
+    description?: string | null;
+    image: File;             // обов'язковий для створення (CreateDto)
+    startDate: string;       // ISO string
+    endDate: string;         // ISO string
+    isActive?: boolean;      // в CreateDto дефолт true, можна зробити опціональним
     categoryId?: number | null;
     discountTypeId: number;
+    amount: number;          // співпадає з Amount у CreateDto
     productIds?: number[];
 }
 
-export interface IPromotionPutRequest extends IPromotionPostRequest {
+export interface IPromotionPutRequest {
     id: number;
+    name: string;
+    description?: string | null;
+    image?: File | null;     // опціональний, може бути null (UpdateDto)
+    startDate: string;
+    endDate: string;
+    isActive?: boolean;
+    categoryId?: number | null;
+    discountTypeId: number;
+    amount: number;
+    productIds?: number[];
 }

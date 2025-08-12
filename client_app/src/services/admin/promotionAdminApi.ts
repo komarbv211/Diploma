@@ -1,7 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQuery } from '../../utilities/createBaseQuery';
-import { IPromotion, IPromotionPutRequest } from '../../types/promotion';
-import { serializePromotion } from '../../utilities/serialize';
+import { IPromotion } from '../../types/promotion';
 
 export const promotionAdminApi = createApi({
     reducerPath: 'promotionAdminApi',
@@ -27,21 +26,15 @@ export const promotionAdminApi = createApi({
             invalidatesTags: ['Promotions'],
         }),
 
-        updatePromotion: builder.mutation<void, IPromotionPutRequest>({
-            query: (updatedPromotion) => {
-                try {
-                    const formData = serializePromotion(updatedPromotion);
-                    return {
-                        url: '',
-                        method: 'PUT',
-                        body: formData,
-                    };
-                } catch {
-                    throw new Error("Error serializing the promotion data.");
-                }
-            },
+        updatePromotion: builder.mutation<void, { id: number; formData: FormData }>( {
+            query: ({formData }) => ({
+                url: '',  // видаляємо id з URL
+                method: 'PUT',
+                body: formData,
+            }),
             invalidatesTags: ['Promotions'],
         }),
+
 
         deletePromotion: builder.mutation<void, number>({
             query: (id) => ({

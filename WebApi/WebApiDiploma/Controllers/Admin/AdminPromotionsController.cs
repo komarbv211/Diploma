@@ -1,8 +1,8 @@
 ﻿using Core.DTOs.PromotionDTOs;
 using Core.Interfaces;
-using Infrastructure.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace WebApiDiploma.Controllers.Admin
 {
@@ -41,6 +41,27 @@ namespace WebApiDiploma.Controllers.Admin
 
             await _promotionService.DeletePromotionAsync(id);
             return Ok(new { message = "Акція видалена" });
+        }
+
+        // Новий метод: отримати всі акції
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var promotions = await _promotionService.GetAllPromotionsAsync();
+            return Ok(promotions);
+        }
+
+        // Новий метод: отримати акцію за id
+        [HttpGet("{id:long}")]
+        public async Task<IActionResult> GetById(long id)
+        {
+            if (id < 0) return BadRequest("Невірний ID");
+
+            var promotion = await _promotionService.GetPromotionByIdAsync(id);
+            if (promotion == null)
+                return NotFound("Акція не знайдена");
+
+            return Ok(promotion);
         }
     }
 }

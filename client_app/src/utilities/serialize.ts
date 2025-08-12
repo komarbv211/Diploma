@@ -36,8 +36,8 @@ export function serializePromotion(data: IPromotionPutRequest): FormData {
         formData.append('description', data.description);
     }
 
-    formData.append('startDate', data.startDate);
-    formData.append('endDate', data.endDate);
+    formData.append('startDate', data.startDate.toString());
+    formData.append('endDate', data.endDate.toString());
     formData.append('isActive', data.isActive.toString());
 
     if (data.categoryId !== undefined && data.categoryId !== null) {
@@ -58,3 +58,4 @@ export function serializePromotion(data: IPromotionPutRequest): FormData {
 
     return formData;
 }
+
