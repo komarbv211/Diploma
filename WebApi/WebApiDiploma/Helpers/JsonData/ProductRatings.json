@@ -1,0 +1,21 @@
+//ProductRating
+[
+  {
+    "Id": 1,
+    "ProductId": 1,
+    "UserId": 1,
+    "Rating": 5
+  },
+  {
+    "Id": 2,
+    "ProductId": 1,
+    "UserId": 2,
+    "Rating": 4
+  },
+  {
+    "Id": 3,
+    "ProductId": 2,
+    "UserId": 1,
+    "Rating": 3
+  }
+]

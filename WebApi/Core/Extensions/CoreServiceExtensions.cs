@@ -19,6 +19,10 @@ namespace Core.Extensions
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IPromotionRepository, PromotionRepository>();
             services.AddScoped<IPromotionService, PromotionService>();
+            services.AddScoped<IProductRatingService, ProductRatingService>();
+            services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IAuthService, AuthService>();
+
         }
     }
 }

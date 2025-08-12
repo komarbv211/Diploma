@@ -15,6 +15,11 @@ namespace Infrastructure.Entities
 
         [ForeignKey("Category")]
         public long CategoryId { get; set; }
+
+        // Додані властивості рейтингу 
+        public long? RatingsCount { get; set; }
+        public double? AverageRating { get; set; }
+
         public virtual CategoryEntity? Category { get; set; }
 
         public virtual ICollection<ProductImageEntity>? Images { get; set; }
@@ -23,7 +28,7 @@ namespace Infrastructure.Entities
         //public virtual ICollection<PromotionEntity>? Promotions { get; set; }
 
         public virtual ICollection<PromotionProductEntity>? PromotionProducts { get; set; }
-
-
+        public virtual ICollection<ProductRatingEntity>? Ratings { get; set; }        
+        public ICollection<CartEntity>? Carts { get; set; }
     }
 }

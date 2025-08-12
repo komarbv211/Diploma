@@ -7,6 +7,8 @@ export interface IProduct {
   description: string;
   categoryId: number;
   category: ICategoryName;
+  averageRating?:number;
+  ratingsCount:number;
   images?: IProductImageDto[];
 }
 
