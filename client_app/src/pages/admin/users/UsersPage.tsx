@@ -573,6 +573,7 @@ import PaginationComponent from "../../../components/pagination/PaginationCompon
 import { IUser } from "../../../types/user";
 import { useDebounce } from "use-debounce";
 import { DatePicker } from "antd";
+import type { TableProps } from "antd";
 // import type { RangeValue } from 'rc-picker/lib/interface';
 // import dayjs, { Dayjs } from "dayjs";
 
@@ -669,89 +670,195 @@ const { RangePicker } = DatePicker;
     console.log(`Action: ${action}`, record);
   };
 
-  const handleTableChange = (
-      _: TablePaginationConfig,
-      __: Record<string, (string | number)[] | null>,
-      sorter: SorterResult<IUserExtended> | SorterResult<IUserExtended>[],
-      ___: TableCurrentDataSource<IUserExtended>
-  ) => {
-    const singleSorter = Array.isArray(sorter) ? sorter[0] : sorter;
-    const field = singleSorter?.field as string;
-    const backendField = fieldMap[field];
+  // const handleTableChange = (
+  //     // _: TablePaginationConfig,
+  //     // // __: Record<string, (string | number)[] | null>,
+  //     //  filters: Record<string, (string | number | boolean)[] | null>,
+  //     // sorter: SorterResult<IUserExtended> | SorterResult<IUserExtended>[],
+  //     // ___: TableCurrentDataSource<IUserExtended>
 
-    if (backendField) {
-      setSortBy(backendField);
-      setSortDesc(singleSorter.order === "descend");
-    } else {
-      setSortBy(undefined);
-    }
-  };
+  //     pagination: TablePaginationConfig,
+  // filters: Record<string, (string | number | boolean)[] | null>,
+  // sorter: SorterResult<IUserExtended> | SorterResult<IUserExtended>[],
+  // extra: TableCurrentDataSource<IUserExtended>
+  // ) => {
+  //   const singleSorter = Array.isArray(sorter) ? sorter[0] : sorter;
+  //   const field = singleSorter?.field as string;
+  //   const backendField = fieldMap[field];
+
+  //   if (backendField) {
+  //     setSortBy(backendField);
+  //     setSortDesc(singleSorter.order === "descend");
+  //   } else {
+  //     setSortBy(undefined);
+  //      setSortDesc(false); // Важливо, щоб скидалось!
+  //   }
+  //   setCurrentPage(1); // Якщо юзер сортує - йому варто бачити 1 сторінку
+  // };
+  const handleTableChange: TableProps<IUserExtended>["onChange"] = (
+  pagination,
+  filters,
+  sorter,
+  extra
+) => {
+  const singleSorter = Array.isArray(sorter) ? sorter[0] : sorter;
+  const field = singleSorter?.field as string;
+  const backendField = fieldMap[field];
+
+  if (backendField) {
+    setSortBy(backendField);
+    setSortDesc(singleSorter.order === "descend");
+  } else {
+    setSortBy(undefined);
+    setSortDesc(false);
+  }
+
+  setCurrentPage(1);
+};
+
+
+  const resetSorting = () => {
+     console.log("resetSorting called");
+  setSortBy(undefined);
+  setSortDesc(false);
+  setCurrentPage(1); // щоб оновити дані
+};
+
+  // const columns = [
+  //   {
+  //     title: "First Name",
+  //     dataIndex: "firstName",
+  //     key: "firstName",
+  //     sorter: true,
+  //   },
+  //   {
+  //     title: "Last Name",
+  //     dataIndex: "lastName",
+  //     key: "lastName",
+  //     sorter: true,
+  //   },
+  //   {
+  //     title: "Email",
+  //     dataIndex: "email",
+  //     key: "email",
+  //     sorter: true,
+  //   },
+  //   {
+  //     title: "Role",
+  //     dataIndex: "role",
+  //     key: "role",
+  //     sorter: true,
+  //     render: (role: string) => (role === "admin" ? "Administrator" : role),
+  //   },
+  //   {
+  //     title: "Created Date",
+  //     dataIndex: "createdDateObj",
+  //     key: "createdDate",
+  //     sorter: true,
+  //     render: (date: dayjs.Dayjs) =>
+  //         date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-",
+  //   },
+  //   {
+  //     title: "Last Activity",
+  //     dataIndex: "lastActivityObj",
+  //     key: "lastActivity",
+  //     sorter: true,
+  //     render: (date: dayjs.Dayjs) =>
+  //         date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-",
+  //   },
+  //   {
+  //     title: "Actions",
+  //     key: "actions",
+  //     render: (_: unknown, record: IUserExtended) => (
+  //         <Dropdown
+  //             overlay={
+  //               <Menu>
+  //                 <Menu.Item onClick={() => handleAction("edit", record)}>
+  //                   Edit
+  //                 </Menu.Item>
+  //                 <Menu.Item onClick={() => handleAction("delete", record)}>
+  //                   Delete
+  //                 </Menu.Item>
+  //               </Menu>
+  //             }
+  //         >
+  //           <Button>
+  //             Actions <DownOutlined />
+  //           </Button>
+  //         </Dropdown>
+  //     ),
+  //   },
+  // ];
+
 
   const columns = [
-    {
-      title: "First Name",
-      dataIndex: "firstName",
-      key: "firstName",
-      sorter: true,
-    },
-    {
-      title: "Last Name",
-      dataIndex: "lastName",
-      key: "lastName",
-      sorter: true,
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      sorter: true,
-    },
-    {
-      title: "Role",
-      dataIndex: "role",
-      key: "role",
-      sorter: true,
-      render: (role: string) => (role === "admin" ? "Administrator" : role),
-    },
-    {
-      title: "Created Date",
-      dataIndex: "createdDateObj",
-      key: "createdDate",
-      sorter: true,
-      render: (date: dayjs.Dayjs) =>
-          date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-",
-    },
-    {
-      title: "Last Activity",
-      dataIndex: "lastActivityObj",
-      key: "lastActivity",
-      sorter: true,
-      render: (date: dayjs.Dayjs) =>
-          date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-",
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_: unknown, record: IUserExtended) => (
-          <Dropdown
-              overlay={
-                <Menu>
-                  <Menu.Item onClick={() => handleAction("edit", record)}>
-                    Edit
-                  </Menu.Item>
-                  <Menu.Item onClick={() => handleAction("delete", record)}>
-                    Delete
-                  </Menu.Item>
-                </Menu>
-              }
-          >
-            <Button>
-              Actions <DownOutlined />
-            </Button>
-          </Dropdown>
-      ),
-    },
-  ];
+  {
+    title: "First Name",
+    dataIndex: "firstName",
+    key: "firstName",
+    sorter: true,
+    sortOrder: sortBy === "FirstName" ? (sortDesc ? "descend" : "ascend") : null,
+  },
+  {
+    title: "Last Name",
+    dataIndex: "lastName",
+    key: "lastName",
+    sorter: true,
+    sortOrder: sortBy === "LastName" ? (sortDesc ? "descend" : "ascend") : null,
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
+    sorter: true,
+    sortOrder: sortBy === "Email" ? (sortDesc ? "descend" : "ascend") : null,
+  },
+  {
+    title: "Role",
+    dataIndex: "role",
+    key: "role",
+    sorter: true,
+    sortOrder: sortBy === "Roles" ? (sortDesc ? "descend" : "ascend") : null,
+    render: (role: string) => (role === "admin" ? "Administrator" : role),
+  },
+  {
+    title: "Created Date",
+    dataIndex: "createdDateObj",
+    key: "createdDate",
+    sorter: true,
+    sortOrder: sortBy === "CreatedDate" ? (sortDesc ? "descend" : "ascend") : null,
+    render: (date: dayjs.Dayjs) =>
+      date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-",
+  },
+  {
+    title: "Last Activity",
+    dataIndex: "lastActivityObj",
+    key: "lastActivity",
+    sorter: true,
+    sortOrder: sortBy === "LastActivity" ? (sortDesc ? "descend" : "ascend") : null,
+    render: (date: dayjs.Dayjs) =>
+      date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-",
+  },
+  {
+    title: "Actions",
+    key: "actions",
+    render: (_: unknown, record: IUserExtended) => (
+      <Dropdown
+        overlay={
+          <Menu>
+            <Menu.Item onClick={() => handleAction("edit", record)}>Edit</Menu.Item>
+            <Menu.Item onClick={() => handleAction("delete", record)}>Delete</Menu.Item>
+          </Menu>
+        }
+      >
+        <Button>
+          Actions <DownOutlined />
+        </Button>
+      </Dropdown>
+    ),
+  },
+];
+
 
   return (
       <div style={{ padding: "20px" }}>
@@ -818,9 +925,8 @@ const { RangePicker } = DatePicker;
     format="DD.MM.YYYY"
   />
 </Space>
-
-
-          <Button type="primary">Add User</Button>
+          <Button onClick={() => resetSorting()}>Скинути сортування</Button>
+    <Button type="primary">Add User</Button>
         </Space>
 
         {isLoading ? (
@@ -833,10 +939,18 @@ const { RangePicker } = DatePicker;
                     onChange: handleSelectChange,
                   }}
                   columns={columns}
-                  rowKey="id"
-                  pagination={false}
-                  dataSource={dataSource}
-                  //onChange={handleTableChange}
+  rowKey="id"
+  pagination={false}
+  dataSource={dataSource}
+  onChange={handleTableChange}
+  sorter={
+    sortBy
+      ? {
+          field: Object.entries(fieldMap).find(([key, value]) => value === sortBy)?.[0],
+          order: sortDesc ? "descend" : "ascend",
+        }
+      : undefined
+  }
               />
               <PaginationComponent
                   currentPage={currentPage}
