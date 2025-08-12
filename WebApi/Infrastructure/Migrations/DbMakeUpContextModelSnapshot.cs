@@ -93,9 +93,6 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric");
-
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp with time zone");
 
@@ -223,6 +220,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
 
                     b.Property<long?>("CategoryId")
                         .HasColumnType("bigint");
@@ -555,6 +555,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+
             modelBuilder.Entity("Infrastructure.Entities.CartEntity", b =>
                 {
                     b.HasOne("Infrastructure.Entities.ProductEntity", "Product")
@@ -573,6 +574,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("User");
                 });
+            
 
             modelBuilder.Entity("Infrastructure.Entities.CategoryEntity", b =>
                 {

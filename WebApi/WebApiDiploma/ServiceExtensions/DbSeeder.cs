@@ -287,16 +287,15 @@ namespace WebApiDiploma.ServiceExtensions
                         {
                             // === 1. Обробка DiscountType ===
 
-                            // Шукаємо, чи вже існує такий тип знижки з таким значенням
-                            var discountType = await discountTypeRepo.FirstOrDefaultAsync(dt => dt.Name == model.DiscountType && dt.Amount == model.DiscountValue);
+                            // Шукаємо, чи вже існує такий тип знижки 
+                            var discountType = await discountTypeRepo.FirstOrDefaultAsync(dt => dt.Name == model.DiscountType);
 
                             // Якщо такого немає — створюємо новий
                             if (discountType == null)
                             {
                                 discountType = new DiscountTypeEntity
                                 {
-                                    Name = model.DiscountType,   // "Percent" або "Fixed"
-                                    Amount = model.DiscountValue // або 20 (%), або 100 (грн)
+                                    Name = model.DiscountType   // "Percent" або "Fixed"
                                 };
 
                                 // Додаємо в БД
