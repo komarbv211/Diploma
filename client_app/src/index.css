@@ -27,7 +27,16 @@ input::placeholder {
 :where(.css-dev-only-do-not-override-pjilya).ant-drawer-right>.ant-drawer-content-wrapper {
   top: 5vw;
   right: 5vw;
+  left: 5vw;
   bottom: 5vw;
+}
+@media (max-width: 768px) {
+  :where(.css-dev-only-do-not-override-pjilya).ant-drawer-right > .ant-drawer-content-wrapper {
+    top: 2vw;
+    right: 2vw;
+    left: 2vw;
+    bottom: 2vw;
+  }
 }
 :where(.css-dev-only-do-not-override-pjilya).ant-list-split .ant-list-item {
   border-color: gray;

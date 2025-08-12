@@ -29,7 +29,7 @@ const CartDrawer: React.FC = () => {
         </div>
 
         <div className="flex flex-col justify-between ml-1 h-[41px]">
-          <div className="flex justify-center items-center w-[49px] h-[19px] p-[10px] gap-[10px] bg-[#C89FB8] rounded-[15px]">
+          <div className="flex justify-center items-center w-[49px] h-[19px] p-[10px] gap-[10px] bg-light_purple rounded-[15px]">
             {/* Тут можна показувати кількість товарів із useCart */}
             <span className="w-[29px] h-[20px] text-black font-manrope font-light text-[15px] leading-[20px] text-center">
               <span className="...">
@@ -47,7 +47,7 @@ const CartDrawer: React.FC = () => {
       <Drawer
         placement="right"
         open={open}
-        width={1720} // ширина дравера в пікселях
+        width={"full"} // ширина дравера в пікселях
         headerStyle={{ borderBottom: "none" }}
         title={
           <div
@@ -75,7 +75,7 @@ const CartDrawer: React.FC = () => {
       >
         {/* Головний контейнер із flex */}
         <div
-          className="flex gap-6 px-6 py-4 border-t border-gray"
+          className="flex flex-col md:flex-row gap-6 px-6 py-4 border-t border-gray"
           style={{ height: "66vh" }}
         >
           {/* Ліва частина зі скролом */}
@@ -147,10 +147,12 @@ const CartDrawer: React.FC = () => {
           </div>
 
           {/* Права частина без скролу */}
-          <div className="flex flex-col px-2" style={{ flex: 1 }}>
-            <div>
-              <div className="flex text-[27px] font-medium font-manrope mb-2 justify-between">
-                <span>Загальна сума :</span>
+          <div className="flex flex-col  px-2 basis-[1.7] sm:basis-[2] md:basis-[2.5]">
+            <div className="bg-beige2 gap-3 p-[20px] rounded-xl">
+              <div className="flex xl:text-[27px] font-medium font-manrope mb-2 justify-between">
+                <div className="flex flex-col">
+                  <span>Загальна сума:</span>
+                </div>
                 <span>
                   {cart
                     ?.reduce(
@@ -162,11 +164,13 @@ const CartDrawer: React.FC = () => {
                   ₴
                 </span>
               </div>
-            </div>
 
-            <button className="w-full h-[63px] bg-pink rounded-xl text-white text-[24px] font-semibold font-manrope hover:bg-pink/90 transition">
-              Оформити замовлення
-            </button>
+              <button className="w-full h-[63px] bg-pink rounded-xl text-white xl:text-[24px] font-semibold font-manrope hover:bg-pink/90 transition">
+                <p className="ml-3 mr-3 sm:justify-between sm:items-center">
+                  Оформити замовлення
+                </p>
+              </button>
+            </div>
           </div>
         </div>
       </Drawer>
