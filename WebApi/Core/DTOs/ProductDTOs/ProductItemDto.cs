@@ -9,6 +9,8 @@ namespace Core.DTOs.ProductsDTO
         public decimal Price { get; set; }
         public string? Description { get; set; }
         public long CategoryId { get; set; }
+        public double? AverageRating { get; set; }
+        public long RatingsCount { get; set; }
         public List<ProductImageDto>? Images { get; set; }
     }
 }

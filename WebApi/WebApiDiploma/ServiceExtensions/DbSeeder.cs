@@ -222,11 +222,39 @@ namespace WebApiDiploma.ServiceExtensions
                 else Console.WriteLine("File \"Adverts.json\" not found");
             }
 
+            // ProductRating seeder
+            var productRatingRepo = scope.ServiceProvider.GetService<IRepository<ProductRatingEntity>>();
+            if (productRatingRepo is not null && !await productRatingRepo.AnyAsync())
+            {
+                Console.WriteLine("Start product ratings seeder");
+                string ratingsJsonPath = Path.Combine(Environment.CurrentDirectory, "Helpers", app.Configuration["SeederJsonDir"]!, "ProductRatings.json");
+                if (File.Exists(ratingsJsonPath))
+                {
+                    var ratingsJson = File.ReadAllText(ratingsJsonPath, Encoding.UTF8);
+                    try
+                    {
+                        var ratingModels = JsonConvert.DeserializeObject<IEnumerable<SeederProductRatingModel>>(ratingsJson)
+                                           ?? throw new JsonException();
 
+                        var ratings = ratingModels.Select(x => new ProductRatingEntity
+                        {
+                            Id = x.Id,
+                            ProductId = x.ProductId,
+                            UserId = x.UserId,
+                            Rating = x.Rating
+                        });
 
-
-
-
+                        await productRatingRepo.AddRangeAsync(ratings);
+                        await productRatingRepo.SaveAsync();
+                        Console.WriteLine("Product ratings seeded successfully.");
+                    }
+                    catch (JsonException)
+                    {
+                        Console.WriteLine("Error deserialize ProductRatings.json");
+                    }
+                }
+                else Console.WriteLine("File \"ProductRatings.json\" not found");
+            }
 
             // Отримуємо потрібні репозиторії з DI-контейнера
 
@@ -259,16 +287,15 @@ namespace WebApiDiploma.ServiceExtensions
                         {
                             // === 1. Обробка DiscountType ===
 
-                            // Шукаємо, чи вже існує такий тип знижки з таким значенням
-                            var discountType = await discountTypeRepo.FirstOrDefaultAsync(dt => dt.Name == model.DiscountType && dt.Amount == model.DiscountValue);
+                            // Шукаємо, чи вже існує такий тип знижки 
+                            var discountType = await discountTypeRepo.FirstOrDefaultAsync(dt => dt.Name == model.DiscountType);
 
                             // Якщо такого немає — створюємо новий
                             if (discountType == null)
                             {
                                 discountType = new DiscountTypeEntity
                                 {
-                                    Name = model.DiscountType,   // "Percent" або "Fixed"
-                                    Amount = model.DiscountValue // або 20 (%), або 100 (грн)
+                                    Name = model.DiscountType   // "Percent" або "Fixed"
                                 };
 
                                 // Додаємо в БД

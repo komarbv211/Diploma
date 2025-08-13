@@ -2,7 +2,6 @@
 using Core.DTOs.UsersDTOs;
 using Core.Interfaces;
 using Core.Models.Search;
-using Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,35 +13,30 @@ namespace WebApiDiploma.Controllers.Admin
     [Authorize(Roles = "Admin")]
     public class AdminUserController : ControllerBase
     {
-        private readonly IUserService service;
+        private readonly IUserService _service;
+        private readonly IEmailService _emailService;
         private readonly ILogger<AdminUserController> _logger;
 
-        public AdminUserController(IUserService services, ILogger<AdminUserController> logger)
+        public AdminUserController(IUserService service, IEmailService emailService, ILogger<AdminUserController> logger)
         {
-            service = services;
+            _service = service;
+            _emailService = emailService;
             _logger = logger;
         }
 
         [HttpGet("users")]
         public async Task<ActionResult<PagedResultDto<UserDTO>>> GetAll([FromQuery] PagedRequestDto request)
         {
-            var users = await service.GetAllAsync(request);
+            var users = await _service.GetAllAsync(request);
             return Ok(users);
         }
 
         [HttpPost]
         public async Task<ActionResult> Create([FromForm] UserCreateDTO dto)
         {
-            await service.CreateUserAsync(dto);
+            await _service.CreateUserAsync(dto);
             return Ok();
         }
-
-        //[HttpGet("search")]
-        //public async Task<IActionResult> SearchUsers([FromQuery] UserSearchModel model)
-        //{
-        //    var result = await service.SearchUsersAsync(model);
-        //    return Ok(result);
-        //}
 
         [HttpGet("search")]
         public async Task<IActionResult> SearchUsers([FromQuery] UserSearchModel model)
@@ -56,11 +50,39 @@ namespace WebApiDiploma.Controllers.Admin
                 _logger.LogInformation("No roles provided in the query.");
             }
 
-            var result = await service.SearchUsersAsync(model);
+            var result = await _service.SearchUsersAsync(model);
             return Ok(result);
         }
 
+        [HttpPost("send-message")]
+        public async Task<IActionResult> SendMessageToUser([FromBody] UserMessageDTO dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Subject) || string.IsNullOrWhiteSpace(dto.Message))
+            {
+                return BadRequest("Subject and Message cannot be empty.");
+            }
 
+            try
+            {
+                // Отримуємо email користувача за Id
+                var user = await _service.GetByIdAsync(dto.Id);
+                if (user == null)
+                {
+                    return NotFound($"User with Id {dto.Id} not found.");
+                }
+
+                // Відправка листа
+                await _emailService.SendEmailAsync(user.Email, dto.Subject, dto.Message);
+
+                _logger.LogInformation("Email sent to user {UserId} ({Email}) with subject '{Subject}'", user.Id, user.Email, dto.Subject);
+
+                return Ok("Message sent successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending email to user {UserId}", dto.Id);
+                return StatusCode(500, "An error occurred while sending the email.");
+            }
+        }
     }
-
 }

@@ -45,6 +45,9 @@ namespace Infrastructure.Entities
         // Може бути використано, якщо акція не на всю категорію, а тільки на вибрані товари
         //public virtual ICollection<ProductEntity>? Products { get; set; }
 
+        [Required]
+        public decimal Amount { get; set; }
+
 
         public virtual ICollection<PromotionProductEntity>? PromotionProducts { get; set; }
 

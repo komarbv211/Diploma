@@ -32,5 +32,7 @@ namespace Infrastructure.Entities
         public virtual ICollection<UserLoginEntity>? UserLogins { get; set; }
         //public virtual ICollection<OrderEntity> Orders { get; set; }
         public virtual ICollection<UserRoleEntity>? UserRoles { get; set; }
+        public virtual ICollection<ProductRatingEntity>? Ratings { get; set; }
+        public ICollection<CartEntity>? Carts { get; set; }
     }
 }
