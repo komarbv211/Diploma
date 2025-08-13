@@ -574,6 +574,8 @@ import { IUser } from "../../../types/user";
 import { useDebounce } from "use-debounce";
 import { DatePicker } from "antd";
 import type { TableProps } from "antd";
+
+
 // import type { RangeValue } from 'rc-picker/lib/interface';
 // import dayjs, { Dayjs } from "dayjs";
 
@@ -616,7 +618,7 @@ const { RangePicker } = DatePicker;
   const [debouncedSearchRoles] = useDebounce(searchRoles, 500);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(5);
   const [sortBy, setSortBy] = useState<string | undefined>();
   const [sortDesc, setSortDesc] = useState<boolean>(false);
 
@@ -637,6 +639,8 @@ const { RangePicker } = DatePicker;
     // ...(searchField === "email" && { searchEmail: debouncedSearchText }),
     // ...(searchField === "roles" && { searchRoles: debouncedSearchRoles }),
   });
+
+  console.log("Working app", pageSize);
 
   const users = data ?? { items: [], totalCount: 0 };
 
@@ -966,7 +970,7 @@ const { RangePicker } = DatePicker;
               <PaginationComponent
                   currentPage={currentPage}
                   pageSize={pageSize}
-                  totalItems={users.totalCount}
+                  totalItems={data?.pagination?.totalCount}
                   onPageChange={(page, size) => {
                     setCurrentPage(page);
                     setPageSize(size);
