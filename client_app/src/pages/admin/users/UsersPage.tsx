@@ -719,8 +719,17 @@ const { RangePicker } = DatePicker;
 
   const resetSorting = () => {
      console.log("resetSorting called");
-  setSortBy(undefined);
-  setSortDesc(false);
+  // setSortBy(undefined);
+  // setSortDesc(false);
+
+    setSearchRoles(undefined);
+    setSearchText('');
+    setDateField('createdDate'); // або null, якщо дефолтного значення немає
+    setDateRange(null);
+
+    // Скидаємо сортування
+    setSortBy(undefined);
+    setSortDesc(false);
   setCurrentPage(1); // щоб оновити дані
 };
 
@@ -888,16 +897,18 @@ const { RangePicker } = DatePicker;
 
           <Space>
   <Select
-    placeholder="Select role"
+    placeholder="Обрати роль"
+    value={searchRoles || undefined} // важливо: керуємо значенням
+    allowClear
     onChange={(value) => setSearchRoles(value)}
     style={{ width: 150 }}
   >
-    <Select.Option value="Admin">Administrator</Select.Option>
-    <Select.Option value="User">User</Select.Option>
+    <Select.Option value="Admin">Адміністратор</Select.Option>
+    <Select.Option value="User">Користувач</Select.Option>
   </Select>
 
   <Input
-    placeholder="Search"
+    placeholder="Пошук за ім'ям"
     prefix={<SearchOutlined />}
     value={searchText}
     onChange={handleSearch}
