@@ -35,6 +35,7 @@ export interface PagedResultDto<T> {
   totalCount: number;
 }
 
+
 export interface PagedRequestDto {
   page?: number;
   pageSize?: number;
@@ -70,20 +71,3 @@ export interface IUserListResponse {
   totalCount: number;
 }
 
-// interface IUserFromServer {
-//   id: number;
-//   fullName: string;
-//   email: string;
-//   image?: string;
-//   isLoginGoogle?: boolean;
-//   isLoginPassword?: boolean;
-//   lastActivity: string;
-//   createdDate: string;
-// }
-// interface UserSearchParams {
-//   page: number;
-//   pageSize: number;
-//   sortBy?: string;
-//   sortDesc?: boolean;
-//   name?: string;
-// }
