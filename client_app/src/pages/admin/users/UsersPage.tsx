@@ -155,6 +155,7 @@ const UsersPage: React.FC = () => {
     setCurrentPage(1);
   };
 
+
   const resetSorting = () => {
     setSearchRoles(undefined);
     setSearchText("");
