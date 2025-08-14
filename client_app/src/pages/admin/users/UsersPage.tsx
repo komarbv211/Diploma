@@ -233,7 +233,7 @@ const UsersPage: React.FC = () => {
               }
           >
             <Button>
-              Actions <DownOutlined />
+              Дії <DownOutlined />
             </Button>
           </Dropdown>
       ),
