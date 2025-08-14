@@ -1,10 +1,12 @@
 import { lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 
+// Лейзі-імпорт сторінок
 const AdminLayout = lazy(() => import("./../components/layouts/admin/Layout"));
 const Dashboard = lazy(() => import("./../pages/admin/Dashboard"));
-const AdminProfile = lazy(() => import("./../pages/admin/AdminProfile"));
+const AdminProfile = lazy(() => import("./../pages/admin/AdminProfile"))
 const UsersPage = lazy(() => import("./../pages/admin/users/UsersPage"));
+const UserMessagePage = lazy(() => import("../pages/admin/users/UserMessagePage")); 
 const CategoryList = lazy(() => import("./../pages/admin/categories/CategoryList"));
 const TestingList = lazy(() => import("./../pages/admin/testing/TestingList"));
 const EditCategoryPage = lazy(() => import("./../pages/admin/categories/EditCategoryPage"));
@@ -22,7 +24,10 @@ export const AdminRoutes = () => {
       <Route element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="profile" element={<AdminProfile />} />
-        <Route path="users" element={<UsersPage />} />
+        <Route path="users">
+          <Route index element={<UsersPage />} />
+          <Route path=":id/message" element={<UserMessagePage />} />
+        </Route>
 
         <Route path="categories">
           <Route index element={<CategoryList />} />
@@ -43,7 +48,7 @@ export const AdminRoutes = () => {
 
         <Route path="promotions">
           <Route index element={<PromotionList />} />
-          <Route path="create" element={<CreatePromotionPage />} />{" "}
+          <Route path="create" element={<CreatePromotionPage />} />
           <Route path="edit/:id" element={<EditPromotionPage />} />
         </Route>
       </Route>

@@ -1,15 +1,14 @@
-// userApi.ts
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQueryWithReauth } from '../utilities/createBaseQuery';
-import { IUserCreateDTO, IUserDTO } from '../types/user';
-import {handleAuthQueryStarted} from "../utilities/handleAuthQueryStarted.ts";
-import {IAuthResponse} from "../types/account.ts";
+import { IUserCreateDTO, IUserDTO, IUserMessageDTO } from '../types/user';
+import { handleAuthQueryStarted } from "../utilities/handleAuthQueryStarted.ts";
+import { IAuthResponse } from "../types/account.ts";
 
 export const userApi = createApi({
   reducerPath: 'userApi',
-  baseQuery: createBaseQueryWithReauth('User'),
+  baseQuery: createBaseQueryWithReauth('admin/user'),
   tagTypes: ['Users'],
-  endpoints: (builder) => ({    
+  endpoints: (builder) => ({
     getUserById: builder.query<IUserDTO, number>({
       query: (id) => ({
         url: `${id}`,
@@ -48,6 +47,15 @@ export const userApi = createApi({
       }),
       invalidatesTags: ['Users'],
     }),
+
+    sendMessageToUser: builder.mutation<string, IUserMessageDTO>({
+      query: (message) => ({
+        url: 'send-message',
+        method: 'POST',
+        body: message,
+        responseHandler: (response) => response.text(), // 👈 повертаємо текст
+      }),
+    }),
   }),
 });
 
@@ -57,4 +65,5 @@ export const {
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
+  useSendMessageToUserMutation,
 } = userApi;

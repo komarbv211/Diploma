@@ -111,18 +111,14 @@ const CartDrawer: React.FC = () => {
                     />
 
                     {/* Контейнер з інформацією */}
-                    <div className="flex flex-col flex-1 gap-3 lg:flex-row xl:items-center xl:justify-between">
+                    <div className="flex flex-col flex-1 gap-3 lg:flex-row lg:items-center lg:justify-between">
                       {/* Назва + категорія */}
                       <div className="flex-1 min-w-[100px]">
-                        <Text
-                          strong
-                          className="w-[332px] h-[27px] font-manrope font-medium text-[20px] leading-[27px] 
-                          bg-gradient-to-r from-[#1A3D83] to-[#8AA8D2] bg-clip-text text-transparent"
-                        >
+                        <Text strong className="text-lg">
                           {item.name}
                         </Text>
                         <br />
-                        <Text type="secondary" className="text-[16px]">
+                        <Text type="secondary" className="text-sm">
                           {item.categoryName}
                         </Text>
                       </div>
@@ -130,7 +126,7 @@ const CartDrawer: React.FC = () => {
                       {/* Кнопки та ціна */}
                       <div className="flex flex-col lg:flex-row lg:items-center lg:gap-6">
                         {/* Кнопки */}
-                        <div className="flex items-center gap-2 w-28 justify-center h-[52px] rounded-lg border border-blue2">
+                        <div className="flex items-center gap-2 w-full lg:w-28 lg:justify-center">
                           <Button
                             size="small"
                             onClick={() =>
@@ -150,8 +146,10 @@ const CartDrawer: React.FC = () => {
                         </div>
 
                         {/* Ціна */}
-                        <div className="w-full lg:w-28 text-left lg:text-right ">
-                          <Text className="text-[20px]">{item.price} ₴</Text>
+                        <div className="w-full lg:w-28 text-left lg:text-right">
+                          <Text className="text-base">
+                            Ціна: {item.price} ₴
+                          </Text>
                         </div>
                       </div>
                     </div>
