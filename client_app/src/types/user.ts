@@ -61,9 +61,11 @@ export interface IUser {
   isLoginGoogle?: boolean;
   isLoginPassword?: boolean;
   createdDate: string;
-  lastActivity: string;
+  lastActivity?: string;
   roles: string; 
 }
+
+
 
 // types/user.ts
 export interface IUserListResponse {
