@@ -45,3 +45,9 @@ export interface PaginationComponentProps {
   totalItems: number;
   onPageChange: (page: number, pageSize: number) => void;
 }
+
+export interface IUserMessageDTO {
+    id: number;
+    subject: string;
+    message: string;
+}

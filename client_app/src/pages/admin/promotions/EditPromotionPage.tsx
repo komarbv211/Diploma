@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Form,
     Input,
@@ -9,14 +9,13 @@ import {
     message,
     Upload,
     Modal,
-    InputNumber,
+    Divider,
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
-import moment, { Moment } from 'moment';
+import dayjs, { Dayjs } from 'dayjs';
 import locale from 'antd/es/date-picker/locale/uk_UA';
-import { UploadFile } from 'antd/es/upload/interface';
-import { RcFile } from 'antd/es/upload';
+import { UploadFile, RcFile } from 'antd/es/upload';
 
 import CategoryTreeSelect from '../../../components/category/CategoryTreeSelect';
 import ImageCropper from '../../../components/images/ImageCropper';
@@ -27,7 +26,22 @@ import {
 } from '../../../services/admin/promotionAdminApi';
 
 import { base64ToFile } from '../../../utilities/base64ToFile';
+import { validateImageBeforeUpload } from '../../../utilities/validateImageUpload';
 
+import {
+    DndContext,
+    PointerSensor,
+    useSensor,
+    closestCenter,
+} from '@dnd-kit/core';
+import {
+    SortableContext,
+    verticalListSortingStrategy,
+    arrayMove,
+} from '@dnd-kit/sortable';
+import type { DragEndEvent } from '@dnd-kit/core';
+
+const { Item } = Form;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 const { TextArea } = Input;
@@ -37,11 +51,12 @@ const discountTypes = [
     { id: 2, name: 'Фіксована сума' },
 ];
 
-const disabledDate = (current: Moment) => {
-    return current && current < moment().startOf('day');
+const disabledDate = (current: Dayjs | null) => {
+    if (!current) return false;
+    return current < dayjs().startOf('minute');
 };
 
-const EditPromotionPage: React.FC = () => {
+const EditPromotionPage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
 
@@ -50,19 +65,21 @@ const EditPromotionPage: React.FC = () => {
 
     const [form] = Form.useForm();
     const [fileList, setFileList] = useState<UploadFile[]>([]);
-    const [isCropModalVisible, setCropModalVisible] = useState(false);
     const [cropIndex, setCroppingIndex] = useState<number | null>(null);
+    const [isCropModalVisible, setCropModalVisible] = useState(false);
+
+    const sensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } });
 
     useEffect(() => {
         if (promotion) {
             form.setFieldsValue({
                 name: promotion.name,
                 description: promotion.description,
-                period: [moment(promotion.startDate), moment(promotion.endDate)],
+                period: [dayjs(promotion.startDate), dayjs(promotion.endDate)],
                 isActive: promotion.isActive,
                 categoryId: promotion.categoryId ?? null,
                 discountTypeId: promotion.discountTypeId,
-                amount: promotion.amount, // зміна discountAmount -> amount
+                amount: promotion.discountAmount,
                 productIds: promotion.productIds ?? [],
             });
 
@@ -78,19 +95,6 @@ const EditPromotionPage: React.FC = () => {
             }
         }
     }, [promotion, form]);
-
-    const handleUploadChange = ({ fileList: newFileList }: { fileList: UploadFile[] }) => {
-        const updated = newFileList.map((file) => {
-            if (!file.url && file.originFileObj) {
-                return {
-                    ...file,
-                    url: URL.createObjectURL(file.originFileObj),
-                };
-            }
-            return file;
-        });
-        setFileList(updated);
-    };
 
     const handleCrop = (croppedBase64: string) => {
         if (cropIndex === null) return;
@@ -125,16 +129,33 @@ const EditPromotionPage: React.FC = () => {
         }
     };
 
+    const handleUploadChange = ({ fileList: newFileList }: { fileList: UploadFile[] }) => {
+        const updatedFileList = newFileList.map((file) => {
+            if (!file.url && !file.thumbUrl && file.originFileObj) {
+                return {
+                    ...file,
+                    url: URL.createObjectURL(file.originFileObj),
+                };
+            }
+            return file;
+        });
+        setFileList(updatedFileList);
+    };
+
     const handleRemove = (file: UploadFile) => {
         setFileList((prev) => prev.filter((f) => f.uid !== file.uid));
         return true;
     };
 
-    const validatePeriod = (_: any, value: [Moment, Moment]) => {
-        if (!value || value.length !== 2) {
-            return Promise.reject(new Error('Будь ласка, виберіть період дії!'));
-        }
-        return Promise.resolve();
+    const onDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id) return;
+
+        setFileList((prev) => {
+            const oldIndex = prev.findIndex((f) => f.uid === active.id);
+            const newIndex = prev.findIndex((f) => f.uid === over.id);
+            return arrayMove(prev, oldIndex, newIndex);
+        });
     };
 
     const onFinish = async (values: any) => {
@@ -145,7 +166,6 @@ const EditPromotionPage: React.FC = () => {
 
         try {
             const formData = new FormData();
-
             formData.append('id', id!);
             formData.append('name', values.name.trim());
             if (values.description) formData.append('description', values.description.trim());
@@ -164,21 +184,16 @@ const EditPromotionPage: React.FC = () => {
             }
 
             formData.append('discountTypeId', values.discountTypeId.toString());
-            formData.append('amount', values.amount.toString()); // зміна discountAmount -> amount
+            formData.append('amount', values.amount.toString());
 
             if (values.productIds?.length) {
-                values.productIds.forEach((pid: string | number) => {
-                    const numPid = Number(pid);
-                    if (!isNaN(numPid)) {
-                        formData.append('productIds', numPid.toString());
-                    }
-                });
+                formData.append('productIds', JSON.stringify(values.productIds));
             }
 
             await updatePromotion({ id: Number(id), formData }).unwrap();
             message.success('Акцію успішно оновлено!');
             navigate('/admin/promotions');
-        } catch (error) {
+        } catch {
             message.error('Помилка при оновленні акції.');
         }
     };
@@ -186,144 +201,157 @@ const EditPromotionPage: React.FC = () => {
     if (isLoading) return <div>Завантаження...</div>;
 
     return (
-        <>
-            <div className="mt-6">
-                <Button type="default" onClick={() => navigate(-1)}>
-                    Назад
-                </Button>
-            </div>
+        <div className="max-w-2xl mx-auto my-10 p-6 bg-white shadow-lg rounded-lg">
+            <Button type="default" className="mb-6" onClick={() => navigate(-1)}>
+                Назад
+            </Button>
 
-            <div className="max-w-xl mx-auto">
-                <h1 className="text-center text-3xl font-extrabold my-6">Редагування акції</h1>
+            <h1 className="text-center text-3xl font-extrabold text-blue-600 mb-8">
+                Редагування акції
+            </h1>
 
-                <Form
-                    form={form}
-                    onFinish={onFinish}
-                    layout="vertical"
-                    scrollToFirstError
-                    initialValues={{
-                        isActive: true,
-                        discountTypeId: 1,
-                        amount: 0,
-                    }}
+            <Form
+                form={form}
+                onFinish={onFinish}
+                layout="vertical"
+                initialValues={{
+                    isActive: true,
+                    discountTypeId: discountTypes[0].id,
+                    amount: 0,
+                    period: [null, null],
+                }}
+                scrollToFirstError
+            >
+                <Item
+                    name="name"
+                    label="Назва акції"
+                    rules={[
+                        { required: true, message: 'Введіть назву акції!' },
+                        {
+                            validator: (_, value) =>
+                                value && value.trim()
+                                    ? Promise.resolve()
+                                    : Promise.reject(new Error('Назва не може бути лише з пробілів')),
+                        },
+                    ]}
                 >
-                    <Form.Item
-                        name="name"
-                        label="Назва"
-                        rules={[
-                            { required: true, message: 'Введіть назву!' },
-                            {
-                                validator: (_, value) =>
-                                    value && value.trim()
-                                        ? Promise.resolve()
-                                        : Promise.reject(new Error('Назва не може бути лише з пробілів')),
+                    <Input placeholder="Назва акції" />
+                </Item>
+
+                <Item name="description" label="Опис акції">
+                    <TextArea rows={4} placeholder="Опис (необов’язково)" />
+                </Item>
+
+                <Divider>Період дії</Divider>
+                <Item
+                    name="period"
+                    label="Виберіть початок та кінець акції"
+                    rules={[{ required: true, message: 'Будь ласка, виберіть період дії!' }]}
+                >
+                    <RangePicker
+                        locale={locale}
+                        showTime={{ format: 'HH:mm' }}
+                        format="YYYY-MM-DD HH:mm"
+                        disabledDate={disabledDate}
+                        allowClear
+                        placeholder={['Початок', 'Кінець']}
+                        style={{ width: '100%' }}
+                    />
+                </Item>
+
+                <Item name="isActive" valuePropName="checked">
+                    <Checkbox>Активна</Checkbox>
+                </Item>
+
+                <Divider>Категорія та знижка</Divider>
+                <Item
+                    name="categoryId"
+                    label="Категорія"
+                    rules={[{ required: true, message: 'Будь ласка, оберіть категорію!' }]}
+                >
+                    <CategoryTreeSelect placeholder="Оберіть категорію" allowClear showSearch/>
+                </Item>
+
+                <Item
+                    name="discountTypeId"
+                    label="Тип знижки"
+                    rules={[{ required: true, message: 'Будь ласка, оберіть тип знижки!' }]}
+                >
+                    <Select placeholder="Оберіть тип знижки">
+                        {discountTypes.map((dt) => (
+                            <Option key={dt.id} value={dt.id}>
+                                {dt.name}
+                            </Option>
+                        ))}
+                    </Select>
+                </Item>
+
+                <Item
+                    name="amount"
+                    label="Сума знижки"
+                    rules={[
+                        { required: true, message: 'Будь ласка, введіть суму знижки!' },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                const type = getFieldValue('discountTypeId');
+                                if (value > 0) {
+                                    if (type === 1 && value > 100) {
+                                        return Promise.reject(new Error('Відсоткова знижка не може перевищувати 100%'));
+                                    }
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('Сума знижки має бути більшою за 0'));
                             },
-                        ]}
-                    >
-                        <Input placeholder="Назва акції" />
-                    </Form.Item>
+                        }),
+                    ]}
+                >
+                    <Input type="number" min={0} placeholder="Введіть суму знижки" />
+                </Item>
 
-                    <Form.Item name="description" label="Опис">
-                        <TextArea rows={4} placeholder="Опис (необов’язково)" />
-                    </Form.Item>
+                <Divider>Зображення акції</Divider>
+                <Item>
+                    <DndContext sensors={[sensor]} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+                        <SortableContext items={fileList.map((file) => file.uid)} strategy={verticalListSortingStrategy}>
+                            <Upload
+                                multiple={false}
+                                beforeUpload={validateImageBeforeUpload}
+                                fileList={fileList}
+                                onChange={handleUploadChange}
+                                onPreview={handlePreview}
+                                onRemove={handleRemove}
+                                listType="picture"
+                            >
+                                {fileList.length < 1 && <Button icon={<UploadOutlined />}>Завантажити зображення</Button>}
+                            </Upload>
+                        </SortableContext>
+                    </DndContext>
+                </Item>
 
-                    <Form.Item
-                        name="period"
-                        label="Період дії"
-                        rules={[{ required: true }, { validator: validatePeriod }]}
-                    >
-                        <RangePicker
-                            locale={locale}
-                            showTime={{ format: 'HH:mm' }}
-                            format="YYYY-MM-DD HH:mm"
-                            disabledDate={disabledDate}
-                            allowClear
-                            placeholder={['Початок', 'Кінець']}
-                        />
-                    </Form.Item>
+                <Item className="mt-6">
+                    <Button type="primary" htmlType="submit" loading={isUpdating} block>
+                        Оновити акцію
+                    </Button>
+                </Item>
+            </Form>
 
-                    <Form.Item name="isActive" valuePropName="checked">
-                        <Checkbox>Активна</Checkbox>
-                    </Form.Item>
-
-                    <Form.Item
-                        name="categoryId"
-                        label="Категорія"
-                        rules={[{ required: true, message: 'Оберіть категорію!' }]}
-                    >
-                        <CategoryTreeSelect />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="discountTypeId"
-                        label="Тип знижки"
-                        rules={[{ required: true, message: 'Оберіть тип знижки!' }]}
-                    >
-                        <Select>
-                            {discountTypes.map((type) => (
-                                <Option key={type.id} value={type.id}>
-                                    {type.name}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-
-                    <Form.Item
-                        name="amount"
-                        label="Сума знижки"
-                        rules={[
-                            { required: true, message: 'Вкажіть суму знижки' },
-                            {
-                                type: 'number',
-                                min: 0.01,
-                                message: 'Мінімальне значення — 0.01',
-                            },
-                        ]}
-                    >
-                        <InputNumber min={0.01} style={{ width: '100%' }} placeholder="10 / 20.5 / ..." />
-                    </Form.Item>
-
-                    <Form.Item name="productIds" label="Продукти акції (ID)">
-                        <Select
-                            mode="tags"
-                            placeholder="Введіть ID продукту"
-                            tokenSeparators={[',', ' ']}
-                            style={{ width: '100%' }}
-                            filterOption={false}
-                        />
-                    </Form.Item>
-
-                    <Form.Item label="Зображення">
-                        <Upload
-                            listType="picture-card"
-                            fileList={fileList}
-                            onChange={handleUploadChange}
-                            onPreview={handlePreview}
-                            onRemove={handleRemove}
-                            beforeUpload={() => false}
-                            maxCount={1}
-                        >
-                            {fileList.length >= 1 ? null : (
-                                <div>
-                                    <UploadOutlined />
-                                    <div>Завантажити</div>
-                                </div>
-                            )}
-                        </Upload>
-                    </Form.Item>
-
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" loading={isUpdating} className="w-full">
-                            Оновити акцію
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </div>
-
-            <Modal open={isCropModalVisible} onCancel={() => setCropModalVisible(false)} footer={null} width={800}>
-                <ImageCropper imageFile={fileList[cropIndex ?? 0]?.originFileObj as File} onCrop={handleCrop} />
+            <Modal
+                open={isCropModalVisible}
+                footer={null}
+                onCancel={() => {
+                    setCropModalVisible(false);
+                    setCroppingIndex(null);
+                }}
+                destroyOnClose
+            >
+                {cropIndex !== null && fileList[cropIndex]?.url ? (
+                    <ImageCropper
+                        image={fileList[cropIndex]!.url!}
+                        onCrop={handleCrop}
+                        aspectRatio={16 / 9}
+                    />
+                ) : null}
             </Modal>
-        </>
+        </div>
     );
 };
 
