@@ -40,3 +40,4 @@ export interface IPromotionPutRequest {
     amount: number;
     productIds?: number[];
 }
+

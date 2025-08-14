@@ -2,10 +2,12 @@ import { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import EditPromotionPage from "../pages/admin/promotions/EditPromotionPage.tsx";
 
+// Лейзі-імпорт сторінок
 const AdminLayout = lazy(() => import('./../components/layouts/admin/Layout'));
 const Dashboard = lazy(() => import('./../pages/admin/Dashboard'));
 const AdminProfile = lazy(() => import('./../pages/admin/AdminProfile'));
 const UsersPage = lazy(() => import('./../pages/admin/users/UsersPage'));
+const UserMessagePage = lazy(() => import('../pages/admin/users/UserMessagePage')); // додано
 const CategoryList = lazy(() => import('./../pages/admin/categories/CategoryList'));
 const TestingList = lazy(() => import('./../pages/admin/testing/TestingList'));
 const EditCategoryPage = lazy(() => import('./../pages/admin/categories/EditCategoryPage'));
@@ -14,15 +16,19 @@ const ProductList = lazy(() => import('./../pages/admin/products/ProductList'));
 const CreateProductPage = lazy(() => import('./../pages/admin/products/CreateProductPage'));
 const EditProductPage = lazy(() => import('../pages/admin/products/EditProductpage'));
 const PromotionList = lazy(() => import('./../pages/admin/promotions/PromotionList'));
-const CreatePromotionPage = lazy(() => import('./../pages/admin/promotions/CreatePromotionPage')); // додано
+const CreatePromotionPage = lazy(() => import('./../pages/admin/promotions/CreatePromotionPage'));
 
 export const AdminRoutes = () => {
   return (
       <Routes>
         <Route element={<AdminLayout />}>
+
           <Route index element={<Dashboard />} />
           <Route path="profile" element={<AdminProfile />} />
-          <Route path="users" element={<UsersPage />} />
+          <Route path="users">
+            <Route index element={<UsersPage />} />
+            <Route path=":id/message" element={<UserMessagePage />} /> {/* додано */}
+          </Route>
 
           <Route path="categories">
             <Route index element={<CategoryList />} />
@@ -43,9 +49,10 @@ export const AdminRoutes = () => {
 
           <Route path="promotions">
             <Route index element={<PromotionList />} />
-            <Route path="create" element={<CreatePromotionPage />} /> {/* додано */}
+            <Route path="create" element={<CreatePromotionPage />} />
             <Route path="edit/:id" element={<EditPromotionPage />} />
           </Route>
+
         </Route>
       </Routes>
   );
