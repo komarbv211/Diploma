@@ -1,5 +1,4 @@
 
-
 import React, { useState, useMemo } from "react";
 import {
   Table,
@@ -25,6 +24,7 @@ import { useGetAllUsersQuery } from "../../../services/admin/userAdninApi";
 import PaginationComponent from "../../../components/pagination/PaginationComponent";
 import { IUser } from "../../../types/user";
 import { useDebounce } from "use-debounce";
+import { useNavigate } from "react-router-dom";
 
 dayjs.extend(customParseFormat);
 dayjs.locale("uk");
@@ -68,6 +68,7 @@ const UsersPage: React.FC = () => {
   const [debouncedSearchRoles] = useDebounce(searchRoles, 500);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+
   const [pageSize, setPageSize] = useState(5);
   const [sortBy, setSortBy] = useState<string | undefined>();
   const [sortDesc, setSortDesc] = useState<boolean>(false);
@@ -83,6 +84,10 @@ const UsersPage: React.FC = () => {
     endDate: dateRange?.[1]?.format("DD.MM.YYYY"),
     dateField: dateField === "createdDate" ? "CreatedDate" : "LastActivity",
   });
+
+  const navigate = useNavigate();
+
+  // const { data, isLoading, isError } = useGetAllUsersQuery({ page: currentPage, pageSize });
 
   const users = data ?? { items: [], totalCount: 0 };
 
@@ -112,8 +117,22 @@ const UsersPage: React.FC = () => {
     setSelectedRowKeys(keys);
   };
 
-  const handleAction = (action: string, record: IUserExtended) => {
-    console.log(`Action: ${action}`, record);
+
+  // const handleAction = (action: string, record: IUserExtended) => {
+  //   console.log(`Action: ${action}`, record);
+
+  const handleAction = (action: string, record: IUser) => {
+    switch(action) {
+      case 'edit':
+        console.log('Edit user', record);
+        break;
+      case 'delete':
+        console.log('Delete user', record);
+        break;
+      case 'message':
+        navigate(`/admin/users/${record.id}/message`);
+        break;
+    }
   };
 
   const handleTableChange: TableProps<IUserExtended>["onChange"] = (
@@ -165,6 +184,7 @@ const UsersPage: React.FC = () => {
         sortBy === "LastName" ? (sortDesc ? "descend" : "ascend") : null,
     },
     {
+
       title: "Email",
       dataIndex: "email",
       key: "email",
@@ -201,24 +221,21 @@ const UsersPage: React.FC = () => {
     },
     {
       title: "Дії",
-      key: "actions",
-      render: (_: unknown, record: IUserExtended) => (
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item onClick={() => handleAction("edit", record)}>
-                Редагувати
-              </Menu.Item>
-              <Menu.Item onClick={() => handleAction("delete", record)}>
-                Видалити
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <Button>
-            Дії <DownOutlined />
-          </Button>
-        </Dropdown>
+      key: 'actions',
+      render: (_: any, record: IUser) => (
+          <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item onClick={() => handleAction('edit', record)}>Edit</Menu.Item>
+                  <Menu.Item onClick={() => handleAction('delete', record)}>Delete</Menu.Item>
+                  <Menu.Item onClick={() => handleAction('message', record)}>Send Message</Menu.Item> {/* додано */}
+                </Menu>
+              }
+          >
+            <Button>
+              Actions <DownOutlined />
+            </Button>
+          </Dropdown>
       ),
     },
   ];
@@ -310,6 +327,7 @@ const UsersPage: React.FC = () => {
         )}
       </div>
     </ConfigProvider>
+
   );
 };
 

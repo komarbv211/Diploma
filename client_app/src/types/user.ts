@@ -52,6 +52,7 @@ export interface PaginationComponentProps {
   onPageChange: (page: number, pageSize: number) => void;
 }
 
+
 // src/types/user.ts  тест
 export interface IUser {
   id: number;
@@ -71,5 +72,12 @@ export interface IUser {
 export interface IUserListResponse {
   items: IUser[];
   totalCount: number;
+}
+
+
+export interface IUserMessageDTO {
+    id: number;
+    subject: string;
+    message: string;
 }
 
