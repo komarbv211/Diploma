@@ -13,7 +13,8 @@ namespace Core.Models.Search
         public string? Name { get; set; }
         public string? StartDate { get; set; }
         public string? EndDate { get; set; }
-     public DateTime? GetParsedStartDate()
+        public string? DateField { get; set; } // "CreatedDate" або "LastActivity"
+        public DateTime? GetParsedStartDate()
 {
     if (DateTime.TryParseExact(
             StartDate,

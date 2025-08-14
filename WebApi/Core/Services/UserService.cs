@@ -256,16 +256,37 @@ namespace Core.Services
             }
 
 
-            // 📅 Фільтрація по датах
-            if (model?.StartDate != null)
+            //📅 Фільтрація по датах
+            //if (model?.StartDate != null)
+            //{
+            //    query = query.Where(u => u.CreatedDate >= model.GetParsedStartDate());
+            //}
+
+            //if (model?.EndDate != null)
+            //{
+            //    query = query.Where(u => u.LastActivity <= model.GetParsedEndDate());
+            //}
+
+            if (model?.StartDate != null && model.DateField == "CreatedDate")
             {
                 query = query.Where(u => u.CreatedDate >= model.GetParsedStartDate());
             }
+            else if (model?.StartDate != null && model.DateField == "LastActivity")
+            {
+                query = query.Where(u => u.LastActivity >= model.GetParsedStartDate());
+            }
 
-            if (model?.EndDate != null)
+            if (model?.EndDate != null && model.DateField == "CreatedDate")
+            {
+                query = query.Where(u => u.CreatedDate <= model.GetParsedEndDate());
+            }
+            else if (model?.EndDate != null && model.DateField == "LastActivity")
             {
                 query = query.Where(u => u.LastActivity <= model.GetParsedEndDate());
             }
+
+
+
 
 
 

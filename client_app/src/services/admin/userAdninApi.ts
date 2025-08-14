@@ -49,7 +49,7 @@ export const userAdminApi = createApi({
         console.log("search role", searchRoles)
         const params = new URLSearchParams();
         params.append('Page', page.toString());
-        params.append('ItemPerPAge', pageSize.toString());  // саме так, як очікує бекенд
+        params.append('ItemPerPage', pageSize.toString());  // саме так, як очікує бекенд
         if (sortBy) params.append('SortBy', sortBy);
         if (sortDesc !== undefined) params.append('SortDesc', sortDesc.toString());
         if (searchName && searchName.trim() !== '') params.append('Name', searchName.trim());
