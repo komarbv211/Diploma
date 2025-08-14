@@ -16,6 +16,7 @@ namespace Core.DTOs.UsersDTOs
         public bool PhoneNumberConfirmed { get; set; }
         public bool TwoFactorEnabled { get; set; }
         public string? PhoneNumber { get; set; }
+      //  public string Role { get; set; } = string.Empty;
 
         // якщо не знадобиться видалимо.
         //public IEnumerable<int> Adverts { get; set; } = [];
