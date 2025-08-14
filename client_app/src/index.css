@@ -48,3 +48,16 @@ input::placeholder {
 :where(.css-dev-only-do-not-override-pjilya).ant-drawer .ant-drawer-body{
   padding-top: 0%;
 }
+/* За замовчуванням — висота для великих екранів */
+.cart-left {
+  height: 66vh;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* Для екранів менших за lg (~1280px) */
+@media (max-width: 1280px) {
+  .cart-left {
+    height: 7vh;
+  }
+}

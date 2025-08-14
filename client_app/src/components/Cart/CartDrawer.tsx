@@ -1,4 +1,4 @@
-import { Button, Drawer, List, Space, Image, Typography } from "antd";
+import { Button, Drawer, List, Image, Typography } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { type ICartItem } from "../../store/slices/localCartSlice.ts";
 import { useState } from "react";
@@ -74,10 +74,7 @@ const CartDrawer: React.FC = () => {
         closable={false} // вимикає стандартну кнопку закриття
       >
         {/* Головний контейнер із flex */}
-        <div
-          className="flex flex-col md:flex-row gap-6 px-6 py-4 border-t border-gray"
-          style={{ height: "66vh" }}
-        >
+        <div className="flex flex-col cart-left xl:flex-row gap-6 px-6 py-4 border-t border-gray">
           {/* Ліва частина зі скролом */}
           <div
             className="flex-3"
@@ -85,7 +82,7 @@ const CartDrawer: React.FC = () => {
               flex: 3,
               overflowY: "auto",
               height: "100%",
-              paddingRight: "12px", // щоб не захлинався контент під скролом
+              paddingRight: "5px", // щоб не захлинався контент під скролом
             }}
           >
             <List
@@ -103,51 +100,69 @@ const CartDrawer: React.FC = () => {
                     </button>,
                   ]}
                 >
-                  <Space align="start" className="gap-4">
+                  <div className="flex gap-4 w-full">
+                    {/* Фото (завжди ліворуч) */}
                     <Image
                       src={`${APP_ENV.IMAGES_200_URL}${item.imageName}`}
                       width={150}
                       height={160}
                       preview={false}
-                      className="rounded-md"
+                      className="rounded-lg flex-shrink-0"
                     />
-                    <div>
-                      <Text strong className="text-lg">
-                        {item.name}
-                      </Text>
-                      <br />
-                      <Text type="secondary" className="text-sm">
-                        {item.categoryName}
-                      </Text>
-                      <br />
-                      <div className="flex items-center gap-2 my-2">
-                        <Button
-                          size="small"
-                          onClick={() =>
-                            item.quantity! > 1 &&
-                            addToCart({ ...item, quantity: -1 })
-                          }
+
+                    {/* Контейнер з інформацією */}
+                    <div className="flex flex-col flex-1 gap-3 lg:flex-row xl:items-center xl:justify-between">
+                      {/* Назва + категорія */}
+                      <div className="flex-1 min-w-[100px]">
+                        <Text
+                          strong
+                          className="w-[332px] h-[27px] font-manrope font-medium text-[20px] leading-[27px] 
+                          bg-gradient-to-r from-[#1A3D83] to-[#8AA8D2] bg-clip-text text-transparent"
                         >
-                          -
-                        </Button>
-                        <Text>{item.quantity}</Text>
-                        <Button
-                          size="small"
-                          onClick={() => addToCart({ ...item, quantity: 1 })}
-                        >
-                          +
-                        </Button>
+                          {item.name}
+                        </Text>
+                        <br />
+                        <Text type="secondary" className="text-[16px]">
+                          {item.categoryName}
+                        </Text>
                       </div>
-                      <Text className="text-base">Ціна: {item.price} ₴</Text>
+
+                      {/* Кнопки та ціна */}
+                      <div className="flex flex-col lg:flex-row lg:items-center lg:gap-6">
+                        {/* Кнопки */}
+                        <div className="flex items-center gap-2 w-28 justify-center h-[52px] rounded-lg border border-blue2">
+                          <Button
+                            size="small"
+                            onClick={() =>
+                              item.quantity! > 1 &&
+                              addToCart({ ...item, quantity: -1 })
+                            }
+                          >
+                            -
+                          </Button>
+                          <Text>{item.quantity}</Text>
+                          <Button
+                            size="small"
+                            onClick={() => addToCart({ ...item, quantity: 1 })}
+                          >
+                            +
+                          </Button>
+                        </div>
+
+                        {/* Ціна */}
+                        <div className="w-full lg:w-28 text-left lg:text-right ">
+                          <Text className="text-[20px]">{item.price} ₴</Text>
+                        </div>
+                      </div>
                     </div>
-                  </Space>
+                  </div>
                 </List.Item>
               )}
             />
           </div>
 
           {/* Права частина без скролу */}
-          <div className="flex flex-col  px-2 basis-[1.7] sm:basis-[2] md:basis-[2.5]">
+          <div className="flex flex-col  px-2 ">
             <div className="bg-beige2 gap-3 p-[20px] rounded-xl">
               <div className="flex xl:text-[27px] font-medium font-manrope mb-2 justify-between">
                 <div className="flex flex-col">

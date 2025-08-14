@@ -1,10 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { createBaseQuery } from '../../utilities/createBaseQuery';
+import { createBaseQueryWithReauth } from '../../utilities/createBaseQuery';
 import { IPromotion } from '../../types/promotion';
 
 export const promotionAdminApi = createApi({
     reducerPath: 'promotionAdminApi',
-    baseQuery: createBaseQuery('admin/promotion'),
+    baseQuery: createBaseQueryWithReauth('admin/promotion'),
     tagTypes: ['Promotions'],
     endpoints: (builder) => ({
         getAllPromotions: builder.query<IPromotion[], void>({
