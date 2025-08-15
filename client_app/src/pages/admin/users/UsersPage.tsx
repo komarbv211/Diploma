@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import {
   Table,
@@ -20,7 +19,7 @@ import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import "dayjs/locale/uk";
 import ukUA from "antd/es/locale/uk_UA";
-import { useGetAllUsersQuery } from "../../../services/admin/userAdninApi";
+import { useGetAllUsersQuery } from "../../../services/admin/userAdminApi";
 import PaginationComponent from "../../../components/pagination/PaginationComponent";
 import { IUser } from "../../../types/user";
 import { useDebounce } from "use-debounce";
@@ -32,9 +31,9 @@ dayjs.locale("uk");
 interface IUserExtended extends IUser {
   firstName: string;
   lastName: string;
+  role: string;
   createdDateObj: Dayjs;
   lastActivityObj: Dayjs;
-  role: string;
 }
 
 const fieldMap: Record<string, string> = {
@@ -46,29 +45,19 @@ const fieldMap: Record<string, string> = {
   lastActivityObj: "LastActivity",
 };
 
-const parseFullName = (fullName: string) => {
-  const parts = fullName.trim().split(" ");
-  const firstName = parts[0] || "";
-  const lastName = parts.slice(1).join(" ") || "";
-  return { firstName, lastName };
-};
-
 const UsersPage: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [searchRoles, setSearchRoles] = useState<string | undefined>(undefined);
-
   const [dateField, setDateField] = useState<"createdDate" | "lastActivity">(
     "createdDate"
   );
-  const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(
-    null
-  );
-
+  const [dateRange, setDateRange] = useState<
+    [Dayjs | null, Dayjs | null] | null
+  >(null);
   const [debouncedSearchText] = useDebounce(searchText, 500);
   const [debouncedSearchRoles] = useDebounce(searchRoles, 500);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-
   const [pageSize, setPageSize] = useState(5);
   const [sortBy, setSortBy] = useState<string | undefined>();
   const [sortDesc, setSortDesc] = useState<boolean>(false);
@@ -87,27 +76,35 @@ const UsersPage: React.FC = () => {
 
   const navigate = useNavigate();
 
-  // const { data, isLoading, isError } = useGetAllUsersQuery({ page: currentPage, pageSize });
+  const users = useMemo<{ items: IUser[]; totalCount: number }>(() => {
+    const items: IUser[] =
+      data?.items.map((u) => {
+        const safeFullName =
+          u.fullName || `${u.firstName || ""} ${u.lastName || ""}`.trim();
+        return {
+          ...u,
+          fullName: safeFullName,
+          firstName: u.firstName || safeFullName.split(" ")[0] || "",
+          lastName: u.lastName || safeFullName.split(" ")[1] || "",
+          createdDate: u.createdDate ?? "", // гарантовано string
+          lastActivity: u.lastActivity ?? "", // гарантовано string
+        };
+      }) || [];
 
-  const users = data ?? { items: [], totalCount: 0 };
+    return { items, totalCount: data?.totalCount || 0 };
+  }, [data]);
 
   if (isError) {
     message.error("Не вдалося завантажити користувачів");
   }
 
   const dataSource = useMemo<IUserExtended[]>(() => {
-    //@ts-ignore
-    return users.items.map((user: IUser) => {
-      const { firstName, lastName } = parseFullName(user.fullName);
-      return {
-        ...user,
-        firstName,
-        lastName,
-        role: user.roles?.[0] || "Невідомо",
-        createdDateObj: dayjs(user.createdDate, "DD.MM.YYYY HH:mm:ss"),
-        lastActivityObj: dayjs(user.lastActivity, "DD.MM.YYYY HH:mm:ss"),
-      };
-    });
+    return users.items.map((user) => ({
+      ...user,
+      role: user.roles?.[0] || "Невідомо",
+      createdDateObj: dayjs(user.createdDate, "DD.MM.YYYY HH:mm:ss") as Dayjs,
+      lastActivityObj: dayjs(user.lastActivity, "DD.MM.YYYY HH:mm:ss") as Dayjs,
+    }));
   }, [users]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,28 +115,24 @@ const UsersPage: React.FC = () => {
     setSelectedRowKeys(keys);
   };
 
-
-  // const handleAction = (action: string, record: IUserExtended) => {
-  //   console.log(`Action: ${action}`, record);
-
-  const handleAction = (action: string, record: IUser) => {
-    switch(action) {
-      case 'edit':
-        console.log('Edit user', record);
+  const handleAction = (action: string, record: IUserExtended) => {
+    switch (action) {
+      case "edit":
+        console.log("Edit user", record);
         break;
-      case 'delete':
-        console.log('Delete user', record);
+      case "delete":
+        console.log("Delete user", record);
         break;
-      case 'message':
+      case "message":
         navigate(`/admin/users/${record.id}/message`);
         break;
     }
   };
+
+  // handleTableChange - ігноруємо невикористані параметри
   const handleTableChange: TableProps<IUserExtended>["onChange"] = (
-      //@ts-ignore
-      pagination,
-      //@ts-ignore
-      filters,
+    _pagination,
+    _filters,
     sorter
   ) => {
     const singleSorter = Array.isArray(sorter) ? sorter[0] : sorter;
@@ -157,13 +150,11 @@ const UsersPage: React.FC = () => {
     setCurrentPage(1);
   };
 
-
   const resetSorting = () => {
     setSearchRoles(undefined);
     setSearchText("");
     setDateField("createdDate");
     setDateRange(null);
-
     setSortBy(undefined);
     setSortDesc(false);
     setCurrentPage(1);
@@ -187,7 +178,6 @@ const UsersPage: React.FC = () => {
         sortBy === "LastName" ? (sortDesc ? "descend" : "ascend") : null,
     },
     {
-
       title: "Email",
       dataIndex: "email",
       key: "email",
@@ -200,12 +190,13 @@ const UsersPage: React.FC = () => {
       key: "role",
       sorter: true,
       sortOrder: sortBy === "Roles" ? (sortDesc ? "descend" : "ascend") : null,
-      render: (role: string) => (role === "admin" ? "Адміністратор" : role),
+      render: (role: string) =>
+        role.toLowerCase() === "admin" ? "Адміністратор" : role,
     },
     {
       title: "Дата створення",
       dataIndex: "createdDateObj",
-      key: "createdDate",
+      key: "createdDateObj",
       sorter: true,
       sortOrder:
         sortBy === "CreatedDate" ? (sortDesc ? "descend" : "ascend") : null,
@@ -215,7 +206,7 @@ const UsersPage: React.FC = () => {
     {
       title: "Остання активність",
       dataIndex: "lastActivityObj",
-      key: "lastActivity",
+      key: "lastActivityObj",
       sorter: true,
       sortOrder:
         sortBy === "LastActivity" ? (sortDesc ? "descend" : "ascend") : null,
@@ -224,28 +215,34 @@ const UsersPage: React.FC = () => {
     },
     {
       title: "Дії",
-      key: 'actions',
-      render: (_: any, record: IUser) => (
-          <Dropdown
-              overlay={
-                <Menu>
-                  <Menu.Item onClick={() => handleAction('edit', record)}>Edit</Menu.Item>
-                  <Menu.Item onClick={() => handleAction('delete', record)}>Delete</Menu.Item>
-                  <Menu.Item onClick={() => handleAction('message', record)}>Send Message</Menu.Item> {/* додано */}
-                </Menu>
-              }
-          >
-            <Button>
-              Дії <DownOutlined />
-            </Button>
-          </Dropdown>
+      key: "actions",
+      render: (_: unknown, record: IUserExtended) => (
+        <Dropdown
+          overlay={
+            <Menu>
+              <Menu.Item onClick={() => handleAction("edit", record)}>
+                Edit
+              </Menu.Item>
+              <Menu.Item onClick={() => handleAction("delete", record)}>
+                Delete
+              </Menu.Item>
+              <Menu.Item onClick={() => handleAction("message", record)}>
+                Send Message
+              </Menu.Item>
+            </Menu>
+          }
+        >
+          <Button>
+            Дії <DownOutlined />
+          </Button>
+        </Dropdown>
       ),
     },
   ];
 
   return (
     <ConfigProvider locale={ukUA}>
-      <div style={{ padding: "20px" }}>
+      <div style={{ padding: 20 }}>
         <Space
           style={{
             width: "100%",
@@ -282,7 +279,9 @@ const UsersPage: React.FC = () => {
               style={{ width: 180 }}
             >
               <Select.Option value="createdDate">Дата створення</Select.Option>
-              <Select.Option value="lastActivity">Остання активність</Select.Option>
+              <Select.Option value="lastActivity">
+                Остання активність
+              </Select.Option>
             </Select>
 
             <DatePicker.RangePicker
@@ -307,10 +306,7 @@ const UsersPage: React.FC = () => {
         ) : (
           <>
             <Table
-              rowSelection={{
-                selectedRowKeys,
-                onChange: handleSelectChange,
-              }}
+              rowSelection={{ selectedRowKeys, onChange: handleSelectChange }}
               columns={columns}
               rowKey="id"
               pagination={false}
@@ -320,7 +316,7 @@ const UsersPage: React.FC = () => {
             <PaginationComponent
               currentPage={currentPage}
               pageSize={pageSize}
-                //@ts-ignore
+              //@ts-ignore
               totalItems={data?.pagination?.totalCount}
               onPageChange={(page, size) => {
                 setCurrentPage(page);
@@ -331,7 +327,6 @@ const UsersPage: React.FC = () => {
         )}
       </div>
     </ConfigProvider>
-
   );
 };
 

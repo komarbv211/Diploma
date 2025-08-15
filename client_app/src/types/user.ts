@@ -55,13 +55,15 @@ export interface PaginationComponentProps {
 export interface IUser {
   id: number;
   fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   image?: string;
   isLoginGoogle?: boolean;
   isLoginPassword?: boolean;
   createdDate: string;
-  lastActivity?: string;
-  roles: string; 
+  lastActivity: string;
+  roles: string[];
 }
 
 // types/user.ts
