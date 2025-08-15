@@ -24,6 +24,8 @@ namespace Infrastructure.Data
         public DbSet<PromotionProductEntity> PromotionProducts { get; set; }
         public DbSet<ProductRatingEntity> ProductRatings { get; set; }
         public DbSet<CartEntity> Carts { get; set; }
+        public DbSet<BrandEntity> Brands { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

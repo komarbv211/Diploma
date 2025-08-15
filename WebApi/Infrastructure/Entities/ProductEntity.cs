@@ -16,11 +16,17 @@ namespace Infrastructure.Entities
         [ForeignKey("Category")]
         public long CategoryId { get; set; }
 
+        [ForeignKey("Brand")]
+        public long? BrandId { get; set; }
+
         // Додані властивості рейтингу 
         public long? RatingsCount { get; set; }
         public double? AverageRating { get; set; }
 
         public virtual CategoryEntity? Category { get; set; }
+
+        public virtual BrandEntity? Brand { get; set; }
+
 
         public virtual ICollection<ProductImageEntity>? Images { get; set; }
 
