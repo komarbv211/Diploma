@@ -11,7 +11,7 @@ export const userAdminApi = createApi({
   endpoints: (builder) => ({
     getAllUsers: builder.query<PagedResultDto<IUser>, PagedRequestDto & { searchName?: string,
        searchRoles?: string, startDate?: string, endDate?:string, dateField?: string }>({      
-      query: ({ page, pageSize = 5, sortBy, sortDesc, searchName, searchRoles, startDate, endDate,dateField  }) => {
+      query: ({ page, pageSize, sortBy, sortDesc, searchName, searchRoles, startDate, endDate,dateField  }) => {
 
         console.log("search role", searchRoles)
         const params = new URLSearchParams();

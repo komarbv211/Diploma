@@ -91,7 +91,7 @@ const UsersPage: React.FC = () => {
         };
       }) || [];
 
-    return { items, totalCount: data?.totalCount || 0 };
+    return { items, totalCount: data?.pagination.totalCount || 0 };
   }, [data]);
 
   if (isError) {
@@ -316,8 +316,7 @@ const UsersPage: React.FC = () => {
             <PaginationComponent
               currentPage={currentPage}
               pageSize={pageSize}
-              //@ts-ignore
-              totalItems={data?.pagination?.totalCount}
+              totalItems={data?.pagination.totalCount || 0}
               onPageChange={(page, size) => {
                 setCurrentPage(page);
                 setPageSize(size);

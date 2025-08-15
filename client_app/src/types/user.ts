@@ -29,11 +29,15 @@ export interface IUserUpdateDTO {
 }
   
 export interface PagedResultDto<T> {
-  items: T[];
-  currentPage: number;
-  pageSize: number;
-  totalCount: number;
+  items: T[];               
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    pageSize: number;
+    totalCount: number;
+  };
 }
+
 
 
 export interface PagedRequestDto {
