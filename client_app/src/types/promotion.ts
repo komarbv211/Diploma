@@ -34,7 +34,7 @@ export interface IPromotionPutRequest {
     image?: File | null;     // опціональний, може бути null (UpdateDto)
     startDate: string;
     endDate: string;
-    isActive?: boolean;
+    isActive: boolean;
     categoryId?: number | null;
     discountTypeId: number;
     amount: number;
