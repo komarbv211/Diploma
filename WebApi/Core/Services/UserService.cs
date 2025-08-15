@@ -240,6 +240,7 @@ namespace Core.Services
               //.Include(u => u.UserRoles)
               //.ThenInclude(ur => ur.Role)
               .AsQueryable();
+        
 
             //var query = _userManager.Users.AsQueryable();
 
@@ -255,16 +256,37 @@ namespace Core.Services
             }
 
 
-            // 📅 Фільтрація по датах
-            if (model?.StartDate != null)
+            //📅 Фільтрація по датах
+            //if (model?.StartDate != null)
+            //{
+            //    query = query.Where(u => u.CreatedDate >= model.GetParsedStartDate());
+            //}
+
+            //if (model?.EndDate != null)
+            //{
+            //    query = query.Where(u => u.LastActivity <= model.GetParsedEndDate());
+            //}
+
+            if (model?.StartDate != null && model.DateField == "CreatedDate")
             {
                 query = query.Where(u => u.CreatedDate >= model.GetParsedStartDate());
             }
+            else if (model?.StartDate != null && model.DateField == "LastActivity")
+            {
+                query = query.Where(u => u.LastActivity >= model.GetParsedStartDate());
+            }
 
-            if (model?.EndDate != null)
+            if (model?.EndDate != null && model.DateField == "CreatedDate")
+            {
+                query = query.Where(u => u.CreatedDate <= model.GetParsedEndDate());
+            }
+            else if (model?.EndDate != null && model.DateField == "LastActivity")
             {
                 query = query.Where(u => u.LastActivity <= model.GetParsedEndDate());
             }
+
+
+
 
 
 
@@ -295,11 +317,47 @@ namespace Core.Services
                     "Email" => desc ? query.OrderByDescending(u => u.Email) : query.OrderBy(u => u.Email),
                     _ => query.OrderBy(u => u.Id)
                 };
+                //string nameFilter = model.Name.Trim().ToLower().Normalize();
+
+                //query = query.Where(u =>
+                //    (u.FirstName + " " + u.LastName).ToLower().Contains(nameFilter) ||
+                //    u.FirstName.ToLower().Contains(nameFilter) ||
+                //    u.LastName.ToLower().Contains(nameFilter) ||
+                //     u.UserRoles.Any(ur => ur.Role != null && ur.Role.Name != null && ur.Role.Name.ToLower().Contains(nameFilter)) // ✅ перевірка на null
+                //);
             }
             else
             {
                 query = query.OrderBy(u => u.Id); // default
             }
+
+
+            // ↕️ Сортування
+            //if (!string.IsNullOrWhiteSpace(model.SortBy))
+            //{
+            //    bool desc = model.SortDesc;
+            //    query = model.SortBy switch
+            //    {
+            //        "FirstName" => desc ? query.OrderByDescending(u => u.FirstName) : query.OrderBy(u => u.FirstName),
+            //        "LastName" => desc ? query.OrderByDescending(u => u.LastName) : query.OrderBy(u => u.LastName),
+            //        "Email" => desc ? query.OrderByDescending(u => u.Email) : query.OrderBy(u => u.Email),
+            //        "CreatedDate" => desc ? query.OrderByDescending(u => u.CreatedDate) : query.OrderBy(u => u.CreatedDate),
+            //        "LastActivity" => desc ? query.OrderByDescending(u => u.LastActivity) : query.OrderBy(u => u.LastActivity),
+            //        "Role" => desc
+            //            ? query.OrderByDescending(u => u.UserRoles.Select(ur => ur.Role.Name).FirstOrDefault())
+            //            : query.OrderBy(u => u.UserRoles.Select(ur => ur.Role.Name).FirstOrDefault()),
+            //        _ => query.OrderBy(u => u.Id)
+            //    };
+            //}
+            //else
+            //{
+            //    query = query.OrderBy(u => u.Id); // default
+            //}
+
+
+
+
+
 
             //// 📄 Безпечна пагінація
             //var safeItemsPerPage = model.ItemPerPAge < 1 ? 10 : model.ItemPerPAge;

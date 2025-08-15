@@ -44,6 +44,7 @@ export interface IUser {
     image: string;
     roles: string[];
     exp: number;
+    
 }
 
 export interface IUserRegisterRequest {
