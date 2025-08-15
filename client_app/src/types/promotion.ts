@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 export interface IPromotion {
     id: number;
     name: string;
@@ -41,3 +43,13 @@ export interface IPromotionPutRequest {
     productIds?: number[];
 }
 
+export interface PromotionFormValues {
+  name: string;
+  description?: string;
+  period: [Dayjs, Dayjs];
+  isActive: boolean;
+  categoryId?: number | null;
+  discountTypeId: number;
+  amount: number;
+  productIds?: number[];
+}
