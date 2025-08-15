@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import {createBaseQueryWithReauth} from '../../utilities/createBaseQuery';
+import { createBaseQueryWithReauth } from '../../utilities/createBaseQuery';
 import { IPromotion } from '../../types/promotion';
 
 export const promotionAdminApi = createApi({

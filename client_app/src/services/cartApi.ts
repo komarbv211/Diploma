@@ -1,11 +1,11 @@
 import {createApi} from "@reduxjs/toolkit/query/react";
-import {createBaseQuery} from "../utilities/createBaseQuery.ts";
+import {createBaseQueryWithReauth} from "../utilities/createBaseQuery.ts";
 import {type ICartItem} from "../store/slices/localCartSlice.ts";
 
 
 export const cartApi = createApi({
     reducerPath: 'apiCart',
-    baseQuery: createBaseQuery('Cart'),
+    baseQuery: createBaseQueryWithReauth('Cart'),
     tagTypes: ["Carts"],
     endpoints: (builder) => ({
         getCart: builder.query<ICartItem[], void>({
