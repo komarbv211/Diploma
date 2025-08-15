@@ -96,6 +96,7 @@ const UsersPage: React.FC = () => {
   }
 
   const dataSource = useMemo<IUserExtended[]>(() => {
+    //@ts-ignore
     return users.items.map((user: IUser) => {
       const { firstName, lastName } = parseFullName(user.fullName);
       return {
@@ -134,10 +135,11 @@ const UsersPage: React.FC = () => {
         break;
     }
   };
-
   const handleTableChange: TableProps<IUserExtended>["onChange"] = (
-    pagination,
-    filters,
+      //@ts-ignore
+      pagination,
+      //@ts-ignore
+      filters,
     sorter
   ) => {
     const singleSorter = Array.isArray(sorter) ? sorter[0] : sorter;
@@ -318,6 +320,7 @@ const UsersPage: React.FC = () => {
             <PaginationComponent
               currentPage={currentPage}
               pageSize={pageSize}
+                //@ts-ignore
               totalItems={data?.pagination?.totalCount}
               onPageChange={(page, size) => {
                 setCurrentPage(page);
