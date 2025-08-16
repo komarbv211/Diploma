@@ -13,8 +13,9 @@ namespace Infrastructure.Data
     {
 
 
-        public DbMakeUpContext(DbContextOptions<DbMakeUpContext> options):
-            base(options) { }
+        public DbMakeUpContext(DbContextOptions<DbMakeUpContext> options) :
+            base(options)
+        { }
 
         public DbSet<CategoryEntity> Categories { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
@@ -23,6 +24,11 @@ namespace Infrastructure.Data
         public DbSet<PromotionEntity> Promotions { get; set; }
         public DbSet<PromotionProductEntity> PromotionProducts { get; set; }
         public DbSet<ProductRatingEntity> ProductRatings { get; set; }
+        public DbSet<OrderEntity> Orders { get; set; }
+        public DbSet<OrderItemEntity> OrderItems { get; set; }
+        public DbSet<NovaPostWarehouseEntity> NovaPostWarehouses { get; set; }
+        public DbSet<WarehouseUpdateHistoryEntity> WarehouseUpdateHistories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

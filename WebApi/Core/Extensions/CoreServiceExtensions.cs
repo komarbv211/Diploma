@@ -20,7 +20,7 @@ namespace Core.Extensions
             services.AddScoped<IPromotionRepository, PromotionRepository>();
             services.AddScoped<IPromotionService, PromotionService>();
             services.AddScoped<IProductRatingService, ProductRatingService>();
-
+            services.AddScoped<IOrderService, OrderService>();
         }
     }
 }

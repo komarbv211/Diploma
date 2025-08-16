@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DbMakeUpContext))]
-    partial class DbMakeUpContextModelSnapshot : ModelSnapshot
+    [Migration("20250811123437_AddInitialOrderEntities")]
+    partial class AddInitialOrderEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,7 +67,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("tblCategories", (string)null);
+                    b.ToTable("tblCategories");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.DiscountTypeEntity", b =>
@@ -91,7 +94,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DiscountTypes", (string)null);
+                    b.ToTable("DiscountTypes");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.NovaPostWarehouseEntity", b =>
@@ -112,21 +115,11 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<string>("CityRef")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("LastSyncedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<double?>("Latitude")
                         .HasColumnType("double precision");
@@ -142,27 +135,17 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<string>("Region")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RegionRef")
-                        .HasColumnType("text");
-
                     b.Property<string>("WarehouseCode")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
-
-                    b.Property<string>("WarehouseType")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("WorkingHours")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("NovaPostWarehouses", (string)null);
+                    b.ToTable("NovaPostWarehouses");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.OrderEntity", b =>
@@ -178,9 +161,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("DeliveryAddress")
-                        .HasColumnType("text");
 
                     b.Property<int>("DeliveryMethod")
                         .HasColumnType("integer");
@@ -215,7 +195,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.OrderItemEntity", b =>
@@ -252,7 +232,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.ProductEntity", b =>
@@ -294,7 +274,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.ProductImageEntity", b =>
@@ -326,7 +306,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.ProductRatingEntity", b =>
@@ -356,7 +336,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ProductId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("ProductRatings", (string)null);
+                    b.ToTable("ProductRatings");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.PromotionEntity", b =>
@@ -407,7 +387,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("DiscountTypeId");
 
-                    b.ToTable("Promotions", (string)null);
+                    b.ToTable("Promotions");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.PromotionProductEntity", b =>
@@ -436,7 +416,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PromotionId");
 
-                    b.ToTable("PromotionProducts", (string)null);
+                    b.ToTable("PromotionProducts");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.RefreshToken", b =>
@@ -468,7 +448,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("tbl_RefreshTokens", (string)null);
+                    b.ToTable("tbl_RefreshTokens");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.RoleEntity", b =>
@@ -627,22 +607,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-                });
-
-            modelBuilder.Entity("Infrastructure.Entities.WarehouseUpdateHistoryEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("LastUpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("WarehouseUpdateHistories", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
