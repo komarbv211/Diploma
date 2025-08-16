@@ -1,6 +1,6 @@
 ﻿using Core.Interfaces;
-using Core.Services;
 using Core.Repositories;
+using Core.Services;
 
 namespace WebApiDiploma.ServiceExtensions
 {
@@ -10,7 +10,8 @@ namespace WebApiDiploma.ServiceExtensions
         {
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<ICategoryService, CategoryService>();
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());//сканує всі мапери які наслідують Profile
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddHttpClient<NovaPoshtaService>();
 
             return services;
         }        

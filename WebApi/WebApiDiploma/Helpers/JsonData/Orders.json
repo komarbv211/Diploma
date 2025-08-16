@@ -1,0 +1,32 @@
+[
+  {
+    "Id": 1,
+    "UserId": 94,
+    "DeliveryMethod": "NovaPoshta",
+    "WarehouseId": null,
+    "DeliveryAddress": null,
+    "TotalPrice": 1500.0,
+    "Status": "Pending",
+    "PaymentMethod": "CreditCard"
+  },
+  {
+    "Id": 2,
+    "UserId": 95,
+    "DeliveryMethod": "Pickup",
+    "WarehouseId": null,
+    "DeliveryAddress":  "м. Рівне, вул. Виноградна 10",
+    "TotalPrice": 800.0,
+    "Status": "Pending",
+    "PaymentMethod": "Cash"
+  },
+  {
+    "Id": 3,
+    "UserId": 96,
+    "DeliveryMethod": "Pickup",
+    "WarehouseId": null,
+    "DeliveryAddress": null,
+    "TotalPrice": 452.0,
+    "Status": "Pending",
+    "PaymentMethod": "Cash"
+  }
+]
