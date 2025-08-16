@@ -44,7 +44,8 @@ export interface IUser {
     image: string;
     roles: string[];
     exp: number;
-    
+    createdDate?: string;
+    lastActivity?: string;
 }
 
 export interface IUserRegisterRequest {

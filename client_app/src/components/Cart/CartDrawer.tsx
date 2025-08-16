@@ -114,11 +114,15 @@ const CartDrawer: React.FC = () => {
                     <div className="flex flex-col flex-1 gap-3 lg:flex-row lg:items-center lg:justify-between">
                       {/* Назва + категорія */}
                       <div className="flex-1 min-w-[100px]">
-                        <Text strong className="text-lg">
+                        <Text
+                          strong
+                          className="w-[332px] h-[27px] font-manrope font-medium text-[20px] leading-[27px] bg-gradient-to-r from-blue2 to-blueLight bg-clip-text text-transparent"
+                        >
                           {item.name}
                         </Text>
+
                         <br />
-                        <Text type="secondary" className="text-sm">
+                        <Text type="secondary" className="text-[16px]">
                           {item.categoryName}
                         </Text>
                       </div>
@@ -126,7 +130,7 @@ const CartDrawer: React.FC = () => {
                       {/* Кнопки та ціна */}
                       <div className="flex flex-col lg:flex-row lg:items-center lg:gap-6">
                         {/* Кнопки */}
-                        <div className="flex items-center gap-2 w-full lg:w-28 lg:justify-center">
+                        <div className="flex items-center gap-2 w-[117px] h-[52px] lg:w-28 justify-center  bg-white rounded-[15px] border border-blue2">
                           <Button
                             size="small"
                             onClick={() =>
@@ -146,9 +150,9 @@ const CartDrawer: React.FC = () => {
                         </div>
 
                         {/* Ціна */}
-                        <div className="w-full lg:w-28 text-left lg:text-right">
-                          <Text className="text-base">
-                            Ціна: {item.price} ₴
+                        <div className="w-58 text-left lg:text-right">
+                          <Text className="text-[20px] font-medium font-manrope">
+                            {item.price} ₴
                           </Text>
                         </div>
                       </div>

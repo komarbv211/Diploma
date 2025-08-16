@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Form, Input, Button, notification, Space, Typography } from "antd";
-import { useSendMessageToUserMutation } from "../../../services/userApi";
+import { useSendMessageToUserMutation } from "../../../services/admin/userAdminApi";
 import { ApiError } from "../../../types/errors";
 import { handleFormErrors } from "../../../utilities/handleApiErrors";
 
