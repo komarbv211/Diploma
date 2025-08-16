@@ -39,12 +39,5 @@ namespace WebApiDiploma.Controllers.Public
             await _orderService.DeleteOrderAsync((int)id);
             return Ok(id);
         }
-
-        [HttpPost("update-warehouses")]
-        public async Task<IActionResult> UpdateWarehouses()
-        {
-            await _novaPoshtaService.UpdateWarehousesAsync();
-            return Ok();
-        }
     }
 }

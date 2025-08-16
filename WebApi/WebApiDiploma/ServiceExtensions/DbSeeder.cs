@@ -371,16 +371,16 @@ namespace WebApiDiploma.ServiceExtensions
             IRepository<OrderEntity>? orderRepo,
             IRepository<NovaPostWarehouseEntity>? warehouseRepo)
         {
-            var newPostService = serviceProvider.GetRequiredService<NovaPoshtaService>();
-            await newPostService.UpdateWarehousesAsync();
+            //var newPostService = serviceProvider.GetRequiredService<NovaPoshtaService>();
+            //await newPostService.UpdateWarehousesAsync();
 
             if (orderRepo == null || await orderRepo.AnyAsync())
                 return;
 
             Console.WriteLine("Seeding Orders...");
 
-            var ordersJson = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "Helpers", "SeederJsonDir", "Orders.json"));
-            var orderItemsJson = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "Helpers", "SeederJsonDir", "OrderItems.json"));
+            var ordersJson = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "Helpers", "JsonData", "Orders.json"));
+            var orderItemsJson = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "Helpers", "JsonData", "OrderItems.json"));
 
             var orders = JsonConvert.DeserializeObject<List<OrderEntity>>(ordersJson);
             var orderItems = JsonConvert.DeserializeObject<List<OrderItemEntity>>(orderItemsJson);

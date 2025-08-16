@@ -52,30 +52,43 @@ namespace Core.Services
                 return;
             }
 
+            var existingWarehouses = await _npRepository.GetAllQueryable()
+                .ToDictionaryAsync(x => x.WarehouseCode);
+
+            var apiCodes = data.Data.Select(w => w.Number).ToHashSet();
+
             foreach (var w in data.Data)
             {
-                var entity = await _npRepository.FirstOrDefaultAsync(x => x.WarehouseCode == w.Number);
-
-                if (entity == null)
+                if (!existingWarehouses.TryGetValue(w.Number, out var entity))
                 {
                     var newEntity = _mapper.Map<NovaPostWarehouseEntity>(w);
                     MapExtraFields(newEntity, w);
+                    entity.LastSyncedAt = DateTime.UtcNow;
                     await _npRepository.AddAsync(newEntity);
 
                     Console.WriteLine($"Склад {w.Description} ({w.Number}) додано");
                 }
                 else
                 {
-                    _mapper.Map(w, entity);
                     MapExtraFields(entity, w);
                     entity.LastSyncedAt = DateTime.UtcNow;
-
                     Console.WriteLine($"Склад {w.Description} ({w.Number}) оновлено");
                 }
             }
 
+            var toDeactivate = existingWarehouses.Values
+                .Where(x => !apiCodes.Contains(x.WarehouseCode) && x.IsActive)
+                .ToList();
+
+            foreach (var w in toDeactivate)
+            {
+                w.IsActive = false;
+                Console.WriteLine($"Склад {w.Address} ({w.WarehouseCode}) деактивовано");
+            }
+
             await _npRepository.SaveAsync();
         }
+        
         private static void MapExtraFields(NovaPostWarehouseEntity entity, NovaPostWarehouseData w)
         {
             entity.Address = w.Description ?? string.Empty;

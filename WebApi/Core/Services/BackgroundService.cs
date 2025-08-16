@@ -37,6 +37,15 @@ namespace Core.Services
             var history = await db.GetAllQueryable().FirstOrDefaultAsync(stoppingToken)
                           ?? new WarehouseUpdateHistoryEntity { LastUpdatedAt = DateTime.MinValue };
 
+            if (history == null)
+            {
+                history = new WarehouseUpdateHistoryEntity { LastUpdatedAt = DateTime.UtcNow };
+                await db.AddAsync(history);
+                await db.SaveAsync();
+                Console.WriteLine("BG Service started");
+                return;
+            }
+
             if (DateTime.UtcNow - history.LastUpdatedAt > _updateThreshold)
             {
                 try
