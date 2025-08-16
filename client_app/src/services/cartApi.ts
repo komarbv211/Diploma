@@ -1,0 +1,70 @@
+import {createApi} from "@reduxjs/toolkit/query/react";
+import {createBaseQueryWithReauth} from "../utilities/createBaseQuery.ts";
+import {type ICartItem} from "../store/slices/localCartSlice.ts";
+
+
+export const cartApi = createApi({
+    reducerPath: 'apiCart',
+    baseQuery: createBaseQueryWithReauth('Cart'),
+    tagTypes: ["Carts"],
+    endpoints: (builder) => ({
+        getCart: builder.query<ICartItem[], void>({
+            query: () => ({
+                url: 'getCart',
+                method: 'GET'
+            }),
+            providesTags: ['Carts']
+        }),
+
+        addToCartsRange: builder.mutation<void, ICartItem[]>({
+            query: (items) => {
+                try {
+                    return {
+                        url: 'addRange',
+                        method: 'POST',
+                        body: items,
+                    };
+                } catch {
+                    throw new Error('Error add item to cart');
+                }
+            },
+            invalidatesTags: ["Carts"]
+        }),
+
+        createUpdateCart: builder.mutation<void, ICartItem>({
+            query: (item) => {
+                try {
+                    return {
+                        url: 'createUpdate',
+                        method: 'POST',
+                        body: item,
+                    };
+                } catch {
+                    throw new Error('Error add item to cart');
+                }
+
+            },
+            invalidatesTags: ["Carts"]
+        }),
+        removeCartItem: builder.mutation<void, number>({
+            query: (id) => {
+                try {
+                    return {
+                        url: `removeCartItem/${id}`,
+                        method: 'DELETE'
+                    };
+                } catch {
+                    throw new Error('Error remove item from cart');
+                }
+            },
+            invalidatesTags: ["Carts"]
+        }),
+    })
+});
+
+
+export const {
+    useGetCartQuery,
+    useCreateUpdateCartMutation,
+    useRemoveCartItemMutation
+} = cartApi;

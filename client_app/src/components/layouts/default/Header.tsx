@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { Avatar, Form, Dropdown, Input } from "antd";
 import {
   UserOutlined,
@@ -5,29 +6,55 @@ import {
   SettingOutlined,
   DashboardOutlined,
 } from "@ant-design/icons";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { getUser, logOut } from "../../../store/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { APP_ENV } from "../../../env";
-import { UserIcon, CartIcon, SearchIcon } from "../../icons";
+import { UserIcon, SearchIcon } from "../../icons";
 import HorizontalNavigation from "../../navigation/HorizontalNavigation";
-import { useLocation } from "react-router-dom";
+import CartDrawer from "../../Cart/CartDrawer";
+import { useCart } from "../../../hooks/useCart";
+import { cartApi } from "../../../services/cartApi";
+import { addItem, clearCart } from "../../../store/slices/localCartSlice";
+import { useRef } from "react";
 
-const CustomHeader = () => {
+const CustomHeader: React.FC = () => {
   const user = useAppSelector(getUser);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const isAdmin = user?.roles.includes("Admin");
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith("/admin");
+  const { cart } = useCart(user != null);
+  const localCart = useAppSelector((state) => state.localCart.items);
+  const prevUserRef = useRef<typeof user | null>(null);
 
-  const handleLogout = () => {
-    console.log("Header: Logout initiated");
+  const handleLogout = async () => {
+    const serverCart = [...cart];
     dispatch(logOut());
-    console.log("Header: Logout dispatched, redirecting to home");
-    // Використовуємо window.location.href для примусового перенаправлення
+    console.log("Server cart", serverCart);
+    dispatch(cartApi.util.resetApiState()); // очищення кешу запитів кошика
+    console.log("Server cart", serverCart);
+    serverCart.forEach((item) => {
+      dispatch(addItem(item));
+    });
     window.location.href = "/";
   };
+
+  useEffect(() => {
+    const prevUser = prevUserRef.current;
+    if (!prevUser && user) {
+      // синхронізація тільки коли відбулось логінення
+      if (localCart.length > 0) {
+        Promise.all(
+          localCart.map((item) =>
+            dispatch(cartApi.endpoints.createUpdateCart.initiate(item)).unwrap()
+          )
+        ).then(() => dispatch(clearCart()));
+      }
+      dispatch(cartApi.endpoints.getCart.initiate());
+    }
+    prevUserRef.current = user;
+  }, [user, localCart, dispatch]);
 
   const avatarUrl = user?.image
     ? `${APP_ENV.IMAGES_100_URL}${user.image}`
@@ -62,8 +89,7 @@ const CustomHeader = () => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 h-20 bg-white  flex items-center justify-between px-10">
-        {/* Логотип */}
+      <header className="fixed top-0 left-0 right-0 h-20 bg-white flex items-center justify-between px-10">
         <Link to="/" className="flex-none w-[310px] h-[58px] order-0 ">
           <img
             src="/cosmeria 1.png"
@@ -71,15 +97,15 @@ const CustomHeader = () => {
             className="w-[85%] h-{85%} object-contain"
           />
         </Link>
-        {/* Пошук */}
+
         <Form.Item name="search">
           <Input
             placeholder="Пошук"
-            className="serch-header-input serch-header-input"
+            className="serch-header-input"
             suffix={<SearchIcon />}
           />
         </Form.Item>
-        {/* Користувач і кошик */}
+
         <div className="flex items-center gap-8">
           {user ? (
             <Dropdown menu={{ items: menuItems }}>
@@ -104,39 +130,11 @@ const CustomHeader = () => {
               </div>
             </div>
           )}
-
-          <div
-            className="flex items-center cursor-pointer"
-            onClick={() => navigate("/")}
-          >
-            {/* Іконка ліворуч */}
-            <div className="relative w-[41px] h-[41px] flex-shrink-0">
-              <CartIcon className="text-black w-full h-full" />
-            </div>
-
-            {/* Справа блок з бейджем і текстом */}
-            <div className="flex flex-col justify-between ml-3 h-[41px]">
-              {/* Бейдж зверху справа */}
-              <div
-                className="flex justify-center items-center
-                   w-[49px] h-[19px] p-[10px] gap-[10px]
-                   bg-[#C89FB8] rounded-[15px]"
-              >
-                <span className="w-[29px] h-[20px] text-black font-manrope font-light text-[15px] leading-[20px] text-center">
-                  0
-                </span>
-              </div>
-
-              {/* Текст знизу справа */}
-              <div className="w-[49px] h-[22px] font-manrope font-medium text-[16px] leading-[22px] text-black text-center">
-                Кошик
-              </div>
-            </div>
-          </div>
+          {/* Drawer кошика */}
+          <CartDrawer />
         </div>
       </header>
 
-      {/* Горизонтальна навігація */}
       {!isAdminPath && (
         <div className="mt-20">
           <HorizontalNavigation />

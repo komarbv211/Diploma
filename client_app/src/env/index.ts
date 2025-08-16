@@ -22,5 +22,6 @@ const APP_ENV = {
     IMAGES_800_URL,
     IMAGES_1200_URL,
 }
+
 console.log('REMOTE_BASE_URL:', REMOTE_BASE_URL);
 export { APP_ENV };

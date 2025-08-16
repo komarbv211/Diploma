@@ -22,10 +22,14 @@ namespace Core.Validators.Products
             RuleFor(p => p.CategoryId)
                     .GreaterThan(0).WithMessage("Категорія обов'язкова.");
 
+            RuleFor(p => p.image)
+                .Must(images => images == null || images.Count <= 20)
+                .WithMessage("Можна завантажити максимум 15 фото.");
+
             RuleForEach(p => p.image)
-                    .Must(file => file.Length < 5 * 1024 * 1024) 
-                    .WithMessage("Розмір кожного зображення має бути менше 5 МБ.")
-                    .When(p => p.image != null);
+                .Must(file => file.Length <= 10 * 1024 * 1024) // 10 МБ
+                .WithMessage("Розмір кожного зображення має бути менше або дорівнювати 10 МБ.")
+                .When(p => p.image != null);
         }
     }
 }

@@ -24,6 +24,7 @@ namespace Infrastructure.Data
         public DbSet<PromotionEntity> Promotions { get; set; }
         public DbSet<PromotionProductEntity> PromotionProducts { get; set; }
         public DbSet<ProductRatingEntity> ProductRatings { get; set; }
+        public DbSet<CartEntity> Carts { get; set; }
         public DbSet<OrderEntity> Orders { get; set; }
         public DbSet<OrderItemEntity> OrderItems { get; set; }
         public DbSet<NovaPostWarehouseEntity> NovaPostWarehouses { get; set; }
@@ -70,7 +71,18 @@ namespace Infrastructure.Data
                 // Забороняємо дублювання рейтингу від одного користувача для одного продукту
                 pr.HasIndex(r => new { r.ProductId, r.UserId }).IsUnique();
             });
-        }
+            builder.Entity<CartEntity>(cart =>
+            {
+                cart.HasKey(c => new { c.ProductId, c.UserId });
 
+                cart.HasOne(c => c.Product)
+                    .WithMany(p => p.Carts)
+                    .HasForeignKey(c => c.ProductId);
+
+                cart.HasOne(c => c.User)
+                    .WithMany(u => u.Carts)
+                    .HasForeignKey(c => c.UserId);
+            });
+        }
     }
 }

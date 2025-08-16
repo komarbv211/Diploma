@@ -16,12 +16,5 @@ namespace Infrastructure.Entities
         [Required, StringLength(50)]
         public string Name { get; set; } = string.Empty;
 
-        // Значення знижки:
-        // Якщо DiscountType = "Percent", то це відсоток (20 = 20%)
-        // Якщо DiscountType = "Fixed", то це сума в валюті (наприклад, 100 грн)
-        [Required]
-        public decimal Amount { get; set; } 
-
-        
     }
 }

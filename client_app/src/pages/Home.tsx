@@ -22,7 +22,7 @@ const Home: React.FC = () => {
       <div className="w-full max-w-[1680px] flex flex-wrap justify-center gap-[12px]">
         {isLoading && <p>Завантаження...</p>}
         {products?.map((product) => (
-          <div className="cart-container" key={product.id}>
+          <div key={product.id}>
             <ProductCard
               title={product.name}
               category={getCategoryName(product.categoryId)}
