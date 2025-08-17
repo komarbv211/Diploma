@@ -221,13 +221,13 @@ const UsersPage: React.FC = () => {
           overlay={
             <Menu>
               <Menu.Item onClick={() => handleAction("edit", record)}>
-                Edit
+                Редагувати
               </Menu.Item>
               <Menu.Item onClick={() => handleAction("delete", record)}>
-                Delete
+                Видалити
               </Menu.Item>
               <Menu.Item onClick={() => handleAction("message", record)}>
-                Send Message
+                Надіслати повідомлення
               </Menu.Item>
             </Menu>
           }

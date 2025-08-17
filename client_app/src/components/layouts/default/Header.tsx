@@ -98,13 +98,15 @@ const CustomHeader: React.FC = () => {
           />
         </Link>
 
-        <Form.Item name="search">
-          <Input
-            placeholder="Пошук"
-            className="serch-header-input"
-            suffix={<SearchIcon />}
-          />
-        </Form.Item>
+        {!isAdminPath && (
+          <Form.Item name="search">
+            <Input
+              placeholder="Пошук"
+              className="serch-header-input"
+              suffix={<SearchIcon />}
+            />
+          </Form.Item>
+        )}
 
         <div className="flex items-center gap-8">
           {user ? (

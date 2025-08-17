@@ -48,3 +48,9 @@ input::placeholder {
 :where(.css-dev-only-do-not-override-pjilya).ant-drawer .ant-drawer-body{
   padding-top: 0%;
 }
+:where(.css-dev-only-do-not-override-pjilya).ant-layout-sider-light .ant-layout-sider-trigger {
+    margin-bottom: 13px;
+}
+:where(.css-dev-only-do-not-override-pjilya).ant-card .ant-card-body {
+    padding: 16px;
+}
