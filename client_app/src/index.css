@@ -40,3 +40,11 @@ input::placeholder {
 :where(.css-dev-only-do-not-override-pjilya).ant-card .ant-card-body {
     padding: 16px;
 }
+/* приховати горизонтальний скрол */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

@@ -5,6 +5,7 @@ import { useGetCategoryTreeQuery } from "../services/categoryApi";
 import { APP_ENV } from "../env";
 import { useAppSelector } from "../store/store";
 import { getUser } from "../store/slices/userSlice";
+import { Link } from "react-router-dom";
 
 const Home: React.FC = () => {
   const { data: products, isLoading, refetch } = useGetAllProductsQuery();
@@ -22,7 +23,7 @@ const Home: React.FC = () => {
       <div className="w-full max-w-[1680px] flex flex-wrap justify-center gap-[12px]">
         {isLoading && <p>Завантаження...</p>}
         {products?.map((product) => (
-          <div key={product.id}>
+          <Link key={product.id} to={`/product/details/${product.id}`}>
             <ProductCard
               title={product.name}
               category={getCategoryName(product.categoryId)}
@@ -37,7 +38,7 @@ const Home: React.FC = () => {
               }
               onRated={() => refetch()}
             />
-          </div>
+          </Link>
         ))}
       </div>
     </div>
