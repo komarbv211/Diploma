@@ -4,13 +4,17 @@ import { useCart } from "../../hooks/useCart";
 import { APP_ENV } from "../../env";
 import { CartIcon, DeleteIcon } from "../icons";
 import ReactDOM from "react-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const CartModal: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
   const { cart, addToCart, removeFromCart } = useCart(user != null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  useEffect(() => {
+    setIsCartOpen(false);
+  }, [location.pathname]);
 
   return (
     <>
@@ -158,7 +162,7 @@ const CartModal: React.FC = () => {
                     </div>
 
                     <Link to="/orders">
-                      <button className="w-full h-[52px] bg-pink rounded-xl text-white xs:text-[24px] font-semibold font-manrope hover:bg-pink/90 transition">
+                      <button onClick={() => setIsCartOpen(false)} className="w-full h-[52px] bg-pink rounded-xl text-white xs:text-[24px] font-semibold font-manrope hover:bg-pink/90 transition">
                         Оформити замовлення
                       </button>
                     </Link>
