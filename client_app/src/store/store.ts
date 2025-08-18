@@ -5,7 +5,7 @@ import userReducer from './slices/userSlice';
 
 import { userApi } from '../services/userApi';
 import { authApi } from '../services/authApi';
-import { userAdminApi } from '../services/admin/userAdninApi';
+import { userAdminApi } from '../services/admin/userAdminApi';
 import { categoryApi } from '../services/categoryApi';
 import { categoryAdminApi } from '../services/admin/categoryAdmnApi';
 import { productApi } from '../services/productApi';

@@ -12,11 +12,11 @@ import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { APP_ENV } from "../../../env";
 import { UserIcon, SearchIcon } from "../../icons";
 import HorizontalNavigation from "../../navigation/HorizontalNavigation";
-import CartDrawer from "../../Cart/CartDrawer";
 import { useCart } from "../../../hooks/useCart";
 import { cartApi } from "../../../services/cartApi";
 import { addItem, clearCart } from "../../../store/slices/localCartSlice";
 import { useRef } from "react";
+import CartModal from "../../Cart/CartModal";
 
 const CustomHeader: React.FC = () => {
   const user = useAppSelector(getUser);
@@ -98,13 +98,15 @@ const CustomHeader: React.FC = () => {
           />
         </Link>
 
-        <Form.Item name="search">
-          <Input
-            placeholder="Пошук"
-            className="serch-header-input"
-            suffix={<SearchIcon />}
-          />
-        </Form.Item>
+        {!isAdminPath && (
+          <Form.Item name="search">
+            <Input
+              placeholder="Пошук"
+              className="serch-header-input"
+              suffix={<SearchIcon />}
+            />
+          </Form.Item>
+        )}
 
         <div className="flex items-center gap-8">
           {user ? (
@@ -130,8 +132,8 @@ const CustomHeader: React.FC = () => {
               </div>
             </div>
           )}
-          {/* Drawer кошика */}
-          <CartDrawer />
+          {/* Modal кошика */}
+          <CartModal />
         </div>
       </header>
 

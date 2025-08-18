@@ -71,6 +71,7 @@ public class ProductService : IProductService
         try
         {
             var product = _mapper.Map<ProductEntity>(dto);
+            product.RatingsCount = 0;
             await _productRepository.AddAsync(product);
             await _productRepository.SaveAsync();
 

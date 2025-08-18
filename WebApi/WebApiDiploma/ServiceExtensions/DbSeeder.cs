@@ -1,9 +1,14 @@
-﻿using Newtonsoft.Json;
-using System.Text;
+﻿using Core.Interfaces;
+using Core.Models.Enums;
+using Core.Services;
 using Infrastructure.Entities;
-using WebApiDiploma.Models.Seeder;
-using Core.Interfaces;
+using Infrastructure.Enums;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using System.Text;
+using WebApiDiploma.Models.Seeder;
 
 namespace WebApiDiploma.ServiceExtensions
 {
@@ -40,7 +45,7 @@ namespace WebApiDiploma.ServiceExtensions
 
             // Users seeder
             var userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
-            
+
             var imageService = serviceProvider.GetRequiredService<IImageService>();
             if (!userManager.Users.Any())
             {
@@ -187,31 +192,31 @@ namespace WebApiDiploma.ServiceExtensions
                             ?? throw new JsonException();
                         //if (productModels.Any() && filterValueRepo is not null)
                         //{
-                            var productTasks = productModels.Select(async (x) =>
-                            {
-                                //var filterValues = filterValueRepo.GetListBySpec(new FilterValueSpecs.GetByIds(x.FilterValueIds)).Result.ToList();
-                                var imagesTasks = x.ImagePaths.Select(async (path, index) =>
-                                    new ProductImageEntity()
-                                    {
-                                        Priority = (short)index,
-                                        Name = await imageService.SaveImageFromUrlAsync(path)
-                                    });
-                                var images = await Task.WhenAll(imagesTasks);
-                                return new ProductEntity()
+                        var productTasks = productModels.Select(async (x) =>
+                        {
+                            //var filterValues = filterValueRepo.GetListBySpec(new FilterValueSpecs.GetByIds(x.FilterValueIds)).Result.ToList();
+                            var imagesTasks = x.ImagePaths.Select(async (path, index) =>
+                                new ProductImageEntity()
                                 {
-                                    Name = x.Name,
-                                    Price =x.Price,
-                                    Description = x.Description,
-                                    CategoryId = x.CategoryId,
-                                    Images = images,
-                                };
-                            });
-                            var products = await Task.WhenAll(productTasks);
-                            Console.WriteLine($"Adding {products.Length} adverts to the database.");
-                            await ProductRepo.AddRangeAsync(products);
+                                    Priority = (short)index,
+                                    Name = await imageService.SaveImageFromUrlAsync(path)
+                                });
+                            var images = await Task.WhenAll(imagesTasks);
+                            return new ProductEntity()
+                            {
+                                Name = x.Name,
+                                Price = x.Price,
+                                Description = x.Description,
+                                CategoryId = x.CategoryId,
+                                Images = images,
+                            };
+                        });
+                        var products = await Task.WhenAll(productTasks);
+                        Console.WriteLine($"Adding {products.Length} adverts to the database.");
+                        await ProductRepo.AddRangeAsync(products);
 
-                            await ProductRepo.SaveAsync();
-                            Console.WriteLine("Adverts added to the database.");
+                        await ProductRepo.SaveAsync();
+                        Console.WriteLine("Adverts added to the database.");
                         //}
                     }
                     catch (JsonException)
@@ -255,6 +260,41 @@ namespace WebApiDiploma.ServiceExtensions
                 }
                 else Console.WriteLine("File \"ProductRatings.json\" not found");
             }
+
+
+            //Brands seeder
+            var brandRepo = scope.ServiceProvider.GetService<IRepository<BrandEntity>>();
+
+            if (brandRepo is not null && !await brandRepo.AnyAsync())
+            {
+                Console.WriteLine("Start brand seeder");
+                string brandJsonDataFile = Path.Combine(Environment.CurrentDirectory, "Helpers", app.Configuration["SeederJsonDir"]!, "Brand.json");
+                if (File.Exists(brandJsonDataFile))
+                {
+                    var filtersJson = File.ReadAllText(brandJsonDataFile, Encoding.UTF8);
+                    try
+                    {
+                        var brandModels = JsonConvert.DeserializeObject<IEnumerable<SeederBrandModel>>(filtersJson)
+                            ?? throw new JsonException();
+                        foreach (var brandModel in brandModels)
+                        {
+                            var parent = new BrandEntity
+                            {
+                                Name = brandModel.Name
+                            };
+                            await brandRepo.AddAsync(parent);
+                            await brandRepo.SaveAsync();
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                        Console.WriteLine("Error deserialize brands json file");
+                    }
+                }
+                else Console.WriteLine("File \"JsonData/Brand.json\" not found");
+            }
+
+
 
             // Отримуємо потрібні репозиторії з DI-контейнера
 
@@ -353,7 +393,45 @@ namespace WebApiDiploma.ServiceExtensions
                 }
             }
 
+
+            var orderRepo = scope.ServiceProvider.GetService<IRepository<OrderEntity>>();
+            var warehouseRepo = scope.ServiceProvider.GetService<IRepository<NovaPostWarehouseEntity>>();
+
+            await SeedOrdersAsync(scope.ServiceProvider, orderRepo, warehouseRepo);
+
         }
+
+        private static async Task SeedOrdersAsync(
+            IServiceProvider serviceProvider,
+            IRepository<OrderEntity>? orderRepo,
+            IRepository<NovaPostWarehouseEntity>? warehouseRepo)
+        {
+            //var newPostService = serviceProvider.GetRequiredService<NovaPoshtaService>();
+            //await newPostService.UpdateWarehousesAsync();
+
+            if (orderRepo == null || await orderRepo.AnyAsync())
+                return;
+
+            Console.WriteLine("Seeding Orders...");
+
+            var ordersJson = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "Helpers", "JsonData", "Orders.json"));
+            var orderItemsJson = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "Helpers", "JsonData", "OrderItems.json"));
+
+            var orders = JsonConvert.DeserializeObject<List<OrderEntity>>(ordersJson);
+            var orderItems = JsonConvert.DeserializeObject<List<OrderItemEntity>>(orderItemsJson);
+
+            foreach (var order in orders!)
+            {
+                order.Items = orderItems!.Where(i => i.OrderId == order.Id).ToList();
+            }
+
+            await orderRepo.AddRangeAsync(orders!);
+            await orderRepo.SaveAsync();
+
+            Console.WriteLine($"Orders seeded: {orders!.Count}, OrderItems seeded: {orderItems!.Count}");
+        }
+
+
 
 
 

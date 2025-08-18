@@ -2,6 +2,7 @@
 using Core.Extensions;
 using Core.Interfaces;
 using Core.Models;
+using Core.Services;
 using FluentValidation;
 using Infrastructure.Data;
 using Infrastructure.Entities;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using WebApiDiploma.Filters;
 using WebApiDiploma.ServiceExtensions;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,10 +36,10 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 .AddDefaultTokenProviders();
 
 // Власні сервіси
-
 builder.Services.AddWebApiServices();
 builder.Services.AddCoreServices();
 builder.Services.AddScoped<ICookieService, CookieService>();
+builder.Services.AddHostedService<WarehouseBackgroundService>();
 
 // Controllers
 builder.Services.AddControllers();

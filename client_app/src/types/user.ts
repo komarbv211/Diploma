@@ -29,11 +29,15 @@ export interface IUserUpdateDTO {
 }
   
 export interface PagedResultDto<T> {
-  items: T[];
-  currentPage: number;
-  pageSize: number;
-  totalCount: number;
+  items: T[];               
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    pageSize: number;
+    totalCount: number;
+  };
 }
+
 
 
 export interface PagedRequestDto {
@@ -55,13 +59,15 @@ export interface PaginationComponentProps {
 export interface IUser {
   id: number;
   fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   image?: string;
   isLoginGoogle?: boolean;
   isLoginPassword?: boolean;
   createdDate: string;
-  lastActivity?: string;
-  roles: string; 
+  lastActivity: string;
+  roles: string[];
 }
 
 // types/user.ts
