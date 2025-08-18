@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Core.DTOs.BrandsDTOs
 {
-    public class BrandDto
+    public class BrandUpdateDto: BrandCreateDto
     {
-        public string? Name { get; set; }
+        public long Id { get; set; }
     }
 }
