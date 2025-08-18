@@ -7,6 +7,7 @@ import { useCart } from "../../hooks/useCart.ts";
 import { APP_ENV } from "../../env/index.ts";
 //import OrderForm from "../orderForm";
 import { CartIcon, DeleteIcon } from "../../components/icons";
+import Link from "antd/es/typography/Link";
 
 const { Text } = Typography;
 
@@ -182,11 +183,13 @@ const CartDrawer: React.FC = () => {
                 </span>
               </div>
 
+            <Link href="/orders">
               <button className="w-full h-[63px] bg-pink rounded-xl text-white xl:text-[24px] font-semibold font-manrope hover:bg-pink/90 transition">
                 <p className="ml-3 mr-3 sm:justify-between sm:items-center">
                   Оформити замовлення
                 </p>
               </button>
+            </Link>
             </div>
           </div>
         </div>

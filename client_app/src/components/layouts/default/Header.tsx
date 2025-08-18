@@ -3,7 +3,6 @@ import { Avatar, Form, Dropdown, Input } from "antd";
 import {
   UserOutlined,
   LogoutOutlined,
-  SettingOutlined,
   DashboardOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
@@ -74,11 +73,6 @@ const CustomHeader: React.FC = () => {
       key: "profile",
       icon: <UserOutlined />,
       label: <Link to="/profile">Profile</Link>,
-    },
-    {
-      key: "settings",
-      icon: <SettingOutlined />,
-      label: <Link to="/settings">Settings</Link>,
     },
     {
       key: "logout",

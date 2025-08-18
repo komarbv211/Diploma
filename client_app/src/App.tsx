@@ -10,6 +10,7 @@ import AuthWatcher from "./components/AuthWatcher";
 
 const Home = lazy(() => import("./pages/Home"));
 const UserProfile = lazy(() => import("./pages/user/UserProfile.tsx"));
+const OrderPage = lazy(() => import("./pages/user/OrderPage.tsx"));
 const LoginUser = lazy(() => import("./pages/LoginUser.tsx"));
 const RegistrUser = lazy(() => import("./pages/RegistrUser.tsx"));
 const GoogleRegisterUser = lazy(() => import("./pages/GoogleRegisterUser.tsx"));
@@ -30,6 +31,7 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="profile" element={<UserProfile />} />
+            <Route path="orders" element={<OrderPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
           <Route path="login/*" element={<LoginUser />} />
