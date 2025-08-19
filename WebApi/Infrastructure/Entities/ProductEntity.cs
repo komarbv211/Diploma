@@ -27,6 +27,12 @@ namespace Infrastructure.Entities
 
         public virtual BrandEntity? Brand { get; set; }
 
+        // 🆕 Дата створення
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        /// Показує, чи товар активний (доступний для продажу/показу)
+        public bool IsActive { get; set; } = true;
 
         public virtual ICollection<ProductImageEntity>? Images { get; set; }
 
