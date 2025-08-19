@@ -22,14 +22,6 @@ namespace Core.DTOs.PromotionDTOs
 
         public bool IsActive { get; set; } = true;
 
-        [Required]
-        public decimal Amount { get; set; }
 
-        public long? CategoryId { get; set; }
-
-        [Required]
-        public long DiscountTypeId { get; set; }
-
-        public List<long>? ProductIds { get; set; }
     }
 }

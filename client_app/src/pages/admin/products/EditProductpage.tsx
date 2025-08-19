@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Button, Input, Upload, Form } from "antd";
+import { Button, Input, Upload, Form, InputNumber } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import Item from "antd/es/list/Item";
 import {
   useUpdateProductMutation,
   useGetProductByIdQuery,
 } from "../../../services/admin/productAdminApi";
 import CategoryTreeSelect from "../../../components/category/CategoryTreeSelect";
+
 import { IProductPutRequest } from "../../../types/product";
 import { UploadFile } from "antd/es/upload/interface";
 import { APP_ENV } from "../../../env";
@@ -31,11 +31,6 @@ const EditProductPage = () => {
   useEffect(() => {
     if (productData) {
       form.setFieldsValue({ ...form.getFieldsValue(), ...productData });
-      console.log("Category id", productData.categoryId);
-      form.setFieldsValue({
-        ...form.getFieldsValue(),
-        ...productData,
-      });
 
       const updatedFileList: UploadFile[] =
         productData.images?.map(
@@ -60,7 +55,6 @@ const EditProductPage = () => {
       uid: file.uid || Date.now().toString(),
       order: index,
     }));
-
     setFileList([...fileList, ...newFileList]);
   };
 
@@ -76,7 +70,6 @@ const EditProductPage = () => {
     try {
       values.id = Number(id);
       values.image = fileList.map((x) => x.originFileObj as File);
-      console.log("Submit Form", values);
       await updateProduct(values).unwrap();
       navigate("..");
     } catch (error: unknown) {
@@ -91,45 +84,51 @@ const EditProductPage = () => {
           Назад
         </Button>
       </Link>
+
       <div className="max-w-lg mx-auto my-6">
         <h1 className="text-3xl font-bold mb-4">Редагування продукт</h1>
+
         <Form form={form} onFinish={onFinish} layout="vertical">
           <Form.Item
             name="name"
             label="Назва"
             rules={[
-              { required: true, message: "Будь ласка, введіть назву групи!" },
+              {
+                required: true,
+                message: "Будь ласка, введіть назву продукту!",
+              },
             ]}
           >
             <Input placeholder="Назва" />
           </Form.Item>
 
-          <Form.Item
-            name="description"
-            label="Опис"
-            rules={[{ required: false }]}
-          >
-            <Input.TextArea
-              rows={6}
-              autoSize={{ minRows: 6, maxRows: 15 }}
-              placeholder="Введіть детальний опис. Використовуйте Enter для абзаців."
-            />
+          <Form.Item name="description" label="Опис">
+            <Input placeholder="Опис" />
           </Form.Item>
 
           <Form.Item
             name="price"
             label="Ціна"
-            rules={[
-              { required: true, message: "Будь ласка, введіть назву групи!" },
-            ]}
+            rules={[{ required: true, message: "Будь ласка, введіть ціну!" }]}
           >
-            <Input placeholder="Ціна" />
+            <Input placeholder="Ціна" type="number" />
+          </Form.Item>
+
+          <Form.Item
+            name="quantity"
+            label="Кількість"
+            rules={[{ required: true, message: "Вкажіть кількість!" }]}
+          >
+            <InputNumber
+              min={0}
+              placeholder="Кількість"
+              style={{ width: "100%" }}
+            />
           </Form.Item>
 
           <Form.Item
             label="Категорія"
             name="categoryId"
-            htmlFor="categoryId"
             rules={[{ required: true, message: "Це поле є обов'язковим!" }]}
           >
             <CategoryTreeSelect
@@ -138,6 +137,7 @@ const EditProductPage = () => {
               showSearch
             />
           </Form.Item>
+
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="upload-list" direction="horizontal">
               {(provided) => (
@@ -161,12 +161,11 @@ const EditProductPage = () => {
                           <Upload
                             listType="picture-card"
                             fileList={[file]}
-                            onRemove={() => {
-                              const newFileList = fileList.filter(
-                                (f) => f.uid !== file.uid
-                              );
-                              setFileList(newFileList);
-                            }}
+                            onRemove={() =>
+                              setFileList(
+                                fileList.filter((f) => f.uid !== file.uid)
+                              )
+                            }
                           />
                         </div>
                       )}
@@ -192,11 +191,11 @@ const EditProductPage = () => {
             </div>
           </Upload>
 
-          <Item>
+          <Form.Item>
             <Button type="primary" htmlType="submit" block>
               Зберегти
             </Button>
-          </Item>
+          </Form.Item>
         </Form>
       </div>
     </>
