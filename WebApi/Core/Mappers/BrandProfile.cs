@@ -10,7 +10,8 @@ namespace Core.Mappers
         public BrandProfile()
         {
         CreateMap<BrandEntity, BrandItemDto>(). ReverseMap();
-            
+            CreateMap<BrandCreateDto, BrandEntity>();
+
         }
     }
 }
