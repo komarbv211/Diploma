@@ -21,14 +21,5 @@ namespace Core.DTOs.PromotionDTOs
         public DateTime EndDate { get; set; }
 
         public bool IsActive { get; set; } = true;
-
-        public long? CategoryId { get; set; }
-
-        [Required]
-        public decimal Amount { get; set; }
-
-        public long DiscountTypeId { get; set; }
-
-        public List<long>? ProductIds { get; set; } 
     }
 }

@@ -261,102 +261,67 @@ namespace WebApiDiploma.ServiceExtensions
                 else Console.WriteLine("File \"ProductRatings.json\" not found");
             }
 
-            // Отримуємо потрібні репозиторії з DI-контейнера
-
             var promotionRepo = scope.ServiceProvider.GetService<IRepository<PromotionEntity>>();
-            var discountTypeRepo = scope.ServiceProvider.GetService<IRepository<DiscountTypeEntity>>();
-            var promotionProductRepo = scope.ServiceProvider.GetService<IRepository<PromotionProductEntity>>();
+var productRepo = scope.ServiceProvider.GetService<IRepository<ProductEntity>>();
 
-            // Перевірка: якщо є репозиторій акцій і таблиця ще порожня — починаємо сидінг
-            if (promotionRepo is not null && !await promotionRepo.AnyAsync())
+if (promotionRepo is not null && !await promotionRepo.AnyAsync())
+{
+    Console.WriteLine("Start promotions seeder");
+
+    string promotionJsonPath = Path.Combine(Environment.CurrentDirectory, "Helpers", app.Configuration["SeederJsonDir"]!, "Promotion.json");
+
+    if (File.Exists(promotionJsonPath))
+    {
+        var promotionJson = File.ReadAllText(promotionJsonPath, Encoding.UTF8);
+        try
+        {
+            var promotionModels = JsonConvert.DeserializeObject<List<SeederPromotionModel>>(promotionJson)
+                                  ?? throw new JsonException();
+
+            foreach (var model in promotionModels)
             {
-                Console.WriteLine("Start promotions seeder");
-
-                // Формуємо шлях до JSON-файлу з акціями
-                string promotionJsonPath = Path.Combine(Environment.CurrentDirectory, "Helpers", app.Configuration["SeederJsonDir"]!, "Promotion.json");
-
-                // Перевіряємо, чи файл існує
-                if (File.Exists(promotionJsonPath))
+                // Створюємо акцію
+                var promotion = new PromotionEntity
                 {
-                    // Зчитуємо JSON як рядок
-                    var promotionJson = File.ReadAllText(promotionJsonPath, Encoding.UTF8);
+                    Name = model.Name,
+                    Description = model.Description,
+                    Image = model.Image,
+                    StartDate = model.StartDate.ToUniversalTime(),
+                    EndDate = model.EndDate.ToUniversalTime(),
+                    IsActive = model.IsActive
+                };
 
-                    try
+                await promotionRepo.AddAsync(promotion);
+                await promotionRepo.SaveAsync();
+
+                // Прив’язка продуктів до акції
+                if (model.ProductIds is not null && model.ProductIds.Any() && productRepo is not null)
+                {
+                    foreach (var productId in model.ProductIds)
                     {
-                        // Десеріалізуємо JSON у список моделей
-                        var promotionModels = JsonConvert.DeserializeObject<List<SeederPromotionModel>>(promotionJson)
-                                              ?? throw new JsonException();
-
-                        // Проходимося по кожній акції з файлу
-                        foreach (var model in promotionModels)
+                        var product = await productRepo!.GetByID(productId);
+                        if (product != null)
                         {
-                            // === 1. Обробка DiscountType ===
-
-                            // Шукаємо, чи вже існує такий тип знижки 
-                            var discountType = await discountTypeRepo.FirstOrDefaultAsync(dt => dt.Name == model.DiscountType);
-
-                            // Якщо такого немає — створюємо новий
-                            if (discountType == null)
-                            {
-                                discountType = new DiscountTypeEntity
-                                {
-                                    Name = model.DiscountType   // "Percent" або "Fixed"
-                                };
-
-                                // Додаємо в БД
-                                await discountTypeRepo.AddAsync(discountType);
-                                await discountTypeRepo.SaveAsync();
-                            }
-
-                            // === 2. Створення PromotionEntity ===
-
-                            var promotion = new PromotionEntity
-                            {
-                                Name = model.Name,
-                                Description = model.Description,
-                                Image = model.Image,
-                                StartDate = model.StartDate.ToUniversalTime(),
-                                EndDate = model.EndDate.ToUniversalTime(),
-                                IsActive = model.IsActive,
-                                CategoryId = model.CategoryId,           // Якщо вказано — акція для всієї категорії
-                                DiscountTypeId = discountType.Id         // Зв’язок з DiscountTypeEntity
-                            };
-
-                            // Зберігаємо акцію в БД
-                            await promotionRepo.AddAsync(promotion);
-                            await promotionRepo.SaveAsync();
-
-                            // === 3. Додаємо зв’язок з продуктами, якщо ProductIds є ===
-
-                            if (model.ProductIds is not null && model.ProductIds.Any())
-                            {
-                                foreach (var productId in model.ProductIds)
-                                {
-                                    var pp = new PromotionProductEntity
-                                    {
-                                        PromotionId = promotion.Id,
-                                        ProductId = productId
-                                    };
-
-                                    // Додаємо зв’язок акція-продукт
-                                    await promotionProductRepo.AddAsync(pp);
-                                }
-
-                                // Зберігаємо всі зв’язки одним разом
-                                await promotionProductRepo.SaveAsync();
-                            }
+                            product.PromotionId = promotion.Id;
                         }
                     }
-                    catch (JsonException)
-                    {
-                        Console.WriteLine("❌ Error: Не вдалося десеріалізувати Promotions.json");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("❌ Promotions.json не знайдено");
+                    await productRepo.SaveAsync();
                 }
             }
+
+            Console.WriteLine("Promotions seeded successfully.");
+        }
+        catch (JsonException)
+        {
+            Console.WriteLine("❌ Error: Не вдалося десеріалізувати Promotions.json");
+        }
+    }
+    else
+    {
+        Console.WriteLine("❌ Promotions.json не знайдено");
+    }
+}
+
 
 
             var orderRepo = scope.ServiceProvider.GetService<IRepository<OrderEntity>>();

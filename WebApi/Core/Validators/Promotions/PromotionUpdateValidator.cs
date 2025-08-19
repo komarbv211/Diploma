@@ -14,8 +14,7 @@ public class PromotionUpdateValidator : AbstractValidator<PromotionUpdateDto>
             .LessThan(x => x.EndDate)
             .WithMessage("Дата початку має бути раніше за дату завершення.");
 
-        RuleFor(x => x.DiscountTypeId)
-            .GreaterThan(0).WithMessage("Оберіть тип знижки.");
+        
 
 
     }

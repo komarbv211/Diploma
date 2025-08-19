@@ -41,13 +41,7 @@ namespace Core.Services
                 entity.Image = imageName;
             }
 
-            if (dto.ProductIds != null && dto.ProductIds.Any())
-            {
-                entity.PromotionProducts = dto.ProductIds.Select(id => new PromotionProductEntity
-                {
-                    ProductId = id
-                }).ToList();
-            }
+            
 
             await _repository.AddAsync(entity);
             await _repository.SaveAsync();
@@ -91,9 +85,7 @@ namespace Core.Services
                 promotion.Image = oldImage;
             }
 
-            promotion.PromotionProducts = dto.ProductIds?
-                .Select(pid => new PromotionProductEntity { ProductId = pid, PromotionId = dto.Id })
-                .ToList();
+            
 
             await _promotionRepository.Update(promotion);
             await _promotionRepository.SaveAsync();
@@ -112,12 +104,7 @@ namespace Core.Services
                 StartDate = p.StartDate,
                 EndDate = p.EndDate,
                 IsActive = p.IsActive,
-                CategoryId = p.CategoryId,
-                CategoryName = p.Category?.Name,
-                DiscountTypeId = p.DiscountTypeId,
-                DiscountTypeName = p.DiscountType?.Name ?? string.Empty,
-                DiscountAmount = p.Amount,
-                ProductIds = p.PromotionProducts?.Select(pp => pp.ProductId).ToList() ?? new List<long>()
+                ProductIds = p.Products?.Select(pp => pp.Id).ToList() ?? new List<long>()
             }).ToList();
 
             return promotionDtos;
@@ -137,12 +124,7 @@ namespace Core.Services
                 StartDate = promotion.StartDate,
                 EndDate = promotion.EndDate,
                 IsActive = promotion.IsActive,
-                CategoryId = promotion.CategoryId,
-                CategoryName = promotion.Category?.Name,
-                DiscountTypeId = promotion.DiscountTypeId,
-                DiscountTypeName = promotion.DiscountType?.Name ?? string.Empty,
-                DiscountAmount = promotion.Amount,
-                ProductIds = promotion.PromotionProducts?.Select(pp => pp.ProductId).ToList() ?? new List<long>()
+                ProductIds = promotion.Products?.Select(pp => pp.Id).ToList() ?? new List<long>()
             };
 
             return dto;
