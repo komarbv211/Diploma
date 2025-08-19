@@ -27,7 +27,7 @@ const Footer: React.FC = () => {
       </div>
 
       {/* Основна навігація */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-4 mb-12">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 px-4 mb-12">
         {/* Про доставку */}
         <div>
           <h3 className="text-xl font-semibold mb-2">Про доставку</h3>
@@ -57,6 +57,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Контакти */}
+        <div></div>
         <div>
           <h3 className="text-xl font-semibold mb-2">Контакти</h3>
           <ul className="space-y-1 text-base text-black">

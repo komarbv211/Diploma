@@ -6,7 +6,7 @@ import { useCart } from "../hooks/useCart";
 import InteractiveRating from "../components/InteractiveRating";
 import { CartIcon } from "../components/icons";
 import ImagesViewer from "../components/images/images_viewer/ImagesViewer";
-import { Typography, Button } from "antd";
+import { Typography } from "antd";
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,7 +30,7 @@ const ProductDetails: React.FC = () => {
 
   return (
     <>
-      <div className="container mx-auto px-4 mt-16 flex flex-col lg:flex-row gap-12">
+      <div className="container mx-auto px-4 mt-16 flex flex-col lg:flex-row gap-12 max-w-[1680px]">
         {/* Ліва частина: ImagesViewer */}
         <div className="flex-1 h-full">
           <ImagesViewer advertImages={product.images || []} />
@@ -71,21 +71,22 @@ const ProductDetails: React.FC = () => {
                 <span className="text-lg">1</span>
               </div>
             </div>
+          </div>
+          <div className="flex items-center justify-between">
             <button
               onClick={handleAddToCart}
-              className="flex items-center gap-2 px-6 py-3 bg-pink-500 text-white font-semibold rounded-lg hover:bg-pink-600 transition"
+              className="flex items-center gap-2 px-6 py-3 bg-pink text-white text-[24px] font-semibold rounded-lg hover:bg-pink2 transition w-[300px] justify-center"
             >
-              <CartIcon className="w-6 h-6" />
+              <CartIcon className="w-8 h-8" />
               Купити
             </button>
+            <button
+              onClick={() => navigate(-1)}
+              className="text-gray hover:text-pink2 underline"
+            >
+              Повернутися назад
+            </button>
           </div>
-
-          <button
-            onClick={() => navigate(-1)}
-            className="mt-4 text-gray-500 underline"
-          >
-            Повернутися назад
-          </button>
         </div>
       </div>
       <div className="flex flex-col items-center gap-12 max-w-full md:max-w-[1380px] mx-auto py-12">
@@ -96,13 +97,9 @@ const ProductDetails: React.FC = () => {
 
         {/* Кнопка залишити відгук */}
         <div className="flex justify-center">
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="h-[52px] px-6 text-lg md:text-xl font-medium rounded-lg bg-pink"
-          >
+          <button className="h-[52px] px-6 text-lg md:text-xl  text-white font-medium rounded-lg bg-pink hover:bg-pink2">
             Залишити відгук
-          </Button>
+          </button>
         </div>
       </div>
     </>

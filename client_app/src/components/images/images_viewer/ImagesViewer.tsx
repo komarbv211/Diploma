@@ -68,7 +68,7 @@ const ImagesViewer: React.FC<ImageViewerProps> = ({
       <div className="flex items-center gap-2">
         <button
           onClick={() => scroll("left")}
-          className="w-10 h-10 flex justify-center items-center bg-gray-300 text-gray-700 rounded-lg  hover:text-pink transition"
+          className="w-10 h-24 flex justify-center items-center bg-gray-300 text-gray-700 rounded-lg  hover:text-pink transition"
         >
           <LeftOutlined />
         </button>
@@ -93,7 +93,7 @@ const ImagesViewer: React.FC<ImageViewerProps> = ({
 
         <button
           onClick={() => scroll("right")}
-          className="w-10 h-10 flex justify-center items-center bg-gray-300 text-gray-700 rounded-lg   hover:text-pink transition"
+          className="w-10 h-24 flex justify-center items-center bg-gray-300 text-gray-700 rounded-lg   hover:text-pink transition"
         >
           <RightOutlined />
         </button>
