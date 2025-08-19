@@ -30,12 +30,6 @@ namespace Core.Validators.Promotions
             RuleFor(x => x.EndDate)
                 .NotEmpty().WithMessage("Дата завершення обов'язкова.");
 
-            RuleFor(x => x.DiscountTypeId)
-                .GreaterThan(0).WithMessage("Оберіть тип знижки.");
-
-            RuleFor(x => x)
-                .Must(x => x.CategoryId.HasValue || (x.ProductIds != null && x.ProductIds.Any()))
-                .WithMessage("Потрібно вибрати або категорію, або хоча б один продукт.");
         }
     }
 }

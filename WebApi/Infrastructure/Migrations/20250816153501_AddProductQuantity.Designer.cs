@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DbMakeUpContext))]
-    partial class DbMakeUpContextModelSnapshot : ModelSnapshot
+    [Migration("20250816153501_AddProductQuantity")]
+    partial class AddProductQuantity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,6 +86,30 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ParentId");
 
                     b.ToTable("tblCategories");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.DiscountTypeEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DiscountTypes");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.NovaPostWarehouseEntity", b =>
@@ -246,6 +273,51 @@ namespace Infrastructure.Migrations
                     b.ToTable("OrderItems");
                 });
 
+            modelBuilder.Entity("Infrastructure.Entities.ProductEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<double?>("AverageRating")
+                        .HasColumnType("double precision");
+
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<long?>("RatingsCount")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Products");
+                });
+
             modelBuilder.Entity("Infrastructure.Entities.ProductImageEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -306,6 +378,89 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("ProductRatings");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.PromotionEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<long?>("CategoryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<long>("DiscountTypeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("DiscountTypeId");
+
+                    b.ToTable("Promotions");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.PromotionProductEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("PromotionId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("PromotionId");
+
+                    b.ToTable("PromotionProducts");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.RefreshToken", b =>
@@ -583,103 +738,9 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ProductEntity", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<double?>("AverageRating")
-                        .HasColumnType("double precision");
-
-                    b.Property<long>("CategoryId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)");
-
-                    b.Property<decimal?>("DiscountPercent")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<long?>("PromotionId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.Property<long?>("RatingsCount")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("PromotionId");
-
-                    b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("PromotionEntity", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Promotions");
-                });
-
             modelBuilder.Entity("Infrastructure.Entities.CartEntity", b =>
                 {
-                    b.HasOne("ProductEntity", "Product")
+                    b.HasOne("Infrastructure.Entities.ProductEntity", "Product")
                         .WithMany("Carts")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -733,9 +794,20 @@ namespace Infrastructure.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("Infrastructure.Entities.ProductEntity", b =>
+                {
+                    b.HasOne("Infrastructure.Entities.CategoryEntity", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("Infrastructure.Entities.ProductImageEntity", b =>
                 {
-                    b.HasOne("ProductEntity", "Product")
+                    b.HasOne("Infrastructure.Entities.ProductEntity", "Product")
                         .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -746,7 +818,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Infrastructure.Entities.ProductRatingEntity", b =>
                 {
-                    b.HasOne("ProductEntity", "Product")
+                    b.HasOne("Infrastructure.Entities.ProductEntity", "Product")
                         .WithMany("Ratings")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -761,6 +833,42 @@ namespace Infrastructure.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.PromotionEntity", b =>
+                {
+                    b.HasOne("Infrastructure.Entities.CategoryEntity", "Category")
+                        .WithMany("Promotions")
+                        .HasForeignKey("CategoryId");
+
+                    b.HasOne("Infrastructure.Entities.DiscountTypeEntity", "DiscountType")
+                        .WithMany()
+                        .HasForeignKey("DiscountTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("DiscountType");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.PromotionProductEntity", b =>
+                {
+                    b.HasOne("Infrastructure.Entities.ProductEntity", "Product")
+                        .WithMany("PromotionProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Entities.PromotionEntity", "Promotion")
+                        .WithMany("PromotionProducts")
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Promotion");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.RefreshToken", b =>
@@ -831,28 +939,13 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProductEntity", b =>
-                {
-                    b.HasOne("Infrastructure.Entities.CategoryEntity", "Category")
-                        .WithMany("Products")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PromotionEntity", "Promotion")
-                        .WithMany("Products")
-                        .HasForeignKey("PromotionId");
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Promotion");
-                });
-
             modelBuilder.Entity("Infrastructure.Entities.CategoryEntity", b =>
                 {
                     b.Navigation("Children");
 
                     b.Navigation("Products");
+
+                    b.Navigation("Promotions");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.NovaPostWarehouseEntity", b =>
@@ -863,6 +956,22 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Infrastructure.Entities.OrderEntity", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.ProductEntity", b =>
+                {
+                    b.Navigation("Carts");
+
+                    b.Navigation("Images");
+
+                    b.Navigation("PromotionProducts");
+
+                    b.Navigation("Ratings");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.PromotionEntity", b =>
+                {
+                    b.Navigation("PromotionProducts");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.RoleEntity", b =>
@@ -883,20 +992,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("UserLogins");
 
                     b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("ProductEntity", b =>
-                {
-                    b.Navigation("Carts");
-
-                    b.Navigation("Images");
-
-                    b.Navigation("Ratings");
-                });
-
-            modelBuilder.Entity("PromotionEntity", b =>
-                {
-                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

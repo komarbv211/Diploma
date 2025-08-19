@@ -9,4 +9,5 @@ public interface IProductService
     Task<ProductItemDto> CreateProductAsync(ProductCreateDto dto);
     Task UpdateProductAsync(ProductUpdateDto dto);
     Task DeleteProductAsync(long id);
+    Task SetProductPromotionAsync(ProductSetPromotionDto dto);
 }

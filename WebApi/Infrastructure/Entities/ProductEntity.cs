@@ -1,34 +1,35 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Infrastructure.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace Infrastructure.Entities
+public class ProductEntity : BaseEntity<long>
 {
-    public class ProductEntity : BaseEntity<long>
-    {
-        [Required, StringLength(255)]
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        //public string? Image { get; set; }
+    [Required, StringLength(255)]
+    public string Name { get; set; }
+    public decimal Price { get; set; }
 
-        [StringLength(4000)]
-        public string? Description { get; set; }
+    [StringLength(4000)]
+    public string? Description { get; set; }
 
-        [ForeignKey("Category")]
-        public long CategoryId { get; set; }
+    [ForeignKey("Category")]
+    public long CategoryId { get; set; }
+    public virtual CategoryEntity? Category { get; set; }
 
-        // Додані властивості рейтингу 
-        public long? RatingsCount { get; set; }
-        public double? AverageRating { get; set; }
+    public int Quantity { get; set; }
 
-        public virtual CategoryEntity? Category { get; set; }
+    public long? RatingsCount { get; set; }
+    public double? AverageRating { get; set; }
 
-        public virtual ICollection<ProductImageEntity>? Images { get; set; }
+    public virtual ICollection<ProductImageEntity>? Images { get; set; }
 
-        // 🔗 Зв'язок з акціями (багато до багатьох)
-        //public virtual ICollection<PromotionEntity>? Promotions { get; set; }
+    // 🔗 Зв’язок: багато продуктів можуть належати одній акції
+    [ForeignKey("Promotion")]
+    public long? PromotionId { get; set; }
+    public virtual PromotionEntity? Promotion { get; set; }
 
-        public virtual ICollection<PromotionProductEntity>? PromotionProducts { get; set; }
-        public virtual ICollection<ProductRatingEntity>? Ratings { get; set; }        
-        public ICollection<CartEntity>? Carts { get; set; }
-    }
+    // Знижка у відсотках (опціонально)
+    public decimal? DiscountPercent { get; set; }
+
+    public virtual ICollection<ProductRatingEntity>? Ratings { get; set; }
+    public ICollection<CartEntity>? Carts { get; set; }
 }

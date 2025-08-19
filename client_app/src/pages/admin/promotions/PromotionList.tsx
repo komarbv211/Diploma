@@ -2,13 +2,14 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Table, Button, Dropdown, Input, Space, Spin, Image, Tag, notification, Modal, List } from 'antd';
 import { SearchOutlined, PlusOutlined, MoreOutlined } from '@ant-design/icons';
 import { IPromotion } from '../../../types/promotion';
-import { IProduct } from '../../../types/product';
+import {IProduct, IProductSetPromotionRequest} from '../../../types/product';
 import { APP_ENV } from '../../../env';
 import PaginationComponent from '../../../components/pagination/PaginationComponent';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useDeletePromotionMutation, useGetAllPromotionsQuery } from '../../../services/admin/promotionAdminApi';
 import { productApi } from '../../../services/productApi.ts';
-import { useAppDispatch } from '../../../store/store.ts'; // хук для dispatch з твоєї конфігурації Redux
+import { useAppDispatch } from '../../../store/store.ts';
+import { useSetProductPromotionMutation } from '../../../services/admin/productAdminApi';
 
 const filterPromotions = (list: IPromotion[], text: string) =>
     list.filter(p => p.name?.toLowerCase().includes(text.toLowerCase()));
@@ -31,6 +32,7 @@ const PromotionList: React.FC = () => {
 
     const { data: allPromotions, isLoading } = useGetAllPromotionsQuery();
     const [deletePromotion, { isLoading: isDeleting }] = useDeletePromotionMutation();
+    const [setProductPromotion] = useSetProductPromotionMutation();
 
     useEffect(() => {
         if (allPromotions) setPromotions(allPromotions);
@@ -70,6 +72,31 @@ const PromotionList: React.FC = () => {
             isMounted = false;
         };
     }, [currentProductsIds, dispatch]);
+
+    const handleUnlinkProduct = async (productId: number) => {
+        try {
+            const payload: IProductSetPromotionRequest = {
+                productId,
+                promotionId: null, // 🔹 розрив прив’язки
+                discountPercent: 0,
+            };
+
+            await setProductPromotion(payload).unwrap();
+
+            notification.success({
+                message: "Продукт відв'язано",
+                description: "Продукт успішно видалено з акції!",
+            });
+
+            setCurrentProducts(prev => prev.filter(p => p.id !== productId));
+        } catch {
+            notification.error({
+                message: "Помилка",
+                description: "Не вдалося відв'язати продукт від акції",
+            });
+        }
+    };
+
 
     const filteredPromotions = useMemo(() => filterPromotions(promotions, searchText), [promotions, searchText]);
     const pagedPromotions = useMemo(() => {
@@ -161,9 +188,6 @@ const PromotionList: React.FC = () => {
         },
         { title: 'Дата початку', dataIndex: 'startDate', key: 'startDate', render: (date: string) => <Tag color="green">{new Date(date).toLocaleDateString()}</Tag> },
         { title: 'Дата завершення', dataIndex: 'endDate', key: 'endDate', render: (date: string) => <Tag color="red">{new Date(date).toLocaleDateString()}</Tag> },
-        { title: 'Категорія', dataIndex: 'categoryName', key: 'categoryName', render: (catName?: string) => catName ? <Tag color="blue">{catName}</Tag> : <Tag color="default">—</Tag> },
-        { title: 'Тип знижки', dataIndex: 'discountTypeName', key: 'discountTypeName', render: (discount?: string) => discount ? <Tag color="purple">{discount}</Tag> : <Tag color="default">—</Tag> },
-        { title: 'Знижка', dataIndex: 'discountAmount', key: 'discountAmount', render: (amount?: number) => amount !== undefined ? <strong style={{ color: '#cf1322' }}>{amount}</strong> : <Tag color="default">—</Tag> },
         { title: 'Зображення', dataIndex: 'imageUrl', key: 'imageUrl', render: (img?: string) => img ? <Image width={60} src={`${APP_ENV.IMAGES_1200_URL}${img}`} style={{ borderRadius: 8 }} /> : <Tag color="default">—</Tag> },
         { title: 'Статус', dataIndex: 'isActive', key: 'isActive', render: (isActive: boolean) => isActive ? <Tag color="success">Активна</Tag> : <Tag color="error">Неактивна</Tag> },
         { title: 'Дії', key: 'actions', render: (_: unknown, record: IPromotion) => renderActions(record) },
@@ -237,6 +261,13 @@ const PromotionList: React.FC = () => {
                                 {product.images && product.images.length > 0 && (
                                     <Image width={80} src={`${APP_ENV.IMAGES_1200_URL}${product.images[0].name}`} />
                                 )}
+                                <Button
+                                    danger
+                                    onClick={() => handleUnlinkProduct(product.id)}
+                                    style={{ marginTop: 10 }}
+                                >
+                                    Видалити з акції
+                                </Button>
                             </List.Item>
                         )}
                     />

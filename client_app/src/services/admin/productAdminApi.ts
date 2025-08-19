@@ -1,12 +1,15 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQueryWithReauth } from '../../utilities/createBaseQuery';
-import { IProduct, IProductPutRequest } from '../../types/product';
+import { IProduct, IProductPutRequest, IProductSetPromotionRequest} from '../../types/product';
 import { serializeProduct } from '../../utilities/serialize';
+
+
+
 
 export const productAdminApi = createApi({
     reducerPath: 'productAdminApi',
     baseQuery: createBaseQueryWithReauth('admin'),
-    tagTypes: ['Products'],
+    tagTypes: ['Products', 'Promotions'],
     endpoints: (builder) => ({
         getAllProducts: builder.query<IProduct[], void>({
             query: () => 'product',
@@ -14,7 +17,7 @@ export const productAdminApi = createApi({
         }),
 
         getProductById: builder.query<IProduct, number>({
-            query: (id) => `product/${id}`, 
+            query: (id) => `product/${id}`,
             providesTags: ['Products'],
         }),
 
@@ -50,13 +53,24 @@ export const productAdminApi = createApi({
             }),
             invalidatesTags: ["Products"],
         }),
+
+        // 🔹 Використовуємо новий інтерфейс
+        setProductPromotion: builder.mutation<{ message: string }, IProductSetPromotionRequest>({
+            query: (dto) => ({
+                url: 'product/set-promotion',
+                method: 'PUT',
+                body: dto,
+            }),
+            invalidatesTags: ["Products", "Promotions"],
+        }),
     }),
 });
 
 export const {
-    useGetAllProductsQuery, 
+    useGetAllProductsQuery,
     useGetProductByIdQuery,
     useCreateProductMutation,
     useUpdateProductMutation,
     useDeleteProductMutation,
+    useSetProductPromotionMutation, // 🔹 додали хук
 } = productAdminApi;

@@ -22,7 +22,7 @@ public class AdminProductController : ControllerBase
     {
         var products = await _productService.GetProductsAsync();
         return Ok(products);
-    } 
+    }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromForm] ProductCreateDto dto)
@@ -51,5 +51,16 @@ public class AdminProductController : ControllerBase
         var product = await _productService.GetByIdAsync(id);
         if (product == null) return NotFound();
         return Ok(product);
+    }
+
+    // Новий ендпоінт для встановлення акції та знижки
+    [HttpPut("set-promotion")]
+    public async Task<IActionResult> SetPromotion([FromBody] ProductSetPromotionDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        await _productService.SetProductPromotionAsync(dto);
+        return Ok(new { message = "Продукт успішно прив'язано до акції" });
     }
 }
