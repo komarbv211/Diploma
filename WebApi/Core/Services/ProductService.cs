@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Core.DTOs.PaginationDTOs;
 using Core.DTOs.ProductsDTO;
 using Core.Exceptions;
@@ -8,6 +9,7 @@ using Core.Specifications;
 using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using WebApiDiploma.Pagination;
 
 namespace Core.Services;
 
@@ -217,7 +219,10 @@ public class ProductService : IProductService
         }
     }
 
-    public Task<SearchResult<ProductItemModel>> SearchProductsAsync(ProductSearchModel model, bool isAdmin = false)
+
+
+
+    public async Task<SearchResult<ProductItemModel>> SearchProductsAsync(ProductSearchModel model, bool isAdmin = false)
     {
 
         var query = _productRepository
@@ -228,10 +233,10 @@ public class ProductService : IProductService
             .AsQueryable();
 
         // 🔐 Фільтр для публічної частини
-        if (!isAdmin)
-        {
-            query = query.Where(p => p.IsActive); // або твоя умова доступності
-        }
+        //if (!isAdmin)
+        //{
+        //    query = query.Where(p => p.IsActive); // або твоя умова доступності
+        //}
 
         // 🔍 Фільтри
         if (model.CategoryId.HasValue)
@@ -258,9 +263,21 @@ public class ProductService : IProductService
         if (startDate.HasValue)
             query = query.Where(p => p.CreatedAt >= startDate.Value);
 
-        var endDate = model.GetParsedEndDate();
-        if (endDate.HasValue)
-            query = query.Where(p => p.CreatedAt <= endDate.Value);
+        //var endDate = model.GetParsedEndDate();
+        //if (endDate.HasValue)
+        //    query = query.Where(p => p.CreatedAt <= endDate.Value);
+
+
+
+
+
+         // 🔢 Загальна кількість
+            var totalCount = await query.CountAsync();
+
+            // 📄 Пейджинг
+            var safeItemsPerPage = model.ItemPerPage < 1 ? 10 : model.ItemPerPage;
+            var totalPages = (int)Math.Ceiling(totalCount / (double)safeItemsPerPage);
+            var safePage = Math.Min(Math.Max(1, model.Page), Math.Max(1, totalPages));
 
         // 🔽 Сортування
         query = model.SortBy switch
@@ -294,29 +311,29 @@ public class ProductService : IProductService
         //    //TotalCount = total
         //};
 
-        //// Завантаження продуктів з пагінацією
-        //var products = await query
-        //    .Skip((safePage - 1) * safeItemsPerPage)
-        //    .Take(safeItemsPerPage)
-        //    .ProjectTo<ProductItemModel>(_mapper.ConfigurationProvider)
-        //    .ToListAsync();
+        // Завантаження продуктів з пагінацією
+        var products = await query
+            .Skip((safePage - 1) * safeItemsPerPage)
+            .Take(safeItemsPerPage)
+            .ProjectTo<ProductItemModel>(_mapper.ConfigurationProvider)
+            .ToListAsync();
 
-        //// Підрахунок загальної кількості сторінок
-        //var totalPages = (int)Math.Ceiling(totalCount / (double)safeItemsPerPage);
+        // Підрахунок загальної кількості сторінок
+        var totalPagess = (int)Math.Ceiling(totalCount / (double)safeItemsPerPage);
 
-        //// Формування результату
-        //return new SearchResult<ProductItemModel>
-        //{
-        //    Items = products,
-        //    Pagination = new PagedResultDto<ProductItemModel>
-        //    {
-        //        CurrentPage = safePage,
-        //        PageSize = safeItemsPerPage,
-        //        TotalCount = totalCount,
-        //        TotalPages = totalPages,
-        //        // Items можна не дублювати тут, бо є зовні
-        //    }
-        //};
+        // Формування результату
+        return new SearchResult<ProductItemModel>
+        {
+            Items = products,
+            Pagination = new PagedResultDto<ProductItemModel>
+            {
+                CurrentPage = safePage,
+                PageSize = safeItemsPerPage,
+                TotalCount = totalCount,
+                TotalPages = totalPagess,
+                // Items можна не дублювати тут, бо є зовні
+            }
+        };
 
     }
 }

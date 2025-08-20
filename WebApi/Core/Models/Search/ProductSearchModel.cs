@@ -11,14 +11,14 @@ namespace Core.Models.Search
     {
         public long? CategoryId { get; set; }
         public long? BrandId { get; set; }
-        public decimal? PriceMin { get; set; }
-        public decimal? PriceMax { get; set; }
+        public int? PriceMin { get; set; }
+        public int? PriceMax { get; set; }
         public double? MinRating { get; set; }
         public bool? InStock { get; set; } // Якщо треба перевіряти наявність
 
         // Дата додавання (пошук по CreatedAt)
         public string? StartDate { get; set; }
-        public string? EndDate { get; set; }
+        //public string? EndDate { get; set; }
 
         public DateTime? GetParsedStartDate()
         {
@@ -34,19 +34,19 @@ namespace Core.Models.Search
             return null;
         }
 
-        public DateTime? GetParsedEndDate()
-        {
-            if (DateTime.TryParseExact(
-                    EndDate,
-                    "dd.MM.yyyy",
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeLocal,
-                    out var parsedDate))
-            {
-                return parsedDate.ToUniversalTime();
-            }
-            return null;
-        }
+        //public DateTime? GetParsedEndDate()
+        //{
+        //    if (DateTime.TryParseExact(
+        //            EndDate,
+        //            "dd.MM.yyyy",
+        //            CultureInfo.InvariantCulture,
+        //            DateTimeStyles.AssumeLocal,
+        //            out var parsedDate))
+        //    {
+        //        return parsedDate.ToUniversalTime();
+        //    }
+        //    return null;
+        //}
 
         // Сортування
         public string? SortBy { get; set; } // "Price", "Rating", "CreatedAt"
@@ -54,6 +54,7 @@ namespace Core.Models.Search
 
         // Пагінація
         public int Page { get; set; } = 1;
-        public int ItemsPerPage { get; set; } = 10;
+        public int ItemPerPage { get; set; } = 10;
+       
     }
 }
