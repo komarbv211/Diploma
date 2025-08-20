@@ -20,9 +20,7 @@ namespace Infrastructure.Data
         public DbSet<CategoryEntity> Categories { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<ProductImageEntity> ProductImages { get; set; }
-        public DbSet<DiscountTypeEntity> DiscountTypes { get; set; }
         public DbSet<PromotionEntity> Promotions { get; set; }
-        public DbSet<PromotionProductEntity> PromotionProducts { get; set; }
         public DbSet<ProductRatingEntity> ProductRatings { get; set; }
         public DbSet<CartEntity> Carts { get; set; }
 

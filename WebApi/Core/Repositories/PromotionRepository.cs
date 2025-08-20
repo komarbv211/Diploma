@@ -9,32 +9,27 @@ namespace Core.Repositories
     {
         public PromotionRepository(DbMakeUpContext context) : base(context) { }
 
+        // Отримати акцію з продуктами
         public async Task<PromotionEntity?> GetByIdWithProductsAsync(long id)
         {
             return await dbSet
-                .Include(p => p.PromotionProducts)
+                .Include(p => p.Products)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        // Отримати всі акції з деталями (категорії + продукти)
         public async Task<List<PromotionEntity>> GetAllWithDetailsAsync()
         {
-            var promotions = await dbSet
-    .Include(p => p.Category)
-    .Include(p => p.DiscountType)
-    .Include(p => p.PromotionProducts)
-        .ThenInclude(pp => pp.Product)
-    .ToListAsync();
-
-            return promotions;
-
+            return await dbSet
+                .Include(p => p.Products)
+                .ToListAsync();
         }
 
+        // Отримати одну акцію з продуктами і категорією
         public async Task<PromotionEntity?> GetByIdWithProductsAndDetailsAsync(long id)
         {
             return await dbSet
-                .Include(p => p.Category)
-                .Include(p => p.DiscountType)
-                .Include(p => p.PromotionProducts)
+                .Include(p => p.Products)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
     }

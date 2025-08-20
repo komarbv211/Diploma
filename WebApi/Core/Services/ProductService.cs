@@ -219,6 +219,37 @@ public class ProductService : IProductService
         }
     }
 
+    public async Task SetProductPromotionAsync(ProductSetPromotionDto dto)
+    {
+        if (dto == null)
+            throw new HttpException("Дані не можуть бути порожніми", HttpStatusCode.BadRequest);
+
+        try
+        {
+            // Отримуємо продукт із бази
+            var product = await _productRepository.FirstOrDefaultAsync(new ProductWithImagesSpecification(dto.ProductId));
+            if (product == null)
+                throw new HttpException("Продукт не знайдено", HttpStatusCode.NotFound);
+
+            // Мапимо дані з DTO на продукт
+            product.PromotionId = dto.PromotionId;
+            product.DiscountPercent = dto.DiscountPercent;
+
+            // Зберігаємо зміни
+            await _productRepository.Update(product);
+            await _productRepository.SaveAsync();
+        }
+        catch (HttpException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new HttpException("Сталася внутрішня помилка сервера при оновленні акції продукту", HttpStatusCode.InternalServerError, ex);
+        }
+    }
+
+
 
 
 

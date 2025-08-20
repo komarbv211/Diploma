@@ -17,7 +17,6 @@ import { handleFormErrors } from '../../../utilities/handleApiErrors';
 import { ApiError } from '../../../types/errors';
 import type { DragEndEvent } from '@dnd-kit/core';
 
-
 const { Item } = Form;
 
 const CreateProductPage = () => {
@@ -42,7 +41,7 @@ const CreateProductPage = () => {
             };
 
             const formData = buildProductFormData(product);
-           
+
             await createProduct(formData).unwrap();
             message.success('Продукт успішно створено!');
             navigate('/admin/products');
@@ -50,7 +49,6 @@ const CreateProductPage = () => {
             handleFormErrors(error as ApiError, form);
         }
     };
-
 
     const handleCrop = (croppedBase64: string) => {
         if (cropIndex === null) return;
@@ -141,19 +139,28 @@ const CreateProductPage = () => {
                 </h1>
                 <Form form={form} onFinish={onFinish} layout="vertical" noValidate>
                     <Item name="name" label="Назва"
-                        rules={[
-                            { required: true, message: 'Будь ласка, введіть назву продукту!' },
-                            { validator: (_, value) => value && value.trim() ? Promise.resolve() : Promise.reject(new Error('Назва не може бути лише з пробілів')) }
-                        ]}>
+                          rules={[
+                              { required: true, message: 'Будь ласка, введіть назву продукту!' },
+                              { validator: (_, value) => value && value.trim() ? Promise.resolve() : Promise.reject(new Error('Назва не може бути лише з пробілів')) }
+                          ]}>
                         <Input placeholder="Назва" />
                     </Item>
 
                     <Item name="price" label="Ціна"
-                        rules={[
-                            { required: true, message: 'Будь ласка, вкажіть ціну!' },
-                            { validator: (_, value) => value > 0 ? Promise.resolve() : Promise.reject(new Error('Ціна має бути більше нуля')), },
-                        ]}>
+                          rules={[
+                              { required: true, message: 'Будь ласка, вкажіть ціну!' },
+                              { validator: (_, value) => value > 0 ? Promise.resolve() : Promise.reject(new Error('Ціна має бути більше нуля')), },
+                          ]}>
                         <Input type="number" placeholder="Ціна" min={0.01} step={0.01} />
+                    </Item>
+
+                    {/* 🔹 Нове поле quantity */}
+                    <Item name="quantity" label="Кількість"
+                          rules={[
+                              { required: true, message: 'Будь ласка, вкажіть кількість!' },
+                              { validator: (_, value) => value > 0 ? Promise.resolve() : Promise.reject(new Error('Кількість має бути більше нуля')) },
+                          ]}>
+                        <Input type="number" placeholder="Кількість" min={1} step={1} />
                     </Item>
 
                     <Item name="description" label="Опис">
@@ -161,7 +168,7 @@ const CreateProductPage = () => {
                     </Item>
 
                     <Item name="categoryId" label="Категорія"
-                        rules={[{ required: true, message: 'Будь ласка, оберіть категорію!' }]}>
+                          rules={[{ required: true, message: 'Будь ласка, оберіть категорію!' }]} >
                         <CategoryTreeSelect placeholder="Оберіть категорію" allowClear showSearch />
                     </Item>
 
@@ -214,7 +221,6 @@ const CreateProductPage = () => {
                                 setCropModalVisible(false);
                             }}
                         />
-
                     )}
                 </Modal>
             </div>

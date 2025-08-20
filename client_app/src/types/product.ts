@@ -4,12 +4,16 @@ export interface IProduct {
   id: number;
   name: string;
   price: number;
-  description: string;
+  description?: string;
   categoryId: number;
-  category: ICategoryName;
-  averageRating?:number;
-  ratingsCount:number;
+  category?: ICategoryName;
+  quantity: number;
+  averageRating?: number;
+  ratingsCount: number;
   images?: IProductImageDto[];
+  promotionId?: number;
+  discountPercent?: number;
+  finalPrice?: number; // розрахована ціна зі знижкою
 }
 
 export interface IProductPostRequest {
@@ -17,12 +21,27 @@ export interface IProductPostRequest {
   price: number;
   description?: string;
   categoryId: number;
+  quantity: number;
+  image: File[];
+}
+
+export interface IProductPutRequest
+{
+  id: number;
+  name: string;
+  price: number;
+  description?: string;
+  categoryId: number;
+  quantity: number;
   image?: File[];
 }
 
-export interface IProductPutRequest extends IProductPostRequest {
-  id: number;
+export interface IProductSetPromotionRequest {
+  productId: number;
+  promotionId: number | null;
+  discountPercent: number;
 }
+
 
 export interface IProductImageDto {
   id: number;
