@@ -23,10 +23,14 @@ namespace Infrastructure.Data
         public DbSet<PromotionEntity> Promotions { get; set; }
         public DbSet<ProductRatingEntity> ProductRatings { get; set; }
         public DbSet<CartEntity> Carts { get; set; }
+
+        public DbSet<BrandEntity> Brands { get; set; }
+
         public DbSet<OrderEntity> Orders { get; set; }
         public DbSet<OrderItemEntity> OrderItems { get; set; }
         public DbSet<NovaPostWarehouseEntity> NovaPostWarehouses { get; set; }
         public DbSet<WarehouseUpdateHistoryEntity> WarehouseUpdateHistories { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

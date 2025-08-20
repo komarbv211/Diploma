@@ -261,6 +261,43 @@ namespace WebApiDiploma.ServiceExtensions
                 else Console.WriteLine("File \"ProductRatings.json\" not found");
             }
 
+
+            //Brands seeder
+            var brandRepo = scope.ServiceProvider.GetService<IRepository<BrandEntity>>();
+
+            if (brandRepo is not null && !await brandRepo.AnyAsync())
+            {
+                Console.WriteLine("Start brand seeder");
+                string brandJsonDataFile = Path.Combine(Environment.CurrentDirectory, "Helpers", app.Configuration["SeederJsonDir"]!, "Brand.json");
+                if (File.Exists(brandJsonDataFile))
+                {
+                    var filtersJson = File.ReadAllText(brandJsonDataFile, Encoding.UTF8);
+                    try
+                    {
+                        var brandModels = JsonConvert.DeserializeObject<IEnumerable<SeederBrandModel>>(filtersJson)
+                            ?? throw new JsonException();
+                        foreach (var brandModel in brandModels)
+                        {
+                            var parent = new BrandEntity
+                            {
+                                Name = brandModel.Name
+                            };
+                            await brandRepo.AddAsync(parent);
+                            await brandRepo.SaveAsync();
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                        Console.WriteLine("Error deserialize brands json file");
+                    }
+                }
+                else Console.WriteLine("File \"JsonData/Brand.json\" not found");
+            }
+
+
+
+            // Отримуємо потрібні репозиторії з DI-контейнера
+
             var promotionRepo = scope.ServiceProvider.GetService<IRepository<PromotionEntity>>();
 var productRepo = scope.ServiceProvider.GetService<IRepository<ProductEntity>>();
 
@@ -360,6 +397,9 @@ if (promotionRepo is not null && !await promotionRepo.AnyAsync())
 
             Console.WriteLine($"Orders seeded: {orders!.Count}, OrderItems seeded: {orderItems!.Count}");
         }
+
+
+
 
 
 
