@@ -7,7 +7,6 @@ import {
   useGetProductByIdQuery,
 } from "../../../services/admin/productAdminApi";
 import CategoryTreeSelect from "../../../components/category/CategoryTreeSelect";
-
 import { IProductPutRequest } from "../../../types/product";
 import { UploadFile } from "antd/es/upload/interface";
 import { APP_ENV } from "../../../env";
