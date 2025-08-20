@@ -23,8 +23,6 @@ public class ProductEntity : BaseEntity<long>
     public long? RatingsCount { get; set; }
     public double? AverageRating { get; set; }
 
-    public virtual ICollection<ProductImageEntity>? Images { get; set; }
-
     // 🔗 Зв’язок: багато продуктів можуть належати одній акції
     [ForeignKey("Promotion")]
     public long? PromotionId { get; set; }

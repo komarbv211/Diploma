@@ -291,8 +291,8 @@ public class ProductService : IProductService
         }
 
         var startDate = model.GetParsedStartDate();
-        if (startDate.HasValue)
-            query = query.Where(p => p.CreatedAt >= startDate.Value);
+        //if (startDate.HasValue)
+        //    query = query.Where(p => p.CreatedAt >= startDate.Value);
 
         //var endDate = model.GetParsedEndDate();
         //if (endDate.HasValue)
@@ -315,7 +315,7 @@ public class ProductService : IProductService
         {
             "Price" => model.SortDesc ? query.OrderByDescending(p => p.Price) : query.OrderBy(p => p.Price),
             "Rating" => model.SortDesc ? query.OrderByDescending(p => p.AverageRating) : query.OrderBy(p => p.AverageRating),
-            "CreatedAt" => model.SortDesc ? query.OrderByDescending(p => p.CreatedAt) : query.OrderBy(p => p.CreatedAt),
+           // "CreatedAt" => model.SortDesc ? query.OrderByDescending(p => p.CreatedAt) : query.OrderBy(p => p.CreatedAt),
             _ => query.OrderBy(p => p.Id)
         };
 
