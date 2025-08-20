@@ -2,6 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQueryWithReauth } from '../../utilities/createBaseQuery';
 import { IProduct, IProductPutRequest, IProductSetPromotionRequest} from '../../types/product';
 import { serializeProduct } from '../../utilities/serialize';
+import { promotionAdminApi } from './promotionAdminApi';
 
 
 
@@ -9,7 +10,7 @@ import { serializeProduct } from '../../utilities/serialize';
 export const productAdminApi = createApi({
     reducerPath: 'productAdminApi',
     baseQuery: createBaseQueryWithReauth('admin'),
-    tagTypes: ['Products', 'Promotions'],
+    tagTypes: ['Products'],
     endpoints: (builder) => ({
         getAllProducts: builder.query<IProduct[], void>({
             query: () => 'product',
@@ -61,7 +62,28 @@ export const productAdminApi = createApi({
                 method: 'PUT',
                 body: dto,
             }),
-            invalidatesTags: ["Products", "Promotions"],
+            invalidatesTags: ["Products"],
+            async onQueryStarted(dto, { dispatch, queryFulfilled }) {
+                const patch = dispatch(
+                    productAdminApi.util.updateQueryData('getAllProducts', undefined, (draft) => {
+                        const product = draft.find((x) => x.id === dto.productId);
+                        if (product) {
+                            Object.assign(product, {
+                                promotionId: dto.promotionId ?? undefined,
+                                discountPercent: dto.discountPercent ?? 0
+                            });
+                        }
+                    })
+                );
+
+                try {
+                    await queryFulfilled;
+                    dispatch(promotionAdminApi.util.invalidateTags([{ type: 'Promotions', id: 'LIST' }]));
+                } catch {
+                    patch.undo();
+                }
+            }
+
         }),
     }),
 });

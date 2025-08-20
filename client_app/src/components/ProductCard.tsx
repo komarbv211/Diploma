@@ -7,6 +7,7 @@ import { useAppSelector } from "../store/store";
 import { useCart } from "../hooks/useCart";
 import { APP_ENV } from "../env";
 import { ICartItem } from "../store/slices/localCartSlice";
+import { Link } from "react-router-dom";
 
 type Props = {
   title: string;
@@ -71,19 +72,27 @@ const ProductCard: React.FC<Props> = ({
 
   return (
     <div className="grid grid-rows-[325px_1fr_auto] p-[15px_40px] w-[405px] h-[513px] bg-white rounded-[15px] border border-blue2">
-      <div
-        className="bg-cover bg-center rounded-[15px]"
-        style={{ backgroundImage: `url(${image})` }}
-      ></div>
-
+      <Link
+        key={productId}
+        to={`/product/details/${productId}`}
+        className="block rounded-[15px] overflow-hidden"
+        style={{
+          width: "100%",
+          height: "325px",
+          backgroundImage: `url(${image})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      ></Link>
       <div className="flex flex-col justify-normal gap-1">
-        <h3 className="line-clamp-2 min-h-[54px] font-manrope font-medium text-[20px] leading-[27px] bg-gradient-to-r from-blue2 to-blueLight bg-clip-text text-transparent">
-          {title}
-        </h3>
-        <p className="line-clamp-2 min-h-[34px] text-[18px] text-gray">
-          {category}
-        </p>
-
+        <Link key={productId} to={`/product/details/${productId}`}>
+          <h3 className="line-clamp-2 min-h-[54px] font-manrope font-medium text-[20px] leading-[27px] bg-gradient-to-r from-blue2 to-blueLight bg-clip-text text-transparent">
+            {title}
+          </h3>
+          <p className="line-clamp-2 min-h-[34px] text-[18px] text-gray">
+            {category}
+          </p>
+        </Link>
         <InteractiveRating
           productId={productId}
           userRating={userRating}

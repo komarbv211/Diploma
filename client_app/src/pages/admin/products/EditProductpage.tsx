@@ -2,159 +2,203 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button, Input, Upload, Form, InputNumber } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { useUpdateProductMutation, useGetProductByIdQuery } from "../../../services/admin/productAdminApi";
-import CategoryTreeSelect from '../../../components/category/CategoryTreeSelect';
+import {
+  useUpdateProductMutation,
+  useGetProductByIdQuery,
+} from "../../../services/admin/productAdminApi";
+import CategoryTreeSelect from "../../../components/category/CategoryTreeSelect";
 import { IProductPutRequest } from "../../../types/product";
 import { UploadFile } from "antd/es/upload/interface";
 import { APP_ENV } from "../../../env";
-import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "@hello-pangea/dnd";
 import { handleFormErrors } from "../../../utilities/handleApiErrors";
 import { ApiError } from "../../../types/errors";
 
 const EditProductPage = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const { data: productData } = useGetProductByIdQuery(Number(id));
-    const [updateProduct] = useUpdateProductMutation();
-    const [form] = Form.useForm<IProductPutRequest>();
-    const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { data: productData } = useGetProductByIdQuery(Number(id));
+  const [updateProduct] = useUpdateProductMutation();
+  const [form] = Form.useForm<IProductPutRequest>();
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
-    useEffect(() => {
-        if (productData) {
-            form.setFieldsValue({ ...form.getFieldsValue(), ...productData });
+  useEffect(() => {
+    if (productData) {
+      form.setFieldsValue({ ...form.getFieldsValue(), ...productData });
 
-            const updatedFileList: UploadFile[] = productData.images?.map((image) => ({
-                uid: image.id.toString(),
-                name: image.name,
-                url: `${APP_ENV.IMAGES_200_URL}${image.name}`,
-                originFileObj: new File([new Blob([''])], image.name, { type: 'old-image' })
-            } as UploadFile)) || [];
+      const updatedFileList: UploadFile[] =
+        productData.images?.map(
+          (image) =>
+            ({
+              uid: image.id.toString(),
+              name: image.name,
+              url: `${APP_ENV.IMAGES_200_URL}${image.name}`,
+              originFileObj: new File([new Blob([""])], image.name, {
+                type: "old-image",
+              }),
+            } as UploadFile)
+        ) || [];
 
-            setFileList(updatedFileList);
-        }
-    }, [productData, form]);
-
-    const handleImageChange = (info: { fileList: UploadFile[] }) => {
-        const newFileList = info.fileList.map((file, index) => ({
-            ...file,
-            uid: file.uid || Date.now().toString(),
-            order: index,
-        }));
-        setFileList([...fileList, ...newFileList]);
-    };
-
-    const onDragEnd = (result: DropResult) => {
-        if (!result.destination) return;
-        const reorderedFiles = Array.from(fileList);
-        const [movedFile] = reorderedFiles.splice(result.source.index, 1);
-        reorderedFiles.splice(result.destination.index, 0, movedFile);
-        setFileList(reorderedFiles);
-    };
-
-    const onFinish = async (values: IProductPutRequest) => {
-        try {
-            values.id = Number(id);
-            values.image = fileList.map(x => x.originFileObj as File);
-            await updateProduct(values).unwrap();
-            navigate("..");
-        } catch (error: unknown) {
-            handleFormErrors(error as ApiError, form);
-        }
+      setFileList(updatedFileList);
     }
+  }, [productData, form]);
 
-    return (
-        <>
-            <Link to="/admin/products">
-                <Button type="default" onClick={() => navigate(-1)}>Назад</Button>
-            </Link>
+  const handleImageChange = (info: { fileList: UploadFile[] }) => {
+    const newFileList = info.fileList.map((file, index) => ({
+      ...file,
+      uid: file.uid || Date.now().toString(),
+      order: index,
+    }));
+    setFileList([...fileList, ...newFileList]);
+  };
 
-            <div className="max-w-lg mx-auto my-6">
-                <h1 className="text-3xl font-bold mb-4">Редагування продукт</h1>
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+    const reorderedFiles = Array.from(fileList);
+    const [movedFile] = reorderedFiles.splice(result.source.index, 1);
+    reorderedFiles.splice(result.destination.index, 0, movedFile);
+    setFileList(reorderedFiles);
+  };
 
-                <Form form={form} onFinish={onFinish} layout="vertical">
+  const onFinish = async (values: IProductPutRequest) => {
+    try {
+      values.id = Number(id);
+      values.image = fileList.map((x) => x.originFileObj as File);
+      await updateProduct(values).unwrap();
+      navigate("..");
+    } catch (error: unknown) {
+      handleFormErrors(error as ApiError, form);
+    }
+  };
 
-                    <Form.Item name="name" label="Назва" rules={[{ required: true, message: 'Будь ласка, введіть назву продукту!' }]}>
-                        <Input placeholder="Назва" />
-                    </Form.Item>
+  return (
+    <>
+      <Link to="/admin/products">
+        <Button type="default" onClick={() => navigate(-1)}>
+          Назад
+        </Button>
+      </Link>
 
-                    <Form.Item name="description" label="Опис">
-                        <Input placeholder="Опис" />
-                    </Form.Item>
+      <div className="max-w-lg mx-auto my-6">
+        <h1 className="text-3xl font-bold mb-4">Редагування продукт</h1>
 
-                    <Form.Item name="price" label="Ціна" rules={[{ required: true, message: 'Будь ласка, введіть ціну!' }]}>
-                        <Input placeholder="Ціна" type="number" />
-                    </Form.Item>
+        <Form form={form} onFinish={onFinish} layout="vertical">
+          <Form.Item
+            name="name"
+            label="Назва"
+            rules={[
+              {
+                required: true,
+                message: "Будь ласка, введіть назву продукту!",
+              },
+            ]}
+          >
+            <Input placeholder="Назва" />
+          </Form.Item>
 
-                    <Form.Item
-                        name="quantity"
-                        label="Кількість"
-                        rules={[{ required: true, message: 'Вкажіть кількість!' }]}
+          <Form.Item name="description" label="Опис">
+            <Input placeholder="Опис" />
+          </Form.Item>
+
+          <Form.Item
+            name="price"
+            label="Ціна"
+            rules={[{ required: true, message: "Будь ласка, введіть ціну!" }]}
+          >
+            <Input placeholder="Ціна" type="number" />
+          </Form.Item>
+
+          <Form.Item
+            name="quantity"
+            label="Кількість"
+            rules={[{ required: true, message: "Вкажіть кількість!" }]}
+          >
+            <InputNumber
+              min={0}
+              placeholder="Кількість"
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Категорія"
+            name="categoryId"
+            rules={[{ required: true, message: "Це поле є обов'язковим!" }]}
+          >
+            <CategoryTreeSelect
+              placeholder="Оберіть категорію: "
+              allowClear
+              showSearch
+            />
+          </Form.Item>
+
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="upload-list" direction="horizontal">
+              {(provided) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className="flex flex-wrap gap-2"
+                >
+                  {fileList.map((file, index) => (
+                    <Draggable
+                      key={file.uid}
+                      draggableId={file.uid}
+                      index={index}
                     >
-                        <InputNumber min={0} placeholder="Кількість" style={{ width: '100%' }} />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Категорія"
-                        name="categoryId"
-                        rules={[{ required: true, message: "Це поле є обов'язковим!" }]}
-                    >
-                        <CategoryTreeSelect
-                            placeholder="Оберіть категорію: "
-                            allowClear
-                            showSearch
-                        />
-                    </Form.Item>
-
-                    <DragDropContext onDragEnd={onDragEnd}>
-                        <Droppable droppableId="upload-list" direction="horizontal">
-                            {(provided) => (
-                                <div ref={provided.innerRef} {...provided.droppableProps} className="flex flex-wrap gap-2">
-                                    {fileList.map((file, index) => (
-                                        <Draggable key={file.uid} draggableId={file.uid} index={index}>
-                                            {(provided) => (
-                                                <div
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                >
-                                                    <Upload
-                                                        listType="picture-card"
-                                                        fileList={[file]}
-                                                        onRemove={() => setFileList(fileList.filter(f => f.uid !== file.uid))}
-                                                    />
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-                    </DragDropContext>
-
-                    <Upload
-                        multiple
-                        listType="picture-card"
-                        beforeUpload={() => false}
-                        onChange={handleImageChange}
-                        fileList={[]}
-                        accept="image/*"
-                    >
-                        <div>
-                            <PlusOutlined />
-                            <div style={{ marginTop: 8 }}>Додати</div>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <Upload
+                            listType="picture-card"
+                            fileList={[file]}
+                            onRemove={() =>
+                              setFileList(
+                                fileList.filter((f) => f.uid !== file.uid)
+                              )
+                            }
+                          />
                         </div>
-                    </Upload>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
 
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" block>
-                            Зберегти
-                        </Button>
-                    </Form.Item>
-                </Form>
+          <Upload
+            multiple
+            listType="picture-card"
+            beforeUpload={() => false}
+            onChange={handleImageChange}
+            fileList={[]}
+            accept="image/*"
+          >
+            <div>
+              <PlusOutlined />
+              <div style={{ marginTop: 8 }}>Додати</div>
             </div>
-        </>
-    );
+          </Upload>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              Зберегти
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+    </>
+  );
 };
 
 export default EditProductPage;
