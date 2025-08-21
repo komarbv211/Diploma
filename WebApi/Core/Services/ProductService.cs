@@ -251,123 +251,6 @@ public class ProductService : IProductService
 
 
 
-
-
-    //public async Task<SearchResult<ProductItemModel>> SearchProductsAsync(ProductSearchModel model, bool isAdmin = false)
-    //{
-
-    //    var query = _productRepository
-    //        .GetAllQueryable()
-    //        //.Include(p => p.Brand)
-    //        .Include(p => p.Category)
-    //        .Include(p => p.Images)
-    //        .AsQueryable();
-
-    //    // 🔐 Фільтр для публічної частини
-    //    //if (!isAdmin)
-    //    //{
-    //    //    query = query.Where(p => p.IsActive); // або твоя умова доступності
-    //    //}
-
-    //    // 🔍 Фільтри
-    //    if (model.CategoryId.HasValue)
-    //        query = query.Where(p => p.CategoryId == model.CategoryId);
-
-    //    //if (model.BrandId.HasValue)
-    //    //    query = query.Where(p => p.BrandId == model.BrandId);
-
-    //    if (model.PriceMin.HasValue)
-    //        query = query.Where(p => p.Price >= model.PriceMin.Value);
-
-    //    if (model.PriceMax.HasValue)
-    //        query = query.Where(p => p.Price <= model.PriceMax.Value);
-
-    //    if (model.MinRating.HasValue)
-    //        query = query.Where(p => p.AverageRating >= model.MinRating.Value);
-
-    //    if (model.InStock.HasValue && model.InStock.Value)
-    //    {
-    //        query = query.Where(p => p.Carts.Any()); // або пиши свою перевірку на наявність
-    //    }
-
-    //    var startDate = model.GetParsedStartDate();
-    //    //if (startDate.HasValue)
-    //    //    query = query.Where(p => p.CreatedAt >= startDate.Value);
-
-    //    //var endDate = model.GetParsedEndDate();
-    //    //if (endDate.HasValue)
-    //    //    query = query.Where(p => p.CreatedAt <= endDate.Value);
-
-
-
-
-
-    //     // 🔢 Загальна кількість
-    //        var totalCount = await query.CountAsync();
-
-    //        // 📄 Пейджинг
-    //        var safeItemsPerPage = model.ItemPerPage < 1 ? 10 : model.ItemPerPage;
-    //        var totalPages = (int)Math.Ceiling(totalCount / (double)safeItemsPerPage);
-    //        var safePage = Math.Min(Math.Max(1, model.Page), Math.Max(1, totalPages));
-
-    //    // 🔽 Сортування
-    //    query = model.SortBy switch
-    //    {
-    //        "Price" => model.SortDesc ? query.OrderByDescending(p => p.Price) : query.OrderBy(p => p.Price),
-    //        "Rating" => model.SortDesc ? query.OrderByDescending(p => p.AverageRating) : query.OrderBy(p => p.AverageRating),
-    //       // "CreatedAt" => model.SortDesc ? query.OrderByDescending(p => p.CreatedAt) : query.OrderBy(p => p.CreatedAt),
-    //        _ => query.OrderBy(p => p.Id)
-    //    };
-
-    //    // 📦 Пагінація
-    //    //var total = await query.CountAsync();
-    //    //var items = await query
-    //    //    .Skip((model.Page - 1) * model.ItemsPerPage)
-    //    //    .Take(model.ItemsPerPage)
-    //    //    .Select(p => new ProductItemModel
-    //    //    {
-    //    //        Id = p.Id,
-    //    //        Name = p.Name,
-    //    //        Price = p.Price,
-    //    //        Rating = p.AverageRating,
-    //    //        ImageUrl = p.Images.FirstOrDefault().Url,
-    //    //        BrandName = p.Brand != null ? p.Brand.Name : null,
-    //    //        CategoryName = p.Category != null ? p.Category.Name : null
-    //    //    })
-    //    //    .ToListAsync();
-
-    //    //return new SearchResult<ProductItemModel>
-    //    //{
-    //    //    //Items = items,
-    //    //    //TotalCount = total
-    //    //};
-
-    //    // Завантаження продуктів з пагінацією
-    //    var products = await query
-    //        .Skip((safePage - 1) * safeItemsPerPage)
-    //        .Take(safeItemsPerPage)
-    //        .ProjectTo<ProductItemModel>(_mapper.ConfigurationProvider)
-    //        .ToListAsync();
-
-    //    // Підрахунок загальної кількості сторінок
-    //    var totalPagess = (int)Math.Ceiling(totalCount / (double)safeItemsPerPage);
-
-    //    // Формування результату
-    //    return new SearchResult<ProductItemModel>
-    //    {
-    //        Items = products,
-    //        Pagination = new PagedResultDto<ProductItemModel>
-    //        {
-    //            CurrentPage = safePage,
-    //            PageSize = safeItemsPerPage,
-    //            TotalCount = totalCount,
-    //            TotalPages = totalPagess,
-    //            // Items можна не дублювати тут, бо є зовні
-    //        }
-    //    };
-
-    //}
-
     public async Task<SearchResult<ProductItemModel>> SearchProductsAsync(ProductSearchModel model, bool isAdmin = false)
     {
         var query = _productRepository
@@ -411,17 +294,11 @@ public class ProductService : IProductService
             query = query.Where(p =>
                 p.Name.ToLower().Contains(keyword) ||
                 (p.Brand != null && p.Brand.Name.ToLower().Contains(keyword)) ||
-                (p.Category != null && p.Category.Name.ToLower().Contains(keyword))
+                (p.Category != null && p.Category.Name.ToLower().Contains(keyword)) ||
+                (p.Description != null && p.Description.ToLower().Contains(keyword))
             );
         }
 
-        //if (!string.IsNullOrWhiteSpace(model.Query))
-        //{
-        //    var keyword = model.Query.Trim().ToLower();
-        //    query = query.Where(p =>
-        //        p.Name.ToLower().Contains(keyword) ||
-        //        (p.Description != null && p.Description.ToLower().Contains(keyword)));
-        //}
 
         var startDate = model.GetParsedStartDate();
         if (startDate.HasValue)
@@ -471,6 +348,7 @@ public class ProductService : IProductService
 
                 BrandName = p.Brand != null ? p.Brand.Name : null,
                 CategoryName = p.Category != null ? p.Category.Name : null,
+                CreatedAt = p.DateCreated, // 🟢 ← ОБОВ’ЯЗКОВО
                 IsInStock = p.Quantity > 0
             })
             .ToListAsync();

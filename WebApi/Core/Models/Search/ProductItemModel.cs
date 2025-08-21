@@ -12,7 +12,6 @@ namespace Core.Models.Search
         public string Name { get; set; } = default!;
         public int Price { get; set; }
         public double? Rating { get; set; }
-        //public string? ImageUrl { get; set; }
         public string ImageUrl { get; set; } = default!; // ← оце і потрібно
         public string? BrandName { get; set; }
         public string? CategoryName { get; set; }
