@@ -30,7 +30,7 @@ namespace Infrastructure.Data
         public DbSet<OrderItemEntity> OrderItems { get; set; }
         public DbSet<NovaPostWarehouseEntity> NovaPostWarehouses { get; set; }
         public DbSet<WarehouseUpdateHistoryEntity> WarehouseUpdateHistories { get; set; }
-
+        public DbSet<CommentEntity> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -84,6 +84,21 @@ namespace Infrastructure.Data
                 cart.HasOne(c => c.User)
                     .WithMany(u => u.Carts)
                     .HasForeignKey(c => c.UserId);
+            });
+
+            builder.Entity<CommentEntity>(c =>
+            {
+                c.HasKey(x => x.Id);
+
+                c.HasOne(x => x.Product)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(x => x.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                c.HasOne(x => x.User)
+                    .WithMany(u => u.Comments)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
