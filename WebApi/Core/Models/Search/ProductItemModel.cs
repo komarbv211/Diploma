@@ -10,10 +10,14 @@ namespace Core.Models.Search
     {
         public long Id { get; set; }
         public string Name { get; set; } = default!;
-        public decimal Price { get; set; }
+        public int Price { get; set; }
         public double? Rating { get; set; }
-        public string? ImageUrl { get; set; }
+        public string ImageUrl { get; set; } = default!; // ← оце і потрібно
         public string? BrandName { get; set; }
         public string? CategoryName { get; set; }
+        public bool IsInStock { get; set; }
+        public int Quantity { get; set; }
+        public DateTime CreatedAt { get; set; } // 🆕 Додали дату створення
+
     }
 }
