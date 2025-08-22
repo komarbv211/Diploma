@@ -36,4 +36,6 @@ public class ProductEntity : BaseEntity<long>
     public virtual ICollection<ProductImageEntity>? Images { get; set; }
     public virtual ICollection<ProductRatingEntity>? Ratings { get; set; }
     public ICollection<CartEntity>? Carts { get; set; }
+    public virtual ICollection<CommentEntity>? Comments { get; set; }
+
 }
