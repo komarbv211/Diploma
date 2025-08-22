@@ -7,6 +7,8 @@ import InteractiveRating from "../components/InteractiveRating";
 import { CartIcon } from "../components/icons";
 import ImagesViewer from "../components/images/images_viewer/ImagesViewer";
 import { Typography } from "antd";
+import AddReviewModal from "../components/AddReviewModalProps";
+import ReviewsScroller from "../components/ReviewsScroller";
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,6 +16,8 @@ const ProductDetails: React.FC = () => {
   const { addToCart } = useCart(true);
   const navigate = useNavigate();
   const { Paragraph } = Typography;
+  const [isReviewOpen, setIsReviewOpen] = React.useState(false);
+
   if (isLoading) return <p className="text-center mt-20">Завантаження...</p>;
   if (!product) return <p className="text-center mt-20">Продукт не знайдено</p>;
 
@@ -97,9 +101,21 @@ const ProductDetails: React.FC = () => {
 
         {/* Кнопка залишити відгук */}
         <div className="flex justify-center">
-          <button className="h-[52px] px-6 text-lg md:text-xl  text-white font-medium rounded-lg bg-pink hover:bg-pink2">
+          <button
+            className="h-[52px] px-6 text-lg md:text-xl  text-white font-medium rounded-lg bg-pink hover:bg-pink2"
+            onClick={() => setIsReviewOpen(true)}
+          >
             Залишити відгук
           </button>
+          <AddReviewModal
+            productId={product.id}
+            productName={product.name}
+            isOpen={isReviewOpen}
+            onClose={() => setIsReviewOpen(false)}
+          />
+        </div>
+        <div className="flex justify-center">
+          <ReviewsScroller productId={Number(id)} />
         </div>
       </div>
     </>
