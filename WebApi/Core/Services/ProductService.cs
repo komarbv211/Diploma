@@ -281,7 +281,7 @@ public class ProductService : IProductService
 
         if (model.MinRating.HasValue)
             query = query.Where(p => p.AverageRating >= model.MinRating.Value);
-
+       //якщо ти заходиш під користувачем то він не активний
         if (model.InStock == true)
             query = query.Where(p => p.Quantity > 0);
 
