@@ -32,10 +32,10 @@ public class PublicProductController : ControllerBase
     }
 
      [HttpGet("search")]
-    public async Task<IActionResult> SearchProduct([FromQuery] ProductSearchModel model, [FromQuery] bool isUser = false)
+    public async Task<IActionResult> SearchProduct([FromQuery] ProductSearchModel model)
     {
         
-        var result = await _productService.SearchProductsAsync(model, isUser);
+        var result = await _productService.SearchProductsAsync(model,  false);
 
         return Ok(result);
     }

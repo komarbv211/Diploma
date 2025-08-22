@@ -345,7 +345,7 @@ public class ProductService : IProductService
                 Price = (int)p.Price,
                 Rating = p.AverageRating,
                 //ImageUrl = p.Images.Select(i => i.ImageUrl).FirstOrDefault(),
-
+                Quantity = p.Quantity,
                 BrandName = p.Brand != null ? p.Brand.Name : null,
                 CategoryName = p.Category != null ? p.Category.Name : null,
                 CreatedAt = p.DateCreated, // 🟢 ← ОБОВ’ЯЗКОВО

@@ -16,6 +16,7 @@ namespace Core.Models.Search
         public string? BrandName { get; set; }
         public string? CategoryName { get; set; }
         public bool IsInStock { get; set; }
+        public int Quantity { get; set; }
         public DateTime CreatedAt { get; set; } // 🆕 Додали дату створення
 
     }
