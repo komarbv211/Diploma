@@ -49,3 +49,10 @@ export interface IProductImageDto {
   priority: number;
   productId: number;
 }
+
+export 
+interface IRateProductRequest {
+  productId: number;
+  rating: number;
+  userId: number;
+}
