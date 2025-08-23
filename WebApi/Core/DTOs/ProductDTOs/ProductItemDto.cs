@@ -20,6 +20,8 @@ namespace Core.DTOs.ProductsDTO
 
         public long RatingsCount { get; set; }
 
+        public DateTime? CreatedDate { get; set; } = DateTime.UtcNow;
+
         public List<ProductImageDto>? Images { get; set; }
 
         // 🔗 Опціональне поле: акція, до якої належить продукт

@@ -2,6 +2,7 @@
 using Core.Interfaces;
 using Core.Models.Search;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApiDiploma.Controllers.Admin;
@@ -67,21 +68,11 @@ public class AdminProductController : ControllerBase
 
 
     [HttpGet("search")]
-    public async Task<IActionResult> SearchProduct([FromQuery] ProductSearchModel model, [FromQuery] bool isAdmin = false)
+    public async Task<IActionResult> SearchProduct([FromQuery] ProductSearchModel model)
     {
-        //if (model.Roles != null && model.Roles.Any())
-        //{
-        //    _logger.LogInformation("Roles from query: {Roles}", string.Join(", ", model.Roles));
-        //}
-        //else
-        //{
-        //    _logger.LogInformation("No roles provided in the query.");
-        //}
-        //bool isAdmin = User.IsInRole("Admin");
-        var result = await _productService.SearchProductsAsync(model, isAdmin);
+        
+        var result = await _productService.SearchProductsAsync(model, User.IsInRole("Admin"));
 
-
-        //var result = await _productService.SearchProductsAsync(model);
         return Ok(result);
     }
 }

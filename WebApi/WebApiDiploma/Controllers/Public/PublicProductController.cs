@@ -1,5 +1,6 @@
 ﻿using Core.DTOs.ProductsDTO;
 using Core.Interfaces;
+using Core.Models.Search;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApiDiploma.Controllers.Public;
@@ -28,5 +29,14 @@ public class PublicProductController : ControllerBase
         var product = await _productService.GetByIdAsync(id);
         if (product == null) return NotFound();
         return Ok(product);
+    }
+
+     [HttpGet("search")]
+    public async Task<IActionResult> SearchProduct([FromQuery] ProductSearchModel model)
+    {
+        
+        var result = await _productService.SearchProductsAsync(model,  false);
+
+        return Ok(result);
     }
 }
