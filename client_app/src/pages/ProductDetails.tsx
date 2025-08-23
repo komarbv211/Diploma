@@ -26,7 +26,7 @@ const ProductDetails: React.FC = () => {
       productId: product.id,
       name: product.name,
       price: product.price,
-      quantity: 1,
+      quantity: product.quantity,
       imageName: product.images?.[0]?.name || "",
     });
     window.dispatchEvent(new CustomEvent("open-cart"));

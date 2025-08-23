@@ -17,3 +17,12 @@ export interface ReviewItemProduct {
     image: string;
   };
 }
+export interface Review {
+  id: number;
+  text: string;
+  user: {
+    firstName: string;
+    lastName: string;
+    image?: string;
+  };
+}

@@ -8,6 +8,8 @@ import { handleFormErrors } from "../utilities/handleApiErrors";
 import { ApiError } from "../types/errors";
 import { Form, message } from "antd";
 import { useRateProductMutation } from "../services/productRatingApi ";
+import { MailIcon } from "./icons";
+import AcoountBoxIcon from "./icons/AccountBoxIcon";
 
 type AddReviewModalProps = {
   productId: number;
@@ -44,12 +46,15 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
     try {
       if (text) {
         await reviewProduct({ productId, userId: user.id, text }).unwrap();
+        message.success("Ваш відгук додано!");
+      }
+      if (rating) {
         await rateProduct({
           productId,
           rating,
           userId: user.id,
         }).unwrap();
-        message.success("Ваш відгук додано!");
+        message.success("Вашу оцінку додано!");
       }
 
       setRating(0);
@@ -105,16 +110,21 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
         {/* User info */}
         {user && (
           <div className="flex gap-6 mt-6">
-            <div className="flex flex-col gap-2 w-1/3">
+            <div className="flex flex-col gap-2 w-1/4">
               <span className="text-[20px] font-medium">Ім’я</span>
-              <div className="border border-gray-500 rounded-xl px-4 py-2">
-                {user.firstName}
+              <div className="flex justify-between items-center border border-gray-500 rounded-xl px-4 py-2">
+                <span>{user.firstName}</span>
+                <AcoountBoxIcon />
               </div>
             </div>
-            <div className="flex flex-col gap-2 w-2/3">
+
+            <div className="flex flex-col gap-2 w-1/4"></div>
+
+            <div className="flex flex-col gap-2 w-2/4">
               <span className="text-[20px] font-medium">Email</span>
-              <div className="border border-gray-500 rounded-xl px-4 py-2">
-                {user.email}
+              <div className="flex justify-between items-center border border-gray-500 rounded-xl px-4 py-2">
+                <span>{user.email}</span>
+                <MailIcon />
               </div>
             </div>
           </div>
