@@ -9,7 +9,7 @@ import ImagesViewer from "../components/images/images_viewer/ImagesViewer";
 import { Typography } from "antd";
 import AddReviewModal from "../components/AddReviewModalProps";
 import ReviewsScroller from "../components/ReviewsScroller";
-
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { data: product, isLoading } = useGetProductByIdQuery(Number(id));
@@ -17,7 +17,7 @@ const ProductDetails: React.FC = () => {
   const navigate = useNavigate();
   const { Paragraph } = Typography;
   const [isReviewOpen, setIsReviewOpen] = React.useState(false);
-
+  const [quantity, setQuantity] = React.useState(1);
   if (isLoading) return <p className="text-center mt-20">Завантаження...</p>;
   if (!product) return <p className="text-center mt-20">Продукт не знайдено</p>;
 
@@ -26,7 +26,7 @@ const ProductDetails: React.FC = () => {
       productId: product.id,
       name: product.name,
       price: product.price,
-      quantity: product.quantity,
+      quantity: quantity,
       imageName: product.images?.[0]?.name || "",
     });
     window.dispatchEvent(new CustomEvent("open-cart"));
@@ -69,11 +69,23 @@ const ProductDetails: React.FC = () => {
           </span>
 
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3">
-              <span className="text-xl font-manrope">Кількість:</span>
-              <div className="flex items-center gap-3 p-2 bg-gray-100 rounded-lg">
-                <span className="text-lg">1</span>
-              </div>
+            <span className="text-xl font-manrope">Кількість:</span>
+            <div className="flex items-center gap-5 border rounded-[15px] px-4 py-2 w-[106px] h-[45px]">
+              <button
+                onClick={() => setQuantity((prev) => Math.max(prev - 1, 1))}
+                className="text-black hover:text-pink2"
+              >
+                <MinusOutlined />
+              </button>
+              <span className="text-black text-[20px] font-medium">
+                {quantity}
+              </span>
+              <button
+                onClick={() => setQuantity((prev) => prev + 1)}
+                className="text-black hover:text-pink2"
+              >
+                <PlusOutlined />
+              </button>
             </div>
           </div>
           <div className="flex items-center justify-between">
