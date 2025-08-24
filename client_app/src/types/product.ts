@@ -10,6 +10,7 @@ export interface IProduct {
   quantity: number;
   averageRating?: number;
   ratingsCount: number;
+  commentsCount: number;
   images?: IProductImageDto[];
   promotionId?: number;
   discountPercent?: number;

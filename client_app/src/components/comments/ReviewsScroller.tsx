@@ -1,10 +1,10 @@
 // src/components/ReviewsScroller.tsx
 import React, { useRef, useState, useEffect } from "react";
-import { useGetCommentsByProductIdQuery } from "../services/productCommentsApi";
+import { useGetCommentsByProductIdQuery } from "../../services/productCommentsApi";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Modal } from "antd";
 import ReviewCard from "./ReviewCard";
-import { Review } from "../types/review";
+import { Review } from "../../types/review";
 
 interface ReviewsScrollerProps {
   productId: number;

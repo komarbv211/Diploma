@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { useAppSelector } from "../store/store";
-import { getUser } from "../store/slices/userSlice";
-import InteractiveRating from "./InteractiveRating";
-import { useReviewProductMutation } from "../services/productCommentsApi";
-import { handleFormErrors } from "../utilities/handleApiErrors";
-import { ApiError } from "../types/errors";
+import { useAppSelector } from "../../store/store";
+import { getUser } from "../../store/slices/userSlice";
+import InteractiveRating from "../InteractiveRating";
+import { useReviewProductMutation } from "../../services/productCommentsApi";
+import { handleFormErrors } from "../../utilities/handleApiErrors";
+import { ApiError } from "../../types/errors";
 import { Form, message } from "antd";
-import { useRateProductMutation } from "../services/productRatingApi ";
-import { MailIcon } from "./icons";
-import AcoountBoxIcon from "./icons/AccountBoxIcon";
+import { useRateProductMutation } from "../../services/productRatingApi ";
+import { MailIcon } from "../icons";
+import AcoountBoxIcon from "../icons/AccountBoxIcon";
 
 type AddReviewModalProps = {
   productId: number;
