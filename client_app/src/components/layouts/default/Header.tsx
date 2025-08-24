@@ -137,13 +137,14 @@ const CustomHeader: React.FC = () => {
         </div>
       </header>
       {/* Гамбургер для мобільних */}
-      <Button
-        type="text"
-        className="mt-20 xl:hidden font-[32px]"
-        icon={<MenuOutlined className="text-2xl" />}
-        onClick={() => setDrawerVisible(true)}
-      />
-
+      {!isAdminPath && (
+        <Button
+          type="text"
+          className="mt-16 xl:hidden font-[32px]"
+          icon={<MenuOutlined className="text-2xl" />}
+          onClick={() => setDrawerVisible(true)}
+        />
+      )}
       {/* Мобільне меню Drawer */}
       <Drawer
         placement="left"
@@ -162,8 +163,10 @@ const CustomHeader: React.FC = () => {
       </Drawer>
 
       {!isAdminPath && (
-        <div className="mt-20 hidden xl:flex justify-center">
-          <HorizontalNavigation />
+        <div className="flex flex-row w-full bg-white justify-center">
+          <div className="mt-20 hidden xl:flex justify-center">
+            <HorizontalNavigation />
+          </div>
         </div>
       )}
     </>
