@@ -48,7 +48,9 @@ const CatalogPage: React.FC = () => {
             userRating={product.ratingsCount ?? 0}
             productId={product.id}
             userId={Number(user?.id)}
-            image={APP_ENV.IMAGES_1200_URL + product.images}
+            image={
+              product.imageUrl ? APP_ENV.IMAGES_1200_URL + product.imageUrl : ""
+            }
             onRated={() => refetch()}
           />
         ))}

@@ -12,6 +12,7 @@ export interface IProduct {
   ratingsCount: number;
   commentsCount: number;
   images?: IProductImageDto[];
+  imageUrl?:string;
   promotionId?: number;
   discountPercent?: number;
   finalPrice?: number; // розрахована ціна зі знижкою
