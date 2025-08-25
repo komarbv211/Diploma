@@ -12,6 +12,7 @@ export interface IProduct {
   ratingsCount: number;
   commentsCount: number;
   images?: IProductImageDto[];
+  imageUrl?:string;
   promotionId?: number;
   discountPercent?: number;
   finalPrice?: number; // розрахована ціна зі знижкою
@@ -56,4 +57,30 @@ interface IRateProductRequest {
   productId: number;
   rating: number;
   userId: number;
+}
+export interface IProductSearchResponse {
+  items: IProduct[];
+  pagination: IPagination;
+}
+
+export interface IProductSearchRequest {
+  CategoryId?: number;
+  BrandId?: number;
+  PriceMin?: number;
+  PriceMax?: number;
+  MinRating?: number;
+  InStock?: boolean;
+  Query?: string;
+  StartDate?: string;
+  EndDate?: string;
+  SortBy?: string;
+  SortDesc?: boolean;
+  Page?: number;
+  ItemPerPage?: number;
+}
+export interface IPagination {
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
+  totalCount: number;
 }
