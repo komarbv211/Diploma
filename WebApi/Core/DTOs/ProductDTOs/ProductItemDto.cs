@@ -19,6 +19,7 @@ namespace Core.DTOs.ProductsDTO
         public double? AverageRating { get; set; }
 
         public long RatingsCount { get; set; }
+        public int CommentsCount { get; set; }
 
         public DateTime? CreatedDate { get; set; } = DateTime.UtcNow;
 

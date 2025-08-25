@@ -1,5 +1,5 @@
 // src/pages/ProductDetails.tsx
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetProductByIdQuery } from "../services/productApi";
 import { useCart } from "../hooks/useCart";
@@ -7,8 +7,8 @@ import InteractiveRating from "../components/InteractiveRating";
 import { CartIcon } from "../components/icons";
 import ImagesViewer from "../components/images/images_viewer/ImagesViewer";
 import { Typography } from "antd";
-import AddReviewModal from "../components/AddReviewModalProps";
-import ReviewsScroller from "../components/ReviewsScroller";
+import AddReviewModal from "../components/comments/AddReviewModalProps";
+import ReviewsScroller from "../components/comments/ReviewsScroller";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +18,11 @@ const ProductDetails: React.FC = () => {
   const { Paragraph } = Typography;
   const [isReviewOpen, setIsReviewOpen] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
   if (isLoading) return <p className="text-center mt-20">Завантаження...</p>;
   if (!product) return <p className="text-center mt-20">Продукт не знайдено</p>;
 
@@ -56,7 +61,7 @@ const ProductDetails: React.FC = () => {
               size={20}
             />
             <span className="text-[16px] text-gray-700">
-              {product.ratingsCount} відгуки
+              {product.commentsCount} відгуки
             </span>
           </div>
 
@@ -126,9 +131,12 @@ const ProductDetails: React.FC = () => {
             onClose={() => setIsReviewOpen(false)}
           />
         </div>
-        <div className="flex justify-center">
-          <ReviewsScroller productId={Number(id)} />
-        </div>
+        {/* Відображаємо відгуки тільки якщо вони є */}
+        {product.commentsCount > 0 && (
+          <div className="flex justify-center w-full">
+            <ReviewsScroller productId={Number(id)} />
+          </div>
+        )}
       </div>
     </>
   );

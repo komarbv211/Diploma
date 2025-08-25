@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Button, Drawer, Dropdown, Input } from "antd";
+import { Button, Drawer, Dropdown, Input } from "antd";
 import {
   UserOutlined,
   LogoutOutlined,
@@ -9,7 +9,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { getUser, logOut } from "../../../store/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
-import { APP_ENV } from "../../../env";
+// import { APP_ENV } from "../../../env";
 import { UserIcon, SearchIcon } from "../../icons";
 import HorizontalNavigation from "../../navigation/HorizontalNavigation";
 import { useCart } from "../../../hooks/useCart";
@@ -19,7 +19,7 @@ import { useRef } from "react";
 import CartModal from "../../Cart/CartModal";
 import VerticalNavigation from "../../navigation/VerticalNavigation";
 import { categoryApi } from "../../../services/categoryApi";
-
+import Avatar from "../../Avatar";
 const CustomHeader: React.FC = () => {
   const user = useAppSelector(getUser);
   const dispatch = useAppDispatch();
@@ -60,9 +60,9 @@ const CustomHeader: React.FC = () => {
     prevUserRef.current = user;
   }, [user, localCart, dispatch]);
 
-  const avatarUrl = user?.image
-    ? `${APP_ENV.IMAGES_100_URL}${user.image}`
-    : undefined;
+  // const avatarUrl = user?.image
+  //   ? `${APP_ENV.IMAGES_100_URL}${user.image}`
+  //   : undefined;
 
   const menuItems = [
     ...(isAdmin
@@ -110,13 +110,21 @@ const CustomHeader: React.FC = () => {
 
         <div className="flex items-center gap-8">
           {user ? (
-            <Dropdown menu={{ items: menuItems }}>
-              <Avatar
+            <Dropdown menu={{ items: menuItems }} trigger={["click"]}>
+              {/* <Avatar
                 size={42}
                 icon={!avatarUrl && <UserOutlined />}
                 src={avatarUrl}
                 className="cursor-pointer"
-              />
+              /> */}
+              <span className="cursor-pointer">
+                <Avatar
+                  firstName={user.firstName}
+                  lastName={user.lastName}
+                  image={user.image || undefined}
+                  size={42}
+                />
+              </span>
             </Dropdown>
           ) : (
             <div className="flex items-center gap-2">

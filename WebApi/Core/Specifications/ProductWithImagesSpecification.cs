@@ -13,6 +13,7 @@ public class ProductWithImagesSpecification : Specification<ProductEntity>
     public ProductWithImagesSpecification(long productId)
     {
         Query.Where(p => p.Id == productId)
-             .Include(p => p.Images);
+             .Include(p => p.Images)
+             .Include(p => p.Comments);
     }
 }

@@ -1,7 +1,7 @@
 // src/components/ReviewCard.tsx
 import React from "react";
-import { Review } from "../types/review";
-import { APP_ENV } from "../env";
+import { Review } from "../../types/review";
+import Avatar from "../Avatar";
 
 interface ReviewCardProps {
   review: Review;
@@ -11,13 +11,11 @@ interface ReviewCardProps {
 const ReviewCard: React.FC<ReviewCardProps> = ({ review, onShowFull }) => (
   <div className="flex flex-col gap-4 bg-[#FFF7F3] rounded-[15px] p-6 min-w-[300px] max-w-[300px] h-[300px]">
     <div className="flex items-center gap-3">
-      <img
-        src={`${APP_ENV.IMAGES_200_URL}${review.user?.image || "NoImage.png"}`}
-        alt={review.user?.firstName || "User"}
-        className="w-[50px] h-[50px] rounded-full object-cover"
-        onError={(e) => {
-          e.currentTarget.src = "/NoImage.png";
-        }}
+      <Avatar
+        firstName={review.user?.firstName}
+        lastName={review.user?.lastName}
+        image={review.user?.image}
+        size={50}
       />
       <span className="text-lg font-medium text-[#1A3D83]">
         {review.user?.firstName} {review.user?.lastName}

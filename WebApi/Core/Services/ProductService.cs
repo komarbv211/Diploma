@@ -39,6 +39,7 @@ public class ProductService : IProductService
             var products = await _productRepository.GetAllQueryable()
                 .Include(p => p.Images)
                 .Include(p => p.Ratings)
+                .Include(p => p.Comments)
                 .ToListAsync();
 
             return _mapper.Map<List<ProductItemDto>>(products);
