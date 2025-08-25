@@ -18,6 +18,7 @@ import { cartApi } from '../services/cartApi';
 import localCarReducer from './slices/localCartSlice';
 import authReducer from './slices/userSlice';
 import { productCommentsApi } from '../services/productCommentsApi';
+import { brandApi } from '../services/brandApi'; // 👈 імпорт
 
 
 export const store = configureStore({
@@ -31,6 +32,7 @@ export const store = configureStore({
                 [productApi.reducerPath]: productApi.reducer,
                 [productAdminApi.reducerPath]: productAdminApi.reducer,
                 [promotionAdminApi.reducerPath]: promotionAdminApi.reducer,  // <-- додано
+                [brandApi.reducerPath]: brandApi.reducer, // 👈 додай сюди
                 [productRatingApi.reducerPath]: productRatingApi.reducer,
                 [cartApi.reducerPath]: cartApi.reducer,
                 [productCommentsApi.reducerPath]: productCommentsApi.reducer,
@@ -50,6 +52,7 @@ export const store = configureStore({
                 productRatingApi.middleware,
                 cartApi.middleware,
                 productCommentsApi.middleware,
+                brandApi.middleware // 👈 додай сюди
             ),
 });
 
