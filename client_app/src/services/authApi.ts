@@ -11,6 +11,7 @@ import {
 import { createBaseQuery } from '../utilities/createBaseQuery';
 import { handleAuthQueryStarted } from '../utilities/handleAuthQueryStarted';
 import { serialize } from 'object-to-formdata';
+import { logOut } from '../store/slices/userSlice';
 
 
 export const authApi = createApi({
@@ -92,7 +93,22 @@ export const authApi = createApi({
             onQueryStarted: handleAuthQueryStarted,
             invalidatesTags: ['AuthUser'],
         }),
-
+                logout: builder.mutation<void, void>({
+            query: () => ({
+                url: 'logout',
+                method: 'POST',
+                body: {}, // тіло пусте, бо refreshToken сервер бере з cookie
+            }),
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                } catch {
+                    // навіть якщо запит зламається - все одно чистимо стейт
+                } finally {
+                    dispatch(logOut()); // викликає reducer logOut з userSlice
+                }
+            },
+        }),
     }),
 });
 
@@ -105,4 +121,5 @@ export const {
     useForgotPasswordMutation,
     useResetPasswordMutation,
     useRefreshTokenMutation,
+    useLogoutMutation,
 } = authApi;

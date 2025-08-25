@@ -7,7 +7,7 @@ import {
   MenuOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
-import { getUser, logOut } from "../../../store/slices/userSlice";
+import { getUser } from "../../../store/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
 // import { APP_ENV } from "../../../env";
 import { UserIcon, SearchIcon } from "../../icons";
@@ -20,6 +20,7 @@ import CartModal from "../../Cart/CartModal";
 import VerticalNavigation from "../../navigation/VerticalNavigation";
 import { categoryApi } from "../../../services/categoryApi";
 import Avatar from "../../Avatar";
+import { useLogoutMutation } from "../../../services/authApi";
 const CustomHeader: React.FC = () => {
   const user = useAppSelector(getUser);
   const dispatch = useAppDispatch();
@@ -30,10 +31,11 @@ const CustomHeader: React.FC = () => {
   const localCart = useAppSelector((state) => state.localCart.items);
   const prevUserRef = useRef<typeof user | null>(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const [logout] = useLogoutMutation();
 
   const handleLogout = async () => {
     const serverCart = [...cart];
-    dispatch(logOut());
+    await logout();
     console.log("Server cart", serverCart);
     dispatch(cartApi.util.resetApiState()); // очищення кешу запитів кошика
     dispatch(categoryApi.util.resetApiState());
