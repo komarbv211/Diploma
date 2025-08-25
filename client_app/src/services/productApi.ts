@@ -1,5 +1,5 @@
 import { createApi} from '@reduxjs/toolkit/query/react';
-import { IProduct } from '../types/product';
+import { IProduct, IProductSearchRequest, IProductSearchResponse } from '../types/product';
 import { createBaseQuery } from '../utilities/createBaseQuery';
 
 export const productApi = createApi({
@@ -19,6 +19,19 @@ export const productApi = createApi({
             query: (categoryId) => `category/${categoryId}`,
             providesTags: ['Products'],
         }),
+        searchProducts: builder.query<IProductSearchResponse, IProductSearchRequest>({
+            query: (params) => {
+                const searchParams = new URLSearchParams();
+                Object.entries(params).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) {
+                    searchParams.append(key, String(value));
+                }
+                });
+                return `search?${searchParams.toString()}`;
+            },
+            providesTags: ['Products'],
+        }),
+
     }),
 });
 
@@ -26,4 +39,5 @@ export const {
     useGetAllProductsQuery, 
     useGetProductByIdQuery,
     useGetProductsByCategoryQuery,
+    useSearchProductsQuery,
 } = productApi;
