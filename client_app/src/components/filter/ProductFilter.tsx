@@ -139,6 +139,7 @@
 
 
 import React, { useState } from "react";
+import { Slider } from 'antd';
 import { useGetBrandsQuery } from "../../services/brandApi";
 import BrandListWithAlphabet from "../brand/BrandListWithAlphabet"; // ⚠️ шлях може змінюватись
 
@@ -204,6 +205,8 @@ const ProductFilter: React.FC<Props> = ({ onChange }) => {
       SortDesc: sortDesc || undefined,
     });
   };
+  const minPriceFromApi = 100;
+const maxPriceFromApi = 10000;
 
   return (
 
@@ -219,7 +222,7 @@ const ProductFilter: React.FC<Props> = ({ onChange }) => {
             className="border px-3 py-2 rounded"
           />
 
-          <input
+          {/* <input
             type="number"
             placeholder="Ціна від"
             value={priceMin}
@@ -233,7 +236,27 @@ const ProductFilter: React.FC<Props> = ({ onChange }) => {
             value={priceMax}
             onChange={(e) => setPriceMax(e.target.value)}
             className="border px-3 py-2 rounded w-[100px]"
-          />
+          /> */}
+
+          <div className="w-[300px]">
+  <label className="block mb-2 font-medium">Ціна, грн</label>
+  <Slider
+    range
+    min={minPriceFromApi}
+  max={maxPriceFromApi}
+    step={10}
+    value={[Number(priceMin) || 0, Number(priceMax) || 10000]}
+    onChange={([min, max]) => {
+      setPriceMin(String(min));
+      setPriceMax(String(max));
+    }}
+  />
+  <div className="flex justify-between text-sm text-gray-600 mt-1">
+    <span>{priceMin || 0} грн</span>
+    <span>{priceMax || 10000} грн</span>
+  </div>
+</div>
+
 
           <input
             type="number"

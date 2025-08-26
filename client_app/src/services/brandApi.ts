@@ -1,5 +1,6 @@
 // services/brandApi.ts
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createBaseQuery } from '../utilities/createBaseQuery';
 
 export interface Brand {
   id: number;
@@ -8,15 +9,14 @@ export interface Brand {
 
 export const brandApi = createApi({
   reducerPath: 'brandApi',
-  baseQuery: fetchBaseQuery({
-  baseUrl: 'http://localhost:5209/api', // <-- явно вказати адресу бекенду
-}),
-// query: () => 'brands',
-//   baseQuery: fetchBaseQuery({ baseUrl: '/api' }), // ⚠️ змінити на свій базовий URL
+  baseQuery: createBaseQuery('brand'),
   endpoints: (builder) => ({
     
     getBrands: builder.query<Brand[], void>({
-      query: () => '/brands',
+     query: () => ({
+        url: ``,
+        method: 'GET',
+      }),
     }),
   }),
 });
