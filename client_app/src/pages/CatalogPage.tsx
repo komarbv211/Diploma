@@ -35,36 +35,41 @@ const [filters, setFilters] = useState<ProductFilterData>({});
     );
   };
 
-  return (
-    <div className="flex justify-center mt-[100px] px-4">
+return (
+  <div className="flex flex-col lg:flex-row mt-[100px] px-4 max-w-[1680px] mx-auto">
 
-      {/* 🔍 Компонент фільтра */}
-    <ProductFilter onChange={(data) => setFilters(data)} />
-      <div className="w-full max-w-[1680px] flex flex-wrap justify-center gap-[12px]">
-        {isLoading && <p>Завантаження...</p>}
-
-        {searchResult?.items.length === 0 && !isLoading && (
-          <p>Немає товарів у цій категорії.</p>
-        )}
-
-        {searchResult?.items.map((product) => (
-          <ProductCard
-            key={product.id}
-            title={product.name}
-            category={product.category?.name || getCategoryName(Number(id))}
-            price={product.price}
-            userRating={product.ratingsCount ?? 0}
-            productId={product.id}
-            userId={Number(user?.id)}
-            image={
-              product.imageUrl ? APP_ENV.IMAGES_1200_URL + product.imageUrl : ""
-            }
-            onRated={() => refetch()}
-          />
-        ))}
-      </div>
+    {/* 🔍 Блок фільтра */}
+    <div className="w-full lg:w-1/4 lg:pr-4 mb-4 lg:mb-0">
+      <ProductFilter onChange={(data) => setFilters(data)} />
     </div>
-  );
+
+    {/* 🛒 Блок товарів */}
+    <div className="w-full lg:w-3/4 flex flex-wrap gap-[12px]">
+      {isLoading && <p>Завантаження...</p>}
+
+      {searchResult?.items.length === 0 && !isLoading && (
+        <p>Немає товарів у цій категорії.</p>
+      )}
+
+      {searchResult?.items.map((product) => (
+        <ProductCard
+          key={product.id}
+          title={product.name}
+          category={product.category?.name || getCategoryName(Number(id))}
+          price={product.price}
+          userRating={product.ratingsCount ?? 0}
+          productId={product.id}
+          userId={Number(user?.id)}
+          image={
+            product.imageUrl ? APP_ENV.IMAGES_1200_URL + product.imageUrl : ""
+          }
+          onRated={() => refetch()}
+        />
+      ))}
+    </div>
+  </div>
+);
+
 };
 
 export default CatalogPage;
