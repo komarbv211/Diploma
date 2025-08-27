@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { Slider } from 'antd';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
 import { useGetBrandsQuery } from "../../services/brandApi";
 import BrandListWithAlphabet from "../brand/BrandListWithAlphabet";
 
@@ -11,6 +14,9 @@ export interface ProductFilterData {
   InStock?: boolean;
   SortBy?: string;
   SortDesc?: boolean;
+
+  StartDate?: string; // "dd.MM.yyyy"
+  EndDate?: string;   // "dd.MM.yyyy"
 }
 
 type Props = {
@@ -26,6 +32,9 @@ const ProductFilter: React.FC<Props> = ({ onChange }) => {
   const [sortBy, setSortBy] = useState("");
   const [sortDesc, setSortDesc] = useState(false);
   const [selectedLetter, setSelectedLetter] = useState("");
+  const [selectedBrandId, setSelectedBrandId] = useState<number | null>(null);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
 
   const { data: brands = [], isLoading, isError, error } = useGetBrandsQuery();
@@ -40,10 +49,25 @@ const ProductFilter: React.FC<Props> = ({ onChange }) => {
       InStock: inStock,
       SortBy: sortBy || undefined,
       SortDesc: sortDesc || undefined,
+      StartDate: startDate ? format(startDate, "dd.MM.yyyy") : undefined,
+      EndDate: endDate ? format(endDate, "dd.MM.yyyy") : undefined,
     });
   };
 
   const handleReset = () => {
+    // setQuery("");
+    // setPriceMin("");
+    // setPriceMax("");
+    // setMinRating("");
+    // setInStock(false);
+    // setSortBy("");
+    // setSortDesc(false);
+    // onChange({});
+    // setSelectedLetter("");
+    // setStartDate(null);
+    // setEndDate(null);
+
+
     setQuery("");
     setPriceMin("");
     setPriceMax("");
@@ -51,22 +75,51 @@ const ProductFilter: React.FC<Props> = ({ onChange }) => {
     setInStock(false);
     setSortBy("");
     setSortDesc(false);
-    onChange({});
     setSelectedLetter("");
+    setStartDate(null);
+    setEndDate(null);
+    setSelectedBrandId(null);
+
+    // Очистити фільтри
+    onChange({});
+
+    // Оновити сторінку (опціонально)
+    window.location.reload();
   };
 
-  const handleBrandSelect = (brand: { name: string }) => {
-    setQuery(brand.name);
-    onChange({
-      Query: brand.name,
-      PriceMin: priceMin ? Number(priceMin) : undefined,
-      PriceMax: priceMax ? Number(priceMax) : undefined,
-      MinRating: minRating ? Number(minRating) : undefined,
-      InStock: inStock,
-      SortBy: sortBy || undefined,
-      SortDesc: sortDesc || undefined,
-    });
+  // const handleBrandSelect = (brand: { name: string }) => {
+  //   setQuery(brand.name);
+  //   onChange({
+  //     Query: brand.name,
+  //     PriceMin: priceMin ? Number(priceMin) : undefined,
+  //     PriceMax: priceMax ? Number(priceMax) : undefined,
+  //     MinRating: minRating ? Number(minRating) : undefined,
+  //     InStock: inStock,
+  //     SortBy: sortBy || undefined,
+  //     SortDesc: sortDesc || undefined,
+  //   });
+  // };
+
+  const handleBrandSelect = (brand: { name: string; id: number } | null) => {
+    if (brand === null) {
+      setSelectedBrandId(null);
+      setQuery("");
+      onChange({}); // скинути фільтр бренду
+    } else {
+      setSelectedBrandId(brand.id);
+      setQuery(brand.name);
+      onChange({
+        Query: brand.name,
+        PriceMin: priceMin ? Number(priceMin) : undefined,
+        PriceMax: priceMax ? Number(priceMax) : undefined,
+        MinRating: minRating ? Number(minRating) : undefined,
+        InStock: inStock,
+        SortBy: sortBy || undefined,
+        SortDesc: sortDesc || undefined,
+      });
+    }
   };
+
 
   const minPriceFromApi = 100;
   const maxPriceFromApi = 10000;
@@ -80,12 +133,21 @@ const ProductFilter: React.FC<Props> = ({ onChange }) => {
         {isLoading && <p>Завантаження брендів...</p>}
         {isError && <p>Помилка при завантаженні брендів.</p>}
         {!isLoading && !isError && (
-           <BrandListWithAlphabet
-    brands={brands}
-    selectedLetter={selectedLetter}
-    onLetterSelect={setSelectedLetter}
-    onBrandSelect={handleBrandSelect}
-  />
+  //          <BrandListWithAlphabet
+  //   brands={brands}
+  //   selectedLetter={selectedLetter}
+  //   onLetterSelect={setSelectedLetter}
+  //   onBrandSelect={handleBrandSelect}
+  // />
+
+            <BrandListWithAlphabet
+                brands={brands}
+                selectedLetter={selectedLetter}
+                onLetterSelect={setSelectedLetter}
+                onBrandSelect={handleBrandSelect}
+                selectedBrandId={selectedBrandId}
+            />
+
         )}
       </div>
 
@@ -117,6 +179,30 @@ const ProductFilter: React.FC<Props> = ({ onChange }) => {
             <span>{priceMax || maxPriceFromApi} грн</span>
           </div>
         </div>
+
+
+        <div className="flex flex-col gap-2">
+          <label className="font-medium">Дата від</label>
+          <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              dateFormat="dd.MM.yyyy"
+              className="border px-3 py-2 rounded w-full"
+              placeholderText="Оберіть дату від"
+              isClearable
+          />
+
+          <label className="font-medium mt-2">Дата до</label>
+          <DatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              dateFormat="dd.MM.yyyy"
+              className="border px-3 py-2 rounded w-full"
+              placeholderText="Оберіть дату до"
+              isClearable
+          />
+        </div>
+
 
         {/* Мін. рейтинг */}
         <input
@@ -162,21 +248,22 @@ const ProductFilter: React.FC<Props> = ({ onChange }) => {
           За спаданням
         </label>
 
-        {/* Кнопки */}
-        <div className="flex flex-col gap-2 w-full">
-          <button
+      </div>
+      {/* Кнопки */}
+      <div className="flex flex-col gap-2 w-full">
+        <button
             onClick={handleApply}
             className="bg-blue-500 text-white px-4 py-2 rounded w-full"
-          >
-            Застосувати
-          </button>
-          <button
+        >
+          Застосувати
+        </button>
+
+        <button
             onClick={handleReset}
-            className="bg-gray-400 text-white px-4 py-2 rounded w-full"
-          >
-            Скинути
-          </button>
-        </div>
+            className="bg-red-500 text-white px-4 py-2 rounded w-full"
+        >
+          Очистити фільтр
+        </button>
       </div>
 
       
