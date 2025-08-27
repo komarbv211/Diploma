@@ -9,7 +9,6 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { getUser } from "../../../store/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
-// import { APP_ENV } from "../../../env";
 import { UserIcon, SearchIcon } from "../../icons";
 import HorizontalNavigation from "../../navigation/HorizontalNavigation";
 import { useCart } from "../../../hooks/useCart";
@@ -62,10 +61,6 @@ const CustomHeader: React.FC = () => {
     prevUserRef.current = user;
   }, [user, localCart, dispatch]);
 
-  // const avatarUrl = user?.image
-  //   ? `${APP_ENV.IMAGES_100_URL}${user.image}`
-  //   : undefined;
-
   const menuItems = [
     ...(isAdmin
       ? [
@@ -91,7 +86,7 @@ const CustomHeader: React.FC = () => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 h-20 bg-white flex items-center justify-between px-10 shadow-none">
+      <header className="fixed top-0 left-0 right-0 h-20 bg-white flex items-center justify-between px-[120px] shadow-none">
         <Link to="/" className="flex-none w-[150px] sm:w-[310px]">
           <img
             src="/cosmeria 1.png"
@@ -113,12 +108,6 @@ const CustomHeader: React.FC = () => {
         <div className="flex items-center gap-8">
           {user ? (
             <Dropdown menu={{ items: menuItems }} trigger={["click"]}>
-              {/* <Avatar
-                size={42}
-                icon={!avatarUrl && <UserOutlined />}
-                src={avatarUrl}
-                className="cursor-pointer"
-              /> */}
               <span className="cursor-pointer">
                 <Avatar
                   firstName={user.firstName}
