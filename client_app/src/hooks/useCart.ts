@@ -15,7 +15,7 @@ export const useCart = (isAuth: boolean) => {
         if (isAuth) {
             // console.log("Add remote cart", item);
             const existing = remoteCart?.find(i => i.productId === item.productId);
-            const quantity = existing ? existing.quantity! + item.quantity! : 1;
+            const quantity = existing ? existing.quantity! + item.quantity! : item.quantity!;
             await addRemote({ ...item, quantity });
         } else {
             dispatch(addItem(item));

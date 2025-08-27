@@ -13,7 +13,7 @@ import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { data: product, isLoading } = useGetProductByIdQuery(Number(id));
-  const { addToCart } = useCart(true);
+  const { addToCart } = useCart(!!localStorage.getItem("token"));
   const navigate = useNavigate();
   const { Paragraph } = Typography;
   const [isReviewOpen, setIsReviewOpen] = React.useState(false);
