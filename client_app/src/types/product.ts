@@ -6,6 +6,7 @@ export interface IProduct {
   price: number;
   description?: string;
   categoryId: number;
+  brandId?: number;
   category?: ICategoryName;
   quantity: number;
   averageRating?: number;
@@ -23,6 +24,7 @@ export interface IProductPostRequest {
   price: number;
   description?: string;
   categoryId: number;
+  brandId?: number;
   quantity: number;
   image: File[];
 }
@@ -34,6 +36,7 @@ export interface IProductPutRequest
   price: number;
   description?: string;
   categoryId: number;
+  brandId: number;
   quantity: number;
   image?: File[];
 }

@@ -8,6 +8,7 @@ export function serializeProduct(data: IProductPutRequest): FormData {
     formData.append('name', data.name);
     formData.append('price', data.price.toString());
     formData.append('categoryId', data.categoryId.toString());
+    formData.append('brandId', data.brandId.toString());
     formData.append('quantity', data.quantity.toString());
 
     if (data.description) {
