@@ -79,7 +79,7 @@ const [filters, setFilters] = useState<ProductFilterData>({});
         />
       ))}
     </div>
-  </div>
+   </div>
   </div>
 );
 
