@@ -14,7 +14,6 @@ const CatalogPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 const [filters, setFilters] = useState<ProductFilterData>({});
 
-  // Виклик пошуку з CategoryId
   const {
     data: searchResult,
     isLoading,
@@ -28,6 +27,7 @@ const [filters, setFilters] = useState<ProductFilterData>({});
 
   const { data: categories } = useGetCategoryTreeQuery();
   const user = useAppSelector(getUser);
+  const category = categories?.find((cat) => cat.id === Number(id));
 
   const getCategoryName = (id: number) => {
     return (
@@ -35,6 +35,25 @@ const [filters, setFilters] = useState<ProductFilterData>({});
     );
   };
 
+  return (
+    <div className="flex flex-col lg:flex-row mt-[100px] px-4 max-w-[1680px] mx-auto gap-4">
+      {/* 🔍 Ліва колонка: фільтри */}
+      <div className="w-full lg:w-[23.5%]"></div>
+
+      {/* 🛒 Права колонка: зображення категорії + товари */}
+      <div className="w-full lg:w-[76.5%] flex flex-col gap-6 m-o p-0">
+        {/* Фото категорії зверху */}
+        {category?.image && (
+          <img
+            src={APP_ENV.IMAGES_1200_URL + category.image}
+            alt={category.name}
+            className="w-full max-h-[700px] object-cover rounded-lg"
+          />
+        )}
+
+        {/* Картки товарів */}
+        <div className="flex flex-wrap justify-center  gap-4">
+          {isLoading && <p>Завантаження...</p>}
 return (
   <div className="flex flex-col lg:flex-row mt-[100px] px-4 max-w-[1680px] mx-auto">
 

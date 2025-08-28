@@ -1,6 +1,6 @@
 // src/components/ProductCard.tsx
 import React from "react";
-import { CartIcon } from "../components/icons";
+import { CartFlowerIcon, CartIcon } from "../components/icons";
 import InteractiveRating from "../components/InteractiveRating";
 import { useRateProductMutation } from "../services/productRatingApi ";
 import { useAppSelector } from "../store/store";
@@ -34,7 +34,8 @@ const ProductCard: React.FC<Props> = ({
 }) => {
   const [rateProduct] = useRateProductMutation();
   const { user } = useAppSelector((s) => s.auth);
-  const { addToCart } = useCart(!!user);
+  const { cart, addToCart } = useCart(!!user);
+  const isInCart = cart.some((item: ICartItem) => item.productId === productId);
 
   // витягуємо тільки ім'я файлу, якщо передано повний URL
   const getImageName = (img: string) =>
@@ -113,7 +114,14 @@ const ProductCard: React.FC<Props> = ({
             onClick={handleAddToCart}
             className="w-[28.5px] h-[23.5px] flex items-center justify-center "
           >
-            <CartIcon className="text-black w-full h-full" />
+            {isInCart ? (
+              <div className="relative w-full h-full">
+                <CartIcon className="text-black w-full h-full" />
+                <CartFlowerIcon className="absolute top-[6px] right-0 text-pink2 w-1/2 h-1/2" />
+              </div>
+            ) : (
+              <CartIcon className="text-black w-full h-full" /> // 🛒 порожня іконка
+            )}{" "}
           </button>
         </div>
       </div>
