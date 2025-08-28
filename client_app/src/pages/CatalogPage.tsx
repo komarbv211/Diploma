@@ -37,8 +37,12 @@ const [filters, setFilters] = useState<ProductFilterData>({});
 
   return (
     <div className="flex flex-col lg:flex-row mt-[100px] px-4 max-w-[1680px] mx-auto gap-4">
+
       {/* 🔍 Ліва колонка: фільтри */}
-      <div className="w-full lg:w-[23.5%]"></div>
+      <div className="w-full lg:w-[23.5%]">
+
+          <ProductFilter onChange={(data) => setFilters(data)} />
+      </div>
 
       {/* 🛒 Права колонка: зображення категорії + товари */}
       <div className="w-full lg:w-[76.5%] flex flex-col gap-6 m-o p-0">
@@ -54,17 +58,6 @@ const [filters, setFilters] = useState<ProductFilterData>({});
         {/* Картки товарів */}
         <div className="flex flex-wrap justify-center  gap-4">
           {isLoading && <p>Завантаження...</p>}
-return (
-  <div className="flex flex-col lg:flex-row mt-[100px] px-4 max-w-[1680px] mx-auto">
-
-    {/* 🔍 Блок фільтра */}
-    <div className="w-full lg:w-1/4 lg:pr-4 mb-4 lg:mb-0">
-      <ProductFilter onChange={(data) => setFilters(data)} />
-    </div>
-
-    {/* 🛒 Блок товарів */}
-    <div className="w-full lg:w-3/4 flex flex-wrap gap-[12px]">
-      {isLoading && <p>Завантаження...</p>}
 
       {searchResult?.items.length === 0 && !isLoading && (
         <p>Немає товарів у цій категорії.</p>
@@ -87,8 +80,8 @@ return (
       ))}
     </div>
   </div>
+  </div>
 );
 
-};
-
+}
 export default CatalogPage;
