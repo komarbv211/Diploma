@@ -19,21 +19,39 @@ namespace Core.Validators.Order
             RuleForEach(x => x.Items)
                 .SetValidator(new OrderItemCreateDtoValidator());
 
-            RuleFor(x => x)
-            .Custom((order, context) =>
-            {
-                if ((order.DeliveryType == DeliveryType.NovaPoshta || order.DeliveryType == DeliveryType.Pickup)
-                    && !order.WarehouseId.HasValue)
-                {
-                    context.AddFailure("WarehouseId", "Не вибрано відділення для доставки або самовивозу");
-                }
+            RuleFor(x => x.FirstName)
+                .NotEmpty().WithMessage("Ім’я обов’язкове");
 
-                if (order.DeliveryType == DeliveryType.Courier && string.IsNullOrWhiteSpace(order.DeliveryAddress))
-                {
-                    context.AddFailure("DeliveryAddress", "Для кур’єрської доставки необхідно вказати адресу");
-                }
+            RuleFor(x => x.LastName)
+                .NotEmpty().WithMessage("Прізвище обов’язкове");
+
+            RuleFor(x => x.Email)
+                .NotEmpty().WithMessage("Email обов’язковий")
+                .EmailAddress().WithMessage("Некоректний формат email");
+
+            RuleFor(x => x.Phone)
+                .NotEmpty().WithMessage("Телефон обов’язковий");
+
+            RuleFor(x => x.City)
+                .NotEmpty().WithMessage("Місто обов’язкове");
+
+            When(x => x.DeliveryType == DeliveryType.Courier, () =>
+            {
+                RuleFor(x => x.Street)
+                    .NotEmpty()
+                    .WithMessage("Вулиця обов'язкова для кур'єрської доставки");
+
+                RuleFor(x => x.House)
+                    .NotEmpty()
+                    .WithMessage("Будинок обов'язковий для кур'єрської доставки");
             });
 
+            When(x => x.DeliveryType == DeliveryType.NovaPoshta, () =>
+            {
+                RuleFor(x => x.WarehouseId)
+                    .NotNull()
+                    .WithMessage("Не вибрано відділення для доставки");
+            });
         }
     }
 }

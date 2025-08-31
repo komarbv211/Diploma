@@ -1,22 +1,22 @@
-import { useState } from "react";
+interface QuantityCounterProps {
+  quantity: number;
+  className?: string;
+  onIncrease?: () => void;
+  onDecrease?: () => void;
+}
 
-function QuantityCounter({ initial = 1, className = "" }) {
-  const [quantity, setQuantity] = useState(initial);
-
-  const increase = () => setQuantity((prev) => prev + 1);
-  const decrease = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
-
+function QuantityCounter({
+  quantity,
+  className = "",
+  onIncrease,
+  onDecrease,
+}: QuantityCounterProps) {
   return (
     <div
-      className={`relative w-[120px] h-12 ${className}`}
-      style={{
-        background: "linear-gradient(to bottom, #1A3D83, #8AA8D2)",
-        padding: "1px",
-        borderRadius: "12px",
-      }}
+      className={`relative w-[120px] h-12 border border-blue2 rounded-xl p-1 ${className}`}
     >
       <div className="flex justify-between items-center h-full bg-white rounded-[11px] px-3">
-        <button type="button" onClick={decrease}>
+        <button type="button" onClick={onDecrease}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -34,9 +34,9 @@ function QuantityCounter({ initial = 1, className = "" }) {
           </svg>
         </button>
 
-        <span className="text-base">{quantity}</span>
+        <span className="text-base font-semibold">{quantity}</span>
 
-        <button type="button" onClick={increase}>
+        <button type="button" onClick={onIncrease}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"

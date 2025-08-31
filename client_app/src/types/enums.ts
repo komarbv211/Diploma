@@ -1,21 +1,17 @@
 export enum DeliveryType {
-  NovaPost,
-  UkrPost,
-  Courier,
-  Pickup,
+  NovaPoshta = "Нова Пошта (відділення)",
+  Courier = "Доставка кур'єром",
 }
 
 export enum PaymentMethod {
-  Cash,
-  Card,
-  ApplePay,
-  GooglePay,
+  Cash = "Готівка",
+  CreditCard = "Оплата картою"
 }
 
 export enum OrderStatus {
   Pending,
   Paid,
   Shipped,
-  Delivered,
+  Completed,
   Cancelled,
 }

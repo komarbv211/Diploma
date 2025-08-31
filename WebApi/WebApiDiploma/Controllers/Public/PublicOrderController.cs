@@ -1,7 +1,11 @@
 ﻿using Core.DTOs.OrderDTOs;
 using Core.Interfaces;
 using Core.Services;
+using MailKit.Search;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph.Models;
+using System.Security.Claims;
 
 namespace WebApiDiploma.Controllers.Public
 {
@@ -18,9 +22,17 @@ namespace WebApiDiploma.Controllers.Public
             _novaPoshtaService = novaPoshtaService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<OrderDto>>> GetOrders() =>
-        Ok(await _orderService.GetOrders());
+        [HttpGet("my")]
+        [Authorize]
+        public async Task<ActionResult> GetMyOrders()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var orders = await _orderService.GetOrdersByUserIdAsync(long.Parse(userId));
+            return Ok(orders);
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderDto>> GetById(long id) =>
@@ -38,6 +50,13 @@ namespace WebApiDiploma.Controllers.Public
         {
             await _orderService.DeleteOrderAsync((int)id);
             return Ok(id);
+        }
+
+        [HttpGet("warehouses/{cityRef}")]
+        public async Task<ActionResult<List<NovaPostWarehouseDto>>> GetWarehousesByCity(string cityRef)
+        {
+            var warehouses = await _novaPoshtaService.GetAllWarehousesAsync(cityRef);
+            return Ok(warehouses);
         }
     }
 }

@@ -8,11 +8,24 @@ namespace Core.DTOs.OrderDTOs
         public long Id { get; set; }
         public long UserId { get; set; }
         public long? WarehouseId { get; set; }
+
+        // personal info
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
+
+        // delivery
+        public string? City { get; set; }
+        public string? Street { get; set; }
+        public string? House { get; set; }
+        public string? Apartment { get; set; }
+        public string? DeliveryAddress { get; set; }
+
         public decimal TotalPrice { get; set; }
         public DeliveryType DeliveryType { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public OrderStatus Status { get; set; }
-        public string? DeliveryAddress { get; set; }
         public string? CustomerNote { get; set; }
         public string? TrackingNumber { get; set; }
         public DateTime? UpdatedAt { get; set; }
@@ -24,10 +37,21 @@ namespace Core.DTOs.OrderDTOs
     {
         public long UserId { get; set; }
         public long? WarehouseId { get; set; }
+
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
+
+        public string? City { get; set; }
+        public string? Street { get; set; }
+        public string? House { get; set; }
+        public string? Apartment { get; set; }
+        public string? DeliveryAddress { get; set; }
+
         public decimal TotalPrice { get; set; }
         public DeliveryType DeliveryType { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
-        public string? DeliveryAddress { get; set; }
         public string? CustomerNote { get; set; }
         public string? TrackingNumber { get; set; }
         public List<OrderItemCreateDto> Items { get; set; } = [];

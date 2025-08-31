@@ -1,6 +1,7 @@
 ﻿using Core.DTOs.OrderDTOs;
 using Core.Interfaces;
 using Core.Services;
+using Infrastructure.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,6 +28,13 @@ namespace WebApiDiploma.Controllers.Admin
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderDto>> GetById(long id) =>
             Ok(await _orderService.GetOrderByIdAsync(id));
+
+        [HttpGet("user/{userId:long}")]
+        public async Task<IActionResult> GetOrdersByUserId(long userId)
+        {
+            var orders = await _orderService.GetOrdersByUserIdAsync(userId);
+            return Ok(orders);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] OrderCreateDto dto)

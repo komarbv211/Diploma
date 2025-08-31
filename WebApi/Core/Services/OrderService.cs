@@ -49,9 +49,20 @@ namespace Core.Services
             return orderDto ?? throw new HttpException("Замовлення не знайдено", HttpStatusCode.NotFound);
         }
 
+        public async Task<List<OrderDto>> GetOrdersByUserIdAsync(long userId)
+        {
+            return await _orderRepository
+                .GetAllQueryable()
+                .Where(o => o.UserId == userId)
+                .Include(o => o.Items)
+                .Include(o => o.Warehouse)
+                .ProjectTo<OrderDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+        }
+
         public async Task<OrderDto> CreateOrderAsync(OrderCreateDto dto)
         {
-            var warehouse = await ValidateWarehouseAsync(dto.WarehouseId, dto.DeliveryType, dto.DeliveryAddress);
+            var warehouse = await ValidateWarehouseAsync(dto.WarehouseId, dto.DeliveryType, dto);
 
             var entity = _mapper.Map<OrderEntity>(dto);
 
@@ -75,7 +86,7 @@ namespace Core.Services
                 .FirstOrDefaultAsync(o => o.Id == dto.Id)
                 ?? throw new HttpException("Замовлення не знайдено", HttpStatusCode.NotFound);
 
-            var warehouse = await ValidateWarehouseAsync(dto.WarehouseId, dto.DeliveryType, dto.DeliveryAddress);
+            var warehouse = await ValidateWarehouseAsync(dto.WarehouseId, dto.DeliveryType, dto);
 
             _mapper.Map(dto, entity);
 
@@ -106,41 +117,33 @@ namespace Core.Services
             await _orderRepository.SaveAsync();
         }
 
-        private async Task<NovaPostWarehouseEntity?> ValidateWarehouseAsync(long? warehouseId, DeliveryType deliveryType, string? deliveryAddress)
+        private async Task<NovaPostWarehouseEntity?> ValidateWarehouseAsync(long? warehouseId, DeliveryType deliveryType, OrderCreateDto dto)
         {
-            if (deliveryType == DeliveryType.NovaPoshta || deliveryType == DeliveryType.Pickup)
+            if (deliveryType == DeliveryType.NovaPoshta)
             {
                 if (!warehouseId.HasValue)
-                {
-                    var msg = deliveryType == DeliveryType.NovaPoshta
-                        ? "Не вибрано відділення Нової пошти"
-                        : "Не вибрано відділення для самовивозу";
-
-                    throw new HttpException(msg, HttpStatusCode.BadRequest);
-                }
+                    throw new HttpException("Не вибрано відділення Нової пошти", HttpStatusCode.BadRequest);
 
                 var warehouse = await _warehouseRepository.GetByID(warehouseId.Value);
                 if (warehouse == null)
-                {
-                    var msg = deliveryType == DeliveryType.NovaPoshta
-                        ? "Відділення Нової пошти не знайдено"
-                        : "Відділення для самовивозу не знайдено";
-
-                    throw new HttpException(msg, HttpStatusCode.BadRequest);
-                }
+                    throw new HttpException("Відділення Нової пошти не знайдено", HttpStatusCode.BadRequest);
 
                 return warehouse;
             }
 
             if (deliveryType == DeliveryType.Courier)
             {
-                if (string.IsNullOrWhiteSpace(deliveryAddress))
-                    throw new HttpException("Для кур’єрської доставки необхідно вказати адресу", HttpStatusCode.BadRequest);
+                if (string.IsNullOrWhiteSpace(dto.Street) || string.IsNullOrWhiteSpace(dto.House))
+                    throw new HttpException("Вулиця та будинок обов'язкові для кур'єрської доставки", HttpStatusCode.BadRequest);
+
+                dto.DeliveryAddress = $"{dto.City}, {dto.Street} {dto.House}" +
+                                      (string.IsNullOrWhiteSpace(dto.Apartment) ? "" : $", кв. {dto.Apartment}");
 
                 return null;
             }
 
             return null;
         }
+
     }
 }

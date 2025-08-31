@@ -24,10 +24,11 @@ namespace Core.Services
             _apiKey = config["NovaPoshta:ApiKey"] ?? "";
         }
 
-        public async Task<List<NovaPostWarehouseDto>> GetAllWarehousesAsync()
+        public async Task<List<NovaPostWarehouseDto>> GetAllWarehousesAsync(string cityRef)
         {
             return await _npRepository.GetAllQueryable()
                 .ProjectTo<NovaPostWarehouseDto>(_mapper.ConfigurationProvider)
+                .Where(x => x.CityRef == cityRef)   
                 .ToListAsync();
         }
 
@@ -104,6 +105,8 @@ namespace Core.Services
             entity.MaxWeightKg = decimal.TryParse(w.TotalMaxWeightAllowed, out var weight) ? weight : null;
             entity.Latitude = w.Latitude ?? 0;
             entity.Longitude = w.Longitude ?? 0;
+            entity.CityRef = w.CityRef ?? string.Empty;
+            entity.City = w.CityDescription ?? string.Empty;
         }
     }
 }
