@@ -55,100 +55,53 @@ const OrderPage = () => {
 
   const deliveryType = Form.useWatch("deliveryType", form);
 
-  const validatePersonalInfo = (values: OrderCreateDto) => {
-    if (
-      !values.firstName ||
-      !values.lastName ||
-      !values.email ||
-      !values.phone
-    ) {
-      setActiveTab("personal");
-      return false;
-    }
-    return true;
-  };
-
-  const validateDeliveryInfo = (values: OrderCreateDto) => {
-    if (
-      !values.city ||
-      (values.deliveryType === DeliveryType.Courier &&
-        (!values.street || !values.house))
-    ) {
-      setActiveTab("delivery");
-      return false;
-    }
-    return true;
-  };
-
-  const buildDeliveryAddress = (values: OrderCreateDto) => {
-    if (values.deliveryType !== DeliveryType.Courier) return "";
-    const cityName =
-      citiesData?.find((c) => c.Ref === values.city)?.Description ?? "";
-    const streetName =
-      streets?.find((s) => s.Description === values.street)?.Description ??
-      values.street;
-    return `${cityName}, ${streetName}, буд. ${values.house}${
-      values.apartment ? `, кв. ${values.apartment}` : ""
-    }`;
-  };
-
-  const buildOrderObject = (
-    values: OrderCreateDto,
-    deliveryAddress: string
-  ): OrderCreateDto => {
-    const totalPrice = cart.reduce(
-      (sum, item) => sum + item.price! * item.quantity!,
-      0
-    );
-    return {
-      userId: user?.id ?? 0,
-      warehouseId:
-        values.deliveryType === DeliveryType.NovaPoshta && values.warehouseId
-          ? Number(values.warehouseId)
-          : undefined,
-      totalPrice,
-      deliveryType: values.deliveryType,
-      paymentMethod: values.paymentMethod,
-      customerNote: values.customerNote,
-      trackingNumber: values.trackingNumber,
-      items: cart.map((item) => ({
-        productId: item.productId!,
-        productName: item.name,
-        quantity: item.quantity!,
-        price: item.price!,
-      })),
-      firstName: values.firstName,
-      lastName: values.lastName,
-      email: values.email,
-      phone: values.phone,
-      city: citiesData?.find((c) => c.Ref === values.city)?.Description ?? "",
-      street: values.street,
-      house: values.house,
-      apartment: values.apartment,
-      deliveryAddress,
-    };
-  };
-
   const onFinish = async (values: OrderCreateDto) => {
-    console.log("Форма відправлена:", values);
+  console.log("Форма:", values);
 
-    if (!validatePersonalInfo(values)) return;
-    if (!validateDeliveryInfo(values)) return;
+  const cityName = citiesData?.find(c => c.Ref === values.city)?.Description ?? "";
+  const streetName = streets?.find(s => s.Description === values.street)?.Description ?? values.street;
 
-    const deliveryAddress = buildDeliveryAddress(values);
-    const newOrder = buildOrderObject(values, deliveryAddress);
+  const deliveryAddress = values.deliveryType === DeliveryType.Courier
+    ? `${cityName}, ${streetName}, буд. ${values.house}${values.apartment ? `, кв. ${values.apartment}` : ""}`
+    : "";
 
-    console.log("Об'єкт для API createOrder:", newOrder);
+  const totalPrice = cart.reduce((sum, item) => sum + item.price! * item.quantity!, 0);
 
-    try {
-      const response = await createOrder(newOrder).unwrap();
-      console.log("Відповідь від сервера:", response);
-      dispatch(clearCart());
-      navigate("/");
-    } catch (err) {
-      console.error("Помилка створення замовлення:", err);
-    }
+  const newOrder: OrderCreateDto = {
+    userId: user?.id ?? 0,
+    warehouseId: values.deliveryType === DeliveryType.NovaPoshta && values.warehouseId ? Number(values.warehouseId) : undefined,
+    totalPrice,
+    deliveryType: values.deliveryType,
+    paymentMethod: values.paymentMethod,
+    customerNote: values.customerNote,
+    trackingNumber: values.trackingNumber,
+    items: cart.map(item => ({
+      productId: item.productId!,
+      productName: item.name,
+      quantity: item.quantity!,
+      price: item.price!,
+    })),
+    firstName: values.firstName,
+    lastName: values.lastName,
+    email: values.email,
+    phone: values.phone,
+    city: cityName,
+    street: values.street,
+    house: values.house,
+    apartment: values.apartment,
+    deliveryAddress,
   };
+
+  try {
+    const response = await createOrder(newOrder).unwrap();
+    console.log("Відповідь від сервера:", response);
+    dispatch(clearCart());
+    navigate("/");
+  } catch (err) {
+    console.error("Помилка створення замовлення:", err);
+  }
+};
+
 
   return (
     <>
