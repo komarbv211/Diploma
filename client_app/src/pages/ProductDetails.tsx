@@ -10,10 +10,12 @@ import { Typography } from "antd";
 import AddReviewModal from "../components/comments/AddReviewModalProps";
 import ReviewsScroller from "../components/comments/ReviewsScroller";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { useAppSelector } from "../store/store";
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { data: product, isLoading } = useGetProductByIdQuery(Number(id));
-  const { addToCart } = useCart(!!localStorage.getItem("token"));
+  const { user } = useAppSelector((s) => s.auth);
+  const { addToCart } = useCart(!!user);
   const navigate = useNavigate();
   const { Paragraph } = Typography;
   const [isReviewOpen, setIsReviewOpen] = React.useState(false);
