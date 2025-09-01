@@ -1052,7 +1052,7 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
         )}
       </div>
 
-      {/* 🔍 Пошук */}
+      {/* 🔍 Пошук
       <input
         type="text"
         placeholder="Пошук..."
@@ -1060,13 +1060,13 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
         onChange={(e) => setQuery(e.target.value)}
         className="px-3 py-2 rounded w-full"
         style={{ border: "none" }}
-      />
+      /> */}
 
      
 
       {/* ⭐ Мін. рейтинг */}
       <div className="flex items-center justify-between">
-        <span className="font-medium">Мін. рейтинг</span>
+        <span className="form-label">Мін. рейтинг</span>
         <button onClick={() => setShowMinRating((prev) => !prev)} className="text-xl font-bold px-2">×</button>
       </div>
       {showMinRating && (
@@ -1085,7 +1085,7 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
 
       {/* 📦 В наявності */}
       <div className="flex items-center justify-between">
-        <span className="font-medium">В наявності</span>
+        <span className="form-label">В наявності</span>
         <button onClick={() => setShowInStock((prev) => !prev)} className="text-xl font-bold px-2">×</button>
       </div>
       {showInStock && (
@@ -1097,7 +1097,7 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
 
       {/* 🧭 Сортування */}
       <div className="flex items-center justify-between">
-        <span className="font-medium">Сортування</span>
+        <span className="form-label">Сортування</span>
         <button onClick={() => setShowSortBy((prev) => !prev)} className="text-xl font-bold px-2">×</button>
       </div>
       {showSortBy && (
@@ -1116,7 +1116,7 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
 
       {/* 🔽 За спаданням */}
       <div className="flex items-center justify-between">
-        <span className="font-medium">За спаданням</span>
+        <span className="form-label">За спаданням</span>
         <button onClick={() => setShowSortDesc((prev) => !prev)} className="text-xl font-bold px-2">×</button>
       </div>
       {showSortDesc && (
@@ -1130,7 +1130,7 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
       {isAdmin && (
         <div className="flex flex-col gap-2 mt-4">
           <div className="flex items-center justify-between">
-            <label className="font-medium">Діапазон дат (від / до)</label>
+            <label className="form-label">Діапазон дат (від / до)</label>
             <button
               onClick={() => setShowDateRange((prev) => !prev)}
               className="text-xl font-bold px-2"
@@ -1156,7 +1156,7 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
 
        {/* 💰 Ціна */}
       <div className="w-full">
-        <label className="block mb-2 font-medium">Ціна, грн</label>
+        <label className="block mb-2 form-label">Вартість</label>
         <Slider
           range
           min={minPriceFromApi}
@@ -1171,29 +1171,37 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
             setPriceMax(String(max));
           }}
         />
-        <div className="flex justify-between mt-1 gap-4">
-          <div className="flex flex-col items-center w-1/2">
-            <span className="text-xs font-medium mb-1">Від</span>
-            <div className="border rounded px-2 py-1 text-center text-sm w-16">
-              {priceMin || minPriceFromApi} грн
-            </div>
-          </div>
-          <div className="flex flex-col items-center w-1/2">
-            <span className="text-xs font-medium mb-1">До</span>
-            <div className="border rounded px-2 py-1 text-center text-sm w-16">
-              {priceMax || maxPriceFromApi} грн
-            </div>
-          </div>
-        </div>
-      </div>
+<div className="flex flex-wrap items-end content-end gap-y-[20px] gap-x-[127px] w-[312px] h-[130px]">
 
-      {/* 🔁 Скидання фільтрів */}
+<div className="flex flex-wrap items-end content-end gap-y-[20px] gap-x-[127px] w-[312px] h-[130px]">
+
+  {/* Від */}
+  <div className="w-[87px] h-[27px] border rounded px-2 py-0.5 flex items-center justify-center gap-1">
+    <span className="text-[20px]">Від</span>
+    <span className="text-black font-manrope text-[20px] font-medium">
+      {priceMin || minPriceFromApi}
+    </span>
+  </div>
+
+  {/* До */}
+  <div className="w-[87px] h-[27px] border rounded px-2 py-0.5 flex items-center justify-center gap-1">
+    <span className="text-[20px]">До</span>
+    <span className="text-black font-manrope text-[20px] font-medium">
+      {priceMax || maxPriceFromApi}
+    </span>
+  </div>
+
+</div>
+</div>
+</div>
+
+
       <button
-        onClick={handleReset}
-        className="bg-red-500 text-white px-4 py-2 rounded w-full mt-4"
-      >
-        Очистити фільтр
-      </button>
+  onClick={handleReset}
+  className="bg-transparent text-500 text-sm hover:underline"
+>
+  Очистити фільтр
+</button>
     </div>
   );
 };
