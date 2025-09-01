@@ -62,15 +62,16 @@ namespace Core.Services
 
         public async Task<OrderDto> CreateOrderAsync(OrderCreateDto dto)
         {
-            var warehouse = await ValidateWarehouseAsync(dto.WarehouseId, dto.DeliveryType, dto);
+            
+            //var warehouse = await ValidateWarehouseAsync(dto.WarehouseId, dto.DeliveryType, dto);
 
             var entity = _mapper.Map<OrderEntity>(dto);
 
-            if (dto.Items.Any())
-                entity.Items = _mapper.Map<List<OrderItemEntity>>(dto.Items);
+            //if (dto.Items.Any())
+            //    entity.Items = _mapper.Map<List<OrderItemEntity>>(dto.Items);
 
-            if (warehouse != null)
-                entity.WarehouseId = warehouse.Id;
+            //if (warehouse != null)
+            //    entity.WarehouseId = warehouse.Id;
 
             await _orderRepository.AddAsync(entity);
             await _orderRepository.SaveAsync();
@@ -80,6 +81,7 @@ namespace Core.Services
 
         public async Task UpdateOrderAsync(OrderUpdateDto dto)
         {
+            /*
             var entity = await _orderRepository
                 .GetAllQueryable()
                 .Include(o => o.Items)
@@ -90,17 +92,18 @@ namespace Core.Services
 
             _mapper.Map(dto, entity);
 
-            var newItems = _mapper.Map<List<OrderItemEntity>>(dto.Items);
+            //var newItems = _mapper.Map<List<OrderItemEntity>>(dto.Items);
 
-            var itemsToRemove = entity.Items.Where(i => !newItems.Any(ni => ni.Id == i.Id)).ToList();
-            _orderItemRepository.DeleteRange(itemsToRemove);
+            //var itemsToRemove = entity.Items.Where(i => !newItems.Any(ni => ni.Id == i.Id)).ToList();
+            //_orderItemRepository.DeleteRange(itemsToRemove);
 
-            var itemsToAdd = newItems.Where(ni => ni.Id == 0).ToList();
-            foreach (var item in itemsToAdd)
-                entity.Items.Add(item);
+            //var itemsToAdd = newItems.Where(ni => ni.Id == 0).ToList();
+            //foreach (var item in itemsToAdd)
+            //    entity.Items.Add(item);
 
-            await _orderRepository.Update(entity);
-            await _orderRepository.SaveAsync();
+            //await _orderRepository.Update(entity);
+            //await _orderRepository.SaveAsync();
+            */
         }
 
         public async Task DeleteOrderAsync(int orderId)
@@ -131,16 +134,16 @@ namespace Core.Services
                 return warehouse;
             }
 
-            if (deliveryType == DeliveryType.Courier)
-            {
-                if (string.IsNullOrWhiteSpace(dto.Street) || string.IsNullOrWhiteSpace(dto.House))
-                    throw new HttpException("Вулиця та будинок обов'язкові для кур'єрської доставки", HttpStatusCode.BadRequest);
+            //if (deliveryType == DeliveryType.Courier)
+            //{
+            //    if (string.IsNullOrWhiteSpace(dto.Street) || string.IsNullOrWhiteSpace(dto.House))
+            //        throw new HttpException("Вулиця та будинок обов'язкові для кур'єрської доставки", HttpStatusCode.BadRequest);
 
-                dto.DeliveryAddress = $"{dto.City}, {dto.Street} {dto.House}" +
-                                      (string.IsNullOrWhiteSpace(dto.Apartment) ? "" : $", кв. {dto.Apartment}");
+            //    dto.DeliveryAddress = $"{dto.City}, {dto.Street} {dto.House}" +
+            //                          (string.IsNullOrWhiteSpace(dto.Apartment) ? "" : $", кв. {dto.Apartment}");
 
-                return null;
-            }
+            //    return null;
+            //}
 
             return null;
         }

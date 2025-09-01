@@ -18,11 +18,14 @@ export const orderApi = createApi({
     }),
 
     createOrder: builder.mutation<OrderDto, OrderCreateDto>({
-      query: (newProd: OrderCreateDto) => ({
-        url: "",
-        method: "POST",
-        body: newProd,
-      }),
+      query: (newProd: OrderCreateDto) => {
+        console.log("-----Server data--------", newProd);
+        return {
+          url: "",
+          method: "POST",
+          body: newProd,
+        }
+      },
       invalidatesTags: ["Orders"],
     }),
 

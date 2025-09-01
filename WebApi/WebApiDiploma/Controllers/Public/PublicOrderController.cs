@@ -41,6 +41,7 @@ namespace WebApiDiploma.Controllers.Public
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] OrderCreateDto dto)
         {
+            var request = this.Request;
             var createdOrder = await _orderService.CreateOrderAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = createdOrder.Id }, createdOrder);
         }

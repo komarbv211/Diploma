@@ -93,10 +93,12 @@ const OrderPage = () => {
   };
 
   try {
-    const response = await createOrder(newOrder).unwrap();
+
+    console.log("------Working app send server----",newOrder);
+     const response = await createOrder(newOrder).unwrap();
     console.log("Відповідь від сервера:", response);
-    dispatch(clearCart());
-    navigate("/");
+    // dispatch(clearCart());
+    // navigate("/");
   } catch (err) {
     console.error("Помилка створення замовлення:", err);
   }
