@@ -5,7 +5,7 @@ namespace Infrastructure.Entities
 {
     public class OrderEntity : BaseEntity<long>
     {
-        public required long UserId { get; set; }
+        public long? UserId { get; set; }
         public virtual UserEntity? User { get; set; }
 
         public virtual ICollection<OrderItemEntity> Items { get; set; } = new List<OrderItemEntity>();
