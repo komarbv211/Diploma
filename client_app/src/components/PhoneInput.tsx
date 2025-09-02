@@ -6,6 +6,7 @@ interface PhoneInputProps {
   value?: string; // формат: +38 (097) 123-45-67
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 const operatorOptions = [
@@ -36,6 +37,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   value = "",
   onChange,
   className,
+  disabled
 }) => {
   const { operator, rest } = parseValue(value);
 
@@ -86,6 +88,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
           label,
         }))}
         className={"h-0"}
+        disabled={disabled}
       />
       <Input
         value={rest}
@@ -95,6 +98,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
         maxLength={9}
         className={className}
         bordered={false}
+        disabled={disabled}
       />
     </div>
   );

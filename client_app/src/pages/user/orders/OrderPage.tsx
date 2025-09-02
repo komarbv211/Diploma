@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Input, Form, Select } from "antd";
 import { useEffect, useState } from "react";
-import { OrderCreateDto } from "../../../types/order";
-import { clearCart } from "../../../store/slices/localCartSlice";
-import { useAppDispatch, useAppSelector } from "../../../store/store";
+import { OrderBaseDto } from "../../../types/order";
+// import { clearCart } from "../../../store/slices/localCartSlice";
+import { useAppSelector } from "../../../store/store";
 import { DeliveryType, PaymentMethod } from "../../../types/enums";
 import { useCart } from "../../../hooks/useCart";
 import {
@@ -20,9 +20,11 @@ import CartSummary from "./CartSummary";
 const OrderPage = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
   const { user } = useAppSelector((state) => state.auth);
+  const isAuth = !!user;
+
   const { cart } = useCart(user != null);
 
   const [note, setNote] = useState(false);
@@ -55,55 +57,77 @@ const OrderPage = () => {
 
   const deliveryType = Form.useWatch("deliveryType", form);
 
-  const onFinish = async (values: OrderCreateDto) => {
-  console.log("Форма:", values);
+  const onFinish = async (values: OrderBaseDto) => {
+    console.log("Форма:", values);
 
-  const cityName = citiesData?.find(c => c.Ref === values.city)?.Description ?? "";
-  const streetName = streets?.find(s => s.Description === values.street)?.Description ?? values.street;
+    const cityName =
+      citiesData?.find((c) => c.Ref === values.city)?.Description ?? "";
+    const streetName =
+      streets?.find((s) => s.Description === values.street)?.Description ??
+      values.street;
 
-  const deliveryAddress = values.deliveryType === DeliveryType.Courier
-    ? `${cityName}, ${streetName}, буд. ${values.house}${values.apartment ? `, кв. ${values.apartment}` : ""}`
-    : "";
+    const deliveryAddress =
+      values.deliveryType === DeliveryType.Courier
+        ? `${cityName}, ${streetName}, буд. ${values.house}${
+            values.apartment ? `, кв. ${values.apartment}` : ""
+          }`
+        : "";
 
-  const totalPrice = cart.reduce((sum, item) => sum + item.price! * item.quantity!, 0);
+    const totalPrice = cart.reduce(
+      (sum, item) => sum + item.price! * item.quantity!,
+      0
+    );
 
-  const newOrder: OrderCreateDto = {
-    userId: user?.id ?? 0,
-    warehouseId: values.deliveryType === DeliveryType.NovaPoshta && values.warehouseId ? Number(values.warehouseId) : undefined,
-    totalPrice,
-    deliveryType: values.deliveryType,
-    paymentMethod: values.paymentMethod,
-    customerNote: values.customerNote,
-    trackingNumber: values.trackingNumber,
-    items: cart.map(item => ({
-      productId: item.productId!,
-      productName: item.name,
-      quantity: item.quantity!,
-      price: item.price!,
-    })),
-    firstName: values.firstName,
-    lastName: values.lastName,
-    email: values.email,
-    phone: values.phone,
-    city: cityName,
-    street: values.street,
-    house: values.house,
-    apartment: values.apartment,
-    deliveryAddress,
+    const newOrder: OrderBaseDto = {
+      warehouseId:
+        values.deliveryType === DeliveryType.NovaPoshta && values.warehouseId
+          ? Number(values.warehouseId)
+          : undefined,
+      totalPrice,
+      deliveryType: values.deliveryType,
+      paymentMethod: values.paymentMethod,
+      customerNote: values.customerNote,
+      trackingNumber: values.trackingNumber,
+      items: cart.map((item) => ({
+        productId: item.productId!,
+        productName: item.name,
+        quantity: item.quantity!,
+        price: item.price!,
+      })),
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      phone: values.phone,
+      city: cityName,
+      street: values.street,
+      house: values.house,
+      apartment: values.apartment,
+      deliveryAddress,
+    };
+
+    try {
+      console.log("------Working app send server----", newOrder);
+      const response = await createOrder(newOrder).unwrap();
+      console.log("Відповідь від сервера:", response);
+      // dispatch(clearCart());
+      // navigate("/");
+    } catch (err) {
+      console.error("Помилка створення замовлення:", err);
+    }
   };
 
-  try {
-
-    console.log("------Working app send server----",newOrder);
-     const response = await createOrder(newOrder).unwrap();
-    console.log("Відповідь від сервера:", response);
-    // dispatch(clearCart());
-    // navigate("/");
-  } catch (err) {
-    console.error("Помилка створення замовлення:", err);
-  }
-};
-
+  const handleTabClick = async (tab: "personal" | "delivery") => {
+    if (tab == "delivery") {
+      try {
+        await form.validateFields();
+        setActiveTab(tab);
+      } catch {
+        setActiveTab("personal");
+      }
+    } else {
+      setActiveTab(tab);
+    }
+  };
 
   return (
     <>
@@ -128,27 +152,11 @@ const OrderPage = () => {
           <div className="flex flex-1 justify-between mr-5 mt-5">
             <div className="flex flex-col w-[47%]">
               <h1 className="form-title !text-left">Оформлення замовлення</h1>
-              <Form
-                layout="vertical"
-                form={form}
-                onFinish={onFinish}
-                onFinishFailed={({ errorFields }) => {
-                  const firstError = String(errorFields[0].name[0]);
-                  if (
-                    ["firstName", "lastName", "email", "phone"].includes(
-                      firstError
-                    )
-                  ) {
-                    setActiveTab("personal");
-                  } else {
-                    setActiveTab("delivery");
-                  }
-                }}
-              >
+              <Form layout="vertical" form={form} onFinish={onFinish}>
                 <div className="flex justify-between my-6">
                   <button
                     type="button"
-                    onClick={() => setActiveTab("personal")}
+                    onClick={() => handleTabClick("personal")}
                     className={`text-[18px] cursor-pointer px-4 py-2 rounded ${
                       activeTab === "personal"
                         ? "bg-gray-200 text-blue2 font-semibold"
@@ -160,7 +168,7 @@ const OrderPage = () => {
 
                   <button
                     type="button"
-                    onClick={() => setActiveTab("delivery")}
+                    onClick={() => handleTabClick("delivery")}
                     className={`text-[18px] cursor-pointer px-4 py-2 rounded ${
                       activeTab === "delivery"
                         ? "bg-gray-200 text-blue2 font-semibold"
@@ -172,7 +180,21 @@ const OrderPage = () => {
                 </div>
 
                 {activeTab === "personal" && (
-                  <PersonalInfoForm setActiveTab={setActiveTab} />
+                  <PersonalInfoForm
+                    setActiveTab={setActiveTab}
+                    form={form}
+                    isAuth={isAuth}
+                    user={
+                      user
+                        ? {
+                            firstName: user.firstName,
+                            lastName: user.lastName,
+                            email: user.email,
+                            phone: user.phoneNumber,
+                          }
+                        : null
+                    }
+                  />
                 )}
 
                 {activeTab === "delivery" && (

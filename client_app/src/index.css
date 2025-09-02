@@ -11,6 +11,13 @@ html, body, #root {
 input::placeholder {
   font-family: 'Manrope', sans-serif;
 }
+
+.input-disabled {
+  background-color: #fff !important;
+  color: #000 !important;
+  border-color: gray !important;
+}
+
 .ant-input,
 .ant-input-password input {
   font-family: 'Manrope', sans-serif !important;

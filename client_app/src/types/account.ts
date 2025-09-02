@@ -43,6 +43,7 @@ export interface IUser {
     email: string;
     image: string;
     roles: string[];
+    phoneNumber: string;
     exp: number;
     createdDate?: string;
     lastActivity?: string;

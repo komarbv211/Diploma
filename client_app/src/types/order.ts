@@ -23,33 +23,8 @@ export interface OrderItemUpdateDto extends OrderItemCreateDto {
 }
 
 // order
-export interface OrderDto {
-  id: number;
-  userId: number;
-  warehouseId?: number;
-  totalPrice: number;
-  deliveryType: DeliveryType;
-  paymentMethod: PaymentMethod;
-  status: OrderStatus;
-  customerNote?: string;
-  trackingNumber?: string;
-  updatedAt?: string;
-  items: OrderItemDto[];
-  warehouse?: NovaPostWarehouseDto;
-
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  city: string;
-  street?: string;
-  house?: string;
-  apartment?: string;
-  deliveryAddress?: string;
-}
-
-export interface OrderCreateDto {
-  userId: number;
+export interface OrderBaseDto {
+  userId?: number;
   warehouseId?: number;
   totalPrice: number;
   deliveryType: DeliveryType;
@@ -57,7 +32,6 @@ export interface OrderCreateDto {
   customerNote?: string;
   trackingNumber?: string;
   items: OrderItemCreateDto[];
-
   firstName: string;
   lastName: string;
   email: string;
@@ -69,10 +43,18 @@ export interface OrderCreateDto {
   deliveryAddress?: string;
 }
 
-export interface OrderUpdateDto extends OrderCreateDto {
+export interface OrderUpdateDto extends OrderBaseDto {
   id: number;
   status: OrderStatus;
   updatedAt?: string;
+}
+
+export interface OrderDto extends OrderBaseDto {
+  id: number;
+  status: OrderStatus;
+  updatedAt?: string;
+  items: OrderItemDto[];
+  warehouse?: NovaPostWarehouseDto;
 }
 
 // location
