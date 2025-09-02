@@ -1,6 +1,8 @@
 ﻿using Core.DTOs.ProductsDTO;
 using Core.Interfaces;
+using Core.Models.Search;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApiDiploma.Controllers.Admin;
@@ -22,7 +24,7 @@ public class AdminProductController : ControllerBase
     {
         var products = await _productService.GetProductsAsync();
         return Ok(products);
-    } 
+    }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromForm] ProductCreateDto dto)
@@ -51,5 +53,26 @@ public class AdminProductController : ControllerBase
         var product = await _productService.GetByIdAsync(id);
         if (product == null) return NotFound();
         return Ok(product);
+    }
+
+    // Новий ендпоінт для встановлення акції та знижки
+    [HttpPut("set-promotion")]
+    public async Task<IActionResult> SetPromotion([FromBody] ProductSetPromotionDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        await _productService.SetProductPromotionAsync(dto);
+        return Ok(new { message = "Продукт успішно прив'язано до акції" });
+    }
+
+
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchProduct([FromQuery] ProductSearchModel model)
+    {
+        
+        var result = await _productService.SearchProductsAsync(model, User.IsInRole("Admin"));
+
+        return Ok(result);
     }
 }

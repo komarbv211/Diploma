@@ -24,7 +24,6 @@ import {
   Spin,
   Upload,
   Avatar,
-  Modal,
   message,
   Form,
 } from "antd";
@@ -36,13 +35,13 @@ import {
 } from "../../services/userApi";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../store/store";
-import ImageCropper from "../../components/images/ImageCropper";
 import { APP_ENV } from "../../env";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import PhoneInput from "../../components/PhoneInput.tsx";
 import { handleFormErrors } from "../../utilities/handleApiErrors";
 import { ApiError } from "../../types/errors";
+import CropperModal from "../../components/images/CropperModal.tsx";
 
 const { Content, Sider } = Layout;
 const { Title, Text } = Typography;
@@ -226,9 +225,6 @@ const UserProfile = () => {
                 <Input size="large" />
               </Form.Item>
 
-              {/*<Form.Item label="Дата народження" name="birthDate">*/}
-              {/*  <Input size="large" type="date" />*/}
-              {/*</Form.Item>*/}
               <Form.Item label="Дата народження" name="birthDate">
                 <DatePicker size="large" format="YYYY-MM-DD" />
               </Form.Item>
@@ -305,22 +301,13 @@ const UserProfile = () => {
             Зберегти зміни
           </Button>
         </Space>
-
-        <Modal
+        <CropperModal
+          image={avatarPreview}
           open={showCropper}
-          footer={null}
+          aspectRatio={1}
+          onCrop={handleCropped}
           onCancel={handleCancelCrop}
-          width={600}
-        >
-          {avatarPreview && (
-            <ImageCropper
-              image={avatarPreview}
-              aspectRatio={1}
-              onCrop={handleCropped}
-              onCancel={handleCancelCrop}
-            />
-          )}
-        </Modal>
+        />
       </Content>
     </Layout>
   );

@@ -21,6 +21,8 @@ const NotFoundPage = lazy(() => import("./pages/common/NotFoundPage.tsx"));
 const PasswordUpdatedPage = lazy(
   () => import("./pages/PasswordUpdatedPage.tsx")
 );
+const ProductDetails = lazy(() => import("./pages/ProductDetails.tsx"));
+const CatalogPage = lazy(() => import("./pages/CatalogPage.tsx"));
 
 function App() {
   return (
@@ -33,7 +35,12 @@ function App() {
             <Route path="profile" element={<UserProfile />} />
             <Route path="orders" element={<OrderPage />} />
             <Route path="*" element={<NotFoundPage />} />
+            <Route path="product">
+              <Route path="details/:id" element={<ProductDetails />} />
+            </Route>
+            <Route path="category/:id" element={<CatalogPage />} />
           </Route>
+
           <Route path="login/*" element={<LoginUser />} />
           <Route path="registr/*" element={<RegistrUser />} />
           <Route path="reset-password/:token" element={<ResetPassword />} />

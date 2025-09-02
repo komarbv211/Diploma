@@ -16,16 +16,6 @@
 
         public bool IsActive { get; set; }
 
-        public long? CategoryId { get; set; }
-
-        public string? CategoryName { get; set; }
-
-        public long DiscountTypeId { get; set; }
-
-        public string DiscountTypeName { get; set; } = string.Empty;
-
-        public decimal DiscountAmount { get; set; }
-
         public List<long> ProductIds { get; set; } = new();
     }
 }

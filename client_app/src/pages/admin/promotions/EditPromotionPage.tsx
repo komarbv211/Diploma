@@ -5,54 +5,29 @@ import {
   Button,
   Checkbox,
   DatePicker,
-  Select,
   message,
   Upload,
-  Modal,
   Divider,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import locale from "antd/es/date-picker/locale/uk_UA";
-import { UploadFile, RcFile } from "antd/es/upload";
+import { RcFile } from "antd/es/upload";
 
-import CategoryTreeSelect from "../../../components/category/CategoryTreeSelect";
-import ImageCropper from "../../../components/images/ImageCropper";
-
+import CropperModal from "../../../components/images/CropperModal";
 import {
   useGetPromotionByIdQuery,
   useUpdatePromotionMutation,
 } from "../../../services/admin/promotionAdminApi";
-
-import { base64ToFile } from "../../../utilities/base64ToFile";
-import { validateImageBeforeUpload } from "../../../utilities/validateImageUpload";
-
-import {
-  DndContext,
-  PointerSensor,
-  useSensor,
-  closestCenter,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-  arrayMove,
-} from "@dnd-kit/sortable";
-import type { DragEndEvent } from "@dnd-kit/core";
 import { PromotionFormValues } from "../../../types/promotion";
+import { APP_ENV } from "../../../env";
 
 const { Item } = Form;
 const { RangePicker } = DatePicker;
-const { Option } = Select;
 const { TextArea } = Input;
 
-const discountTypes = [
-  { id: 1, name: "Відсоток" },
-  { id: 2, name: "Фіксована сума" },
-];
-
-const disabledDate = (current: Dayjs | null) => {
+const disabledDate = (current: dayjs.Dayjs | null) => {
   if (!current) return false;
   return current < dayjs().startOf("minute");
 };
@@ -60,117 +35,62 @@ const disabledDate = (current: Dayjs | null) => {
 const EditPromotionPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
   const { data: promotion, isLoading } = useGetPromotionByIdQuery(Number(id));
   const [updatePromotion, { isLoading: isUpdating }] =
     useUpdatePromotionMutation();
-
   const [form] = Form.useForm();
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [cropIndex, setCroppingIndex] = useState<number | null>(null);
-  const [isCropModalVisible, setCropModalVisible] = useState(false);
-
-  const sensor = useSensor(PointerSensor, {
-    activationConstraint: { distance: 10 },
-  });
+  const [croppedImage, setCroppedImage] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [showCropper, setShowCropper] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<RcFile | null>(null);
 
   useEffect(() => {
     if (promotion) {
       form.setFieldsValue({
         name: promotion.name,
-        description: promotion.description,
+        description: promotion.description ?? "",
         period: [dayjs(promotion.startDate), dayjs(promotion.endDate)],
         isActive: promotion.isActive,
-        categoryId: promotion.categoryId ?? null,
-        discountTypeId: promotion.discountTypeId,
-        amount: promotion.discountAmount,
         productIds: promotion.productIds ?? [],
       });
-
       if (promotion.imageUrl) {
-        setFileList([
-          {
-            uid: "-1",
-            name: "image.jpg",
-            url: promotion.imageUrl,
-            status: "done",
-          },
-        ]);
+        setCroppedImage(`${APP_ENV.IMAGES_200_URL}${promotion.imageUrl}`);
+        setSelectedFile(null);
       }
     }
   }, [promotion, form]);
 
-  const handleCrop = (croppedBase64: string) => {
-    if (cropIndex === null) return;
-
-    const newFile = base64ToFile(
-      croppedBase64,
-      `cropped-${Date.now()}.jpg`
-    ) as RcFile;
-    const newUrl = URL.createObjectURL(newFile);
-
-    setFileList((prev) =>
-      prev.map((file, idx) => {
-        if (idx === cropIndex) {
-          newFile.uid = file.uid;
-          return {
-            ...newFile,
-            url: newUrl,
-            thumbUrl: newUrl,
-            originFileObj: newFile,
-          };
-        }
-        return file;
-      })
-    );
-
-    setCropModalVisible(false);
-    setCroppingIndex(null);
+  const handleBeforeUpload = (file: RcFile) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImagePreview(reader.result as string);
+      setSelectedFile(file);
+      setShowCropper(true);
+    };
+    reader.readAsDataURL(file);
+    return false;
   };
 
-  const handlePreview = (file: UploadFile) => {
-    const index = fileList.findIndex((f) => f.uid === file.uid);
-    if (index !== -1) {
-      setCroppingIndex(index);
-      setCropModalVisible(true);
+  const handleCrop = (cropped: string) => {
+    setCroppedImage(cropped);
+    setShowCropper(false);
+  };
+
+  const handleCancelCrop = () => {
+    setShowCropper(false);
+    setImagePreview(null);
+    setSelectedFile(null);
+  };
+
+  const handlePreview = () => {
+    if (croppedImage) {
+      setImagePreview(croppedImage);
+      setShowCropper(true);
     }
   };
 
-  const handleUploadChange = ({
-    fileList: newFileList,
-  }: {
-    fileList: UploadFile[];
-  }) => {
-    const updatedFileList = newFileList.map((file) => {
-      if (!file.url && !file.thumbUrl && file.originFileObj) {
-        return {
-          ...file,
-          url: URL.createObjectURL(file.originFileObj),
-        };
-      }
-      return file;
-    });
-    setFileList(updatedFileList);
-  };
-
-  const handleRemove = (file: UploadFile) => {
-    setFileList((prev) => prev.filter((f) => f.uid !== file.uid));
-    return true;
-  };
-
-  const onDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    setFileList((prev) => {
-      const oldIndex = prev.findIndex((f) => f.uid === active.id);
-      const newIndex = prev.findIndex((f) => f.uid === over.id);
-      return arrayMove(prev, oldIndex, newIndex);
-    });
-  };
-
   const onFinish = async (values: PromotionFormValues) => {
-    if (fileList.length === 0) {
+    if (!croppedImage) {
       message.error("Будь ласка, завантажте зображення.");
       return;
     }
@@ -181,25 +101,20 @@ const EditPromotionPage = () => {
       formData.append("name", values.name.trim());
       if (values.description)
         formData.append("description", values.description.trim());
-
-      const file = fileList[0].originFileObj as File | undefined;
-      if (file) {
-        formData.append("image", file);
-      }
-
       formData.append("startDate", values.period[0].toISOString());
       formData.append("endDate", values.period[1].toISOString());
       formData.append("isActive", values.isActive.toString());
 
-      if (values.categoryId !== undefined && values.categoryId !== null) {
-        formData.append("categoryId", values.categoryId.toString());
+      if (croppedImage.startsWith("data:image") && selectedFile) {
+        const blob = await (await fetch(croppedImage)).blob();
+        const file = new File([blob], selectedFile.name, { type: blob.type });
+        formData.append("image", file);
       }
 
-      formData.append("discountTypeId", values.discountTypeId.toString());
-      formData.append("amount", values.amount.toString());
-
       if (values.productIds?.length) {
-        formData.append("productIds", JSON.stringify(values.productIds));
+        values.productIds.forEach((pid) =>
+          formData.append("productIds", pid.toString())
+        );
       }
 
       await updatePromotion({ id: Number(id), formData }).unwrap();
@@ -226,12 +141,7 @@ const EditPromotionPage = () => {
         form={form}
         onFinish={onFinish}
         layout="vertical"
-        initialValues={{
-          isActive: true,
-          discountTypeId: discountTypes[0].id,
-          amount: 0,
-          period: [null, null],
-        }}
+        initialValues={{ isActive: true, period: [null, null] }}
         scrollToFirstError
       >
         <Item
@@ -279,92 +189,34 @@ const EditPromotionPage = () => {
           <Checkbox>Активна</Checkbox>
         </Item>
 
-        <Divider>Категорія та знижка</Divider>
-        <Item
-          name="categoryId"
-          label="Категорія"
-          rules={[
-            { required: true, message: "Будь ласка, оберіть категорію!" },
-          ]}
-        >
-          <CategoryTreeSelect
-            placeholder="Оберіть категорію"
-            allowClear
-            showSearch
-          />
-        </Item>
-
-        <Item
-          name="discountTypeId"
-          label="Тип знижки"
-          rules={[
-            { required: true, message: "Будь ласка, оберіть тип знижки!" },
-          ]}
-        >
-          <Select placeholder="Оберіть тип знижки">
-            {discountTypes.map((dt) => (
-              <Option key={dt.id} value={dt.id}>
-                {dt.name}
-              </Option>
-            ))}
-          </Select>
-        </Item>
-
-        <Item
-          name="amount"
-          label="Сума знижки"
-          rules={[
-            { required: true, message: "Будь ласка, введіть суму знижки!" },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                const type = getFieldValue("discountTypeId");
-                if (value > 0) {
-                  if (type === 1 && value > 100) {
-                    return Promise.reject(
-                      new Error("Відсоткова знижка не може перевищувати 100%")
-                    );
-                  }
-                  return Promise.resolve();
-                }
-                return Promise.reject(
-                  new Error("Сума знижки має бути більшою за 0")
-                );
-              },
-            }),
-          ]}
-        >
-          <Input type="number" min={0} placeholder="Введіть суму знижки" />
-        </Item>
-
         <Divider>Зображення акції</Divider>
-        <Item>
-          <DndContext
-            sensors={[sensor]}
-            collisionDetection={closestCenter}
-            onDragEnd={onDragEnd}
+        <div className="mb-4">
+          {croppedImage && (
+            <div style={{ marginBottom: 8 }}>
+              <img
+                src={croppedImage}
+                alt="Зображення акції"
+                style={{
+                  maxWidth: "200px",
+                  height: "auto",
+                  border: "1px solid #ccc",
+                  cursor: selectedFile ? "pointer" : "default",
+                }}
+                onClick={selectedFile ? handlePreview : undefined}
+              />
+            </div>
+          )}
+
+          <Upload
+            showUploadList={false}
+            beforeUpload={handleBeforeUpload}
+            accept="image/*"
           >
-            <SortableContext
-              items={fileList.map((file) => file.uid)}
-              strategy={verticalListSortingStrategy}
-            >
-              <Upload
-                multiple={false}
-                beforeUpload={validateImageBeforeUpload}
-                fileList={fileList}
-                onChange={handleUploadChange}
-                onPreview={handlePreview}
-                onRemove={handleRemove}
-                listType="picture"
-              >
-                {fileList.length < 1 && (
-                  <Button icon={<UploadOutlined />}>
-                    Завантажити зображення
-                  </Button>
-                )}
-              </Upload>
-            </SortableContext>
-          </DndContext>
-        </Item>
+            <Button icon={<UploadOutlined />}>
+              Завантажити нове зображення
+            </Button>
+          </Upload>
+        </div>
 
         <Item className="mt-6">
           <Button type="primary" htmlType="submit" loading={isUpdating} block>
@@ -373,23 +225,13 @@ const EditPromotionPage = () => {
         </Item>
       </Form>
 
-      <Modal
-        open={isCropModalVisible}
-        footer={null}
-        onCancel={() => {
-          setCropModalVisible(false);
-          setCroppingIndex(null);
-        }}
-        destroyOnClose
-      >
-        {cropIndex !== null && fileList[cropIndex]?.url ? (
-          <ImageCropper
-            image={fileList[cropIndex]!.url!}
-            onCrop={handleCrop}
-            aspectRatio={16 / 9}
-          />
-        ) : null}
-      </Modal>
+      <CropperModal
+        image={imagePreview}
+        open={showCropper}
+        aspectRatio={16 / 9}
+        onCrop={handleCrop}
+        onCancel={handleCancelCrop}
+      />
     </div>
   );
 };

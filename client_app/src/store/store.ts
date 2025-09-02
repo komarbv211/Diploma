@@ -2,8 +2,6 @@ import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 import userReducer from "./slices/userSlice";
-import localCarReducer from "./slices/localCartSlice";
-import authReducer from "./slices/userSlice";
 
 import { userApi } from "../services/userApi";
 import { authApi } from "../services/authApi";
@@ -13,20 +11,22 @@ import { categoryAdminApi } from "../services/admin/categoryAdmnApi";
 import { productApi } from "../services/productApi";
 import { productAdminApi } from "../services/admin/productAdminApi";
 
-import { promotionAdminApi } from "../services/admin/promotionAdminApi"; // <-- додано
-import { orderApi } from "../services/orderApi";
-import { orderAdminApi } from "../services/admin/orderAdminApi";
+import { promotionAdminApi } from "../services/admin/promotionAdminApi";
 
 import { productRatingApi } from "../services/productRatingApi ";
 import { cartApi } from "../services/cartApi";
+import localCarReducer from "./slices/localCartSlice";
+import authReducer from "./slices/userSlice";
+import { productCommentsApi } from "../services/productCommentsApi";
+import { brandAdminApi } from "../services/admin/brandAdminApi";
+import { orderApi } from "../services/orderApi";
+import { orderAdminApi } from "../services/admin/orderAdminApi";
+
 import { locationApi } from "../services/locationApi";
 
 export const store = configureStore({
   reducer: {
     account: userReducer,
-    localCart: localCarReducer,
-    auth: authReducer,
-
     [authApi.reducerPath]: authApi.reducer,
     [userAdminApi.reducerPath]: userAdminApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
@@ -34,12 +34,16 @@ export const store = configureStore({
     [categoryAdminApi.reducerPath]: categoryAdminApi.reducer,
     [productApi.reducerPath]: productApi.reducer,
     [productAdminApi.reducerPath]: productAdminApi.reducer,
-    [promotionAdminApi.reducerPath]: promotionAdminApi.reducer, // <-- додано
+    [promotionAdminApi.reducerPath]: promotionAdminApi.reducer,
     [productRatingApi.reducerPath]: productRatingApi.reducer,
     [cartApi.reducerPath]: cartApi.reducer,
+    [productCommentsApi.reducerPath]: productCommentsApi.reducer,
+    [brandAdminApi.reducerPath]: brandAdminApi.reducer,
     [orderApi.reducerPath]: orderApi.reducer,
     [orderAdminApi.reducerPath]: orderAdminApi.reducer,
     [locationApi.reducerPath]: locationApi.reducer,
+    localCart: localCarReducer,
+    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -55,7 +59,9 @@ export const store = configureStore({
       cartApi.middleware,
       orderApi.middleware,
       orderAdminApi.middleware,
-      locationApi.middleware
+      locationApi.middleware,
+      productCommentsApi.middleware,
+      brandAdminApi.middleware
     ),
 });
 

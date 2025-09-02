@@ -42,130 +42,132 @@ const CartModal: React.FC = () => {
       {/* Overlay + Modal */}
       {isCartOpen &&
         ReactDOM.createPortal(
-          <div className="flex items-center justify-center fixed inset-0 z-[9999]">
-            {/* Напівпрозорий фон */}
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+            {/* Напівпрозорий фон на весь екран */}
             <div
               className="absolute inset-0 bg-black/50"
               onClick={() => setIsCartOpen(false)}
             />
 
-            {/* Сам модальний контейнер */}
-            <div className="relative bg-white w-full max-w-[105rem] h-[78%] rounded-2xl shadow-xl flex flex-col overflow-hidden z-50 py-8 px-12">
-              {/* Header */}
-              <div className="flex justify-between items-center">
-                <span className="text-[37px] font-normal">Кошик</span>
-                <button
-                  onClick={() => setIsCartOpen(false)}
-                  className="text-gray-500 hover:text-gray-700 text-[30px]"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {/* Content */}
-              <div className="flex flex-col xl:flex-row gap-6 py-4 border-t border-gray flex-1 overflow-hidden">
-                {/* Ліва частина зі скролом */}
-                <div className="flex-3 flex-1 overflow-y-auto pr-2">
-                  {cart && cart.length > 0 ? (
-                    <ul className="divide-y">
-                      {cart.map((item: ICartItem) => (
-                        <li key={item.productId} className="py-4 border-gray">
-                          <div className="flex gap-4 w-full">
-                            <img
-                              src={`${APP_ENV.IMAGES_200_URL}${
-                                item.imageName || "NoImage.png"
-                              }`}
-                              alt="Product image"
-                              className="w-[150px] h-[160px] object-cover rounded-lg flex-shrink-0"
-                              onError={(e) => {
-                                e.currentTarget.src = "/public/NoImage.png";
-                              }}
-                            />
-
-                            <div className="flex flex-col flex-1 gap-3 lg:flex-row lg:items-center lg:justify-between">
-                              <div className="flex-1">
-                                <p className="w-[332px] h-[27px] font-manrope font-medium text-[20px] leading-[27px] bg-gradient-to-r from-blue2 to-blueLight bg-clip-text text-transparent">
-                                  {item.name}
-                                </p>
-                                <p className="text-[16px] text-gray font-manrope font-medium">
-                                  {item.categoryName}
-                                </p>
-                              </div>
-
-                              <div className="flex flex-col lg:flex-row lg:items-center w-1/4 lg:gap-6">
-                                {/* Кнопки кількості */}
-                                <div className="flex items-center gap-2 w-[117px] h-[52px] lg:w-28 justify-center bg-white rounded-[15px] border border-blue2">
-                                  <button
-                                    onClick={() =>
-                                      item.quantity! > 1 &&
-                                      addToCart({ ...item, quantity: -1 })
-                                    }
-                                    className="px-2 text-lg"
-                                  >
-                                    -
-                                  </button>
-                                  <span>{item.quantity}</span>
-                                  <button
-                                    onClick={() =>
-                                      addToCart({ ...item, quantity: 1 })
-                                    }
-                                    className="px-2 text-lg"
-                                  >
-                                    +
-                                  </button>
-                                </div>
-                              </div>
-                              <div className="flex flex-col w-1/4 justify-end lg:flex-row lg:items-center lg:gap-6">
-                                {/* Ціна */}
-                                <div className="w-auto text-left lg:text-right max-w-32">
-                                  <span className="text-[20px] font-medium font-manrope">
-                                    {item.price} ₴
-                                  </span>
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    removeFromCart(item.productId!)
-                                  }
-                                  className="p-1 rounded hover:bg-gray-100 transition text-black hover:text-pink"
-                                >
-                                  <DeleteIcon size={20} />
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-gray-500 text-lg text-center mt-10">
-                      Кошик порожній
-                    </p>
-                  )}
+            {/* Паддинги по боках, щоб модалка не прилипала до країв */}
+            <div className="w-full px-4 sm:px-8 lg:px-12">
+              {/* Модальне вікно */}
+              <div className="relative bg-white w-full max-w-[105rem] h-[45rem] rounded-2xl shadow-xl flex flex-col overflow-hidden z-50 py-6 sm:py-8 px-4 sm:px-8 lg:px-12 mx-auto">
+                {/* Header */}
+                <div className="flex justify-between items-center">
+                  <span className="text-[37px] font-normal">Кошик</span>
+                  <button
+                    onClick={() => setIsCartOpen(false)}
+                    className="text-gray-500 hover:text-gray-700 text-[30px]"
+                  >
+                    ✕
+                  </button>
                 </div>
 
-                {/* Права частина */}
-                <div className="flex flex-col px-2 w-full xl:w-[400px]">
-                  <div className="bg-beige2 gap-3 p-[20px] rounded-xl">
-                    <div className="flex xs:text-[27px] font-medium font-manrope mb-2 justify-between">
-                      <span>Загальна сума:</span>
-                      <span>
-                        {cart
-                          ?.reduce(
-                            (acc, item) =>
-                              acc + (item.price ?? 0) * (item.quantity ?? 1),
-                            0
-                          )
-                          .toLocaleString()}{" "}
-                        ₴
-                      </span>
-                    </div>
+                {/* Content */}
+                <div className="flex flex-col xl:flex-row gap-6 py-4 border-t border-gray flex-1 overflow-hidden">
+                  {/* Ліва частина зі скролом */}
+                  <div className="flex-3 flex-1 overflow-y-auto pr-2">
+                    {cart && cart.length > 0 ? (
+                      <ul className="divide-y">
+                        {cart.map((item: ICartItem) => (
+                          <li key={item.productId} className="py-4 border-gray">
+                            <div className="flex gap-4 w-full">
+                              <img
+                                src={`${APP_ENV.IMAGES_200_URL}${
+                                  item.imageName || "NoImage.png"
+                                }`}
+                                alt="Product image"
+                                className="w-[150px] h-[160px] object-cover rounded-lg flex-shrink-0"
+                                onError={(e) => {
+                                  e.currentTarget.src = "/public/NoImage.png";
+                                }}
+                              />
 
-                    <Link to="/orders">
-                      <button onClick={() => setIsCartOpen(false)} className="w-full h-[52px] bg-pink rounded-xl text-white xs:text-[24px] font-semibold font-manrope hover:bg-pink/90 transition">
+
+                              <div className="flex flex-col flex-1 gap-3 lg:flex-row lg:items-center lg:justify-between">
+                                <div className="flex-1">
+                                  <p className="w-[332px] h-[27px] font-manrope font-medium text-[20px] leading-[27px] bg-gradient-to-r from-blue2 to-blueLight bg-clip-text text-transparent">
+                                    {item.name}
+                                  </p>
+                                  <p className="text-[16px] text-gray font-manrope font-medium">
+                                    {item.categoryName}
+                                  </p>
+                                </div>
+
+                                <div className="flex flex-col lg:flex-row lg:items-center w-1/4 lg:gap-6">
+                                  {/* Кнопки кількості */}
+                                  <div className="flex items-center gap-2 w-[117px] h-[52px] lg:w-28 justify-center bg-white rounded-[15px] border border-blue2">
+                                    <button
+                                      onClick={() =>
+                                        item.quantity! > 1 &&
+                                        addToCart({ ...item, quantity: -1 })
+                                      }
+                                      className="px-2 text-lg"
+                                    >
+                                      -
+                                    </button>
+                                    <span>{item.quantity}</span>
+                                    <button
+                                      onClick={() =>
+                                        addToCart({ ...item, quantity: 1 })
+                                      }
+                                      className="px-2 text-lg"
+                                    >
+                                      +
+                                    </button>
+                                  </div>
+                                </div>
+                                <div className="flex flex-col w-1/4 justify-end lg:flex-row lg:items-center lg:gap-6">
+                                  {/* Ціна */}
+                                  <div className="w-auto text-left lg:text-right max-w-32">
+                                    <span className="text-[20px] font-medium font-manrope">
+                                      {item.price} ₴
+                                    </span>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      removeFromCart(item.productId!)
+                                    }
+                                    className="p-1 rounded hover:bg-gray-100 transition text-black hover:text-pink"
+                                  >
+                                    <DeleteIcon size={20} />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-gray-500 text-lg text-center mt-10">
+                        Кошик порожній
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Права частина */}
+                  <div className="flex flex-col px-2 w-full xl:w-[400px]">
+                    <div className="bg-beige2 gap-3 p-[20px] rounded-xl">
+                      <div className="flex xs:text-[27px] font-medium font-manrope mb-2 justify-between">
+                        <span>Загальна сума:</span>
+                        <span>
+                          {cart
+                            ?.reduce(
+                              (acc, item) =>
+                                acc + (item.price ?? 0) * (item.quantity ?? 1),
+                              0
+                            )
+                            .toLocaleString()}{" "}
+                          ₴
+                        </span>
+                      </div>
+
+                      <button className="w-full h-[52px] bg-pink rounded-xl text-white xs:text-[24px] font-semibold font-manrope hover:bg-pink/90 transition">
                         Оформити замовлення
                       </button>
-                    </Link>
+                    </div>
                   </div>
                 </div>
               </div>

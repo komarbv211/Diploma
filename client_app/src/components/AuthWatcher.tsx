@@ -15,6 +15,7 @@ const isPublicPath = (pathname: string): boolean => {
     "/forgot-password",
     "/google-register",
     "/password-updated",
+    "/product/details/:id",
     "/orders",
   ];
 
@@ -36,6 +37,8 @@ const isPublicPath = (pathname: string): boolean => {
     return true;
   }
 
+  if (pathname.startsWith("/product/details/")) return true;
+
   console.log("AuthWatcher: path is NOT public:", pathname);
   return false;
 };
@@ -48,7 +51,7 @@ const AuthWatcher = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-    useEffect(() => {
+  useEffect(() => {
     console.log(
       "AuthWatcher: token =",
       token,
@@ -63,7 +66,7 @@ const AuthWatcher = () => {
       console.log("AuthWatcher: logout in progress, skipping redirect");
       return;
     }
-    
+
     // Якщо токен зник і шлях не публічний — редірект
     if (!token && !isPublicPath(location.pathname)) {
       console.log("AuthWatcher: redirecting to login");
@@ -74,7 +77,9 @@ const AuthWatcher = () => {
         if (location.pathname !== "/") {
           navigate("/login");
         } else {
-          console.log("AuthWatcher: user already on home page, skipping redirect");
+          console.log(
+            "AuthWatcher: user already on home page, skipping redirect"
+          );
         }
       }, 100);
     }

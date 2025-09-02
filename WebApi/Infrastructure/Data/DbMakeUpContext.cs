@@ -20,15 +20,17 @@ namespace Infrastructure.Data
         public DbSet<CategoryEntity> Categories { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<ProductImageEntity> ProductImages { get; set; }
-        public DbSet<DiscountTypeEntity> DiscountTypes { get; set; }
         public DbSet<PromotionEntity> Promotions { get; set; }
-        public DbSet<PromotionProductEntity> PromotionProducts { get; set; }
         public DbSet<ProductRatingEntity> ProductRatings { get; set; }
         public DbSet<CartEntity> Carts { get; set; }
+
+        public DbSet<BrandEntity> Brands { get; set; }
+
         public DbSet<OrderEntity> Orders { get; set; }
         public DbSet<OrderItemEntity> OrderItems { get; set; }
         public DbSet<NovaPostWarehouseEntity> NovaPostWarehouses { get; set; }
         public DbSet<WarehouseUpdateHistoryEntity> WarehouseUpdateHistories { get; set; }
+        public DbSet<CommentEntity> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -82,6 +84,21 @@ namespace Infrastructure.Data
                 cart.HasOne(c => c.User)
                     .WithMany(u => u.Carts)
                     .HasForeignKey(c => c.UserId);
+            });
+
+            builder.Entity<CommentEntity>(c =>
+            {
+                c.HasKey(x => x.Id);
+
+                c.HasOne(x => x.Product)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(x => x.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                c.HasOne(x => x.User)
+                    .WithMany(u => u.Comments)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

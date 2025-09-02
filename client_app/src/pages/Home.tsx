@@ -22,22 +22,20 @@ const Home: React.FC = () => {
       <div className="w-full max-w-[1680px] flex flex-wrap justify-center gap-[12px]">
         {isLoading && <p>Завантаження...</p>}
         {products?.map((product) => (
-          <div key={product.id}>
-            <ProductCard
-              title={product.name}
-              category={getCategoryName(product.categoryId)}
-              price={product.price}
-              userRating={product.averageRating}
-              productId={product.id}
-              userId={Number(user?.id)}
-              image={
-                product.images?.[0]?.name
-                  ? APP_ENV.IMAGES_1200_URL + product.images[0].name
-                  : ""
-              }
-              onRated={() => refetch()}
-            />
-          </div>
+          <ProductCard
+            title={product.name}
+            category={getCategoryName(product.categoryId)}
+            price={product.price}
+            userRating={product.averageRating}
+            productId={product.id}
+            userId={Number(user?.id)}
+            image={
+              product.images?.[0]?.name
+                ? APP_ENV.IMAGES_1200_URL + product.images[0].name
+                : ""
+            }
+            onRated={() => refetch()}
+          />
         ))}
       </div>
     </div>

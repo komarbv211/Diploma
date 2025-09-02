@@ -23,6 +23,7 @@ namespace Core.Extensions
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ICommentService, CommentService>();
         }
     }
 }

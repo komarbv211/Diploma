@@ -1,11 +1,15 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Core.DTOs.PaginationDTOs;
 using Core.DTOs.ProductsDTO;
 using Core.Exceptions;
 using Core.Interfaces;
+using Core.Models.Search;
 using Core.Specifications;
 using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using WebApiDiploma.Pagination;
 
 namespace Core.Services;
 
@@ -35,6 +39,7 @@ public class ProductService : IProductService
             var products = await _productRepository.GetAllQueryable()
                 .Include(p => p.Images)
                 .Include(p => p.Ratings)
+                .Include(p => p.Comments)
                 .ToListAsync();
 
             return _mapper.Map<List<ProductItemDto>>(products);
@@ -214,5 +219,157 @@ public class ProductService : IProductService
             throw new HttpException("Невідома помилка при видаленні продукту", HttpStatusCode.InternalServerError, ex);
         }
     }
+
+    public async Task SetProductPromotionAsync(ProductSetPromotionDto dto)
+    {
+        if (dto == null)
+            throw new HttpException("Дані не можуть бути порожніми", HttpStatusCode.BadRequest);
+
+        try
+        {
+            // Отримуємо продукт із бази
+            var product = await _productRepository.FirstOrDefaultAsync(new ProductWithImagesSpecification(dto.ProductId));
+            if (product == null)
+                throw new HttpException("Продукт не знайдено", HttpStatusCode.NotFound);
+
+            // Мапимо дані з DTO на продукт
+            //product.PromotionId = dto.PromotionId;
+            //product.DiscountPercent = dto.DiscountPercent;
+
+            // Зберігаємо зміни
+            await _productRepository.Update(product);
+            await _productRepository.SaveAsync();
+        }
+        catch (HttpException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new HttpException("Сталася внутрішня помилка сервера при оновленні акції продукту", HttpStatusCode.InternalServerError, ex);
+        }
+    }
+
+
+
+    public async Task<SearchResult<ProductItemModel>> SearchProductsAsync(ProductSearchModel model, bool isAdmin = false)
+    {
+        var query = _productRepository
+            .GetAllQueryable()
+            .Include(p => p.Brand)
+            .Include(p => p.Category)
+            .Include(p => p.Images)
+            .AsQueryable();
+
+        // 🔐 Якщо не адмін, фільтруй за активністю (опціонально)
+        if (!isAdmin)
+        {
+            query = query.Where(p => p.Quantity > 0); // або p.IsActive, якщо є таке поле
+        }
+
+        // 🔍 Фільтрація
+        if (model.CategoryId.HasValue)
+            query = query.Where(p => p.CategoryId == model.CategoryId.Value);
+
+        if (model.BrandId.HasValue)
+            query = query.Where(p => p.BrandId == model.BrandId.Value);
+
+        if (model.PriceMin.HasValue)
+            query = query.Where(p => p.Price >= model.PriceMin.Value);
+
+        if (model.PriceMax.HasValue)
+            query = query.Where(p => p.Price <= model.PriceMax.Value);
+
+        if (model.MinRating.HasValue)
+            query = query.Where(p => p.AverageRating >= model.MinRating.Value);
+       //якщо ти заходиш під користувачем то він не активний
+        if (model.InStock == true)
+            query = query.Where(p => p.Quantity > 0);
+
+
+        // 🆕 Пошук по тексту
+        if (!string.IsNullOrWhiteSpace(model.Query))
+        {
+            var keyword = model.Query.Trim().ToLower();
+
+            query = query.Where(p =>
+                p.Name.ToLower().Contains(keyword) ||
+                (p.Brand != null && p.Brand.Name.ToLower().Contains(keyword)) ||
+                (p.Category != null && p.Category.Name.ToLower().Contains(keyword)) ||
+                (p.Description != null && p.Description.ToLower().Contains(keyword))
+            );
+        }
+
+
+        var startDate = model.GetParsedStartDate();
+        if (startDate.HasValue)
+            query = query.Where(p => p.DateCreated >= startDate.Value);
+
+        var endDate = model.GetParsedEndDate();
+        if (endDate.HasValue)
+            query = query.Where(p => p.DateCreated <= endDate.Value);
+
+        // 🔢 Загальна кількість перед пагінацією
+        var totalCount = await query.CountAsync();
+
+        // 🧾 Безпечна пагінація
+        var safeItemsPerPage = model.ItemPerPage < 1 ? 10 : model.ItemPerPage;
+        var totalPages = (int)Math.Ceiling(totalCount / (double)safeItemsPerPage);
+        var safePage = Math.Min(Math.Max(1, model.Page), Math.Max(1, totalPages));
+
+        // 🔽 Сортування
+        query = model.SortBy switch
+        {
+            "Price" => model.SortDesc
+                ? query.OrderByDescending(p => p.Price)
+                : query.OrderBy(p => p.Price),
+
+            "Rating" => model.SortDesc
+                ? query.OrderByDescending(p => p.AverageRating)
+                : query.OrderBy(p => p.AverageRating),
+
+            "CreatedAt" => model.SortDesc
+                ? query.OrderByDescending(p => p.DateCreated)
+                : query.OrderBy(p => p.DateCreated),
+
+            _ => query.OrderBy(p => p.Id)
+        };
+
+        // 📦 Пагінація
+        var products = await query
+            .Skip((safePage - 1) * safeItemsPerPage)
+            .Take(safeItemsPerPage)
+            .Select(p => new ProductItemModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Price = (int)p.Price,
+                Rating = p.AverageRating,
+                //ImageUrl = p.Images.Select(i => i.ImageUrl).FirstOrDefault(),
+                ImageUrl = p.Images != null ? p.Images.Select(i => i.Name).FirstOrDefault() : null,
+                Quantity = p.Quantity,
+                BrandName = p.Brand != null ? p.Brand.Name : null,
+                CategoryName = p.Category != null ? p.Category.Name : null,
+                CreatedAt = p.DateCreated, // 🟢 ← ОБОВ’ЯЗКОВО
+                IsInStock = p.Quantity > 0
+            })
+            .ToListAsync();
+
+        // 📤 Результат
+        return new SearchResult<ProductItemModel>
+        {
+            Items = products,
+            Pagination = new PagedResultDto<ProductItemModel>
+            {
+                CurrentPage = safePage,
+                PageSize = safeItemsPerPage,
+                TotalCount = totalCount,
+                TotalPages = totalPages
+            }
+        };
+    }
+
+
+
 
 }

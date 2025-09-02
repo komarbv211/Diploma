@@ -6,11 +6,14 @@ export function serializeProduct(data: IProductPutRequest): FormData {
 
     formData.append('id', data.id.toString());
     formData.append('name', data.name);
+    formData.append('price', data.price.toString());
+    formData.append('categoryId', data.categoryId.toString());
+    formData.append('brandId', data.brandId.toString());
+    formData.append('quantity', data.quantity.toString());
+
     if (data.description) {
         formData.append('description', data.description);
     }
-    formData.append('price', data.price.toString());
-    formData.append('categoryId', data.categoryId.toString());
 
     if (data.image) {
         data.image.forEach((file) => {
@@ -31,20 +34,13 @@ export function serializePromotion(data: IPromotionPutRequest): FormData {
 
     formData.append('id', data.id.toString());
     formData.append('name', data.name);
+    formData.append('startDate', data.startDate);
+    formData.append('endDate', data.endDate);
+    formData.append('isActive', data.isActive.toString());
 
     if (data.description) {
         formData.append('description', data.description);
     }
-
-    formData.append('startDate', data.startDate.toString());
-    formData.append('endDate', data.endDate.toString());
-    formData.append('isActive', data.isActive.toString());
-
-    if (data.categoryId !== undefined && data.categoryId !== null) {
-        formData.append('categoryId', data.categoryId.toString());
-    }
-
-    formData.append('discountTypeId', data.discountTypeId.toString());
 
     if (data.productIds && data.productIds.length > 0) {
         data.productIds.forEach((id) => {
@@ -58,4 +54,3 @@ export function serializePromotion(data: IPromotionPutRequest): FormData {
 
     return formData;
 }
-
