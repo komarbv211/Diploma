@@ -22,7 +22,6 @@ const Home: React.FC = () => {
       <div className="w-full max-w-[1680px] flex flex-wrap justify-center gap-[12px]">
         {isLoading && <p>Завантаження...</p>}
         {products?.map((product) => (
-          // <Link key={product.id} to={`/product/details/${product.id}`}>
           <ProductCard
             title={product.name}
             category={getCategoryName(product.categoryId)}
@@ -37,7 +36,6 @@ const Home: React.FC = () => {
             }
             onRated={() => refetch()}
           />
-          // </Link>
         ))}
       </div>
     </div>

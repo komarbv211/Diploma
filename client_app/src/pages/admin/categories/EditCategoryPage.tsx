@@ -48,7 +48,7 @@ const EditCategoryPage = () => {
         parentId: category.parentId,
       });
       if (category.image) {
-        setCroppedImage(`${APP_ENV.IMAGES_100_URL}${category.image}`);
+        setCroppedImage(`${APP_ENV.IMAGES_200_URL}${category.image}`);
       }
     }
   }, [category, form]);

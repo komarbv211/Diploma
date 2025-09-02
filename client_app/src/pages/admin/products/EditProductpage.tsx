@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Button, Input, Upload, Form, InputNumber } from "antd";
+import { Button, Input, Upload, Form, InputNumber, Select } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import {
   useUpdateProductMutation,
@@ -18,6 +18,7 @@ import {
 } from "@hello-pangea/dnd";
 import { handleFormErrors } from "../../../utilities/handleApiErrors";
 import { ApiError } from "../../../types/errors";
+import { useGetBrandsQuery } from "../../../services/admin/brandAdminApi";
 
 const EditProductPage = () => {
   const { id } = useParams();
@@ -26,6 +27,7 @@ const EditProductPage = () => {
   const [updateProduct] = useUpdateProductMutation();
   const [form] = Form.useForm<IProductPutRequest>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const { data: brands, isLoading: brandsLoading } = useGetBrandsQuery();
 
   useEffect(() => {
     if (productData) {
@@ -135,6 +137,30 @@ const EditProductPage = () => {
               allowClear
               showSearch
             />
+          </Form.Item>
+          <Form.Item
+            name="brandId"
+            label="Бренд"
+            rules={[{ required: true, message: "Будь ласка, оберіть бренд!" }]}
+          >
+            <Select
+              placeholder="Оберіть бренд"
+              allowClear
+              showSearch
+              optionFilterProp="children"
+              loading={brandsLoading}
+              filterOption={(input, option) =>
+                (option?.children as unknown as string)
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+            >
+              {brands?.map((brand) => (
+                <Select.Option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <DragDropContext onDragEnd={onDragEnd}>

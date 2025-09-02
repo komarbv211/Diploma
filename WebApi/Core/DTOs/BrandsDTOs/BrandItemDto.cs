@@ -8,6 +8,8 @@ namespace Core.DTOs.BrandsDTOs
 {
     public class BrandItemDto
     {
+        public long Id { get; set; }
+
         public string? Name { get; set; }
     }
 }
