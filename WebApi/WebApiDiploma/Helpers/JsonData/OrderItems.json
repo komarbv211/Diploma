@@ -15,7 +15,7 @@
   },
   {
     "OrderId": 2,
-    "ProductId": 50,
+    "ProductId": 52,
     "ProductName": "Товар",
     "Quantity": 1,
     "Price": 800.0
@@ -29,7 +29,7 @@
   },
   {
     "OrderId": 3,
-    "ProductId": 50,
+    "ProductId": 63,
     "ProductName": "Товар",
     "Quantity": 2,
     "Price": 126.0
