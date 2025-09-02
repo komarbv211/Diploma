@@ -10,12 +10,14 @@ export interface Brand {
 export const brandApi = createApi({
   reducerPath: 'brandApi',
   baseQuery: createBaseQuery('brand'),
+  tagTypes: ['Brands'],
   endpoints: (builder) => ({
     
     getBrands: builder.query<Brand[], void>({
      query: () => ({
-        url: ``,
+        url: '',
         method: 'GET',
+        providesTags: ['Brands'],
       }),
     }),
   }),
