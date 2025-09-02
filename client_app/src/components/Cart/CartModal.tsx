@@ -84,7 +84,6 @@ const CartModal: React.FC = () => {
                                 }}
                               />
 
-
                               <div className="flex flex-col flex-1 gap-3 lg:flex-row lg:items-center lg:justify-between">
                                 <div className="flex-1">
                                   <p className="w-[332px] h-[27px] font-manrope font-medium text-[20px] leading-[27px] bg-gradient-to-r from-blue2 to-blueLight bg-clip-text text-transparent">
@@ -164,9 +163,14 @@ const CartModal: React.FC = () => {
                         </span>
                       </div>
 
-                      <button className="w-full h-[52px] bg-pink rounded-xl text-white xs:text-[24px] font-semibold font-manrope hover:bg-pink/90 transition">
-                        Оформити замовлення
-                      </button>
+                      <Link to="/orders">
+                        <button
+                          onClick={() => setIsCartOpen(false)}
+                          className="w-full h-[52px] bg-pink rounded-xl text-white xs:text-[24px] font-semibold font-manrope hover:bg-pink/90 transition"
+                        >
+                          Оформити замовлення
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
