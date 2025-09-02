@@ -188,7 +188,7 @@ const Login: React.FC = () => {
               </span>
               <Link
                 to="/registr"
-                className="font-manrope font-medium text-[18px] text-blue2 text-center cursor-pointer hover:text-hover_blue"
+                className="font-manrope font-medium text-[18px] text-blue2 text-center cursor-pointer hover:text-pink2"
               >
                 Зареєструватися
               </Link>

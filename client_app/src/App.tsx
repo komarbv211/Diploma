@@ -22,6 +22,7 @@ const PasswordUpdatedPage = lazy(
 );
 const ProductDetails = lazy(() => import("./pages/ProductDetails.tsx"));
 const CatalogPage = lazy(() => import("./pages/CatalogPage.tsx"));
+const CommentsPage = lazy(() => import("./pages/CommentsPage.tsx"));
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="*" element={<NotFoundPage />} />
             <Route path="product">
               <Route path="details/:id" element={<ProductDetails />} />
+              <Route path=":id/comments" element={<CommentsPage />} />
             </Route>
             <Route path="category/:id" element={<CatalogPage />} />
           </Route>

@@ -95,3 +95,13 @@
 .serch-header-input{
   @apply flex p-[5px] pl-[15px] h-12 w-[660px] justify-between items-center self-stretch rounded-xl border-[1px] border-black text-gray placeholder:font-manrope leading-normal  !important;
 }
+:where(.css-dev-only-do-not-override-1dlzvkm) a:hover {
+    color: $pink2;
+}
+/* глобально для всіх link-кнопок */
+:where(.css-dev-only-do-not-override-kf1k5b).ant-btn-color-link.ant-btn-variant-link {
+    color: $pink;
+}
+:where(.css-dev-only-do-not-override-kf1k5b).ant-btn-color-link.ant-btn-variant-link:not(:disabled):not(.ant-btn-disabled):hover {
+  color: $pink2; /* hover */
+}
