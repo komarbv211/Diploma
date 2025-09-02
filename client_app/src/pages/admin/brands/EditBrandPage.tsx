@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Upload, Spin, message } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import { IBrandPutRequest } from "../../../types/brand";
@@ -9,8 +9,13 @@ import {
 import CropperModal from "../../../components/images/CropperModal";
 
 const EditBrandPage = () => {
-  const { id } = useParams();
-  const { data: brand, isLoading } = useGetBrandByIDQuery(Number(id));
+  const { id } = useParams<{ id: string }>();
+  const brandId = id ? Number(id) : null;
+
+  const { data: brand, isLoading } = useGetBrandByIDQuery(brandId!, {
+    skip: !brandId, // ❗ не робимо запит, якщо brandId == null
+  });
+
   const [updateBrand] = useUpdateBrandMutation();
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -22,7 +27,6 @@ const EditBrandPage = () => {
   useEffect(() => {
     if (brand) {
       form.setFieldsValue({ name: brand.name });
-      //   if (brand.image) setCroppedImage(brand.image);
     }
   }, [brand, form]);
 
@@ -44,11 +48,13 @@ const EditBrandPage = () => {
 
   const onFinish = async (values: IBrandPutRequest) => {
     try {
-      values.id = Number(id);
-      //   if (croppedImage?.startsWith("data:image")) {
-      //     const blob = await fetch(croppedImage).then((res) => res.blob());
-      //     values.image = new File([blob], "brand.png", { type: blob.type });
-      //   }
+      if (!brandId) {
+        message.error("Невірний ID бренду");
+        return;
+      }
+
+      values.id = brandId;
+
       await updateBrand(values).unwrap();
       message.success("Бренд оновлено");
       navigate("..");
@@ -85,9 +91,7 @@ const EditBrandPage = () => {
             showUploadList={false}
             beforeUpload={handleBeforeUpload}
             accept="image/*"
-          >
-            {/* <Button icon={<UploadOutlined />}>Завантажити зображення</Button> */}
-          </Upload>
+          />
         </div>
 
         <Button type="primary" htmlType="submit">
