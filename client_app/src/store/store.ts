@@ -19,6 +19,7 @@ import localCarReducer from './slices/localCartSlice';
 import authReducer from './slices/userSlice';
 import { productCommentsApi } from '../services/productCommentsApi';
 import { brandApi } from '../services/brandApi';
+import { brandAdminApi } from '../services/admin/brandAdminApi';
 
 export const store = configureStore({
         reducer: {
@@ -52,6 +53,8 @@ export const store = configureStore({
                 productRatingApi.middleware,
                 cartApi.middleware,
                 productCommentsApi.middleware,
+                brandApi.middleware,
+                brandAdminApi.middleware,
             ),
 });
 
