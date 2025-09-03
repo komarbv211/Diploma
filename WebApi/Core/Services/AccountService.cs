@@ -28,7 +28,9 @@ namespace Core.Services
             IEmailService emailService,
             IConfiguration configuration,
             IGoogleAuthService googleAuthService,
-            IMapper mapper
+            IMapper mapper,
+            IRecaptchaService _recaptchaService
+
       ) : IAccountService
     {
 
@@ -261,6 +263,13 @@ namespace Core.Services
             {
                 throw new HttpException("Користувач з таким номером телефону вже існує", HttpStatusCode.BadRequest);
             }
+
+            if (string.IsNullOrWhiteSpace(model.RecaptchaToken))
+                throw new HttpException("Потрібен токен ReCAPTCHA", HttpStatusCode.BadRequest);
+
+            var isValidCaptcha = await _recaptchaService.VerifyAsync(model.RecaptchaToken);
+            if (!isValidCaptcha)
+                throw new HttpException("Недійсна капча", HttpStatusCode.BadRequest);
 
             var user = mapper.Map<UserEntity>(model);
             //    user.PhoneNumber = model.Phone;

@@ -19,5 +19,7 @@ namespace Core.DTOs.AuthorizationDTOs
         public string? Password { get; set; }
 
         public string? Image { get; set; }
+
+        public string? RecaptchaToken { get; set; }
     }
 }

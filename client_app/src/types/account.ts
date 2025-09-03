@@ -51,6 +51,7 @@ export interface IUser {
 export interface IUserRegisterRequest {
     username: string;
     password: string;
+    recaptchaToken?: string;
 }
 
 export interface IUserLoginRequest {
