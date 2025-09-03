@@ -81,7 +81,7 @@ const CatalogPage: React.FC = () => {
               title={product.name}
               category={product.category?.name || getCategoryName(Number(id))}
               price={product.price}
-              userRating={product.ratingsCount ?? 0}
+              userRating={product.rating}
               productId={product.id}
               userId={Number(user?.id)}
               image={

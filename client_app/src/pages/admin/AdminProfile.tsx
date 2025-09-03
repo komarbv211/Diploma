@@ -12,31 +12,30 @@ import {
   Spin,
   Upload,
   Avatar,
-  Modal,
   message,
   Form,
-} from 'antd';
+} from "antd";
 import {
   SettingOutlined,
   LogoutOutlined,
   UploadOutlined,
-} from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { getUser, logOut } from '../../store/slices/userSlice';
-import { useAppSelector } from '../../store/store';
+} from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { getUser, logOut } from "../../store/slices/userSlice";
+import { useAppSelector } from "../../store/store";
 import {
   useGetUserByIdQuery,
   useUpdateUserMutation,
-} from '../../services/userApi';
-import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
-import ImageCropper from '../../components/images/ImageCropper';
-import { APP_ENV } from '../../env';
-import { DatePicker } from 'antd';
+} from "../../services/userApi";
+import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
+import { APP_ENV } from "../../env";
+import { DatePicker } from "antd";
 import PhoneInput from "../../components/PhoneInput.tsx";
-import { handleFormErrors } from '../../utilities/handleApiErrors';
-import { ApiError } from '../../types/errors';
+import { handleFormErrors } from "../../utilities/handleApiErrors";
+import { ApiError } from "../../types/errors";
+import CropperModal from "../../components/images/CropperModal.tsx";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -57,20 +56,20 @@ const AdminProfile: React.FC = () => {
   useEffect(() => {
     if (user) {
       form.setFieldsValue({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.email || '',
-        phoneNumber: user.phoneNumber || '',
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        phoneNumber: user.phoneNumber || "",
         birthDate: user.birthDate ? dayjs(user.birthDate) : null,
       });
 
-      setCroppedImage(`${APP_ENV.IMAGES_100_URL}${user.image}`|| null);
+      setCroppedImage(`${APP_ENV.IMAGES_100_URL}${user.image}` || null);
     }
   }, [user, form]);
 
   const handleLogout = () => {
     dispatch(logOut());
-    navigate('/');
+    navigate("/");
   };
 
   const handleBeforeUpload = (file: File) => {
@@ -92,31 +91,29 @@ const AdminProfile: React.FC = () => {
     setShowCropper(false);
   };
 
-  
-
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
 
       const formData = new FormData();
-      formData.append('id', user!.id.toString());
-      formData.append('firstName', values.firstName);
-      formData.append('lastName', values.lastName);
-      formData.append('email', values.email);
-      formData.append('phoneNumber', values.phoneNumber);
-     // formData.append('birthDate', values.birthDate);
+      formData.append("id", user!.id.toString());
+      formData.append("firstName", values.firstName);
+      formData.append("lastName", values.lastName);
+      formData.append("email", values.email);
+      formData.append("phoneNumber", values.phoneNumber);
+      // formData.append('birthDate', values.birthDate);
       if (values.birthDate) {
-        formData.append('birthDate', values.birthDate.format('YYYY-MM-DD'));
+        formData.append("birthDate", values.birthDate.format("YYYY-MM-DD"));
       }
 
-      if (croppedImage && croppedImage.startsWith('data:image')) {
+      if (croppedImage && croppedImage.startsWith("data:image")) {
         const blob = await fetch(croppedImage).then((res) => res.blob());
-        formData.append('Image', blob, 'avatar.png');
+        formData.append("Image", blob, "avatar.png");
       }
-      
+
       await updateUser(formData).unwrap();
-      console.log('avatar file:', formData.get('avatar'));
-      message.success('Зміни збережено');
+      console.log("avatar file:", formData.get("avatar"));
+      message.success("Зміни збережено");
     } catch (error: unknown) {
       handleFormErrors(error as ApiError, form);
     }
@@ -135,12 +132,12 @@ const AdminProfile: React.FC = () => {
       <Title level={3}>Профіль адміністратора</Title>
 
       <div className="mb-6 flex gap-6 items-center">
-        <Avatar  size={100} src={croppedImage || user.image} />
+        <Avatar size={100} src={croppedImage || user.image} />
         <Upload
           showUploadList={false}
           beforeUpload={handleBeforeUpload}
           accept="image/*"
-          name="photoUrl"  // <-- Ось тут
+          name="photoUrl" // <-- Ось тут
         >
           <Button icon={<UploadOutlined />}>Оновити аватар</Button>
         </Upload>
@@ -149,56 +146,72 @@ const AdminProfile: React.FC = () => {
       <Form layout="vertical" form={form}>
         <Row gutter={40} className="mt-8">
           <Col span={12}>
-            <Form.Item label="Ім’я" name="firstName" rules={[{ required: true, message: 'Введіть ім’я' }]}>
+            <Form.Item
+              label="Ім’я"
+              name="firstName"
+              rules={[{ required: true, message: "Введіть ім’я" }]}
+            >
               <Input size="large" />
             </Form.Item>
 
-            <Form.Item label="Прізвище" name="lastName" rules={[{ required: true, message: 'Введіть прізвище' }]}>
+            <Form.Item
+              label="Прізвище"
+              name="lastName"
+              rules={[{ required: true, message: "Введіть прізвище" }]}
+            >
               <Input size="large" />
             </Form.Item>
 
-            <Form.Item label="E-mail" name="email" rules={[{ required: true, message: 'Введіть email' }]}>
+            <Form.Item
+              label="E-mail"
+              name="email"
+              rules={[{ required: true, message: "Введіть email" }]}
+            >
               <Input size="large" />
             </Form.Item>
-
 
             <Form.Item label="Дата народження" name="birthDate">
               <DatePicker size="large" format="YYYY-MM-DD" />
             </Form.Item>
 
             <Form.Item
-                label="Номер телефону"
-                name="phoneNumber"
-                rules={[
-                  { required: true, message: 'Введіть номер телефону' },
-                  {
-                    validator: (_, value) => {
-                      if (!value) {
-                        return Promise.reject(new Error('Введіть номер телефону'));
-                      }
-                      // Видаляємо всі _ (якщо є)
-                      const cleanedValue = value.replace(/_/g, '');
-                      if (cleanedValue.includes('_')) {
-                        return Promise.reject(new Error('Номер телефону не повністю введений'));
-                      }
-                      const regex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
-                      if (regex.test(cleanedValue)) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(new Error('Невірний формат телефону'));
-                    },
+              label="Номер телефону"
+              name="phoneNumber"
+              rules={[
+                { required: true, message: "Введіть номер телефону" },
+                {
+                  validator: (_, value) => {
+                    if (!value) {
+                      return Promise.reject(
+                        new Error("Введіть номер телефону")
+                      );
+                    }
+                    // Видаляємо всі _ (якщо є)
+                    const cleanedValue = value.replace(/_/g, "");
+                    if (cleanedValue.includes("_")) {
+                      return Promise.reject(
+                        new Error("Номер телефону не повністю введений")
+                      );
+                    }
+                    const regex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+                    if (regex.test(cleanedValue)) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("Невірний формат телефону")
+                    );
                   },
-                ]}
+                },
+              ]}
             >
               <PhoneInput
-                  value={form.getFieldValue('phoneNumber')}
-                  onChange={(e) => {
-                    form.setFieldsValue({ phoneNumber: e.target.value });
-                    console.log('target', e.target.value);
-                  }}
+                value={form.getFieldValue("phoneNumber")}
+                onChange={(e) => {
+                  form.setFieldsValue({ phoneNumber: e.target.value });
+                  console.log("target", e.target.value);
+                }}
               />
             </Form.Item>
-            
           </Col>
 
           <Col span={12}>
@@ -222,7 +235,7 @@ const AdminProfile: React.FC = () => {
               <Input
                 size="large"
                 disabled
-                value={dayjs(user.lastActivity).format('DD.MM.YYYY HH:mm')}
+                value={dayjs(user.lastActivity).format("DD.MM.YYYY HH:mm")}
               />
             </Form.Item>
           </Col>
@@ -235,30 +248,20 @@ const AdminProfile: React.FC = () => {
         <Button danger icon={<LogoutOutlined />} onClick={handleLogout}>
           Вийти
         </Button>
-        <Button type="primary" icon={<SettingOutlined />} onClick={handleSave} >
-        
+        <Button type="primary" icon={<SettingOutlined />} onClick={handleSave}>
           Зберегти зміни
         </Button>
       </Space>
 
-      <Modal
+      <CropperModal
+        image={avatarPreview}
         open={showCropper}
-        footer={null}
+        aspectRatio={1}
+        onCrop={handleCropped}
         onCancel={handleCancelCrop}
-        width={600}
-      >
-        {avatarPreview && (
-          <ImageCropper
-            image={avatarPreview}
-            aspectRatio={1}
-            onCrop={handleCropped}
-            onCancel={handleCancelCrop}
-          />
-        )}
-      </Modal>
+      />
     </Content>
   );
 };
 
 export default AdminProfile;
-

@@ -1,19 +1,9 @@
 import { useState } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  Upload,
-  message,
-  Modal,
-  UploadFile,
-  Select,
-} from "antd";
+import { Form, Input, Button, Upload, message, UploadFile, Select } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 import { useNavigate } from "react-router-dom";
 import { base64ToFile } from "../../../utilities/base64ToFile";
-import ImageCropper from "../../../components/images/ImageCropper";
 import { useCreateProductMutation } from "../../../services/admin/productAdminApi";
 import { IProductPostRequest } from "../../../types/product";
 import { validateImageBeforeUpload } from "../../../utilities/validateImageUpload";
@@ -35,6 +25,7 @@ import { handleFormErrors } from "../../../utilities/handleApiErrors";
 import { ApiError } from "../../../types/errors";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { useGetBrandsQuery } from "../../../services/admin/brandAdminApi";
+import CropperModal from "../../../components/images/CropperModal";
 
 const { Item } = Form;
 
@@ -157,183 +148,167 @@ const CreateProductPage = () => {
   };
 
   return (
-    <>
-      <div className="mt-6">
-        <Button type="default" onClick={() => navigate(-1)}>
-          Назад
-        </Button>
-      </div>
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-center text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 my-6">
-          Створення продукту
-        </h1>
-        <Form form={form} onFinish={onFinish} layout="vertical" noValidate>
-          <Item
-            name="name"
-            label="Назва"
-            rules={[
-              {
-                required: true,
-                message: "Будь ласка, введіть назву продукту!",
-              },
-              {
-                validator: (_, value) =>
-                  value && value.trim()
-                    ? Promise.resolve()
-                    : Promise.reject(
-                        new Error("Назва не може бути лише з пробілів")
-                      ),
-              },
-            ]}
-          >
-            <Input placeholder="Назва" />
-          </Item>
-
-          <Item
-            name="price"
-            label="Ціна"
-            rules={[
-              { required: true, message: "Будь ласка, вкажіть ціну!" },
-              {
-                validator: (_, value) =>
-                  value > 0
-                    ? Promise.resolve()
-                    : Promise.reject(new Error("Ціна має бути більше нуля")),
-              },
-            ]}
-          >
-            <Input type="number" placeholder="Ціна" min={0.01} step={0.01} />
-          </Item>
-
-          {/* 🔹 Нове поле quantity */}
-          <Item
-            name="quantity"
-            label="Кількість"
-            rules={[
-              { required: true, message: "Будь ласка, вкажіть кількість!" },
-              {
-                validator: (_, value) =>
-                  value > 0
-                    ? Promise.resolve()
-                    : Promise.reject(
-                        new Error("Кількість має бути більше нуля")
-                      ),
-              },
-            ]}
-          >
-            <Input type="number" placeholder="Кількість" min={1} step={1} />
-          </Item>
-
-          <Item name="description" label="Опис">
-            <TextArea rows={4} placeholder="Опис..." />
-          </Item>
-
-          <Item
-            name="categoryId"
-            label="Категорія"
-            rules={[
-              { required: true, message: "Будь ласка, оберіть категорію!" },
-            ]}
-          >
-            <CategoryTreeSelect
-              placeholder="Оберіть категорію"
-              allowClear
-              showSearch
-            />
-          </Item>
-          <Form.Item
-            name="brandId"
-            label="Бренд"
-            rules={[{ required: true, message: "Будь ласка, оберіть бренд!" }]}
-          >
-            <Select
-              placeholder="Оберіть бренд"
-              allowClear
-              showSearch
-              optionFilterProp="children"
-              loading={brandsLoading}
-              filterOption={(input, option) =>
-                (option?.children as unknown as string)
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-            >
-              {brands?.map((brand) => (
-                <Select.Option key={brand.id} value={brand.id}>
-                  {brand.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          <Item label="Фото продукту">
-            <DndContext
-              sensors={[sensor]}
-              collisionDetection={closestCenter}
-              onDragEnd={onDragEnd}
-            >
-              <SortableContext
-                items={fileList.map((f) => f.uid)}
-                strategy={verticalListSortingStrategy}
-              >
-                <Upload
-                  multiple
-                  listType="picture-card"
-                  fileList={fileList}
-                  beforeUpload={validateImageBeforeUpload}
-                  onChange={handleUploadChange}
-                  onPreview={handlePreview}
-                  onRemove={handleRemove}
-                  itemRender={(originNode, file) => (
-                    <DraggableUploadListItem
-                      originNode={originNode}
-                      file={file}
-                    />
-                  )}
-                >
-                  {fileList.length < 8 && (
-                    <button type="button">
-                      <UploadOutlined />
-                      <div className="mt-3">Завантажити</div>
-                    </button>
-                  )}
-                </Upload>
-              </SortableContext>
-            </DndContext>
-          </Item>
-
-          <Item>
-            <Button type="primary" htmlType="submit" block loading={isLoading}>
-              Створити продукт
-            </Button>
-          </Item>
-        </Form>
-
-        <Modal
-          open={isCropModalVisible}
-          footer={null}
-          onCancel={() => setCropModalVisible(false)}
-          width={800}
+    <div className="max-w-2xl mx-auto my-10 p-6 bg-white shadow-lg rounded-lg">
+      <Button type="default" className="mb-6" onClick={() => navigate(-1)}>
+        Назад
+      </Button>
+      <h1 className="title">Створення продукту</h1>
+      <Form form={form} onFinish={onFinish} layout="vertical" noValidate>
+        <Item
+          name="name"
+          label="Назва"
+          rules={[
+            {
+              required: true,
+              message: "Будь ласка, введіть назву продукту!",
+            },
+            {
+              validator: (_, value) =>
+                value && value.trim()
+                  ? Promise.resolve()
+                  : Promise.reject(
+                      new Error("Назва не може бути лише з пробілів")
+                    ),
+            },
+          ]}
         >
-          {cropIndex !== null && (
-            <ImageCropper
-              image={
-                fileList[cropIndex]?.originFileObj
-                  ? URL.createObjectURL(
-                      fileList[cropIndex]?.originFileObj as Blob
-                    )
-                  : ""
-              }
-              onCrop={handleCrop}
-              onCancel={() => {
-                setCroppingIndex(null);
-                setCropModalVisible(false);
-              }}
-            />
-          )}
-        </Modal>
-      </div>
-    </>
+          <Input placeholder="Назва" />
+        </Item>
+
+        <Item
+          name="price"
+          label="Ціна"
+          rules={[
+            { required: true, message: "Будь ласка, вкажіть ціну!" },
+            {
+              validator: (_, value) =>
+                value > 0
+                  ? Promise.resolve()
+                  : Promise.reject(new Error("Ціна має бути більше нуля")),
+            },
+          ]}
+        >
+          <Input type="number" placeholder="Ціна" min={0.01} step={0.01} />
+        </Item>
+
+        {/* 🔹 Нове поле quantity */}
+        <Item
+          name="quantity"
+          label="Кількість"
+          rules={[
+            { required: true, message: "Будь ласка, вкажіть кількість!" },
+            {
+              validator: (_, value) =>
+                value > 0
+                  ? Promise.resolve()
+                  : Promise.reject(new Error("Кількість має бути більше нуля")),
+            },
+          ]}
+        >
+          <Input type="number" placeholder="Кількість" min={1} step={1} />
+        </Item>
+
+        <Item name="description" label="Опис">
+          <TextArea rows={4} placeholder="Опис..." />
+        </Item>
+
+        <Item
+          name="categoryId"
+          label="Категорія"
+          rules={[
+            { required: true, message: "Будь ласка, оберіть категорію!" },
+          ]}
+        >
+          <CategoryTreeSelect
+            placeholder="Оберіть категорію"
+            allowClear
+            showSearch
+          />
+        </Item>
+        <Form.Item
+          name="brandId"
+          label="Бренд"
+          rules={[{ required: true, message: "Будь ласка, оберіть бренд!" }]}
+        >
+          <Select
+            placeholder="Оберіть бренд"
+            allowClear
+            showSearch
+            optionFilterProp="children"
+            loading={brandsLoading}
+            filterOption={(input, option) =>
+              (option?.children as unknown as string)
+                .toLowerCase()
+                .includes(input.toLowerCase())
+            }
+          >
+            {brands?.map((brand) => (
+              <Select.Option key={brand.id} value={brand.id}>
+                {brand.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+
+        <Item label="Фото продукту">
+          <DndContext
+            sensors={[sensor]}
+            collisionDetection={closestCenter}
+            onDragEnd={onDragEnd}
+          >
+            <SortableContext
+              items={fileList.map((f) => f.uid)}
+              strategy={verticalListSortingStrategy}
+            >
+              <Upload
+                multiple
+                listType="picture-card"
+                fileList={fileList}
+                beforeUpload={validateImageBeforeUpload}
+                onChange={handleUploadChange}
+                onPreview={handlePreview}
+                onRemove={handleRemove}
+                itemRender={(originNode, file) => (
+                  <DraggableUploadListItem
+                    originNode={originNode}
+                    file={file}
+                  />
+                )}
+              >
+                {fileList.length < 8 && (
+                  <button type="button">
+                    <UploadOutlined />
+                    <div className="mt-3">Завантажити</div>
+                  </button>
+                )}
+              </Upload>
+            </SortableContext>
+          </DndContext>
+        </Item>
+
+        <Item>
+          <Button type="primary" htmlType="submit" block loading={isLoading}>
+            Створити продукт
+          </Button>
+        </Item>
+      </Form>
+
+      <CropperModal
+        image={
+          cropIndex !== null && fileList[cropIndex]?.originFileObj
+            ? URL.createObjectURL(fileList[cropIndex]?.originFileObj as Blob)
+            : null
+        }
+        open={isCropModalVisible}
+        aspectRatio={1}
+        onCrop={handleCrop}
+        onCancel={() => {
+          setCroppingIndex(null);
+          setCropModalVisible(false);
+        }}
+        width={800}
+      />
+    </div>
   );
 };
 
