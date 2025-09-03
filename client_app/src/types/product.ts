@@ -10,6 +10,7 @@ export interface IProduct {
   category?: ICategoryName;
   quantity: number;
   averageRating?: number;
+  rating: number;
   ratingsCount: number;
   commentsCount: number;
   images?: IProductImageDto[];
