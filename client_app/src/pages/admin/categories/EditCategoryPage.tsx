@@ -10,7 +10,7 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ICategoryPutRequest } from "../../../types/category";
 import { APP_ENV } from "../../../env";
@@ -100,12 +100,11 @@ const EditCategoryPage = () => {
   }
 
   return (
-    <>
-      <Link to="/admin/categories">
-        <Button type="default" onClick={() => navigate(-1)}>
-          Назад
-        </Button>
-      </Link>
+    <div className="max-w-2xl mx-auto my-10 p-6 bg-white shadow-lg rounded-lg">
+      <Button type="default" className="mb-6" onClick={() => navigate(-1)}>
+        Назад
+      </Button>
+      <h1 className="title">Редагування категорії</h1>
       <Form
         form={form}
         layout="vertical"
@@ -183,7 +182,7 @@ const EditCategoryPage = () => {
         onCrop={handleCrop}
         onCancel={handleCancelCrop}
       />
-    </>
+    </div>
   );
 };
 

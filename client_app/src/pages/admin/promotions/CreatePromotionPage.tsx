@@ -119,9 +119,7 @@ const CreatePromotionPage = () => {
         Назад
       </Button>
 
-      <h1 className="text-center text-3xl font-extrabold text-blue-600 mb-8">
-        Створення акції
-      </h1>
+      <h1 className="title">Створення акції</h1>
 
       <Form
         form={form}

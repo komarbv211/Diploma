@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Input, Button, Upload, Spin, message } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import { IBrandPutRequest } from "../../../types/brand";
@@ -66,10 +66,12 @@ const EditBrandPage = () => {
   if (isLoading || !brand) return <Spin size="large" />;
 
   return (
-    <>
-      <Button type="link" onClick={() => navigate(-1)}>
+    <div className="max-w-2xl mx-auto my-10 p-6 bg-white shadow-lg rounded-lg">
+      <Button type="default" className="mb-6" onClick={() => navigate(-1)}>
         Назад
       </Button>
+      <h1 className="title">Редагування бренду</h1>
+
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
           label="Назва"
@@ -98,7 +100,6 @@ const EditBrandPage = () => {
           Зберегти
         </Button>
       </Form>
-
       <CropperModal
         image={imagePreview}
         open={showCropper}
@@ -106,7 +107,7 @@ const EditBrandPage = () => {
         onCrop={handleCrop}
         onCancel={handleCancelCrop}
       />
-    </>
+    </div>
   );
 };
 
