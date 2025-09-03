@@ -133,9 +133,7 @@ const EditPromotionPage = () => {
         Назад
       </Button>
 
-      <h1 className="text-center text-3xl font-extrabold text-blue-600 mb-8">
-        Редагування акції
-      </h1>
+      <h1 className="title">Редагування акції</h1>
 
       <Form
         form={form}

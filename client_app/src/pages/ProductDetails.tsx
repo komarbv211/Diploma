@@ -63,7 +63,13 @@ const ProductDetails: React.FC = () => {
               size={20}
             />
             <span className="text-[16px] text-gray-700">
-              {product.commentsCount} відгуки
+              {product.commentsCount}
+              <button
+                onClick={() => navigate(`/product/${id}/comments`)}
+                className="ml-1 text-black underline text-lg hover:text-pink2 font-manrope"
+              >
+                відгуки
+              </button>
             </span>
           </div>
 

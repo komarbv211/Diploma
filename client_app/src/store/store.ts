@@ -13,11 +13,13 @@ import { productAdminApi } from "../services/admin/productAdminApi";
 
 import { promotionAdminApi } from "../services/admin/promotionAdminApi";
 
+<<<<<<< HEAD
 import { productRatingApi } from "../services/productRatingApi ";
 import { cartApi } from "../services/cartApi";
 import localCarReducer from "./slices/localCartSlice";
 import authReducer from "./slices/userSlice";
 import { productCommentsApi } from "../services/productCommentsApi";
+import { brandApi } from '../services/brandApi';
 import { brandAdminApi } from "../services/admin/brandAdminApi";
 import { orderApi } from "../services/orderApi";
 import { orderAdminApi } from "../services/admin/orderAdminApi";
@@ -38,6 +40,7 @@ export const store = configureStore({
     [productRatingApi.reducerPath]: productRatingApi.reducer,
     [cartApi.reducerPath]: cartApi.reducer,
     [productCommentsApi.reducerPath]: productCommentsApi.reducer,
+    [brandApi.reducerPath]: brandApi.reducer, // 👈 додай сюди
     [brandAdminApi.reducerPath]: brandAdminApi.reducer,
     [orderApi.reducerPath]: orderApi.reducer,
     [orderAdminApi.reducerPath]: orderAdminApi.reducer,
@@ -61,6 +64,7 @@ export const store = configureStore({
       orderAdminApi.middleware,
       locationApi.middleware,
       productCommentsApi.middleware,
+      brandApi.middleware,
       brandAdminApi.middleware
     ),
 });

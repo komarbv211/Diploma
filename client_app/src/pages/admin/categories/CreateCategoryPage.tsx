@@ -7,7 +7,7 @@ import {
   InputNumber,
   Select,
 } from "antd";
-import { UploadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -69,15 +69,11 @@ const CreateCategoryPage = () => {
   };
 
   return (
-    <>
-      <Button
-        type="link"
-        icon={<ArrowLeftOutlined />}
-        onClick={() => navigate(-1)}
-        style={{ marginBottom: 16 }}
-      >
+    <div className="max-w-2xl mx-auto my-10 p-6 bg-white shadow-lg rounded-lg">
+      <Button type="default" className="mb-6" onClick={() => navigate(-1)}>
         Назад
       </Button>
+      <h1 className="title">Створення категорії</h1>
 
       <Form
         form={form}
@@ -164,7 +160,7 @@ const CreateCategoryPage = () => {
         onCrop={handleCrop}
         onCancel={handleCancelCrop}
       />
-    </>
+    </div>
   );
 };
 

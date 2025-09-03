@@ -115,7 +115,7 @@ const ForgotPassword: React.FC = () => {
               </span>
               <Link
                 to="/login"
-                className="font-manrope font-medium text-[18px] ml-1 text-blue2 text-center cursor-pointer hover:text-hover_blue"
+                className="font-manrope font-medium text-[18px] ml-1 text-blue2 text-center cursor-pointer hover:text-pink2"
               >
                 Повернутися до входу
               </Link>

@@ -9,8 +9,13 @@ import {
 import CropperModal from "../../../components/images/CropperModal";
 
 const EditBrandPage = () => {
-  const { id } = useParams();
-  const { data: brand, isLoading } = useGetBrandByIDQuery(Number(id));
+  const { id } = useParams<{ id: string }>();
+  const brandId = id ? Number(id) : null;
+
+  const { data: brand, isLoading } = useGetBrandByIDQuery(brandId!, {
+    skip: !brandId, // ❗ не робимо запит, якщо brandId == null
+  });
+
   const [updateBrand] = useUpdateBrandMutation();
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -22,7 +27,6 @@ const EditBrandPage = () => {
   useEffect(() => {
     if (brand) {
       form.setFieldsValue({ name: brand.name });
-      //   if (brand.image) setCroppedImage(brand.image);
     }
   }, [brand, form]);
 
@@ -44,11 +48,13 @@ const EditBrandPage = () => {
 
   const onFinish = async (values: IBrandPutRequest) => {
     try {
-      values.id = Number(id);
-      //   if (croppedImage?.startsWith("data:image")) {
-      //     const blob = await fetch(croppedImage).then((res) => res.blob());
-      //     values.image = new File([blob], "brand.png", { type: blob.type });
-      //   }
+      if (!brandId) {
+        message.error("Невірний ID бренду");
+        return;
+      }
+
+      values.id = brandId;
+
       await updateBrand(values).unwrap();
       message.success("Бренд оновлено");
       navigate("..");
@@ -60,10 +66,12 @@ const EditBrandPage = () => {
   if (isLoading || !brand) return <Spin size="large" />;
 
   return (
-    <>
-      <Button type="link" onClick={() => navigate(-1)}>
+    <div className="max-w-2xl mx-auto my-10 p-6 bg-white shadow-lg rounded-lg">
+      <Button type="default" className="mb-6" onClick={() => navigate(-1)}>
         Назад
       </Button>
+      <h1 className="title">Редагування бренду</h1>
+
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
           label="Назва"
@@ -85,16 +93,13 @@ const EditBrandPage = () => {
             showUploadList={false}
             beforeUpload={handleBeforeUpload}
             accept="image/*"
-          >
-            {/* <Button icon={<UploadOutlined />}>Завантажити зображення</Button> */}
-          </Upload>
+          />
         </div>
 
         <Button type="primary" htmlType="submit">
           Зберегти
         </Button>
       </Form>
-
       <CropperModal
         image={imagePreview}
         open={showCropper}
@@ -102,7 +107,7 @@ const EditBrandPage = () => {
         onCrop={handleCrop}
         onCancel={handleCancelCrop}
       />
-    </>
+    </div>
   );
 };
 

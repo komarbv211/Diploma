@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Form, Input, Button, Upload, message } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { IBrandPostRequest } from "../../../types/brand";
 import { useCreateBrandMutation } from "../../../services/admin/brandAdminApi";
@@ -50,14 +49,12 @@ const CreateBrandPage = () => {
   };
 
   return (
-    <>
-      <Button
-        type="link"
-        icon={<ArrowLeftOutlined />}
-        onClick={() => navigate(-1)}
-      >
+    <div className="max-w-2xl mx-auto my-10 p-6 bg-white shadow-lg rounded-lg">
+      <Button type="default" className="mb-6" onClick={() => navigate(-1)}>
         Назад
       </Button>
+      <h1 className="title">Створення бренду</h1>
+
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
           label="Назва"
@@ -96,7 +93,7 @@ const CreateBrandPage = () => {
         onCrop={handleCrop}
         onCancel={handleCancelCrop}
       />
-    </>
+    </div>
   );
 };
 
