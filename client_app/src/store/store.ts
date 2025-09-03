@@ -13,7 +13,6 @@ import { productAdminApi } from "../services/admin/productAdminApi";
 
 import { promotionAdminApi } from "../services/admin/promotionAdminApi";
 
-<<<<<<< HEAD
 import { productRatingApi } from "../services/productRatingApi ";
 import { cartApi } from "../services/cartApi";
 import localCarReducer from "./slices/localCartSlice";
@@ -40,7 +39,7 @@ export const store = configureStore({
     [productRatingApi.reducerPath]: productRatingApi.reducer,
     [cartApi.reducerPath]: cartApi.reducer,
     [productCommentsApi.reducerPath]: productCommentsApi.reducer,
-    [brandApi.reducerPath]: brandApi.reducer, // 👈 додай сюди
+    [brandApi.reducerPath]: brandApi.reducer,
     [brandAdminApi.reducerPath]: brandAdminApi.reducer,
     [orderApi.reducerPath]: orderApi.reducer,
     [orderAdminApi.reducerPath]: orderAdminApi.reducer,
