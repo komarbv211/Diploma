@@ -11,7 +11,10 @@ namespace Core.Models.Search
     {
         // 🔍 Фільтри
         public long? CategoryId { get; set; }
-        public long? BrandId { get; set; }
+        //public long? BrandId { get; set; }
+
+         public long? [] BrandIds { get; set; }
+
 
         public int? PriceMin { get; set; }
         public int? PriceMax { get; set; }
