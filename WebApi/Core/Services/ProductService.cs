@@ -275,8 +275,11 @@ public class ProductService : IProductService
         //    query = query.Where(p => p.BrandId == model.BrandId.Value);
 
         if (model.BrandIds != null && model.BrandIds.Any())
-    query = query.Where(p => model.BrandIds.Contains(p.BrandId));
-
+            query = query.Where(p => model.BrandIds.Contains(p.BrandId));
+        //if (model.BrandIds != null && model.BrandIds.Any())
+        //{
+        //    query = query.Where(p => model.BrandIds.Contains(p.BrandId));
+        //}
 
         if (model.PriceMin.HasValue)
             query = query.Where(p => p.Price >= model.PriceMin.Value);
