@@ -7,6 +7,7 @@ import Layout from "./components/layouts/default/Layout.tsx";
 import Loader from "./components/Loader.tsx";
 import RequireAdmin from "./routes/guards/RequireAdmin.tsx";
 import AuthWatcher from "./components/AuthWatcher";
+import CartProtectedRoute from "./routes/сartRoutes.tsx";
 
 const Home = lazy(() => import("./pages/Home"));
 const UserProfile = lazy(() => import("./pages/user/UserProfile.tsx"));
@@ -33,7 +34,9 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="profile" element={<UserProfile />} />
-            <Route path="orders" element={<OrderPage />} />
+            <Route path="orders" element={<CartProtectedRoute><OrderPage />
+          </CartProtectedRoute>
+        } />
             <Route path="*" element={<NotFoundPage />} />
             <Route path="product">
               <Route path="details/:id" element={<ProductDetails />} />

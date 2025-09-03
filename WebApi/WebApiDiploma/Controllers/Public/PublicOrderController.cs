@@ -35,21 +35,31 @@ namespace WebApiDiploma.Controllers.Public
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<OrderDto>> GetById(long id) =>
             Ok(await _orderService.GetOrderByIdAsync(id));
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] OrderCreateDto dto)
         {
+            long? userId = null;
+
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!string.IsNullOrEmpty(user)) userId = long.Parse(user);
+            }
+
             var request = this.Request;
-            var createdOrder = await _orderService.CreateOrderAsync(dto);
+            var createdOrder = await _orderService.CreateOrderAsync(dto, userId);
             return CreatedAtAction(nameof(GetById), new { id = createdOrder.Id }, createdOrder);
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> Delete(long id)
         {
-            await _orderService.DeleteOrderAsync((int)id);
+            await _orderService.DeleteOrderAsync(id);
             return Ok(id);
         }
 

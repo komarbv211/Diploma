@@ -4,6 +4,7 @@ using Core.Services;
 using Infrastructure.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace WebApiDiploma.Controllers.Admin
 {
@@ -39,7 +40,15 @@ namespace WebApiDiploma.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] OrderCreateDto dto)
         {
-            var createdOrder = await _orderService.CreateOrderAsync(dto);
+            long? userId = null;
+
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!string.IsNullOrEmpty(user)) userId = long.Parse(user);
+            }
+
+            var createdOrder = await _orderService.CreateOrderAsync(dto, userId);
             return CreatedAtAction(nameof(GetById), new { id = createdOrder.Id }, createdOrder);
         }
 
@@ -54,7 +63,7 @@ namespace WebApiDiploma.Controllers.Admin
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {
-            await _orderService.DeleteOrderAsync((int)id);
+            await _orderService.DeleteOrderAsync(id);
             return Ok(id);
         }
 

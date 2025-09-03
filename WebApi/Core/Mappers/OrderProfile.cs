@@ -9,7 +9,11 @@ namespace Core.Mappers
         public OrderProfile()
         {
             CreateMap<OrderEntity, OrderDto>();
-            CreateMap<OrderCreateDto, OrderEntity>();
+            CreateMap<OrderCreateDto, OrderEntity>()
+                .ForMember(dest => dest.TotalPrice, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.Ignore())
+                .ForMember(dest => dest.Items, opt => opt.Ignore());
+
             CreateMap<OrderUpdateDto, OrderEntity>();
 
             CreateMap<OrderItemEntity, OrderItemDto>();

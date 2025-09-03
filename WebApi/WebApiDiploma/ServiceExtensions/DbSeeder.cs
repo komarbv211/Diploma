@@ -420,8 +420,8 @@ namespace WebApiDiploma.ServiceExtensions
             IRepository<OrderEntity>? orderRepo,
             IRepository<NovaPostWarehouseEntity>? warehouseRepo)
         {
-            //var newPostService = serviceProvider.GetRequiredService<NovaPoshtaService>();
-            //await newPostService.UpdateWarehousesAsync();
+            var newPostService = serviceProvider.GetRequiredService<NovaPoshtaService>();
+            await newPostService.UpdateWarehousesAsync();
 
             if (orderRepo == null || await orderRepo.AnyAsync())
                 return;

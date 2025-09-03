@@ -25,7 +25,7 @@ export interface OrderItemUpdateDto extends OrderItemCreateDto {
 // order
 export interface OrderBaseDto {
   userId?: number;
-  warehouseId?: number;
+  warehouseId?: number | null;
   totalPrice: number;
   deliveryType: DeliveryType;
   paymentMethod: PaymentMethod;
@@ -41,6 +41,23 @@ export interface OrderBaseDto {
   house?: string;
   apartment?: string;
   deliveryAddress?: string;
+}
+
+export interface OrderCreateDto {
+  warehouseId?: number | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  city: string;
+  street?: string;
+  house?: string;
+  apartment?: string;
+  deliveryAddress?: string;
+  deliveryType: DeliveryType;
+  paymentMethod: PaymentMethod;
+  customerNote?: string;
+  items: OrderItemCreateDto[];
 }
 
 export interface OrderUpdateDto extends OrderBaseDto {

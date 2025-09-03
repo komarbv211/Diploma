@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useCart } from "../../../hooks/useCart";
 import { useGetAllProductsQuery } from "../../../services/productApi";
-import { CartIcon } from "../../../components/icons";
 import QuantityCounter from "../../../components/counter/QuantityCounter";
 import { useAppSelector } from "../../../store/store";
 
@@ -23,17 +22,6 @@ const CartSummary = () => {
   const toggleItem = (id: number) => {
     setCollapsedItems((prev) => ({ ...prev, [id]: !prev[id] }));
   };
-
-  if (!cart.length)
-    return (
-      <div className="flex flex-col items-center justify-center py-10 text-gray-400">
-        <CartIcon className="w-28 h-28 mb-5 text-gray" />
-        <p className="text-xl font-semibold">Ваш кошик порожній</p>
-        <p className="font-manrope text-base text-gray duration-300 hover:text-pink2 mt-3">
-          Додайте товари, щоб оформити замовлення
-        </p>
-      </div>
-    );
 
   return (
     <div>

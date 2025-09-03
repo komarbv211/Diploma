@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Input, Form, Select } from "antd";
 import { useEffect, useState } from "react";
-import { OrderBaseDto } from "../../../types/order";
+import { OrderBaseDto, OrderCreateDto } from "../../../types/order";
 // import { clearCart } from "../../../store/slices/localCartSlice";
 import { useAppSelector } from "../../../store/store";
 import { DeliveryType, PaymentMethod } from "../../../types/enums";
@@ -14,8 +14,8 @@ import {
   useCreateOrderMutation,
   useWarehousesByCityQuery,
 } from "../../../services/orderApi";
-import { PersonalInfoForm } from "./PersonalInfoForm";
 import CartSummary from "./CartSummary";
+import { PersonalInfoForm } from "./PersonalInfoForm";
 
 const OrderPage = () => {
   const [form] = Form.useForm();
@@ -73,27 +73,11 @@ const OrderPage = () => {
           }`
         : "";
 
-    const totalPrice = cart.reduce(
-      (sum, item) => sum + item.price! * item.quantity!,
-      0
-    );
-
-    const newOrder: OrderBaseDto = {
+    const newOrder: OrderCreateDto = {
       warehouseId:
         values.deliveryType === DeliveryType.NovaPoshta && values.warehouseId
           ? Number(values.warehouseId)
           : undefined,
-      totalPrice,
-      deliveryType: values.deliveryType,
-      paymentMethod: values.paymentMethod,
-      customerNote: values.customerNote,
-      trackingNumber: values.trackingNumber,
-      items: cart.map((item) => ({
-        productId: item.productId!,
-        productName: item.name,
-        quantity: item.quantity!,
-        price: item.price!,
-      })),
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,
@@ -103,6 +87,15 @@ const OrderPage = () => {
       house: values.house,
       apartment: values.apartment,
       deliveryAddress,
+      deliveryType: values.deliveryType,
+      paymentMethod: values.paymentMethod,
+      customerNote: values.customerNote,
+      items: cart.map((item) => ({
+        productId: item.productId!,
+        productName: item.name,
+        quantity: item.quantity!,
+        price: item.price!,
+      })),
     };
 
     try {
