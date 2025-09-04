@@ -40,6 +40,8 @@ const CatalogPage: React.FC = () => {
     { skip: !id } // пропускаємо запит якщо id немає
   );
 
+  console.log("Salo", filters);
+
   // Перезапуск запиту при зміні id
   useEffect(() => {
     if (id) refetch();

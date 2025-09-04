@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Core.Models.Search
@@ -13,7 +15,8 @@ namespace Core.Models.Search
         public long? CategoryId { get; set; }
         //public long? BrandId { get; set; }
 
-         public long? [] BrandIds { get; set; }
+        [JsonPropertyName("brandIds[]")]
+        public long? [] BrandIds { get; set; }
 
 
         public int? PriceMin { get; set; }

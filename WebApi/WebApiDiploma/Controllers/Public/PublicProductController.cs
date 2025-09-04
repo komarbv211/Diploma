@@ -34,6 +34,7 @@ public class PublicProductController : ControllerBase
      [HttpGet("search")]
     public async Task<IActionResult> SearchProduct([FromQuery] ProductSearchModel model)
     {
+        var request = Request;
         
         var result = await _productService.SearchProductsAsync(model,  false);
 

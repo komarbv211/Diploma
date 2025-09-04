@@ -1271,6 +1271,7 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
       SortDesc: sortDesc || undefined,
       StartDate: isAdmin && startDate ? format(startDate, "dd.MM.yyyy") : undefined,
       EndDate: isAdmin && endDate ? format(endDate, "dd.MM.yyyy") : undefined,
+      //BrandIds: [2,4],
       BrandIds: selectedBrandIds.length > 0 ? selectedBrandIds : undefined, // 🔥
     });
   }, [
