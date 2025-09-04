@@ -13,19 +13,14 @@ namespace Core.Models.Search
     {
         // 🔍 Фільтри
         public long? CategoryId { get; set; }
+  
         //public long? BrandId { get; set; }
-
-        [JsonPropertyName("brandIds[]")]
         public long? [] BrandIds { get; set; }
-
-
+ 
         public int? PriceMin { get; set; }
         public int? PriceMax { get; set; }
-
         public double? MinRating { get; set; }
-
         public bool? InStock { get; set; } // Кількість > 0
-
         public string? Query { get; set; } // Пошук по назві чи опису
 
         // 📅 Дата додавання
