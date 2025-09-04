@@ -18,10 +18,9 @@ export const PersonalInfoForm = ({
   user,
   isAuth,
 }: PersonalInfoFormProps) => {
-  
   const disableField = isAuth;
 
-   useEffect(() => {
+  useEffect(() => {
     if (isAuth && user) {
       form.setFieldsValue({
         firstName: user.firstName,
@@ -29,12 +28,20 @@ export const PersonalInfoForm = ({
         email: user.email,
         phone: user.phone,
       });
+    } else {
+      const savedPersonalInfo = localStorage.getItem("personalInfo");
+      if (savedPersonalInfo) {
+        const parsedData = JSON.parse(savedPersonalInfo);
+        form.setFieldsValue(parsedData);
+      }
     }
   }, [isAuth, user, form]);
-  
+
   const handleNext = async () => {
     try {
       if (!isAuth) await form.validateFields();
+      const values = form.getFieldsValue();
+      localStorage.setItem("personalInfo", JSON.stringify(values));
       setActiveTab("delivery");
     } catch {
       // antd handling

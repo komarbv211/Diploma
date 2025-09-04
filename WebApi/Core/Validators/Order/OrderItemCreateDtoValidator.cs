@@ -8,9 +8,6 @@ namespace Core.Validators.Order
         public OrderItemCreateDtoValidator()
         {
             RuleFor(x => x.ProductId).GreaterThan(0);
-            RuleFor(x => x.ProductName)
-              .NotEmpty()
-              .WithMessage("Назва продукту не може бути порожньою");
 
             RuleFor(x => x.Quantity)
                 .GreaterThan(0)

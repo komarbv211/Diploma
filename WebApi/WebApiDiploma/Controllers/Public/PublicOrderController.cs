@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Graph.Models;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace WebApiDiploma.Controllers.Public
 {

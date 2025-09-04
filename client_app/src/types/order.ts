@@ -6,14 +6,12 @@ export interface OrderItemDto {
   id: number;
   orderId?: number;
   productId: number;
-  productName?: string;
   quantity: number;
   price: number;
 }
 
 export interface OrderItemCreateDto {
   productId: number;
-  productName?: string;
   quantity: number;
   price: number;
 }
@@ -50,6 +48,7 @@ export interface OrderCreateDto {
   email: string;
   phone: string;
   city: string;
+  cityRef: string;
   street?: string;
   house?: string;
   apartment?: string;

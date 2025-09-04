@@ -16,17 +16,20 @@ namespace Core.Services
         private readonly IRepository<OrderEntity> _orderRepository;
         private readonly IRepository<OrderItemEntity> _orderItemRepository;
         private readonly IRepository<NovaPostWarehouseEntity> _warehouseRepository;
+        private readonly IRepository<ProductEntity> _productRepository;
         private readonly IMapper _mapper;
 
         public OrderService(
             IRepository<OrderEntity> orderRepository,
             IRepository<OrderItemEntity> orderItemRepository,
             IRepository<NovaPostWarehouseEntity> warehouseRepository,
+            IRepository<ProductEntity> productRepository,
             IMapper mapper)
         {
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
             _warehouseRepository = warehouseRepository;
+            _productRepository = productRepository;
             _mapper = mapper;
         }
 
@@ -63,19 +66,33 @@ namespace Core.Services
 
         public async Task<OrderDto> CreateOrderAsync(OrderCreateDto dto, long? userId)
         {
-
-            var warehouse = await ValidateWarehouseAsync(dto.WarehouseId, dto.DeliveryType);
+            if (dto == null)
+                throw new HttpException("Неправильні дані замовлення", HttpStatusCode.BadRequest);
 
             var entity = _mapper.Map<OrderEntity>(dto);
             if (userId.HasValue)
                 entity.UserId = userId.Value;
 
-
-            if (dto.Items.Any())
-                entity.Items = _mapper.Map<List<OrderItemEntity>>(dto.Items);
-
+            var warehouse = await ValidateWarehouseAsync(dto.WarehouseId, dto.DeliveryType);
             if (warehouse != null)
                 entity.WarehouseId = warehouse.Id;
+
+            if (dto.Items.Any())
+            {
+                entity.Items = _mapper.Map<List<OrderItemEntity>>(dto.Items);
+                entity.Items = new List<OrderItemEntity>();
+                foreach (var itemDto in dto.Items)
+                {
+                    var product = await _productRepository.GetByID(itemDto.ProductId);
+                    if (product == null)
+                        throw new HttpException($"Товар з id {itemDto.ProductId} не знайдено", HttpStatusCode.BadRequest);
+
+                    var orderItem = _mapper.Map<OrderItemEntity>(itemDto);
+                    orderItem.Price = product.Price;
+                    entity.Items.Add(orderItem);
+                }
+
+            }
 
             entity.TotalPrice = entity.Items?.Sum(i => i.Quantity * i.Price) ?? 0;
             entity.Status = OrderStatus.Pending;
@@ -130,15 +147,20 @@ namespace Core.Services
 
         private async Task<NovaPostWarehouseEntity?> ValidateWarehouseAsync(long? warehouseId, DeliveryType deliveryType)
         {
-            if (deliveryType == DeliveryType.NovaPoshta && warehouseId.HasValue)
+            if (deliveryType == DeliveryType.NovaPoshta)
             {
+                if (!warehouseId.HasValue)
+                    throw new ArgumentException("Для доставки Новою Поштою потрібно обрати відділення.");
+
                 var warehouse = await _warehouseRepository.GetByID(warehouseId.Value);
                 if (warehouse == null)
-                    throw new HttpException("Відділення Нової пошти не знайдено", HttpStatusCode.BadRequest);
+                    throw new ArgumentException("Вибране відділення не знайдено.");
 
                 return warehouse;
             }
+
             return null;
         }
+
     }
 }

@@ -1,9 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Input, Form, Select } from "antd";
 import { useEffect, useState } from "react";
-import { OrderBaseDto, OrderCreateDto } from "../../../types/order";
-// import { clearCart } from "../../../store/slices/localCartSlice";
-import { useAppSelector } from "../../../store/store";
+import {
+  OrderBaseDto,
+  OrderCreateDto,
+  OrderItemCreateDto,
+} from "../../../types/order";
+import { clearCart } from "../../../store/slices/localCartSlice";
+import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { DeliveryType, PaymentMethod } from "../../../types/enums";
 import { useCart } from "../../../hooks/useCart";
 import {
@@ -16,11 +20,12 @@ import {
 } from "../../../services/orderApi";
 import CartSummary from "./CartSummary";
 import { PersonalInfoForm } from "./PersonalInfoForm";
+import { UserData } from "../../../types/user";
 
 const OrderPage = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const { user } = useAppSelector((state) => state.auth);
   const isAuth = !!user;
@@ -44,6 +49,10 @@ const OrderPage = () => {
     useWarehousesByCityQuery(selectedCityRef!, {
       skip: !selectedCityRef,
     });
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     console.log("Вибране місто:", selectedCityRef);
@@ -73,37 +82,44 @@ const OrderPage = () => {
           }`
         : "";
 
+    const personalInfo = localStorage.getItem("personalInfo");
+    let parsedData = {};
+    if (personalInfo) {
+      parsedData = JSON.parse(personalInfo);
+      form.setFieldsValue(parsedData);
+    }
+    console.log("Усі дані з форми:", parsedData);
+
     const newOrder: OrderCreateDto = {
+      ...(parsedData as UserData),
       warehouseId:
         values.deliveryType === DeliveryType.NovaPoshta && values.warehouseId
           ? Number(values.warehouseId)
-          : undefined,
-      firstName: values.firstName,
-      lastName: values.lastName,
-      email: values.email,
-      phone: values.phone,
+          : null,
       city: cityName,
+      cityRef: selectedCityRef ?? "",
       street: values.street,
       house: values.house,
       apartment: values.apartment,
       deliveryAddress,
-      deliveryType: values.deliveryType,
-      paymentMethod: values.paymentMethod,
+      deliveryType: values.deliveryType as unknown as DeliveryType,
+      paymentMethod: values.paymentMethod as unknown as PaymentMethod,
       customerNote: values.customerNote,
-      items: cart.map((item) => ({
+      items: cart.map<OrderItemCreateDto>((item) => ({
         productId: item.productId!,
-        productName: item.name,
         quantity: item.quantity!,
         price: item.price!,
       })),
     };
+    console.log("Об'єкт для бекенду:", JSON.stringify(newOrder, null, 2));
 
     try {
       console.log("------Working app send server----", newOrder);
       const response = await createOrder(newOrder).unwrap();
       console.log("Відповідь від сервера:", response);
-      // dispatch(clearCart());
-      // navigate("/");
+      localStorage.removeItem("personalInfo");
+      dispatch(clearCart());
+      navigate("/");
     } catch (err) {
       console.error("Помилка створення замовлення:", err);
     }
@@ -340,11 +356,12 @@ const OrderPage = () => {
                               placeholder="Оберіть спосіб доставки"
                               className="form-input h-[42px] [&.ant-select-in-form-item]:!w-full"
                             >
-                              {Object.values(DeliveryType).map((type) => (
-                                <Select.Option key={type} value={type}>
-                                  {type}
-                                </Select.Option>
-                              ))}
+                              <Select.Option value={DeliveryType.Courier}>
+                                Доставка кур'єром
+                              </Select.Option>
+                              <Select.Option value={DeliveryType.NovaPoshta}>
+                                Нова Пошта (відділення)
+                              </Select.Option>
                             </Select>
                           </Form.Item>
                           <Form.Item
@@ -364,11 +381,12 @@ const OrderPage = () => {
                               placeholder="Оберіть метод оплати"
                               className="form-input h-[42px] [&.ant-select-in-form-item]:!w-full"
                             >
-                              {Object.values(PaymentMethod).map((type) => (
-                                <Select.Option key={type} value={type}>
-                                  {type}
-                                </Select.Option>
-                              ))}
+                              <Select.Option value={PaymentMethod.Cash}>
+                                Готівка
+                              </Select.Option>
+                              <Select.Option value={PaymentMethod.CreditCard}>
+                                Оплата картою
+                              </Select.Option>
                             </Select>
                           </Form.Item>
                         </div>
