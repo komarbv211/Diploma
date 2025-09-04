@@ -50,6 +50,9 @@ namespace Core.Validators.Authorization
             RuleFor(x => x.Image)
                 .Must(uri => string.IsNullOrEmpty(uri) || Uri.IsWellFormedUriString(uri, UriKind.Absolute))
                 .WithMessage("Зображення має бути дійсною URL-адресою.");
+            RuleFor(x => x.RecaptchaToken)
+                .NotEmpty().WithMessage("Будь ласка, підтвердіть, що ви не робот (reCAPTCHA).");
+
         }
     }
 }
