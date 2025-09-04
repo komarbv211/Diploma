@@ -12,16 +12,29 @@ import MailIcon from "../components/icons/MailIcon.tsx";
 import EyeIcon from "../components/icons/EyeIcon.tsx";
 import EyeOffIcon from "../components/icons/EyeOffIcon.tsx";
 import StarDecoration from "../components/decorations/StarDecoration.tsx";
+import { useState } from "react";
+import { APP_ENV } from "../env/index.ts";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const RegistrUser: React.FC = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [registerUser] = useRegisterUserMutation();
-
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const onFinish = async (values: IUserRegisterRequest) => {
     try {
-      // values.phone тепер містить актуальний номер телефону
-      const response = await registerUser(values).unwrap();
+      if (!recaptchaToken) {
+        return form.setFields([
+          { name: "recaptcha", errors: ["Будь ласка, підтвердіть reCAPTCHA!"] },
+        ]);
+      }
+
+      const dataWithCaptcha = {
+        ...values,
+        recaptchaToken, // додамо токен сюди
+      };
+
+      const response = await registerUser(dataWithCaptcha).unwrap();
       console.log("Користувача успішно зареєстровано", response);
       navigate("..");
     } catch (error: unknown) {
@@ -174,14 +187,31 @@ const RegistrUser: React.FC = () => {
                 &nbsp;та&nbsp;
                 <a href="/privacy">Політикою конфіденційності</a>
               </p>
+              {/* reCAPTCHA v2 */}
+              <div className="grid grid-cols-2 items-center pb-0">
+                <Form.Item name="recaptcha">
+                  <div
+                    style={{ transform: "scale(0.8)", transformOrigin: "0" }}
+                  >
+                    <ReCAPTCHA
+                      sitekey={APP_ENV.RECAPTCHA_SITE_KEY}
+                      size="normal"
+                      onChange={(token) => setRecaptchaToken(token)}
+                    />
+                  </div>
+                </Form.Item>
 
-              <Form.Item>
-                <Button className="btn-pink" type="primary" htmlType="submit">
-                  <span>Зареєструватися</span>
-                </Button>
-              </Form.Item>
-
-              <div className="font-manrope text-[18px] flex justify-between pt-[8px]">
+                <Form.Item>
+                  <Button
+                    className="btn-pink mt-1"
+                    type="primary"
+                    htmlType="submit"
+                  >
+                    <span>Зареєструватися</span>
+                  </Button>
+                </Form.Item>
+              </div>
+              <div className="font-manrope text-[18px] flex justify-between">
                 <span>Вже маєте обліковий запис?</span>
                 <Link to="/login" className="text-blue2">
                   Увійти
