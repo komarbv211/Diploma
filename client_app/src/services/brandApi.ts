@@ -18,6 +18,7 @@ export const brandApi = createApi({
         url: '',
         method: 'GET',
         providesTags: ['Brands'],
+        
       }),
     }),
   }),
