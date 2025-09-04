@@ -17,6 +17,8 @@ namespace Core.Interfaces
         Task<AuthResponse> RegisterAsync(RegisterDto model);
         Task ForgotPasswordAsync(ForgotPasswordDto model);
         Task ResetPasswordAsync(ResetPasswordDto model);
+
+        Task ConfirmEmailAsync(ConfirmEmailDto dto);
         //Task<SearchResult<UserEntity>> SearchUsersAsync(UserSearchModel model);
         //Task<bool> IsRegisteredWithGoogleAsync(string email);
     }

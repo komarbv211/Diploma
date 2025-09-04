@@ -18,7 +18,12 @@ namespace Core.Interfaces
         Task DeleteUserAsync(long id);
         Task<UserDTO?> GetByEmailAsync(string email);
 
+        Task BlockUserAsync(UserBlockDTO dto);
+        Task UnblockUserAsync(long userId);
+
         Task<SearchResult<AdminUserItemModel>> SearchUsersAsync(UserSearchModel model);
+
+        Task PromoteUserToAdminAsync(long userId);
 
         //Task<IEnumerable<UserDTO>> Get(bool isAdmin = false);
         //Task<IEnumerable<UserDTO>> GetLocked();

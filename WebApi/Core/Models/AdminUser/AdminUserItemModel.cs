@@ -11,4 +11,6 @@ public class AdminUserItemModel
     public string CreatedDate { get; set; } = string.Empty;
     public string LastActivity { get; set; } = string.Empty;
     public List<string> Roles { get; set; } = new();
+    public DateTimeOffset? LockoutEnd { get; set; }
+    public bool IsBlocked => LockoutEnd.HasValue && LockoutEnd.Value > DateTimeOffset.UtcNow;
 }
