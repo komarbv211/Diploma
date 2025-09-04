@@ -1,5 +1,6 @@
 ﻿using Core.DTOs.PaginationDTOs;
 using Core.DTOs.UsersDTOs;
+using Core.Exceptions;
 using Core.Interfaces;
 using Core.Models.Search;
 using Microsoft.AspNetCore.Authorization;
@@ -64,14 +65,12 @@ namespace WebApiDiploma.Controllers.Admin
 
             try
             {
-                // Отримуємо email користувача за Id
                 var user = await _service.GetByIdAsync(dto.Id);
                 if (user == null)
                 {
                     return NotFound($"User with Id {dto.Id} not found.");
                 }
 
-                // Відправка листа
                 await _emailService.SendEmailAsync(user.Email, dto.Subject, dto.Message);
 
                 _logger.LogInformation("Email sent to user {UserId} ({Email}) with subject '{Subject}'", user.Id, user.Email, dto.Subject);
@@ -84,5 +83,31 @@ namespace WebApiDiploma.Controllers.Admin
                 return StatusCode(500, "An error occurred while sending the email.");
             }
         }
+
+        [HttpPost("block")]
+        public async Task<IActionResult> BlockUser([FromBody] UserBlockDTO dto)
+        {
+            await _service.BlockUserAsync(dto);
+            return Ok(new
+            {
+                Message = $"User {dto.Id} blocked {(dto.Until.HasValue ? $"until {dto.Until}" : "permanently")}"
+            });
+        }
+
+        [HttpPost("{id}/unblock")]
+        public async Task<IActionResult> UnblockUser(long id)
+        {
+            await _service.UnblockUserAsync(id);
+            return Ok(new { Message = $"User {id} unblocked" });
+        }
+
+        [HttpPost("{id}/promote-to-admin")]
+        public async Task<IActionResult> PromoteToAdmin(long id)
+        {
+            await _service.PromoteUserToAdminAsync(id);
+            return Ok(new { Message = $"User {id} promoted to Admin" });
+        }
+
+
     }
 }

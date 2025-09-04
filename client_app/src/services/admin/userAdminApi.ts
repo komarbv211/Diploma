@@ -1,7 +1,13 @@
-// // userAdminApi.ts
+// userAdminApi.ts
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQueryWithReauth } from '../../utilities/createBaseQuery';
-import { IUserCreateDTO, IUserMessageDTO, PagedRequestDto, PagedResultDto } from '../../types/user';
+import {
+  IUserCreateDTO,
+  IUserMessageDTO,
+  UserBlockDTO,
+  PagedRequestDto,
+  PagedResultDto
+} from '../../types/user';
 import { IUser } from '../../types/user';
 
 export const userAdminApi = createApi({
@@ -9,11 +15,11 @@ export const userAdminApi = createApi({
   baseQuery: createBaseQueryWithReauth('admin/user'),
   tagTypes: ['Users'],
   endpoints: (builder) => ({
-    getAllUsers: builder.query<PagedResultDto<IUser>, PagedRequestDto & { searchName?: string,
-       searchRoles?: string, startDate?: string, endDate?:string, dateField?: string }>({      
-      query: ({ page, pageSize, sortBy, sortDesc, searchName, searchRoles, startDate, endDate,dateField  }) => {
-
-        console.log("search role", searchRoles)
+    getAllUsers: builder.query<
+        PagedResultDto<IUser>,
+        PagedRequestDto & { searchName?: string; searchRoles?: string; startDate?: string; endDate?: string; dateField?: string }
+    >({
+      query: ({ page, pageSize, sortBy, sortDesc, searchName, searchRoles, startDate, endDate, dateField }) => {
         const params = new URLSearchParams();
         params.append('Page', `${page}`);
         params.append('ItemPerPage', `${pageSize}`);
@@ -28,12 +34,13 @@ export const userAdminApi = createApi({
         return {
           url: 'search',
           method: 'GET',
-          params: Object.fromEntries(params.entries()),  // <--- ключова зміна тут
+          params: Object.fromEntries(params.entries()),
         };
       },
       providesTags: ['Users'],
     }),
-     createUser: builder.mutation<void, IUserCreateDTO>({
+
+    createUser: builder.mutation<void, IUserCreateDTO>({
       query: (user) => ({
         url: '',
         method: 'POST',
@@ -41,13 +48,42 @@ export const userAdminApi = createApi({
       }),
       invalidatesTags: ['Users'],
     }),
+
     sendMessageToUser: builder.mutation<string, IUserMessageDTO>({
       query: (message) => ({
         url: 'send-message',
         method: 'POST',
         body: message,
-        responseHandler: (response) => response.text(), // 👈 повертаємо текст
+        responseHandler: (response) => response.text(),
       }),
+    }),
+
+    // 🔒 Блокування користувача
+    blockUser: builder.mutation<void, UserBlockDTO>({
+      query: (dto) => ({
+        url: 'block',
+        method: 'POST',
+        body: dto,
+      }),
+      invalidatesTags: ['Users'],
+    }),
+
+    promoteUserToAdmin: builder.mutation<void, { id: number }>({
+      query: ({ id }) => ({
+        url: `${id}/promote-to-admin`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Users'], // оновлюємо список користувачів після зміни ролі
+    }),
+
+
+    // 🔓 Розблокування користувача
+    unblockUser: builder.mutation<void, { id: number }>({
+      query: ({ id }) => ({
+        url: `${id}/unblock`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Users'],
     }),
   }),
 });
@@ -56,4 +92,8 @@ export const {
   useGetAllUsersQuery,
   useSendMessageToUserMutation,
   useCreateUserMutation,
+  useBlockUserMutation,
+  useUnblockUserMutation,
+  usePromoteUserToAdminMutation, // <-- новий хук
 } = userAdminApi;
+

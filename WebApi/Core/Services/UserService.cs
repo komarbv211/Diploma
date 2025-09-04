@@ -220,10 +220,6 @@ namespace Core.Services
             return result;
         }
 
-
-
-
-
         public async Task<UserDTO?> GetByEmailAsync(string email)
         {
 
@@ -233,6 +229,91 @@ namespace Core.Services
                 user = null;
             return user == null ? null : _mapper.Map<UserDTO>(user);
         }
+
+        public async Task BlockUserAsync(UserBlockDTO dto)
+        {
+            var user = await _userManager.FindByIdAsync(dto.Id.ToString());
+            if (user == null || user.IsRemove)
+            {
+                throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
+            }
+
+            // Перевірка ролі користувача
+            var roles = await _userManager.GetRolesAsync(user);
+            if (roles.Contains("Admin"))
+            {
+                throw new HttpException("Неможливо заблокувати користувача з роллю Адміністратор", HttpStatusCode.Forbidden);
+            }
+
+            // Якщо дата не передана — блокуємо "назавжди"
+            var lockoutEnd = dto.Until ?? DateTimeOffset.MaxValue;
+
+            var result = await _userManager.SetLockoutEndDateAsync(user, lockoutEnd);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new HttpException($"Не вдалося заблокувати користувача: {errors}", HttpStatusCode.BadRequest);
+            }
+        }
+
+
+        public async Task UnblockUserAsync(long userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null || user.IsRemove)
+            {
+                throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
+            }
+
+            // ❌ обнуляємо LockoutEnd → користувач знову активний
+            var result = await _userManager.SetLockoutEndDateAsync(user, null);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new HttpException($"Не вдалося розблокувати користувача: {errors}", HttpStatusCode.BadRequest);
+            }
+        }
+
+        public async Task PromoteUserToAdminAsync(long userId)
+        {
+            // Знаходимо користувача
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null || user.IsRemove)
+            {
+                throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
+            }
+
+            // Отримуємо всі ролі користувача
+            var roles = await _userManager.GetRolesAsync(user);
+
+            // Якщо користувач вже має роль Admin, нічого не робимо
+            if (roles.Contains("Admin"))
+            {
+                throw new HttpException("Користувач вже є адміністратором", HttpStatusCode.BadRequest);
+            }
+
+            // Видаляємо роль User, якщо вона є
+            if (roles.Contains("User"))
+            {
+                var removeResult = await _userManager.RemoveFromRoleAsync(user, "User");
+                if (!removeResult.Succeeded)
+                {
+                    var errors = string.Join(", ", removeResult.Errors.Select(e => e.Description));
+                    throw new HttpException($"Не вдалося видалити роль User: {errors}", HttpStatusCode.BadRequest);
+                }
+            }
+
+            // Додаємо роль Admin
+            var addResult = await _userManager.AddToRoleAsync(user, "Admin");
+            if (!addResult.Succeeded)
+            {
+                var errors = string.Join(", ", addResult.Errors.Select(e => e.Description));
+                throw new HttpException($"Не вдалося додати роль Admin користувачу: {errors}", HttpStatusCode.BadRequest);
+            }
+        }
+
+
+
 
         public async Task<SearchResult<AdminUserItemModel>> SearchUsersAsync(UserSearchModel model)
         {

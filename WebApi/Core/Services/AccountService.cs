@@ -1,20 +1,21 @@
-﻿using Core.Exceptions;
-using Core.Interfaces;
-using Core.Models.Authentication;
-using Core.Resources;
-using Microsoft.AspNetCore.Identity;
-using System.Net;
-using Infrastructure.Entities;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
-using Core.Specifications;
+﻿using AutoMapper;
 using Core.DTOs.AuthorizationDTOs;
-using AutoMapper;
-using System.Data;
-using Core.Models;
-using Microsoft.Extensions.Configuration;
 using Core.DTOs.PaginationDTOs;
+using Core.Exceptions;
+using Core.Interfaces;
+using Core.Models;
+using Core.Models.Authentication;
 using Core.Models.Search;
+using Core.Resources;
+using Core.Specifications;
+using Infrastructure.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using SixLabors.ImageSharp.Formats.Webp;
+using System.Data;
+using System.Net;
+using System.Security.Claims;
 using WebApiDiploma.Pagination;
 
 namespace Core.Services
@@ -28,26 +29,24 @@ namespace Core.Services
             IEmailService emailService,
             IConfiguration configuration,
             IGoogleAuthService googleAuthService,
-            IMapper mapper
+            IMapper mapper,
+            IRecaptchaService _recaptchaService
+
       ) : IAccountService
     {
 
         // Реалізація методу LoginAsync
         public async Task<AuthResponse> LoginAsync(AuthRequest model)
         {
-            // Шукаємо користувача за email
             var user = await userManager.FindByEmailAsync(model.Email);
 
-            // Якщо користувач не знайдений
             if (user == null)
             {
-                // Перевіряємо, чи це адміністратор
                 if (model.Email == "admin" && model.Password == "admin")
                 {
-                    // Створюємо токен для адміністратора
                     var claims = new List<Claim>
             {
-                new ("roles", "Administrator")
+                new("roles", "Administrator")
             };
 
                     var accessToken = jwtService.CreateToken(claims);
@@ -65,14 +64,27 @@ namespace Core.Services
                 }
             }
 
-            // Якщо користувач знайдений, перевіряємо пароль
+            if (user.LockoutEnabled && user.LockoutEnd.HasValue && user.LockoutEnd > DateTimeOffset.UtcNow)
+            {
+                throw new HttpException("Ваш акаунт заблоковано. Зверніться до адміністратора.", HttpStatusCode.Forbidden);
+            }
+
+            // Перевірка пароля
             if (!await userManager.CheckPasswordAsync(user, model.Password))
             {
                 throw new HttpException(Errors.InvalidCredentials, HttpStatusCode.Unauthorized);
             }
 
+            // Якщо email не підтверджено — надсилаємо лист
+            if (!user.EmailConfirmed)
+            {
+                await SendEmailConfirmationAsync(user); // автоматично надсилаємо лист підтвердження
+                throw new HttpException("Будь ласка, підтвердіть вашу електронну пошту. Лист з підтвердженням надіслано повторно.", HttpStatusCode.Forbidden);
+            }
+
             return await GenerateTokensAsync(user);
         }
+
 
         public async Task<AuthResponse> GenerateTokensAsync(UserEntity user)
         {
@@ -250,33 +262,43 @@ namespace Core.Services
 
         public async Task<AuthResponse> RegisterAsync(RegisterDto model)
         {
+
             var userWithSameEmail = await userManager.FindByEmailAsync(model.Email);
             if (userWithSameEmail != null)
-            {
                 throw new HttpException("Користувач з такою електронною поштою вже існує", HttpStatusCode.BadRequest);
-            }
 
+    
             var userWithSamePhone = userManager.Users.FirstOrDefault(u => u.PhoneNumber == model.Phone);
             if (userWithSamePhone != null)
-            {
                 throw new HttpException("Користувач з таким номером телефону вже існує", HttpStatusCode.BadRequest);
-            }
+
+            if (string.IsNullOrWhiteSpace(model.RecaptchaToken))
+                throw new HttpException("Потрібен токен ReCAPTCHA", HttpStatusCode.BadRequest);
+
+            var isValidCaptcha = await _recaptchaService.VerifyAsync(model.RecaptchaToken);
+            if (!isValidCaptcha)
+                throw new HttpException("Недійсна капча", HttpStatusCode.BadRequest);
+
 
             var user = mapper.Map<UserEntity>(model);
-            //    user.PhoneNumber = model.Phone;
-            var res = await userManager.CreateAsync(user, model.Password);
 
-            if (!res.Succeeded)
+            var result = await userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
             {
-                var errors = string.Join(", ", res.Errors.Select(e => e.Description));
-                throw new HttpException($"Не вдалося створити користувача: {errors}", HttpStatusCode.BadRequest);
+                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                     throw new HttpException($"Не вдалося створити користувача: {errors}", HttpStatusCode.BadRequest);
             }
 
             await userManager.AddToRoleAsync(user, "User");
-            user = await userManager.FindByEmailAsync(user.Email);
 
-            return await GenerateTokensAsync(user);
+            await SendEmailConfirmationAsync(user);
+
+            return new AuthResponse
+            {
+                isNewUser = true, 
+            };
         }
+
 
         private async Task<string> CreateRefreshToken(long userId)
         {
@@ -357,6 +379,49 @@ namespace Core.Services
                 throw new HttpException("Помилка під час скидання пароля.", HttpStatusCode.InternalServerError);
             }
         }
+
+        public async Task ConfirmEmailAsync(ConfirmEmailDto dto)
+        {
+            var user = await userManager.FindByIdAsync(dto.UserId.ToString());
+            if (user == null)
+                throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
+
+            var result = await userManager.ConfirmEmailAsync(user, dto.Token);
+            if (!result.Succeeded)
+                throw new HttpException("Не вдалося підтвердити email", HttpStatusCode.BadRequest);
+        }
+
+
+        public async Task SendEmailConfirmationAsync(UserEntity user)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            var confirmEmailUrl = configuration["ConfirmEmailUrl"];
+
+            var encodedUserId = Uri.EscapeDataString(user.Id.ToString());
+            var encodedToken = Uri.EscapeDataString(token);
+
+            var callbackUrl = $"{confirmEmailUrl}?userId={encodedUserId}&token={encodedToken}";
+
+            try
+            {
+                await emailService.SendEmailAsync(
+                    user.Email!,
+                    "Підтвердження електронної пошти",
+                    $"Для підтвердження електронної пошти перейдіть за посиланням: <a href=\"{callbackUrl}\">Підтвердити email</a>"
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Не вдалося надіслати лист для підтвердження email.", HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+
+
 
         //public async Task<SearchResult<UserEntity>> SearchUsersAsync(UserSearchModel model)
         //{
