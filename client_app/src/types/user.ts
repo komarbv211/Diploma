@@ -68,6 +68,8 @@ export interface IUser {
   createdDate: string;
   lastActivity: string;
   roles: string[];
+  isBlocked: boolean;
+  blockedUntil?: string;
 }
 
 // types/user.ts
@@ -81,4 +83,11 @@ export interface IUserMessageDTO {
     id: number;
     subject: string;
     message: string;
+}
+
+
+export interface UserBlockDTO
+{
+    id: number;
+    until?: string;
 }

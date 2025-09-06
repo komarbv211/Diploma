@@ -65,6 +65,18 @@ export const authApi = createApi({
             }),
         }),
 
+        confirmEmail: builder.mutation<void, { userId: number; token: string }>({
+            query: (data) => ({
+                url: 'confirm-email',
+                method: 'POST',
+                body: {
+                    userId: data.userId,
+                    token: data.token,
+                },
+            }),
+        }),
+
+
         forgotPassword: builder.mutation<void, IForgotPasswordRequest>({
             query: (data) => ({
                 url: 'forgot-password',
@@ -122,4 +134,5 @@ export const {
     useResetPasswordMutation,
     useRefreshTokenMutation,
     useLogoutMutation,
+    useConfirmEmailMutation,
 } = authApi;

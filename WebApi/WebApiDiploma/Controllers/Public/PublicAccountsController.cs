@@ -1,6 +1,8 @@
 ﻿using Core.DTOs.AuthorizationDTOs;
+using Core.Exceptions;
 using Core.Interfaces;
 using Core.Models.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApiDiploma.Controllers.Public;
@@ -110,5 +112,12 @@ public class PublicAccountsController : ControllerBase
     {
         await accountService.ResetPasswordAsync(model);
         return Ok();
+    }
+
+    [HttpPost("confirm-email")]
+    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDto dto)
+    {
+        await accountService.ConfirmEmailAsync(dto);
+        return Ok(new { Message = "Email підтверджено успішно" });
     }
 }
