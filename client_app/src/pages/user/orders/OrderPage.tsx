@@ -119,7 +119,7 @@ const OrderPage = () => {
       console.log("Відповідь від сервера:", response);
       localStorage.removeItem("personalInfo");
       dispatch(clearCart());
-      navigate("/");
+      navigate("/order-success", { state: { orderId: response.id } });
     } catch (err) {
       console.error("Помилка створення замовлення:", err);
     }
@@ -140,9 +140,8 @@ const OrderPage = () => {
 
   return (
     <>
-      <div className="w-[93%] mx-auto font-manrope">
-        <hr className="h-px mt-8 mb-2 border-1" />
-
+      <div className="w-[93%] mx-auto font-manrope min-h-[750px]">
+        <hr className="my-10 mb-2 border-1 border-gray rounded" />
         <div className="flex flex-col md:flex-row justify-between">
           <Link
             to="/"
