@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAppSelector } from "../store/store"; // підкоригуй шлях під себе
 import { getUser } from "../store/slices/userSlice";
+import { showToast } from "../utilities/showToast";
+import WarnIcon from "./icons/toasts/WarnIcon";
 
 type InteractiveRatingProps = {
   productId: number;
@@ -25,7 +27,7 @@ const InteractiveRating: React.FC<InteractiveRatingProps> = ({
 
   const handleClick = async (rating: number) => {
     if (!user) {
-      alert("Ви повинні увійти, щоб оцінити продукт");
+      showToast("warn", "Ви повинні увійти, щоб оцінити продукт", <WarnIcon />);
       return; // не змінюємо рейтинг
     }
     setCurrentRating(rating);
