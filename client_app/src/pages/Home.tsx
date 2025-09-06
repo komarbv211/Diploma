@@ -39,11 +39,16 @@ const Home: React.FC = () => {
           {/* Верхній ряд: картки + текст */}
           <div className="grid grid-cols-1 md:grid-cols-[25%_50%_25%] gap-0 w-full">
             {/* Ліва картка */}
-            <div className="rounded-t-2xl overflow-hidden">
+            <div className="relative rounded-tl-2xl overflow-hidden">
               <img
                 src="l_v_brand.jpg"
                 alt="Brand banner left"
                 className="w-full h-[300px] object-cover"
+              />
+              <img
+                src="L_V_Brand_logo.png"
+                alt="Brand logo 1"
+                className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-auto h-[53px] object-contain"
               />
             </div>
 
@@ -62,37 +67,103 @@ const Home: React.FC = () => {
             </div>
 
             {/* Права картка */}
-            <div className="rounded-t-2xl overflow-hidden">
+            <div className="relative rounded-tr-2xl overflow-hidden">
               <img
                 src="r_v_brand.jpg"
                 alt="Brand banner right"
                 className="w-full h-[300px] object-cover"
               />
+              <img
+                src="R_V_Brand_logo.png"
+                alt="Brand logo 4"
+                className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-auto h-[53px] object-contain"
+              />
             </div>
           </div>
+          {/* Нижній ряд: логотипи брендів */}
+          {/* <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-6 items-center justify-items-center w-full">
+            <img
+              src="L_V_Brand_logo.png"
+              alt="Brand logo"
+              className="h-12 object-contain"
+            />
+            <img
+              src="1_N_Brand_logo.png"
+              alt="Brand logo"
+              className="h-12 object-contain"
+            />
+            <img
+              src="2_N_Brand_logo.png"
+              alt="Brand logo"
+              className="h-12 object-contain"
+            />
+            <img
+              src="3_N_Brand_logo.png"
+              alt="Brand logo"
+              className="h-12 object-contain"
+            />
+            <img
+              src="4_N_Brand_logo.png"
+              alt="Brand logo"
+              className="h-12 object-contain"
+            />
+            <img
+              src="R_V_Brand_logo.png"
+              alt="Brand logo"
+              className="h-12 object-contain"
+            />
+          </div> */}
 
           {/* Нижній ряд зображень-карток */}
           <div className="grid grid-cols-2 md:grid-cols-4 w-full">
-            <img
-              src="1_n_brand.jpg"
-              alt="Brand img 1"
-              className="w-full h-[300px] object-cover rounded-bl-2xl"
-            />
-            <img
-              src="2_n_brand.jpg"
-              alt="Brand img 2"
-              className="w-full h-[300px] object-cover"
-            />
-            <img
-              src="3_n_brand.jpg"
-              alt="Brand img 3"
-              className="w-full h-[300px] object-cover"
-            />
-            <img
-              src="4_n_brand.jpg"
-              alt="Brand img 4"
-              className="w-full h-[300px] object-cover rounded-br-2xl"
-            />
+            <div className="relative rounded-bl-2xl overflow-hidden">
+              <img
+                src="1_n_brand.jpg"
+                alt="Brand img 1"
+                className="w-full h-[300px] object-cover rounded-bl-2xl"
+              />
+              <img
+                src="1_N_Brand_logo.png"
+                alt="Brand logo 3"
+                className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-auto h-[53px] object-contain"
+              />
+            </div>
+            <div className="relative overflow-hidden">
+              <img
+                src="2_n_brand.jpg"
+                alt="Brand img 2"
+                className="w-full h-[300px] object-cover"
+              />
+              <img
+                src="2_N_Brand_logo.png"
+                alt="Brand logo 3"
+                className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-auto h-[53px] object-contain"
+              />
+            </div>
+            <div className="relative overflow-hidden">
+              <img
+                src="3_n_brand.jpg"
+                alt="Brand img 3"
+                className="w-full h-[300px] object-cover"
+              />
+              <img
+                src="3_N_Brand_logo.png"
+                alt="Brand logo 3"
+                className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-auto h-[53px] object-contain"
+              />
+            </div>
+            <div className="relative rounded-br-2xl overflow-hidden">
+              <img
+                src="4_n_brand.jpg"
+                alt="Brand img 4"
+                className="w-full h-[300px] object-cover rounded-br-2xl"
+              />
+              <img
+                src="4_N_Brand_logo.png"
+                alt="Brand logo 3"
+                className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-auto h-[53px] object-contain"
+              />
+            </div>
           </div>
         </div>
       </section>
