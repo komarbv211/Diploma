@@ -11,12 +11,14 @@ import { useGetCategoryTreeQuery } from "../services/categoryApi";
 
 type Props = {
   products: IProduct[] | undefined;
-  maxWidth?: string | number; // "1680px" | 1680 | "100%"
+  maxWidth?: string | number;
+  title?: string;
 };
 
 const ProductCarousel: React.FC<Props> = ({
   products = [],
   maxWidth = "1680px",
+  title = "",
 }) => {
   const { data: categories } = useGetCategoryTreeQuery();
 
@@ -41,8 +43,8 @@ const ProductCarousel: React.FC<Props> = ({
     arrows: false, // ВИМКНУЛИ бічні стрілки
     responsive: [
       { breakpoint: 1675, settings: { slidesToShow: 3 } },
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 640, settings: { slidesToShow: 1 } },
+      { breakpoint: 1250, settings: { slidesToShow: 2 } },
+      { breakpoint: 840, settings: { slidesToShow: 1 } },
     ],
   };
 
@@ -56,15 +58,11 @@ const ProductCarousel: React.FC<Props> = ({
   };
 
   return (
-    <div
-      className="relative mx-auto flex flex-col gap-[20px]"
-      style={{ maxWidth, height: 610 }}
-    >
+    <div className="relative mx-auto flex flex-col gap-[20px] h-[610px] w-[100%]">
       {/* Frame 136: заголовок по центру, кнопки справа */}
-      <div className="flex flex-row justify-between items-center w-full h-[50px] ">
+      <div className="flex flex-row justify-center items-center w-[98%] h-[50px] ">
         <h2 className="text-[32px] font-['Source Sans Pro'] text-black ml-1">
-          {" "}
-          Пропозиції брендів
+          {title}
         </h2>
 
         <div className="ml-auto flex items-center gap-[37px] w-[87px] h-[50px]">
@@ -91,7 +89,7 @@ const ProductCarousel: React.FC<Props> = ({
       </div>
 
       {/* Frame 198: слайдер 540px заввишки */}
-      <div className="relative w-full h-[540px] justify-between">
+      <div className="relative w-[99%] h-[540px] ">
         <Slider ref={sliderRef} {...settings}>
           {products.map((p) => (
             <div key={p.id} className="px-2">
