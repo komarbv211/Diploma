@@ -7,10 +7,13 @@ import { APP_ENV } from "../env";
 import { useAppSelector } from "../store/store";
 import { getUser } from "../store/slices/userSlice";
 import { useGetCategoryTreeQuery } from "../services/categoryApi";
+import { useGetPromotionByIdQuery } from "../services/promotionApi";
+import PromotionCard from "../components/PromotionCard";
 
 const Home: React.FC = () => {
   const { data: products, isLoading, refetch } = useGetAllProductsQuery();
   const { data: categories } = useGetCategoryTreeQuery();
+  const { data: promotions } = useGetPromotionByIdQuery(22);
   const user = useAppSelector(getUser);
 
   const getCategoryName = (id: number) => {
@@ -80,40 +83,6 @@ const Home: React.FC = () => {
               />
             </div>
           </div>
-          {/* Нижній ряд: логотипи брендів */}
-          {/* <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-6 items-center justify-items-center w-full">
-            <img
-              src="L_V_Brand_logo.png"
-              alt="Brand logo"
-              className="h-12 object-contain"
-            />
-            <img
-              src="1_N_Brand_logo.png"
-              alt="Brand logo"
-              className="h-12 object-contain"
-            />
-            <img
-              src="2_N_Brand_logo.png"
-              alt="Brand logo"
-              className="h-12 object-contain"
-            />
-            <img
-              src="3_N_Brand_logo.png"
-              alt="Brand logo"
-              className="h-12 object-contain"
-            />
-            <img
-              src="4_N_Brand_logo.png"
-              alt="Brand logo"
-              className="h-12 object-contain"
-            />
-            <img
-              src="R_V_Brand_logo.png"
-              alt="Brand logo"
-              className="h-12 object-contain"
-            />
-          </div> */}
-
           {/* Нижній ряд зображень-карток */}
           <div className="grid grid-cols-2 md:grid-cols-4 w-full">
             <div className="relative rounded-bl-2xl overflow-hidden">
@@ -180,7 +149,17 @@ const Home: React.FC = () => {
           maxWidth="100%"
         />
       </div>
-
+      <PromotionCard
+        image={
+          promotions?.imageUrl
+            ? APP_ENV.IMAGES_1200_URL + promotions.imageUrl
+            : ""
+        }
+        title={promotions?.name || ""}
+        description={promotions?.description || ""}
+        buttonText={"Перейти до товару"}
+        buttonLink={`/product/details/${promotions?.productIds}`}
+      />
       <div className="flex justify-center mt-[100px] px-4">
         <div className="w-full max-w-[1680px] flex flex-wrap justify-center gap-[12px]">
           {isLoading && <p>Завантаження...</p>}
