@@ -9,6 +9,7 @@ import { getUser } from "../store/slices/userSlice";
 import { useGetCategoryTreeQuery } from "../services/categoryApi";
 import { useGetPromotionByIdQuery } from "../services/promotionApi";
 import PromotionCard from "../components/PromotionCard";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 
 const Home: React.FC = () => {
   const { data: products, isLoading, refetch } = useGetAllProductsQuery();
@@ -181,6 +182,7 @@ const Home: React.FC = () => {
           ))}
         </div>
       </div>
+      <ScrollToTopButton />
     </>
   );
 };
