@@ -8,7 +8,7 @@ namespace Infrastructure.Entities
         public required virtual OrderEntity Order { get; set; }
         public long ProductId { get; set; }
         public required virtual ProductEntity Product { get; set; }
-        public required int Quantity { get; set; }
+        public required long Quantity { get; set; }
         public required decimal Price { get; set; }
     }
 }
