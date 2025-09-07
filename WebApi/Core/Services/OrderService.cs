@@ -139,8 +139,8 @@ namespace Core.Services
                 .FirstOrDefaultAsync(o => o.Id == orderId) ?? throw new KeyNotFoundException("Замовлення не знайдено");
 
             if (order.Items.Count != 0) _orderItemRepository.DeleteRange(order.Items);
-
-            _orderRepository.Delete(order);
+            order.IsDeleted = true;
+            //_orderRepository.Delete(order);
 
             await _orderRepository.SaveAsync();
         }
