@@ -27,11 +27,11 @@ namespace WebApiDiploma.Controllers.Public
         [Authorize]
         public async Task<ActionResult> GetMyOrders()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized();
+            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //if (string.IsNullOrEmpty(userId))
+            //    return Unauthorized();
 
-            var orders = await _orderService.GetOrdersByUserIdAsync(long.Parse(userId));
+            var orders = await _orderService.GetOrdersByUserIdAsync();
             return Ok(orders);
         }
 

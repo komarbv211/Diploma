@@ -18,12 +18,14 @@ namespace Core.Services
         private readonly IRepository<NovaPostWarehouseEntity> _warehouseRepository;
         private readonly IRepository<ProductEntity> _productRepository;
         private readonly IMapper _mapper;
+        private readonly IAuthService _authService;
 
         public OrderService(
             IRepository<OrderEntity> orderRepository,
             IRepository<OrderItemEntity> orderItemRepository,
             IRepository<NovaPostWarehouseEntity> warehouseRepository,
             IRepository<ProductEntity> productRepository,
+            IAuthService authService,
             IMapper mapper)
         {
             _orderRepository = orderRepository;
@@ -31,6 +33,7 @@ namespace Core.Services
             _warehouseRepository = warehouseRepository;
             _productRepository = productRepository;
             _mapper = mapper;
+            _authService = authService;
         }
 
         public async Task<List<OrderDto>> GetOrders()
@@ -53,15 +56,17 @@ namespace Core.Services
             return orderDto ?? throw new HttpException("Замовлення не знайдено", HttpStatusCode.NotFound);
         }
 
-        public async Task<List<OrderDto>> GetOrdersByUserIdAsync(long userId)
+        public async Task<List<OrderDto>> GetOrdersByUserIdAsync(long? userId = null)
         {
-            return await _orderRepository
+            var userIdFind = userId == null  ? await _authService.GetUserId() : userId.Value;
+            var result = await _orderRepository
                 .GetAllQueryable()
-                .Where(o => o.UserId == userId)
+                .Where(o => o.UserId == userIdFind)
                 .Include(o => o.Items)
                 .Include(o => o.Warehouse)
                 .ProjectTo<OrderDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
+            return result;
         }
 
         public async Task<OrderDto> CreateOrderAsync(OrderCreateDto dto, long? userId)
