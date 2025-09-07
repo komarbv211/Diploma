@@ -1,7 +1,7 @@
 [
   {
     "Id": 1,
-    "UserId": 94,
+    "UserId": 1,
     "DeliveryMethod": "NovaPoshta",
     "WarehouseId": null,
     "DeliveryAddress": null,
@@ -11,7 +11,7 @@
   },
   {
     "Id": 2,
-    "UserId": 95,
+    "UserId": 2,
     "DeliveryMethod": "Pickup",
     "WarehouseId": null,
     "DeliveryAddress":  "м. Рівне, вул. Виноградна 10",
@@ -21,7 +21,7 @@
   },
   {
     "Id": 3,
-    "UserId": 96,
+    "UserId": 3,
     "DeliveryMethod": "Pickup",
     "WarehouseId": null,
     "DeliveryAddress": null,

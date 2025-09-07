@@ -20,7 +20,8 @@ public class ProductEntity : BaseEntity<long>
 
     public int Quantity { get; set; }
 
-    public long? RatingsCount { get; set; }
+    public int RatingsCount { get; set; } = 0;
+
     public double? AverageRating { get; set; }
 
     // 🔗 Зв’язок: багато продуктів можуть належати одній акції
