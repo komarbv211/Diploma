@@ -117,14 +117,17 @@ const OrderPage = () => {
 
     try {
       console.log("------Working app send server----", newOrder);
-      const response = await createOrder(newOrder).unwrap();
-      console.log("Відповідь від сервера:", response);
-      localStorage.removeItem("personalInfo");
+      //const response = await createOrder(newOrder).unwrap();
 
-      if (isAuth) await clearCartOnServer().unwrap();
+
+      //if (isAuth) await clearCartOnServer().unwrap();
       dispatch(clearCart());
 
-      navigate("/order-success", { state: { orderId: response.id } });
+      // console.log("Відповідь від сервера:", response);
+      // localStorage.removeItem("personalInfo");
+      //
+      const orderId = 1;
+      navigate("/order-success", { state: { orderId: orderId } });
     } catch (err) {
       console.error("Помилка створення замовлення:", err);
     }

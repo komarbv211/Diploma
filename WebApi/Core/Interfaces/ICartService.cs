@@ -7,5 +7,5 @@ public interface ICartService
     Task CreateUpdate(CartCreateUpdateDTO model);
     Task<List<CartItemDTO>> GetCartItems();
     Task Delete(long id);
-    Task ClearCart(long userId);
+    Task ClearCart();
 }

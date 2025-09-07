@@ -47,11 +47,11 @@ public class CartController(ICartService cartService) : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> ClearCart()
     {
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userIdClaim) || !long.TryParse(userIdClaim, out var userId))
-            return Unauthorized();
+        //var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //if (string.IsNullOrEmpty(userIdClaim) || !long.TryParse(userIdClaim, out var userId))
+        //    return Unauthorized();
 
-        await cartService.ClearCart(userId);
+        await cartService.ClearCart();
         return Ok(new { message = "Cart cleared successfully" });
     }
 }

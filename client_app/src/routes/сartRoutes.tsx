@@ -9,11 +9,11 @@ interface CartProtectedRouteProps {
 
 const CartRoutes: React.FC<CartProtectedRouteProps> = ({ children }) => {
   const { user } = useAppSelector(state => state.auth);
-  const { cart } = useCart(!!user);
+  //const { cart } = useCart(!!user);
 
-  if (!cart || cart.length == 0) {
-    return <Navigate to="/" replace />;
-  }
+  // if (!cart || cart.length == 0) {
+  //   return <Navigate to="/" replace />;
+  // }
 
   return <>{children}</>;
 };
