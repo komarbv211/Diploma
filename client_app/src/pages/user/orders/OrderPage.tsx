@@ -21,6 +21,7 @@ import {
 import CartSummary from "./CartSummary";
 import { PersonalInfoForm } from "./PersonalInfoForm";
 import { UserData } from "../../../types/user";
+import { useClearCartMutation } from "../../../services/cartApi";
 
 const OrderPage = () => {
   const [form] = Form.useForm();
@@ -31,6 +32,7 @@ const OrderPage = () => {
   const isAuth = !!user;
 
   const { cart } = useCart(user != null);
+  const [clearCartOnServer] = useClearCartMutation();
 
   const [note, setNote] = useState(false);
   const [activeTab, setActiveTab] = useState("personal");
@@ -118,7 +120,10 @@ const OrderPage = () => {
       const response = await createOrder(newOrder).unwrap();
       console.log("Відповідь від сервера:", response);
       localStorage.removeItem("personalInfo");
+
+      if (isAuth) await clearCartOnServer().unwrap();
       dispatch(clearCart());
+
       navigate("/order-success", { state: { orderId: response.id } });
     } catch (err) {
       console.error("Помилка створення замовлення:", err);

@@ -22,17 +22,21 @@ export const PersonalInfoForm = ({
 
   useEffect(() => {
     if (isAuth && user) {
-      form.setFieldsValue({
+      const values = {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         phone: user.phone,
-      });
+      };
+      form.setFieldsValue(values);
+      localStorage.setItem("personalInfo", JSON.stringify(values));
     } else {
       const savedPersonalInfo = localStorage.getItem("personalInfo");
       if (savedPersonalInfo) {
         const parsedData = JSON.parse(savedPersonalInfo);
         form.setFieldsValue(parsedData);
+        localStorage.setItem("personalInfo", JSON.stringify(parsedData));
+        console.log(localStorage.getItem("personalInfo"));
       }
     }
   }, [isAuth, user, form]);
@@ -40,8 +44,8 @@ export const PersonalInfoForm = ({
   const handleNext = async () => {
     try {
       if (!isAuth) await form.validateFields();
-      const values = form.getFieldsValue();
-      localStorage.setItem("personalInfo", JSON.stringify(values));
+      // const values = form.getFieldsValue();
+      // localStorage.setItem("personalInfo", JSON.stringify(values));
       setActiveTab("delivery");
     } catch {
       // antd handling
