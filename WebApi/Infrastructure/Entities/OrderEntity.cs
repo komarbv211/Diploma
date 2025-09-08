@@ -5,12 +5,24 @@ namespace Infrastructure.Entities
 {
     public class OrderEntity : BaseEntity<long>
     {
-        public required long UserId { get; set; }
+        public long? UserId { get; set; }
         public virtual UserEntity? User { get; set; }
 
         public virtual ICollection<OrderItemEntity> Items { get; set; } = new List<OrderItemEntity>();
         public long? WarehouseId { get; set; }
         public virtual NovaPostWarehouseEntity? Warehouse { get; set; }
+
+        // personal info
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
+        public required string Email { get; set; }
+        public required string Phone { get; set; }
+
+        // delivery
+        public required string City { get; set; }
+        public string? Street { get; set; }
+        public string? House { get; set; }
+        public string? Apartment { get; set; }
 
         public required decimal TotalPrice { get; set; }
         public required DeliveryType DeliveryMethod { get; set; }

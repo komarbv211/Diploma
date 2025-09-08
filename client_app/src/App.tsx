@@ -7,9 +7,12 @@ import Layout from "./components/layouts/default/Layout.tsx";
 import Loader from "./components/Loader.tsx";
 import RequireAdmin from "./routes/guards/RequireAdmin.tsx";
 import AuthWatcher from "./components/AuthWatcher";
+import CartProtectedRoute from "./routes/сartRoutes.tsx";
+import { ToastContainer } from "react-toastify";
 
 const Home = lazy(() => import("./pages/Home"));
 const UserProfile = lazy(() => import("./pages/user/UserProfile.tsx"));
+const OrderPage = lazy(() => import("./pages/user/orders/OrderPage.tsx"));
 const LoginUser = lazy(() => import("./pages/LoginUser.tsx"));
 const ConfirmEmailPage = lazy(() => import("./pages/ConfirmEmailPage.tsx"));
 const RegistrUser = lazy(() => import("./pages/RegistrUser.tsx"));
@@ -24,6 +27,7 @@ const PasswordUpdatedPage = lazy(
 const ProductDetails = lazy(() => import("./pages/ProductDetails.tsx"));
 const CatalogPage = lazy(() => import("./pages/CatalogPage.tsx"));
 const CommentsPage = lazy(() => import("./pages/CommentsPage.tsx"));
+const OrderSuccess = lazy(() => import("./pages/user/orders/OrderSuccess.tsx"));
 
 function App() {
   return (
@@ -34,6 +38,15 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="profile" element={<UserProfile />} />
+            <Route
+              path="orders"
+              element={
+                <CartProtectedRoute>
+                  <OrderPage />
+                </CartProtectedRoute>
+              }
+            />
+            <Route path="/order-success" element={<OrderSuccess />} />
             <Route path="*" element={<NotFoundPage />} />
             <Route path="product">
               <Route path="details/:id" element={<ProductDetails />} />
@@ -54,6 +67,7 @@ function App() {
           </Route>
         </Routes>
       </Suspense>
+      <ToastContainer />
     </>
   );
 }

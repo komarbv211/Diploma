@@ -54,4 +54,12 @@ public class CartService(DbMakeUpContext makeUpContext,
             await makeUpContext.SaveChangesAsync();
         }
     }
+
+    public async Task ClearCart()
+    {
+        var userId = await authService.GetUserId();
+        var items = makeUpContext.Carts.Where(c => c.UserId == userId);
+        makeUpContext.Carts.RemoveRange(items);
+        await makeUpContext.SaveChangesAsync();
+    }
 }

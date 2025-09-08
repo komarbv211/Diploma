@@ -10,6 +10,8 @@ import { Form, message } from "antd";
 import { useRateProductMutation } from "../../services/productRatingApi ";
 import { MailIcon } from "../icons";
 import AcoountBoxIcon from "../icons/AccountBoxIcon";
+import { showToast } from "../../utilities/showToast";
+import WarnIcon from "../icons/toasts/WarnIcon";
 
 type AddReviewModalProps = {
   productId: number;
@@ -35,11 +37,11 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
 
   const handleSubmit = async () => {
     if (!user) {
-      alert("Ви повинні бути авторизовані, щоб залишати відгуки");
+      showToast("warn", "Ви повинні бути авторизовані, щоб залишати відгуки", <WarnIcon />);
       return;
     }
     if (!rating && !text) {
-      alert("Будь ласка, додайте оцінку або текст відгуку");
+      showToast("warn", "Будь ласка, додайте оцінку або текст відгуку", <WarnIcon />);
       return;
     }
 
@@ -67,7 +69,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
 
   const handleRate = async (newRating: number) => {
     if (!user?.id) {
-      alert("Ви повинні увійти, щоб оцінити продукт");
+      showToast("warn", "Ви повинні увійти, щоб оцінити продукт", <WarnIcon />);
       return;
     }
     try {

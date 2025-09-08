@@ -42,7 +42,7 @@ namespace WebApiDiploma.ServiceExtensions
 
             await SeedCommentsAsync(app, serviceProvider);
 
-            //await SeedOrdersAsync(serviceProvider);
+            await SeedOrdersAsync(serviceProvider);
         }
 
         private static async Task InitDatabaseAsync(IServiceProvider serviceProvider)
@@ -405,6 +405,9 @@ namespace WebApiDiploma.ServiceExtensions
         {
             var orderRepo = serviceProvider.GetService<IRepository<OrderEntity>>();
             var warehouseRepo = serviceProvider.GetService<IRepository<NovaPostWarehouseEntity>>();
+
+            var newPostService = serviceProvider.GetRequiredService<NovaPoshtaService>();
+            //await newPostService.UpdateWarehousesAsync();
 
             if (orderRepo == null || await orderRepo.AnyAsync())
                 return;

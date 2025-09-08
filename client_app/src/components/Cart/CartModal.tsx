@@ -4,12 +4,17 @@ import { useCart } from "../../hooks/useCart";
 import { APP_ENV } from "../../env";
 import { CartIcon, DeleteIcon } from "../icons";
 import ReactDOM from "react-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const CartModal: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
   const { cart, addToCart, removeFromCart } = useCart(user != null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  useEffect(() => {
+    setIsCartOpen(false);
+  }, [location.pathname]);
 
   return (
     <>
@@ -135,34 +140,54 @@ const CartModal: React.FC = () => {
                         ))}
                       </ul>
                     ) : (
-                      <p className="text-gray-500 text-lg text-center mt-10">
-                        Кошик порожній
-                      </p>
+                      <div className="font-manrope flex flex-col items-center justify-center h-full text-center py-20">
+                        <CartIcon className="w-32 h-32 mb-6 text-gray animate-bounce" />
+                        <h2 className="text-2xl font-semibold mb-2">
+                          Ваш кошик порожній
+                        </h2>
+                        <p className="text-gray-400 mb-6">
+                          Додайте товари, щоб оформити замовлення
+                        </p>
+                        <button
+                          onClick={() => setIsCartOpen(false)}
+                          className="px-6 py-3 bg-pink text-white rounded-lg hover:bg-pink/90 transition"
+                        >
+                          Повернутися до каталогу
+                        </button>
+                      </div>
                     )}
                   </div>
 
                   {/* Права частина */}
-                  <div className="flex flex-col px-2 w-full xl:w-[400px]">
-                    <div className="bg-beige2 gap-3 p-[20px] rounded-xl">
-                      <div className="flex xs:text-[27px] font-medium font-manrope mb-2 justify-between">
-                        <span>Загальна сума:</span>
-                        <span>
-                          {cart
-                            ?.reduce(
-                              (acc, item) =>
-                                acc + (item.price ?? 0) * (item.quantity ?? 1),
-                              0
-                            )
-                            .toLocaleString()}{" "}
-                          ₴
-                        </span>
-                      </div>
+                  {cart.length > 0 && (
+                    <div className="flex flex-col px-2 w-full xl:w-[400px]">
+                      <div className="bg-beige2 gap-3 p-[20px] rounded-xl">
+                        <div className="flex xs:text-[27px] font-medium font-manrope mb-2 justify-between">
+                          <span>Загальна сума:</span>
+                          <span>
+                            {cart
+                              ?.reduce(
+                                (acc, item) =>
+                                  acc +
+                                  (item.price ?? 0) * (item.quantity ?? 1),
+                                0
+                              )
+                              .toLocaleString()}{" "}
+                            ₴
+                          </span>
+                        </div>
 
-                      <button className="w-full h-[52px] bg-pink rounded-xl text-white xs:text-[24px] font-semibold font-manrope hover:bg-pink/90 transition">
-                        Оформити замовлення
-                      </button>
+                        <Link to="/orders">
+                          <button
+                            onClick={() => setIsCartOpen(false)}
+                            className="w-full h-[52px] bg-pink rounded-xl text-white xs:text-[24px] font-semibold font-manrope hover:bg-pink/90 transition"
+                          >
+                            Оформити замовлення
+                          </button>
+                        </Link>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>

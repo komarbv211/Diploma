@@ -24,10 +24,11 @@ namespace Core.Services
             _apiKey = config["NovaPoshta:ApiKey"] ?? "";
         }
 
-        public async Task<List<NovaPostWarehouseDto>> GetAllWarehousesAsync()
+        public async Task<List<NovaPostWarehouseDto>> GetAllWarehousesAsync(string cityRef)
         {
             return await _npRepository.GetAllQueryable()
                 .ProjectTo<NovaPostWarehouseDto>(_mapper.ConfigurationProvider)
+                .Where(x => x.CityRef == cityRef)   
                 .ToListAsync();
         }
 
@@ -53,7 +54,9 @@ namespace Core.Services
             }
 
             var existingWarehouses = await _npRepository.GetAllQueryable()
-                .ToDictionaryAsync(x => x.WarehouseCode);
+                .AsNoTracking()
+                .GroupBy(x => x.WarehouseCode)
+                .ToDictionaryAsync(g => g.Key, g => g.First());
 
             var apiCodes = data.Data.Select(w => w.Number).ToHashSet();
 
@@ -63,15 +66,18 @@ namespace Core.Services
                 {
                     var newEntity = _mapper.Map<NovaPostWarehouseEntity>(w);
                     MapExtraFields(newEntity, w);
-                    entity.LastSyncedAt = DateTime.UtcNow;
+                    newEntity.LastSyncedAt = DateTime.UtcNow;
                     await _npRepository.AddAsync(newEntity);
 
                     Console.WriteLine($"Склад {w.Description} ({w.Number}) додано");
                 }
                 else
                 {
-                    MapExtraFields(entity, w);
+                    entity.IsActive = true;
                     entity.LastSyncedAt = DateTime.UtcNow;
+                    MapExtraFields(entity, w);
+                    await _npRepository.Update(entity);
+
                     Console.WriteLine($"Склад {w.Description} ({w.Number}) оновлено");
                 }
             }
@@ -83,12 +89,13 @@ namespace Core.Services
             foreach (var w in toDeactivate)
             {
                 w.IsActive = false;
+                await _npRepository.Update(w);
                 Console.WriteLine($"Склад {w.Address} ({w.WarehouseCode}) деактивовано");
             }
 
             await _npRepository.SaveAsync();
         }
-        
+
         private static void MapExtraFields(NovaPostWarehouseEntity entity, NovaPostWarehouseData w)
         {
             entity.Address = w.Description ?? string.Empty;
@@ -98,6 +105,8 @@ namespace Core.Services
             entity.MaxWeightKg = decimal.TryParse(w.TotalMaxWeightAllowed, out var weight) ? weight : null;
             entity.Latitude = w.Latitude ?? 0;
             entity.Longitude = w.Longitude ?? 0;
+            entity.CityRef = w.CityRef ?? string.Empty;
+            entity.City = w.CityDescription ?? string.Empty;
         }
     }
 }

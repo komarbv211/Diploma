@@ -1,35 +1,35 @@
 export interface IUserDTO {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
-    image: string;
-    createdDate: string;
-    lastActivity: string;
-    emailConfirmed: boolean;
-    phoneNumberConfirmed: boolean;
-    twoFactorEnabled: boolean;
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  image: string;
+  createdDate: string;
+  lastActivity: string;
+  emailConfirmed: boolean;
+  phoneNumberConfirmed: boolean;
+  twoFactorEnabled: boolean;
 
-    birthDate?: string;       // додано для дати народження, необов’язкове поле
-    roles: string; 
+  birthDate?: string; // додано для дати народження, необов’язкове поле
+  roles: string;
 }
-  
+
 export interface IUserCreateDTO {
-    email: string;
-    password: string;
-    // інші поля
+  email: string;
+  password: string;
+  // інші поля
 }
-  
+
 export interface IUserUpdateDTO {
-    id: number;
-    email?: string;
-    userName?: string;
-    // інші поля
+  id: number;
+  email?: string;
+  userName?: string;
+  // інші поля
 }
-  
+
 export interface PagedResultDto<T> {
-  items: T[];               
+  items: T[];
   pagination: {
     currentPage: number;
     totalPages: number;
@@ -38,15 +38,13 @@ export interface PagedResultDto<T> {
   };
 }
 
-
-
 export interface PagedRequestDto {
   page?: number;
   pageSize?: number;
   //додав
-   sortBy?: string;     // ✅ додай це
-  sortDesc?: boolean;  // ✅ і це
-   searchName?: string; // 🔁 Замість "name"
+  sortBy?: string; // ✅ додай це
+  sortDesc?: boolean; // ✅ і це
+  searchName?: string; // 🔁 Замість "name"
 }
 
 export interface PaginationComponentProps {
@@ -62,6 +60,7 @@ export interface IUser {
   firstName: string;
   lastName: string;
   email: string;
+  phoneNumber: string;
   image?: string;
   isLoginGoogle?: boolean;
   isLoginPassword?: boolean;
@@ -78,7 +77,6 @@ export interface IUserListResponse {
   totalCount: number;
 }
 
-
 export interface IUserMessageDTO {
     id: number;
     subject: string;
@@ -90,4 +88,11 @@ export interface UserBlockDTO
 {
     id: number;
     until?: string;
+}
+
+export interface UserData {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
 }

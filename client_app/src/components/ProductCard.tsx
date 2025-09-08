@@ -8,6 +8,9 @@ import { useCart } from "../hooks/useCart";
 import { APP_ENV } from "../env";
 import { ICartItem } from "../store/slices/localCartSlice";
 import { Link } from "react-router-dom";
+import { showToast } from "../utilities/showToast";
+import SuccessIcon from "./icons/toasts/SuccessIcon";
+import WarnIcon from "./icons/toasts/WarnIcon";
 
 type Props = {
   title: string;
@@ -45,7 +48,7 @@ const ProductCard: React.FC<Props> = ({
 
   const handleRate = async (rating: number) => {
     if (!userId) {
-      alert("Ви повинні увійти, щоб оцінити продукт");
+      showToast("warn", "Ви повинні увійти, щоб оцінити продукт", <WarnIcon />);
       return;
     }
     try {
@@ -69,6 +72,7 @@ const ProductCard: React.FC<Props> = ({
     await addToCart(item as ICartItem);
     // відкриваємо Drawer
     window.dispatchEvent(new CustomEvent("open-cart"));
+    showToast("success", "Товар додано до кошика", <SuccessIcon />);
   };
 
   return (

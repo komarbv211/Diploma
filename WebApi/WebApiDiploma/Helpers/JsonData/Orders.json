@@ -2,31 +2,85 @@
   {
     "Id": 1,
     "UserId": 1,
+    "FirstName": "Іван",
+    "LastName": "Іваненко",
+    "Email": "ivan94@example.com",
+    "Phone": "+380 (67) 123-45-01",
     "DeliveryMethod": "NovaPoshta",
-    "WarehouseId": null,
+    "WarehouseId": 12,
+    "City": "Рівне",
+    "Street": null,
+    "House": null,
+    "Apartment": null,
     "DeliveryAddress": null,
     "TotalPrice": 1500.0,
     "Status": "Pending",
-    "PaymentMethod": "CreditCard"
+    "PaymentMethod": "CreditCard",
+    "CustomerNote": "Будь ласка, подзвоніть перед доставкою",
+    "TrackingNumber": null,
+    "Items": [
+      {
+        "Id": 1,
+        "ProductName": "Ноутбук",
+        "Quantity": 1,
+        "Price": 1500.0
+      }
+    ]
   },
   {
     "Id": 2,
     "UserId": 2,
-    "DeliveryMethod": "Pickup",
+    "FirstName": "Марія",
+    "LastName": "Петренко",
+    "Email": "maria95@example.com",
+    "Phone": "+380 (67) 234-56-02",
+    "DeliveryMethod": "Courier",
     "WarehouseId": null,
-    "DeliveryAddress":  "м. Рівне, вул. Виноградна 10",
+    "City": "Рівне",
+    "Street": "Виноградна",
+    "House": "10",
+    "Apartment": "5",
+    "DeliveryAddress": "м. Рівне, вул. Виноградна 10, кв. 5",
     "TotalPrice": 800.0,
     "Status": "Pending",
-    "PaymentMethod": "Cash"
+    "PaymentMethod": "Cash",
+    "CustomerNote": null,
+    "TrackingNumber": null,
+    "Items": [
+      {
+        "Id": 2,
+        "ProductName": "Смартфон",
+        "Quantity": 1,
+        "Price": 800.0
+      }
+    ]
   },
   {
     "Id": 3,
     "UserId": 3,
-    "DeliveryMethod": "Pickup",
+    "FirstName": "Олег",
+    "LastName": "Ковальчук",
+    "Email": "oleg96@example.com",
+    "Phone": "+380 (67) 345-67-03",
+    "DeliveryMethod": "NovaPoshta",
     "WarehouseId": null,
-    "DeliveryAddress": null,
+    "City": "Львів",
+    "Street": "Січових Стрільців",
+    "House": "15",
+    "Apartment": "12",
+    "DeliveryAddress": "м. Львів, вул. Січових Стрільців 15, кв. 12",
     "TotalPrice": 452.0,
     "Status": "Pending",
-    "PaymentMethod": "Cash"
+    "PaymentMethod": "Cash",
+    "CustomerNote": "Терміново, до 18:00",
+    "TrackingNumber": null,
+    "Items": [
+      {
+        "Id": 3,
+        "ProductName": "Навушники",
+        "Quantity": 1,
+        "Price": 452.0
+      }
+    ]
   }
 ]

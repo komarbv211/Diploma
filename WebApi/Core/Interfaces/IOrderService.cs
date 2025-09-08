@@ -6,8 +6,9 @@ namespace Core.Interfaces
     {
         Task<List<OrderDto>> GetOrders();
         Task<OrderDto?> GetOrderByIdAsync(long id);
-        Task<OrderDto> CreateOrderAsync(OrderCreateDto dto);
+        Task<List<OrderDto>> GetOrdersByUserIdAsync(long? userId = null);
+        Task<OrderDto> CreateOrderAsync(OrderCreateDto dto, long? userId = null);
         Task UpdateOrderAsync(OrderUpdateDto dto);
-        Task DeleteOrderAsync(int id);
+        Task DeleteOrderAsync(long id);
     }
 }

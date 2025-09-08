@@ -2,6 +2,7 @@
 using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace WebApiDiploma.Controllers.User;
 
@@ -40,5 +41,17 @@ public class CartController(ICartService cartService) : ControllerBase
     {
         await cartService.Delete(id);
         return Ok();
+    }
+
+    [Authorize]
+    [HttpDelete]
+    public async Task<IActionResult> ClearCart()
+    {
+        //var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //if (string.IsNullOrEmpty(userIdClaim) || !long.TryParse(userIdClaim, out var userId))
+        //    return Unauthorized();
+
+        await cartService.ClearCart();
+        return Ok(new { message = "Cart cleared successfully" });
     }
 }

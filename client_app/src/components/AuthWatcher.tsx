@@ -16,6 +16,8 @@ const isPublicPath = (pathname: string): boolean => {
     "/google-register",
     "/password-updated",
     "/product/details/:id",
+    "/orders",
+    "/order-success",
   ];
 
   // Перевіряємо точні збіги

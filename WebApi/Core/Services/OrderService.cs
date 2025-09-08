@@ -3,9 +3,11 @@ using AutoMapper.QueryableExtensions;
 using Core.DTOs.OrderDTOs;
 using Core.Exceptions;
 using Core.Interfaces;
+using Core.Models.Enums;
 using Infrastructure.Entities;
 using Infrastructure.Enums;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using System.Net;
 
 namespace Core.Services
@@ -15,18 +17,24 @@ namespace Core.Services
         private readonly IRepository<OrderEntity> _orderRepository;
         private readonly IRepository<OrderItemEntity> _orderItemRepository;
         private readonly IRepository<NovaPostWarehouseEntity> _warehouseRepository;
+        private readonly IRepository<ProductEntity> _productRepository;
         private readonly IMapper _mapper;
+        private readonly IAuthService _authService;
 
         public OrderService(
             IRepository<OrderEntity> orderRepository,
             IRepository<OrderItemEntity> orderItemRepository,
             IRepository<NovaPostWarehouseEntity> warehouseRepository,
+            IRepository<ProductEntity> productRepository,
+            IAuthService authService,
             IMapper mapper)
         {
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
             _warehouseRepository = warehouseRepository;
+            _productRepository = productRepository;
             _mapper = mapper;
+            _authService = authService;
         }
 
         public async Task<List<OrderDto>> GetOrders()
@@ -49,33 +57,85 @@ namespace Core.Services
             return orderDto ?? throw new HttpException("Замовлення не знайдено", HttpStatusCode.NotFound);
         }
 
-        public async Task<OrderDto> CreateOrderAsync(OrderCreateDto dto)
+        public async Task<List<OrderDto>> GetOrdersByUserIdAsync(long? userId = null)
         {
-            var warehouse = await ValidateWarehouseAsync(dto.WarehouseId, dto.DeliveryType, dto.DeliveryAddress);
+            var userIdFind = userId == null  ? await _authService.GetUserId() : userId.Value;
+            var result = await _orderRepository
+                .GetAllQueryable()
+                .Where(o => o.UserId == userIdFind)
+                .Include(o => o.Items)
+                .Include(o => o.Warehouse)
+                .ProjectTo<OrderDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+            return result;
+        }
+
+        public async Task<OrderDto> CreateOrderAsync(OrderCreateDto dto, long? userId=null)
+        {
+            if (dto == null)
+                throw new HttpException("Неправильні дані замовлення", HttpStatusCode.BadRequest);
 
             var entity = _mapper.Map<OrderEntity>(dto);
 
-            if (dto.Items.Any())
-                entity.Items = _mapper.Map<List<OrderItemEntity>>(dto.Items);
 
+
+            try
+            {
+                entity.UserId = userId == null ? await _authService.GetUserId() : userId.Value;
+            }
+            catch (Exception ex)
+            {
+                if(userId.HasValue)
+                    entity.UserId = userId.Value;
+            }
+
+            var warehouse = await ValidateWarehouseAsync(dto.WarehouseId, dto.DeliveryType);
             if (warehouse != null)
                 entity.WarehouseId = warehouse.Id;
 
             await _orderRepository.AddAsync(entity);
             await _orderRepository.SaveAsync();
 
+            if (dto.Items.Any())
+            {
+                //entity.Items = _mapper.Map<List<OrderItemEntity>>(dto.Items);
+                entity.Items = new List<OrderItemEntity>();
+                foreach (var itemDto in dto.Items)
+                {
+                    var product = await _productRepository.GetByID(itemDto.ProductId);
+                    if (product == null)
+                        throw new HttpException($"Товар з id {itemDto.ProductId} не знайдено", HttpStatusCode.BadRequest);
+
+                    var orderItem = _mapper.Map<OrderItemEntity>(itemDto);
+                    orderItem.Price = product.Price;
+                    orderItem.OrderId = entity.Id;
+                    //await _orderItemRepository.AddAsync(orderItem);
+                    //await _orderItemRepository.SaveAsync();
+                    entity.Items.Add(orderItem);
+                }
+
+            }
+
+            entity.TotalPrice = entity.Items?.Sum(i => i.Quantity * i.Price) ?? 0;
+            entity.Status = OrderStatus.Pending;
+            await _orderRepository.SaveAsync();
+
+            
+
             return _mapper.Map<OrderDto>(entity);
         }
 
         public async Task UpdateOrderAsync(OrderUpdateDto dto)
         {
+
             var entity = await _orderRepository
                 .GetAllQueryable()
                 .Include(o => o.Items)
                 .FirstOrDefaultAsync(o => o.Id == dto.Id)
                 ?? throw new HttpException("Замовлення не знайдено", HttpStatusCode.NotFound);
+            entity.TotalPrice = entity.Items.Sum(i => i.Quantity * i.Price);
 
-            var warehouse = await ValidateWarehouseAsync(dto.WarehouseId, dto.DeliveryType, dto.DeliveryAddress);
+            var warehouse = await ValidateWarehouseAsync(dto.WarehouseId, dto.DeliveryType);
 
             _mapper.Map(dto, entity);
 
@@ -90,9 +150,10 @@ namespace Core.Services
 
             await _orderRepository.Update(entity);
             await _orderRepository.SaveAsync();
+
         }
 
-        public async Task DeleteOrderAsync(int orderId)
+        public async Task DeleteOrderAsync(long orderId)
         {
             var order = await _orderRepository
                 .GetAllQueryable()
@@ -100,47 +161,28 @@ namespace Core.Services
                 .FirstOrDefaultAsync(o => o.Id == orderId) ?? throw new KeyNotFoundException("Замовлення не знайдено");
 
             if (order.Items.Count != 0) _orderItemRepository.DeleteRange(order.Items);
-
-            _orderRepository.Delete(order);
+            order.IsDeleted = true;
+            //_orderRepository.Delete(order);
 
             await _orderRepository.SaveAsync();
         }
 
-        private async Task<NovaPostWarehouseEntity?> ValidateWarehouseAsync(long? warehouseId, DeliveryType deliveryType, string? deliveryAddress)
+        private async Task<NovaPostWarehouseEntity?> ValidateWarehouseAsync(long? warehouseId, DeliveryType deliveryType)
         {
-            if (deliveryType == DeliveryType.NovaPoshta || deliveryType == DeliveryType.Pickup)
+            if (deliveryType == DeliveryType.NovaPoshta)
             {
                 if (!warehouseId.HasValue)
-                {
-                    var msg = deliveryType == DeliveryType.NovaPoshta
-                        ? "Не вибрано відділення Нової пошти"
-                        : "Не вибрано відділення для самовивозу";
-
-                    throw new HttpException(msg, HttpStatusCode.BadRequest);
-                }
+                    throw new ArgumentException("Для доставки Новою Поштою потрібно обрати відділення.");
 
                 var warehouse = await _warehouseRepository.GetByID(warehouseId.Value);
                 if (warehouse == null)
-                {
-                    var msg = deliveryType == DeliveryType.NovaPoshta
-                        ? "Відділення Нової пошти не знайдено"
-                        : "Відділення для самовивозу не знайдено";
-
-                    throw new HttpException(msg, HttpStatusCode.BadRequest);
-                }
+                    throw new ArgumentException("Вибране відділення не знайдено.");
 
                 return warehouse;
             }
 
-            if (deliveryType == DeliveryType.Courier)
-            {
-                if (string.IsNullOrWhiteSpace(deliveryAddress))
-                    throw new HttpException("Для кур’єрської доставки необхідно вказати адресу", HttpStatusCode.BadRequest);
-
-                return null;
-            }
-
             return null;
         }
+
     }
 }

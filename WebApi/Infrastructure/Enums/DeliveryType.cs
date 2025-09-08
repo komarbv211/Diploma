@@ -3,7 +3,6 @@
     public enum DeliveryType
     {
         NovaPoshta,
-        Pickup,
         Courier,
     }
 }
