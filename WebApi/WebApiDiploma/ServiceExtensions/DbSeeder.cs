@@ -407,7 +407,7 @@ namespace WebApiDiploma.ServiceExtensions
             var warehouseRepo = serviceProvider.GetService<IRepository<NovaPostWarehouseEntity>>();
 
             var newPostService = serviceProvider.GetRequiredService<NovaPoshtaService>();
-            //await newPostService.UpdateWarehousesAsync();
+            await newPostService.UpdateWarehousesAsync();
 
             if (orderRepo == null || await orderRepo.AnyAsync())
                 return;
