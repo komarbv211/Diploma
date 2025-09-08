@@ -105,7 +105,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Ініціалізація початкових даних
-await app.SeedDataAsync();
+//await app.SeedDataAsync();
 
 // Запуск
 app.Run();

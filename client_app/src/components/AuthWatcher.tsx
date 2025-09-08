@@ -17,6 +17,7 @@ const isPublicPath = (pathname: string): boolean => {
     "/password-updated",
     "/product/details/:id",
     "/orders",
+    "/order-success",
   ];
 
   // Перевіряємо точні збіги

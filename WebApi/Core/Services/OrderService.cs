@@ -69,14 +69,22 @@ namespace Core.Services
             return result;
         }
 
-        public async Task<OrderDto> CreateOrderAsync(OrderCreateDto dto, long? userId)
+        public async Task<OrderDto> CreateOrderAsync(OrderCreateDto dto, long? userId=null)
         {
             if (dto == null)
                 throw new HttpException("Неправильні дані замовлення", HttpStatusCode.BadRequest);
 
             var entity = _mapper.Map<OrderEntity>(dto);
-            if (userId.HasValue)
-                entity.UserId = userId.Value;
+
+            try
+            {
+                entity.UserId = userId == null ? await _authService.GetUserId() : userId.Value;
+            }
+            catch (Exception ex)
+            {
+                if(userId.HasValue)
+                    entity.UserId = userId.Value;
+            }
 
             var warehouse = await ValidateWarehouseAsync(dto.WarehouseId, dto.DeliveryType);
             if (warehouse != null)
