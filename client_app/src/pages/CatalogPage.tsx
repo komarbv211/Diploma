@@ -9,8 +9,11 @@ import { APP_ENV } from "../env";
 import { useAppSelector } from "../store/store";
 import { getUser } from "../store/slices/userSlice";
 import { useParams } from "react-router-dom";
+import ProductCarousel from "../components/ProductCarousel";
+import { useGetAllProductsQuery } from "../services/admin/productAdminApi";
 
 const CatalogPage: React.FC = () => {
+  const { data: products } = useGetAllProductsQuery();
   const { id } = useParams<{ id: string }>();
   const [filters, setFilters] = useState<ProductFilterData>({});
 
@@ -60,14 +63,82 @@ const CatalogPage: React.FC = () => {
 
       {/* Права колонка: фото категорії + товари */}
       <div className="w-full lg:w-[76.5%] flex flex-col gap-6 m-0 p-0">
+        {/* <img
+          src="parfum_banner.jpg"
+          alt="головний банер"
+          className="w-full max-h-[698px] object-cover object-center"
+        /> */}
+     
         {/* Фото категорії */}
-        {category?.image && (
+        {/* {category?.image && (
+          
           <img
             src={APP_ENV.IMAGES_1200_URL + category.image}
             alt={category.name}
             className="w-full max-h-[700px] object-cover rounded-lg"
           />
-        )}
+        )} */}
+
+ <div
+        className="w-[1420px] h-[765px] flex-shrink-0 aspect-[284/153] bg-[url('/parfum_banner.png')] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg"
+        aria-label="Парфуми банер"
+      >
+         <img
+        src="/parfum_banner.png"
+        alt="Парфуми банер"
+        className="w-full max-h-[700px] object-cover rounded-lg"
+      />
+  </div>
+
+        {/* {category && (
+  <>
+    {category.name === "Парфумерія" ? (
+      <img
+        src="/r_v_brand.jpg"
+        alt="Парфуми банер"
+        className="w-full max-h-[700px] object-cover rounded-lg"
+      />
+    ) : category.image ? (
+      <img
+        src={APP_ENV.IMAGES_1200_URL + category.image}
+        alt={category.name}
+        className="w-full max-h-[700px] object-cover rounded-lg"
+      />
+    ) : (
+      <div className="w-full h-[300px] bg-gray-100 flex items-center justify-center rounded-lg">
+        <p className="text-gray-500">Фото категорії відсутнє</p>
+      </div>
+    )}
+  </>
+)} */}
+
+<div className="w-[1420px] h-[8114px] bg-white mx-auto mt-28 flex flex-col gap-12">
+        <ProductCarousel
+          title={"Пропозиції брендів"}
+          products={products ?? []}
+          maxWidth="1420px"
+        />
+        <ProductCarousel
+  title="Найпопулярніші"
+  products={[...(products ?? [])].sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0))}
+  maxWidth="1420px"
+/>
+      </div>
+
+
+<div
+  className="absolute left-[642px] top-[2337px] w-[1021px] h-[484px] flex-shrink-0 
+             bg-[url('/your-image.png')] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg"
+>
+  {/* Зображення в правому нижньому куті */}
+  <img
+    src="/red_girl.png"
+    alt="Опис зображення"
+    className="absolute bottom-0 right-0 w-[auto] h-auto object-contain"
+  />
+</div>
+
+
 
         {/* Картки товарів */}
         <div className="flex flex-wrap justify-center gap-4">
