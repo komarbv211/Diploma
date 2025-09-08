@@ -7,6 +7,7 @@ using Core.Models.Enums;
 using Infrastructure.Entities;
 using Infrastructure.Enums;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using System.Net;
 
 namespace Core.Services
@@ -76,6 +77,8 @@ namespace Core.Services
 
             var entity = _mapper.Map<OrderEntity>(dto);
 
+
+
             try
             {
                 entity.UserId = userId == null ? await _authService.GetUserId() : userId.Value;
@@ -90,9 +93,12 @@ namespace Core.Services
             if (warehouse != null)
                 entity.WarehouseId = warehouse.Id;
 
+            await _orderRepository.AddAsync(entity);
+            await _orderRepository.SaveAsync();
+
             if (dto.Items.Any())
             {
-                entity.Items = _mapper.Map<List<OrderItemEntity>>(dto.Items);
+                //entity.Items = _mapper.Map<List<OrderItemEntity>>(dto.Items);
                 entity.Items = new List<OrderItemEntity>();
                 foreach (var itemDto in dto.Items)
                 {
@@ -102,6 +108,9 @@ namespace Core.Services
 
                     var orderItem = _mapper.Map<OrderItemEntity>(itemDto);
                     orderItem.Price = product.Price;
+                    orderItem.OrderId = entity.Id;
+                    //await _orderItemRepository.AddAsync(orderItem);
+                    //await _orderItemRepository.SaveAsync();
                     entity.Items.Add(orderItem);
                 }
 
@@ -109,9 +118,9 @@ namespace Core.Services
 
             entity.TotalPrice = entity.Items?.Sum(i => i.Quantity * i.Price) ?? 0;
             entity.Status = OrderStatus.Pending;
-
-            await _orderRepository.AddAsync(entity);
             await _orderRepository.SaveAsync();
+
+            
 
             return _mapper.Map<OrderDto>(entity);
         }

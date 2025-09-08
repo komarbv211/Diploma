@@ -1,12 +1,15 @@
 ﻿using Core.Interfaces;
 using Core.Models.Enums;
 using Core.Services;
+using Infrastructure.Data;
 using Infrastructure.Entities;
 using Infrastructure.Enums;
+using MailKit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using System;
 using System.Text;
 using WebApiDiploma.Models.Seeder;
 
@@ -17,33 +20,49 @@ namespace WebApiDiploma.ServiceExtensions
 
         public static async Task SeedDataAsync(this WebApplication app)
         {
-
-
             //Roles seeder
             using var scope = app.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
+
+            await InitDatabaseAsync(serviceProvider);
+
+            await SeedRolesAsync(serviceProvider);
+
+            await SeedUsersAsync(app,serviceProvider);
+
+            await SeedCategoriesAsync(app, serviceProvider);
+
+            await SeedProductsAsync(app, serviceProvider);
+
+            await SeedProductRatingAsync(app, serviceProvider);
+
+            await SeedBrandsAsync(app, serviceProvider);
+
+            await SeedPromotionsAsync(app, serviceProvider);
+
+            await SeedCommentsAsync(app, serviceProvider);
+
+            await SeedOrdersAsync(serviceProvider);
+        }
+
+        private static async Task InitDatabaseAsync(IServiceProvider serviceProvider)
+        {
+            var context = serviceProvider.GetRequiredService<DbMakeUpContext>();
+            await context.Database.MigrateAsync();
+        }
+
+        private static async Task SeedRolesAsync(IServiceProvider serviceProvider)
+        {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<RoleEntity>>();
 
             if (!await roleManager.RoleExistsAsync("Admin"))
                 await roleManager.CreateAsync(new RoleEntity { Name = "Admin" });
             if (!await roleManager.RoleExistsAsync("User"))
                 await roleManager.CreateAsync(new RoleEntity { Name = "User" });
+        }
 
-
-
-            //NewPost seeder
-            //using (var newPostService = scope.ServiceProvider.GetRequiredService<INewPostService>())
-            //{
-            //    var areaRepo = scope.ServiceProvider.GetRequiredService<IRepository<Area>>();
-            //    if (!await areaRepo.AnyAsync())
-            //    {
-            //        await newPostService.UpdateNewPostData();
-            //    }
-            //}
-
-
-
-            // Users seeder
+        private static async Task SeedUsersAsync(WebApplication app, IServiceProvider serviceProvider)
+        {
             var userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
 
             var imageService = serviceProvider.GetRequiredService<IImageService>();
@@ -89,44 +108,13 @@ namespace WebApiDiploma.ServiceExtensions
                 }
                 else Console.WriteLine("File \"JsonData/Users.json\" not found");
             }
+        }
 
+        private static async Task SeedCategoriesAsync(WebApplication app, IServiceProvider serviceProvider)
+        {
+            var categoryRepo = serviceProvider.GetService<IRepository<CategoryEntity>>();
+            var imageService = serviceProvider.GetRequiredService<IImageService>();
 
-
-            //Filter seeder
-            //var filterRepo = scope.ServiceProvider.GetService<IRepository<Filter>>();
-            //if (filterRepo is not null && !await filterRepo.AnyAsync())
-            //{
-            //    Console.WriteLine("Start filters seeder");
-            //    string filtersJsonDataFile = Path.Combine(Environment.CurrentDirectory, app.Configuration["SeederJsonDir"]!, "Filters.json");
-            //    if (File.Exists(filtersJsonDataFile))
-            //    {
-            //        var filtersJson = File.ReadAllText(filtersJsonDataFile, Encoding.UTF8);
-            //        try
-            //        {
-            //            var filtersModels = JsonConvert.DeserializeObject<IEnumerable<SeederFilterModel>>(filtersJson)
-            //                ?? throw new JsonException();
-            //            if (filtersModels.Any())
-            //            {
-            //                var filters = filtersModels.Select(x => new Filter()
-            //                {
-            //                    Name = x.Name,
-            //                    Values = x.Values.Select(z => new FilterValue() { Value = z }).ToList()
-            //                });
-            //                await filterRepo.AddRangeAsync(filters);
-            //                await filterRepo.SaveAsync();
-            //            }
-            //        }
-            //        catch (JsonException)
-            //        {
-            //            Console.WriteLine("Error deserialize filters json file");
-            //        }
-            //    }
-            //    else Console.WriteLine("File \"JsonData/Filter.json\" not found");
-            //}
-
-            //Category seeder
-
-            var categoryRepo = scope.ServiceProvider.GetService<IRepository<CategoryEntity>>();
             if (categoryRepo is not null && !await categoryRepo.AnyAsync())
             {
                 Console.WriteLine("Start categories seeder");
@@ -173,12 +161,12 @@ namespace WebApiDiploma.ServiceExtensions
                 }
                 else Console.WriteLine("File \"JsonData/Categories.json\" not found");
             }
+        }
 
-
-            //product seeder
-            //var filterValueRepo = scope.ServiceProvider.GetService<IRepository<FilterValue>>();
-            //var settlementRepo = scope.ServiceProvider.GetService<IRepository<Settlement>>();
-            var ProductRepo = scope.ServiceProvider.GetService<IRepository<ProductEntity>>();
+        private static async Task SeedProductsAsync(WebApplication app, IServiceProvider serviceProvider)
+        {
+            var ProductRepo = serviceProvider.GetService<IRepository<ProductEntity>>();
+            var imageService = serviceProvider.GetRequiredService<IImageService>();
             if (ProductRepo is not null && !await ProductRepo.AnyAsync())
             {
                 Console.WriteLine("Start adverts seeder");
@@ -227,8 +215,12 @@ namespace WebApiDiploma.ServiceExtensions
                 else Console.WriteLine("File \"Adverts.json\" not found");
             }
 
-            // ProductRating seeder
-            var productRatingRepo = scope.ServiceProvider.GetService<IRepository<ProductRatingEntity>>();
+        }
+        
+        private static async Task SeedProductRatingAsync(WebApplication app, IServiceProvider serviceProvider)
+        {
+
+            var productRatingRepo = serviceProvider.GetService<IRepository<ProductRatingEntity>>();
             if (productRatingRepo is not null && !await productRatingRepo.AnyAsync())
             {
                 Console.WriteLine("Start product ratings seeder");
@@ -260,10 +252,12 @@ namespace WebApiDiploma.ServiceExtensions
                 }
                 else Console.WriteLine("File \"ProductRatings.json\" not found");
             }
-
-
+        }
+        
+        private static async Task SeedBrandsAsync(WebApplication app, IServiceProvider serviceProvider)
+        {
             //Brands seeder
-            var brandRepo = scope.ServiceProvider.GetService<IRepository<BrandEntity>>();
+            var brandRepo = serviceProvider.GetService<IRepository<BrandEntity>>();
 
             if (brandRepo is not null && !await brandRepo.AnyAsync())
             {
@@ -293,13 +287,12 @@ namespace WebApiDiploma.ServiceExtensions
                 }
                 else Console.WriteLine("File \"JsonData/Brand.json\" not found");
             }
+        }
 
-
-
-            // Отримуємо потрібні репозиторії з DI-контейнера
-
-            var promotionRepo = scope.ServiceProvider.GetService<IRepository<PromotionEntity>>();
-            var productRepo = scope.ServiceProvider.GetService<IRepository<ProductEntity>>();
+        private static async Task SeedPromotionsAsync(WebApplication app, IServiceProvider serviceProvider)
+        {
+            var promotionRepo = serviceProvider.GetService<IRepository<PromotionEntity>>();
+            var productRepo = serviceProvider.GetService<IRepository<ProductEntity>>();
 
             if (promotionRepo is not null && !await promotionRepo.AnyAsync())
             {
@@ -358,8 +351,11 @@ namespace WebApiDiploma.ServiceExtensions
                     Console.WriteLine("❌ Promotions.json не знайдено");
                 }
             }
+        }
 
-            var commentRepo = scope.ServiceProvider.GetService<IRepository<CommentEntity>>();
+        private static async Task SeedCommentsAsync(WebApplication app, IServiceProvider serviceProvider)
+        {
+            var commentRepo = serviceProvider.GetService<IRepository<CommentEntity>>();
             if (commentRepo is not null && !await commentRepo.AnyAsync())
             {
                 Console.WriteLine("Start comments seeder");
@@ -403,25 +399,15 @@ namespace WebApiDiploma.ServiceExtensions
                 }
             }
 
-
-
-
-            var orderRepo = scope.ServiceProvider.GetService<IRepository<OrderEntity>>();
-            var warehouseRepo = scope.ServiceProvider.GetService<IRepository<NovaPostWarehouseEntity>>();
-
-            await SeedOrdersAsync(scope.ServiceProvider, orderRepo, warehouseRepo);
-
-
-
         }
 
-        private static async Task SeedOrdersAsync(
-            IServiceProvider serviceProvider,
-            IRepository<OrderEntity>? orderRepo,
-            IRepository<NovaPostWarehouseEntity>? warehouseRepo)
+        private static async Task SeedOrdersAsync(IServiceProvider serviceProvider)
         {
+            var orderRepo = serviceProvider.GetService<IRepository<OrderEntity>>();
+            var warehouseRepo = serviceProvider.GetService<IRepository<NovaPostWarehouseEntity>>();
+
             var newPostService = serviceProvider.GetRequiredService<NovaPoshtaService>();
-            await newPostService.UpdateWarehousesAsync();
+            //await newPostService.UpdateWarehousesAsync();
 
             if (orderRepo == null || await orderRepo.AnyAsync())
                 return;
@@ -444,42 +430,6 @@ namespace WebApiDiploma.ServiceExtensions
 
             Console.WriteLine($"Orders seeded: {orders!.Count}, OrderItems seeded: {orderItems!.Count}");
         }
-
-
-
-
-
-
-
-        //private async static Task<IEnumerable<CategoryEntity>> GetCategories(
-        //        IEnumerable<CategoryEntity> models,
-        //        IEnumerable<Filter> filters,
-        //        IImageService imageService)
-        //    {
-        //        var categoryTasks = models.Select(async (x) =>
-        //        {
-        //            var advertFilters = x.Filters?.Any() ?? false ? filters.Where(z => x.Filters.Contains(z.Name)) : null;
-        //            var childs = x.Childs?.Any() ?? false ? await GetCategories(x.Childs, filters, imageService) : null;
-        //            var image = !String.IsNullOrEmpty(x.Image)
-        //                ? await imageService.SaveImageFromUrlAsync(x.Image)
-        //                : null;
-        //            return new Category()
-        //            {
-        //                Name = x.Name,
-        //                Image = image,
-        //                Filters = advertFilters?.ToArray() ?? [],
-        //                Childs = childs?.ToArray() ?? []
-        //            };
-        //        });
-        //        var categories = await Task.WhenAll(categoryTasks);
-        //        return categories;
-        //    }
-
-
-
-
-
-
 
     }
 }

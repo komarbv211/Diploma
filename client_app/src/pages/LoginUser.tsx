@@ -34,14 +34,28 @@ const Login: React.FC = () => {
         setShowGoogleModal(true);
         return;
       }
+
       await loginUser(values).unwrap();
       navigate("/");
-    } catch {
-      setErrorMessage("Невірний email або пароль");
+    } catch (error: any) {
+      // Перевірка на помилки від API
+      if (error?.status === 403) {
+        // Заблокований користувач
+        setErrorMessage(
+            error?.data?.message || "Ваш акаунт заблоковано. Зверніться до адміністратора."
+        );
+      } else if (error?.status === 401) {
+        // Невірні дані
+        setErrorMessage("Невірний email або пароль");
+      } else {
+        // Інші помилки
+        setErrorMessage("Сталася помилка. Спробуйте ще раз.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
+
 
   const onLoginGoogleResult = async (googleToken: string) => {
     if (!googleToken) return;

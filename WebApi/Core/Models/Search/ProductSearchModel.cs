@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Core.Models.Search
@@ -11,18 +13,14 @@ namespace Core.Models.Search
     {
         // 🔍 Фільтри
         public long? CategoryId { get; set; }
+  
         //public long? BrandId { get; set; }
-
-         public long? [] BrandIds { get; set; }
-
-
+        public long? [] BrandIds { get; set; }
+ 
         public int? PriceMin { get; set; }
         public int? PriceMax { get; set; }
-
         public double? MinRating { get; set; }
-
         public bool? InStock { get; set; } // Кількість > 0
-
         public string? Query { get; set; } // Пошук по назві чи опису
 
         // 📅 Дата додавання

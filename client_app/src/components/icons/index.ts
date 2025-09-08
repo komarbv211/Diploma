@@ -11,5 +11,7 @@ export { default as InstagramIcon } from "./InstagramIcon";
 export { default as TwitterIcon } from "./TwitterIcon";
 export { default as CartFlowerIcon } from "./CartFlowerIcon";
 export { default as MaterialLight } from "./MaterialLight";
+export { default as PrevArrowIcon } from "./PrevArrowIcon";
+export { default as NextArrowIcon } from "./NextArrowIcon";
 
 

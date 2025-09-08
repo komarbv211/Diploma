@@ -1,7 +1,7 @@
 [
   {
     "Id": 1,
-    "UserId": 94,
+    "UserId": 1,
     "FirstName": "Іван",
     "LastName": "Іваненко",
     "Email": "ivan94@example.com",
@@ -29,7 +29,7 @@
   },
   {
     "Id": 2,
-    "UserId": 95,
+    "UserId": 2,
     "FirstName": "Марія",
     "LastName": "Петренко",
     "Email": "maria95@example.com",
@@ -57,7 +57,7 @@
   },
   {
     "Id": 3,
-    "UserId": 96,
+    "UserId": 3,
     "FirstName": "Олег",
     "LastName": "Ковальчук",
     "Email": "oleg96@example.com",

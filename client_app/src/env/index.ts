@@ -9,6 +9,7 @@ const IMAGES_200_URL: string = IMAGES_URL+ '/200_';
 const IMAGES_400_URL: string = IMAGES_URL + '/400_';
 const IMAGES_800_URL: string = IMAGES_URL + '/800_';
 const IMAGES_1200_URL: string = IMAGES_URL + '/1200_';
+const RECAPTCHA_SITE_KEY: string = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
 const APP_ENV = {
     REMOTE_BASE_URL,
@@ -21,6 +22,7 @@ const APP_ENV = {
     IMAGES_400_URL,
     IMAGES_800_URL,
     IMAGES_1200_URL,
+    RECAPTCHA_SITE_KEY,
 }
 
 console.log('REMOTE_BASE_URL:', REMOTE_BASE_URL);

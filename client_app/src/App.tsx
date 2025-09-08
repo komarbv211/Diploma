@@ -14,6 +14,7 @@ const Home = lazy(() => import("./pages/Home"));
 const UserProfile = lazy(() => import("./pages/user/UserProfile.tsx"));
 const OrderPage = lazy(() => import("./pages/user/orders/OrderPage.tsx"));
 const LoginUser = lazy(() => import("./pages/LoginUser.tsx"));
+const ConfirmEmailPage = lazy(() => import("./pages/ConfirmEmailPage.tsx"));
 const RegistrUser = lazy(() => import("./pages/RegistrUser.tsx"));
 const GoogleRegisterUser = lazy(() => import("./pages/GoogleRegisterUser.tsx"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword.tsx"));
@@ -60,6 +61,7 @@ function App() {
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="/password-updated" element={<PasswordUpdatedPage />} />
           <Route path="google-register" element={<GoogleRegisterUser />} />
+          <Route path="confirm-email" element={<ConfirmEmailPage />} />
           <Route path="/admin/*" element={<RequireAdmin />}>
             <Route path="*" element={<AdminRoutes />} />
           </Route>
