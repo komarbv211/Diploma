@@ -13,6 +13,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import GoogleLoginButton from "../components/buttons/GoogleLoginButton";
 import StarDecoration from "../components/decorations/StarDecoration";
 import { MailIcon, EyeIcon, EyeOffIcon, GoogleIcon } from "../components/icons";
+import BackButton from "../components/buttons/BackButton";
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -42,7 +43,8 @@ const Login: React.FC = () => {
       if (error?.status === 403) {
         // Заблокований користувач
         setErrorMessage(
-            error?.data?.message || "Ваш акаунт заблоковано. Зверніться до адміністратора."
+          error?.data?.message ||
+            "Ваш акаунт заблоковано. Зверніться до адміністратора."
         );
       } else if (error?.status === 401) {
         // Невірні дані
@@ -55,7 +57,6 @@ const Login: React.FC = () => {
       setIsLoading(false);
     }
   };
-
 
   const onLoginGoogleResult = async (googleToken: string) => {
     if (!googleToken) return;
@@ -87,6 +88,8 @@ const Login: React.FC = () => {
         />
         {/* Декоративний градієнт */}
         <div className="absolute inset-0 left-[45%] bg-gradient-to-r from-beige2  z-0" />
+
+        <BackButton to="/" />
 
         {/* Форма логіну */}
         <div className="relative flex w-full max-w-sm mx-auto  rounded-lg  lg:max-w-6xl ">

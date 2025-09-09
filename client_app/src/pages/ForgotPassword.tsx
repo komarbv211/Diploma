@@ -6,6 +6,7 @@ import { ApiError } from "../types/errors";
 import StarDecoration from "../components/decorations/StarDecoration";
 import { MailIcon } from "../components/icons";
 import { Link } from "react-router-dom";
+import BackButton from "../components/buttons/BackButton";
 const ForgotPassword: React.FC = () => {
   const [form] = Form.useForm();
   const [forgotPassword] = useForgotPasswordMutation();
@@ -37,6 +38,8 @@ const ForgotPassword: React.FC = () => {
       />
       {/* Декоративний градієнт */}
       <div className="absolute inset-0 left-[45%] bg-gradient-to-r from-beige2  z-0" />
+
+      <BackButton to="/" />
 
       {/* Форма логіну */}
       <div className="relative flex w-full max-w-sm mx-auto  rounded-lg  lg:max-w-6xl ">
