@@ -8,11 +8,57 @@ import PromotionCard from "../components/PromotionCard";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 import ReviewProductCard from "../components/comments/ReviewProductCard";
 import { useGetRandomCommentsQuery } from "../services/productCommentsApi";
+import { useProducts } from "../hooks/useProducts";
 
 const Home: React.FC = () => {
   const { data: products } = useGetAllProductsQuery();
   const { data: promotions } = useGetPromotionByIdQuery(1);
-  const { data: reviewsFromApi } = useGetRandomCommentsQuery(2);
+  const { data: reviewsFromApi } = useGetRandomCommentsQuery(4);
+  const today = new Date();
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(today.getDate() - 7);
+
+  const { products: newProducts } = useProducts({
+    StartDate: sevenDaysAgo.toISOString().split("T")[0], // "2025-09-02"
+    EndDate: today.toISOString().split("T")[0], // "2025-09-09"
+  }); // Категорія "Новинки"
+  const { products: perfumeProducts } = useProducts({
+    CategoryId: 1,
+  }); // Категорія "Парфумерія"
+  const { products: hairProducts } = useProducts({
+    CategoryId: 49,
+  }); // Категорія "Волосся"
+  const { products: faceProducts } = useProducts({
+    CategoryId: 28,
+  }); // Категорія "Обличчя"
+
+  // розділяємо коментарі на дві групи
+  const reviewsTop = reviewsFromApi?.slice(0, 2) ?? [];
+  const reviewsBottom = reviewsFromApi?.slice(2, 4) ?? [];
+  const renderReviews = (reviews: typeof reviewsFromApi | []) =>
+    reviews && reviews.length > 0 ? (
+      reviews.map((review) => (
+        <ReviewProductCard
+          key={review.id}
+          productName={review.product?.name || "Товар без назви"}
+          productImage={
+            review.product?.images?.[0]
+              ? APP_ENV.IMAGES_1200_URL + review.product.images[0].name
+              : "/NoImage.png"
+          }
+          reviewTitle="Відгук на товар"
+          userName={review.user?.firstName || "Анонім"}
+          reviewText={review.text}
+          onGoToProduct={() =>
+            review.productId
+              ? (window.location.href = `/product/details/${review.productId}`)
+              : undefined
+          }
+        />
+      ))
+    ) : (
+      <p>Немає доступних коментарів</p>
+    );
 
   return (
     <>
@@ -129,7 +175,6 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-
       <div className="container mx-auto  mt-28 flex flex-col gap-12 max-w-[1680px]">
         <ProductCarousel
           title={"Пропозиції брендів"}
@@ -138,44 +183,21 @@ const Home: React.FC = () => {
         />
         <ProductCarousel
           title={"Новинки"}
-          products={products ?? []}
+          products={newProducts ?? []}
           maxWidth="100%"
         />
       </div>
-      {/* 🔹 Відгуки покупців */}
+      {/* 🔹 Відгуки покупців (середина, перші 2) */}
       <section className="flex flex-wrap justify-between gap-[19px] max-w-[1680px] mx-auto mt-[120px]">
-        {reviewsFromApi && reviewsFromApi.length > 0 ? (
-          reviewsFromApi.map((review) => (
-            <ReviewProductCard
-              key={review.id}
-              productName={review.product?.name || "Товар без назви"}
-              productImage={
-                review.product?.images && review.product.images.length > 0
-                  ? APP_ENV.IMAGES_1200_URL + review.product.images[0].name
-                  : "/NoImage.png"
-              }
-              reviewTitle="Відгук на товар"
-              userName={review.user?.firstName || "Анонім"}
-              reviewText={review.text}
-              onGoToProduct={() =>
-                review.productId
-                  ? (window.location.href = `/product/details/${review.productId}`)
-                  : undefined
-              }
-            />
-          ))
-        ) : (
-          <p>Немає доступних коментарів</p>
-        )}
-      </section>
+        {renderReviews(reviewsTop)}
+      </section>{" "}
       <div className="container mx-auto  mt-28 flex flex-col gap-12 max-w-[1680px]">
         <ProductCarousel
           title={"Парфумерія"}
-          products={products ?? []}
+          products={perfumeProducts ?? []}
           maxWidth="100%"
         />
       </div>
-
       <PromotionCard
         image={
           promotions?.imageUrl
@@ -187,45 +209,21 @@ const Home: React.FC = () => {
         buttonText={"Перейти до товару"}
         buttonLink={`/product/details/${promotions?.productIds}`}
       />
-
       <div className="container mx-auto  mt-28 flex flex-col gap-12 max-w-[1680px]">
         <ProductCarousel
           title={"Волосся"}
-          products={products ?? []}
+          products={hairProducts ?? []}
           maxWidth="100%"
         />
         <ProductCarousel
           title={"Обличчя"}
-          products={products ?? []}
+          products={faceProducts ?? []}
           maxWidth="100%"
         />
       </div>
-
-      {/* 🔹 Відгуки покупців */}
+      {/* 🔹 Відгуки покупців (низ, інші 2) */}
       <section className="flex flex-wrap justify-between gap-[19px] max-w-[1680px] mx-auto mt-[120px]">
-        {reviewsFromApi && reviewsFromApi.length > 0 ? (
-          reviewsFromApi.map((review) => (
-            <ReviewProductCard
-              key={review.id}
-              productName={review.product?.name || "Товар без назви"}
-              productImage={
-                review.product?.images && review.product.images.length > 0
-                  ? APP_ENV.IMAGES_1200_URL + review.product.images[0].name
-                  : "/NoImage.png"
-              }
-              reviewTitle="Відгук на товар"
-              userName={review.user?.firstName || "Анонім"}
-              reviewText={review.text}
-              onGoToProduct={() =>
-                review.productId
-                  ? (window.location.href = `/product/details/${review.productId}`)
-                  : undefined
-              }
-            />
-          ))
-        ) : (
-          <p>Немає доступних коментарів</p>
-        )}
+        {renderReviews(reviewsBottom)}
       </section>
       <ScrollToTopButton />
     </>
