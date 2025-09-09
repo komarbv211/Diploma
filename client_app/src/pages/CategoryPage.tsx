@@ -1,67 +1,83 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
 import ProductFilter, {
   ProductFilterData,
 } from "../components/filter/ProductFilter";
-import { useSearchProductsQuery } from "../services/productApi";
 import { useGetCategoryTreeQuery } from "../services/categoryApi";
+import { useSearchProductsQuery } from "../services/productApi";
 import { APP_ENV } from "../env";
 import { useAppSelector } from "../store/store";
 import { getUser } from "../store/slices/userSlice";
 import { useParams } from "react-router-dom";
 import ScrollToTopButton from "../components/ScrollToTopButton";
+import { ICategory } from "../types/category";
 
-const CatalogPage: React.FC = () => {
+const CategoryPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [filters, setFilters] = useState<ProductFilterData>({});
 
   const user = useAppSelector(getUser);
   const isAdmin = user?.roles?.includes("Admin") ?? false;
 
-  // Дані категорій
   const { data: categories } = useGetCategoryTreeQuery();
 
-  // Поточна категорія (оновлюється при зміні id)
-  const category = useMemo(() => {
-    return categories?.find((cat) => cat.id === Number(id));
-  }, [id, categories]);
-
-  // Запит продуктів
-  const {
-    data: searchResult,
-    isLoading,
-    refetch,
-  } = useSearchProductsQuery(
-    {
-      CategoryId: Number(id),
-      Page: 1,
-      ItemPerPage: 12,
-      ...filters,
-    },
-    { skip: !id } // пропускаємо запит якщо id немає
+  const category = useMemo(
+    () => categories?.find((cat) => cat.id === Number(id)),
+    [id, categories]
   );
 
-  console.log("Salo", filters);
+  const getAllCategoryIds = useCallback(
+    (catId: number, tree: ICategory[]): number[] => {
+      const result: number[] = [catId];
+      const children = tree?.filter((c) => c.parentId === catId) || [];
+      for (const child of children) {
+        result.push(...getAllCategoryIds(child.id, tree));
+      }
+      return result;
+    },
+    []
+  );
 
-  // Перезапуск запиту при зміні id
+  const categoryIds = useMemo(() => {
+    if (!id || !categories) return [];
+    return getAllCategoryIds(Number(id), categories);
+  }, [id, categories, getAllCategoryIds]);
+
+  const searchParams = useMemo(() => {
+    return {
+      CategoryIds: categoryIds,
+      Page: 1,
+      ItemPerPage: 50,
+      PriceMin: filters.PriceMin,
+      PriceMax: filters.PriceMax,
+      BrandIds: filters.BrandIds,
+      MinRating: filters.MinRating,
+      InStock: filters.InStock,
+      SortBy: filters.SortBy,
+      SortDesc: filters.SortDesc,
+    };
+  }, [categoryIds, filters]);
+
+  const {
+    data: products,
+    isLoading,
+    refetch,
+  } = useSearchProductsQuery(searchParams, {
+    skip: categoryIds.length === 0,
+    refetchOnMountOrArgChange: true,
+  });
+
   useEffect(() => {
-    if (id) refetch();
-  }, [id, refetch]);
-
-  const getCategoryName = (categoryId: number) =>
-    categories?.find((cat) => cat.id === categoryId)?.name ||
-    "Категорія не вказана";
+    refetch();
+  }, [searchParams, refetch]);
 
   return (
     <div className="flex flex-col lg:flex-row mt-[100px] px-4 max-w-[1680px] mx-auto gap-4">
-      {/* Ліва колонка: фільтри */}
       <div className="w-full lg:w-[23.5%]">
         <ProductFilter onChange={setFilters} isAdmin={isAdmin} />
       </div>
 
-      {/* Права колонка: фото категорії + товари */}
       <div className="w-full lg:w-[76.5%] flex flex-col gap-6 m-0 p-0">
-        {/* Фото категорії */}
         {category?.image && (
           <img
             src={APP_ENV.IMAGES_1200_URL + category.image}
@@ -70,19 +86,17 @@ const CatalogPage: React.FC = () => {
           />
         )}
 
-        {/* Картки товарів */}
         <div className="flex flex-wrap justify-center gap-4">
           {isLoading && <p>Завантаження...</p>}
-
-          {!isLoading && searchResult?.items.length === 0 && (
+          {!isLoading && products?.items.length === 0 && (
             <p>Немає товарів у цій категорії.</p>
           )}
 
-          {searchResult?.items.map((product) => (
+          {products?.items.map((product) => (
             <ProductCard
               key={product.id}
               title={product.name}
-              category={product.category?.name || getCategoryName(Number(id))}
+              category={product.categoryName || ""}
               price={product.price}
               userRating={product.rating}
               productId={product.id}
@@ -96,10 +110,10 @@ const CatalogPage: React.FC = () => {
             />
           ))}
         </div>
+        <ScrollToTopButton />
       </div>
-      <ScrollToTopButton />
     </div>
   );
 };
 
-export default CatalogPage;
+export default CategoryPage;

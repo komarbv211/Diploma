@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Core.DTOs.PaginationDTOs;
+using Core.DTOs.ProductDTOs;
 using Core.DTOs.ProductsDTO;
 using Core.Exceptions;
 using Core.Interfaces;
@@ -376,7 +377,9 @@ public class ProductService : IProductService
         };
     }
 
-
-
-
+    public async Task<List<ProductItemDto>> GetProductsByCategoriesAsync(IEnumerable<long> categoryIds)
+    {
+        var products = await _productRepository.ListAsync(new ProductsByCategorySpecification(categoryIds));
+        return _mapper.Map<List<ProductItemDto>>(products);
+    }
 }

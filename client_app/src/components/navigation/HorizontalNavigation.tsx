@@ -45,6 +45,12 @@ const HorizontalNavigation: React.FC = () => {
     setHoveredCategory(null);
   };
 
+  const handleSubcatalogClick = (categoryId: number) => {
+    setActiveSubcategory(categoryId);
+    navigate(`/catalog/${categoryId}`);
+    setHoveredCategory(null);
+  };
+
   const handleSubmenuMouseEnter = () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -116,6 +122,7 @@ const HorizontalNavigation: React.FC = () => {
               }`}
               onMouseEnter={() => handleCategoryMouseEnter(category.id)}
               onMouseLeave={handleCategoryMouseLeave}
+              onClick={() => handleSubcategoryClick(category.id)}
             >
               <span className="font-manrope text-sm md:text-base font-medium text-gray-700 transition-colors duration-300 mr-1 whitespace-nowrap hover:text-pink2">
                 {category.name}
@@ -151,7 +158,7 @@ const HorizontalNavigation: React.FC = () => {
                       className={`p-3 rounded-lg cursor-pointer transition-all duration-300 flex items-center justify-between hover:translate-x-1 ${
                         activeSubcategory === subcategory.id ? "bg-gray" : ""
                       }`}
-                      onClick={() => handleSubcategoryClick(subcategory.id)}
+                      onClick={() => handleSubcatalogClick(subcategory.id)}
                     >
                       <span className="font-manrope text-sm text-gray-600 transition-all duration-300 flex-1 whitespace-nowrap hover:text-pink2 hover:font-semibold">
                         {subcategory.name}

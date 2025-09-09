@@ -26,6 +26,7 @@ const PasswordUpdatedPage = lazy(
 );
 const ProductDetails = lazy(() => import("./pages/ProductDetails.tsx"));
 const CatalogPage = lazy(() => import("./pages/CatalogPage.tsx"));
+const CategoryPage = lazy(() => import("./pages/CategoryPage.tsx"));
 const CommentsPage = lazy(() => import("./pages/CommentsPage.tsx"));
 const OrderSuccess = lazy(() => import("./pages/user/orders/OrderSuccess.tsx"));
 
@@ -52,7 +53,8 @@ function App() {
               <Route path="details/:id" element={<ProductDetails />} />
               <Route path=":id/comments" element={<CommentsPage />} />
             </Route>
-            <Route path="category/:id" element={<CatalogPage />} />
+            <Route path="category/:id" element={<CategoryPage />} />
+            <Route path="catalog/:id" element={<CatalogPage />} />
           </Route>
 
           <Route path="login/*" element={<LoginUser />} />

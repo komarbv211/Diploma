@@ -14,8 +14,9 @@ namespace Core.DTOs.ProductsDTO
 
         public long CategoryId { get; set; }
 
-        public long? BrandId { get; set; }
+        public string? CategoryName { get; set; }
 
+        public long? BrandId { get; set; }
 
         public int Quantity { get; set; }
 

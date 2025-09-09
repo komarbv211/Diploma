@@ -27,7 +27,7 @@ public class CategoryEditValidator : AbstractValidator<CategoryUpdateDto>
             .WithMessage("Опис має починатися з великої літери.");
 
         RuleFor(category => category.Image)
-            .Must(file => file == null || file.Length <= 2 * 1024 * 1024)
-            .WithMessage("Розмір зображення не повинен перевищувати 2 МБ.");
+            .Must(file => file == null || file.Length <= 10 * 1024 * 1024)
+            .WithMessage("Розмір зображення не повинен перевищувати 10 МБ.");
     }
 }
