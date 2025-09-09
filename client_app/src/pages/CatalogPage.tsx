@@ -112,7 +112,7 @@ const CatalogPage: React.FC = () => {
   </>
 )} */}
 
-<div className="w-[1420px] h-[8114px] bg-white mx-auto mt-28 flex flex-col gap-12">
+{/* <div className="w-[1420px] h-[8114px] bg-white mx-auto mt-28 flex flex-col gap-12">
         <ProductCarousel
           title={"Пропозиції брендів"}
           products={products ?? []}
@@ -126,21 +126,22 @@ const CatalogPage: React.FC = () => {
       </div>
 
 
-<div
-  className="absolute left-[642px] top-[2337px] w-[1021px] h-[484px] flex-shrink-0 
-             bg-[url('/your-image.png')] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg"
->
-  {/* Зображення в правому нижньому куті */}
-  <img
-    src="/red_girl.png"
-    alt="Опис зображення"
-    className="absolute bottom-0 right-0 w-[auto] h-auto object-contain"
-  />
+<div className="relative w-full flex justify-center mt-[100px]">
+  <div
+    className="w-[1021px] h-[484px] flex-shrink-0 bg-[url('/your-image.png')] 
+               bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg relative"
+  >
+    <img
+      src="/red_girl.png"
+      alt="Опис зображення"
+      className="absolute bottom-0 right-0 h-full max-w-none object-contain"
+    />
+  </div>
 </div>
 
 
 
-        {/* Картки товарів */}
+        Картки товарів
         <div className="flex flex-wrap justify-center gap-4">
           {isLoading && <p>Завантаження...</p>}
 
@@ -167,7 +168,74 @@ const CatalogPage: React.FC = () => {
           ))}
         </div>
       </div>
-    </div>
+    </div> */}
+
+
+    {/* Каруселі */}
+<div className="w-[1420px] bg-white mx-auto mt-16 flex flex-col gap-12">
+  <ProductCarousel
+    title={"Пропозиції брендів"}
+    products={products ?? []}
+    maxWidth="1420px"
+  />
+  <ProductCarousel
+    title="Найпопулярніші"
+    products={[...(products ?? [])].sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0))}
+    maxWidth="1420px"
+  />
+</div>
+
+{/* Дівчина у фоні */}
+<div className="relative w-full flex justify-center mt-10">
+  <div
+    className="w-[1021px] h-[484px] flex-shrink-0 bg-[url('/your-image.png')] 
+               bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg relative"
+  >
+    <img
+      src="/red_girl.png"
+      alt="Опис зображення"
+      className="absolute bottom-0 right-0 h-full max-w-none object-contain"
+    />
+  </div>
+</div>
+
+{/* Картки товарів */}
+<div className="max-w-[1420px] mx-auto px-4 mt-10">
+  <div
+    className="grid grid-cols-1 md:grid-cols-2"
+    style={{ gap: "42px" }}
+  >
+    {searchResult?.items.map((product) => (
+      <ProductCard
+        key={product.id}
+        title={product.name}
+        category={product.category?.name || getCategoryName(Number(id))}
+        price={product.price}
+        userRating={product.rating}
+        productId={product.id}
+        userId={Number(user?.id)}
+        image={
+          product.imageUrl
+            ? APP_ENV.IMAGES_1200_URL + product.imageUrl
+            : ""
+        }
+        onRated={() => refetch()}
+      />
+    ))}
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+</div>
+</div>
+
   );
 };
 
