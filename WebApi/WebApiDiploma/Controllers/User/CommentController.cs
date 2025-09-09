@@ -1,5 +1,6 @@
 ﻿using Core.DTOs.CommentDTOs;
 using Core.Interfaces;
+using Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,6 +31,13 @@ namespace WebApiDiploma.Controllers.User
         {
             await commentService.DeleteCommentAsync(id);
             return Ok();
+        }
+
+        [HttpGet("{count?}")]
+        public async Task<IActionResult> GetRandom(int count = 5)
+        {
+            var comments = await commentService.GetRandomCommentsAsync(count);
+            return Ok(comments);
         }
     }
 }

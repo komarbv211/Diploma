@@ -1,4 +1,5 @@
-﻿using Core.DTOs.UsersDTOs;
+﻿using Core.DTOs.ProductDTOs;
+using Core.DTOs.UsersDTOs;
 
 namespace Core.DTOs.CommentDTOs;
 
@@ -10,4 +11,5 @@ public class CommentItemDto
     public string Text { get; set; }
     public DateTime DateCreated { get; set; }
     public UserShortDto? User { get; set; }
+    public ProductShortDto? Product { get; set; }
 }

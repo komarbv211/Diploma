@@ -2,26 +2,18 @@
 import React from "react";
 import { useGetAllProductsQuery } from "../services/productApi";
 import ProductCarousel from "../components/ProductCarousel";
-import ProductCard from "../components/ProductCard";
 import { APP_ENV } from "../env";
-import { useAppSelector } from "../store/store";
-import { getUser } from "../store/slices/userSlice";
-import { useGetCategoryTreeQuery } from "../services/categoryApi";
 import { useGetPromotionByIdQuery } from "../services/promotionApi";
 import PromotionCard from "../components/PromotionCard";
 import ScrollToTopButton from "../components/ScrollToTopButton";
+import ReviewProductCard from "../components/comments/ReviewProductCard";
+import { useGetRandomCommentsQuery } from "../services/productCommentsApi";
 
 const Home: React.FC = () => {
-  const { data: products, isLoading, refetch } = useGetAllProductsQuery();
-  const { data: categories } = useGetCategoryTreeQuery();
-  const { data: promotions } = useGetPromotionByIdQuery(22);
-  const user = useAppSelector(getUser);
+  const { data: products } = useGetAllProductsQuery();
+  const { data: promotions } = useGetPromotionByIdQuery(1);
+  const { data: reviewsFromApi } = useGetRandomCommentsQuery(2);
 
-  const getCategoryName = (id: number) => {
-    return (
-      categories?.find((cat) => cat.id === id)?.name || "Категорія не вказана"
-    );
-  };
   return (
     <>
       {/* 🔹 Банер на початку */}
@@ -150,6 +142,40 @@ const Home: React.FC = () => {
           maxWidth="100%"
         />
       </div>
+      {/* 🔹 Відгуки покупців */}
+      <section className="flex flex-wrap justify-between gap-[19px] max-w-[1680px] mx-auto mt-[120px]">
+        {reviewsFromApi && reviewsFromApi.length > 0 ? (
+          reviewsFromApi.map((review) => (
+            <ReviewProductCard
+              key={review.id}
+              productName={review.product?.name || "Товар без назви"}
+              productImage={
+                review.product?.images && review.product.images.length > 0
+                  ? APP_ENV.IMAGES_1200_URL + review.product.images[0].name
+                  : "/NoImage.png"
+              }
+              reviewTitle="Відгук на товар"
+              userName={review.user?.firstName || "Анонім"}
+              reviewText={review.text}
+              onGoToProduct={() =>
+                review.productId
+                  ? (window.location.href = `/product/details/${review.productId}`)
+                  : undefined
+              }
+            />
+          ))
+        ) : (
+          <p>Немає доступних коментарів</p>
+        )}
+      </section>
+      <div className="container mx-auto  mt-28 flex flex-col gap-12 max-w-[1680px]">
+        <ProductCarousel
+          title={"Парфумерія"}
+          products={products ?? []}
+          maxWidth="100%"
+        />
+      </div>
+
       <PromotionCard
         image={
           promotions?.imageUrl
@@ -161,27 +187,46 @@ const Home: React.FC = () => {
         buttonText={"Перейти до товару"}
         buttonLink={`/product/details/${promotions?.productIds}`}
       />
-      <div className="flex justify-center mt-[100px] px-4">
-        <div className="w-full max-w-[1680px] flex flex-wrap justify-center gap-[12px]">
-          {isLoading && <p>Завантаження...</p>}
-          {products?.map((product) => (
-            <ProductCard
-              title={product.name}
-              category={getCategoryName(product.categoryId)}
-              price={product.price}
-              userRating={product.averageRating}
-              productId={product.id}
-              userId={Number(user?.id)}
-              image={
-                product.images?.[0]?.name
-                  ? APP_ENV.IMAGES_1200_URL + product.images[0].name
-                  : ""
-              }
-              onRated={() => refetch()}
-            />
-          ))}
-        </div>
+
+      <div className="container mx-auto  mt-28 flex flex-col gap-12 max-w-[1680px]">
+        <ProductCarousel
+          title={"Волосся"}
+          products={products ?? []}
+          maxWidth="100%"
+        />
+        <ProductCarousel
+          title={"Обличчя"}
+          products={products ?? []}
+          maxWidth="100%"
+        />
       </div>
+
+      {/* 🔹 Відгуки покупців */}
+      <section className="flex flex-wrap justify-between gap-[19px] max-w-[1680px] mx-auto mt-[120px]">
+        {reviewsFromApi && reviewsFromApi.length > 0 ? (
+          reviewsFromApi.map((review) => (
+            <ReviewProductCard
+              key={review.id}
+              productName={review.product?.name || "Товар без назви"}
+              productImage={
+                review.product?.images && review.product.images.length > 0
+                  ? APP_ENV.IMAGES_1200_URL + review.product.images[0].name
+                  : "/NoImage.png"
+              }
+              reviewTitle="Відгук на товар"
+              userName={review.user?.firstName || "Анонім"}
+              reviewText={review.text}
+              onGoToProduct={() =>
+                review.productId
+                  ? (window.location.href = `/product/details/${review.productId}`)
+                  : undefined
+              }
+            />
+          ))
+        ) : (
+          <p>Немає доступних коментарів</p>
+        )}
+      </section>
       <ScrollToTopButton />
     </>
   );

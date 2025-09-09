@@ -101,7 +101,7 @@ const ProductCarousel: React.FC<Props> = ({
                 image={
                   p.images?.[0]?.name
                     ? APP_ENV.IMAGES_1200_URL + p.images[0].name
-                    : ""
+                    : APP_ENV.IMAGES_1200_URL + p.imageUrl || " "
                 }
                 productId={p.id}
                 userId={1} // підстав свого користувача зі стору

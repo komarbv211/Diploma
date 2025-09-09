@@ -11,6 +11,7 @@ import { getUser } from "../store/slices/userSlice";
 import { useParams } from "react-router-dom";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 import { ICategory } from "../types/category";
+import ProductCarousel from "../components/ProductCarousel";
 
 const CategoryPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -85,6 +86,17 @@ const CategoryPage: React.FC = () => {
             className="w-full max-h-[700px] object-cover rounded-lg"
           />
         )}
+
+        <ProductCarousel
+          title={"Пропозиції брендів"}
+          products={products?.items ?? []}
+          maxWidth="1301px"
+        />
+        <ProductCarousel
+          title={"Легкі весняні аромати"}
+          products={products?.items ?? []}
+          maxWidth="1301px"
+        />
 
         <div className="flex flex-wrap justify-center gap-4">
           {isLoading && <p>Завантаження...</p>}

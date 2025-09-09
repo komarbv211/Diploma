@@ -21,5 +21,7 @@ public class ProductProfile : Profile
 
         CreateMap<ProductUpdateDto, ProductEntity>()
             .ForMember(dest => dest.Images, opt => opt.Ignore());
+
+        CreateMap<ProductEntity, ProductShortDto>();
     }
 }
