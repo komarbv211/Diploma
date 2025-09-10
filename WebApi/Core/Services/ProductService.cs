@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Core.DTOs.PaginationDTOs;
+using Core.DTOs.ProductDTOs;
 using Core.DTOs.ProductsDTO;
 using Core.Exceptions;
 using Core.Interfaces;
 using Core.Models.Search;
+using Core.Repositories;
 using Core.Specifications;
 using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -17,19 +19,22 @@ public class ProductService : IProductService
 {
     private readonly IRepository<ProductEntity> _productRepository;
     private readonly IRepository<ProductImageEntity> _imageRepository;
+    private readonly IRepository<CategoryEntity> _categoryRepository;
     private readonly IMapper _mapper;
     private readonly IImageService _imageService;
 
     public ProductService(
         IRepository<ProductEntity> productRepository,
         IRepository<ProductImageEntity> imageRepository,
-        IMapper mapper,
+        IRepository<CategoryEntity> categoryRepository,
+    IMapper mapper,
         IImageService imageService)
     {
         _productRepository = productRepository;
         _imageRepository = imageRepository;
         _mapper = mapper;
         _imageService = imageService;
+        _categoryRepository = categoryRepository;
     }
 
     public async Task<List<ProductItemDto>> GetProductsAsync()
@@ -269,7 +274,16 @@ public class ProductService : IProductService
 
         // 🔍 Фільтрація
         if (model.CategoryId.HasValue)
-            query = query.Where(p => p.CategoryId == model.CategoryId.Value);
+        {
+            var categoryId = model.CategoryId.Value;
+
+            var allCategoryIds = await _categoryRepository.GetAllQueryable()
+                .Where(c => c.Id == categoryId || c.ParentId == categoryId)
+                .Select(c => c.Id)
+                .ToListAsync();
+
+            query = query.Where(p => allCategoryIds.Contains(p.CategoryId));
+        }
 
         //if (model.BrandId.HasValue)
         //    query = query.Where(p => p.BrandId == model.BrandId.Value);
@@ -376,7 +390,9 @@ public class ProductService : IProductService
         };
     }
 
-
-
-
+    public async Task<List<ProductItemDto>> GetProductsByCategoriesAsync(IEnumerable<long> categoryIds)
+    {
+        var products = await _productRepository.ListAsync(new ProductsByCategorySpecification(categoryIds));
+        return _mapper.Map<List<ProductItemDto>>(products);
+    }
 }

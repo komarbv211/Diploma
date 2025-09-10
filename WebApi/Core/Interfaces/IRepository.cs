@@ -23,9 +23,7 @@ namespace Core.Interfaces
         Task AddRangeAsync(IEnumerable<TEntity> entities);
 
         Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
-        //Task<bool> ExistsByEmailAsync(string email);
-        //Task<TEntity> GetByIdAsync(long id);
-
+        Task<List<TEntity>> ListAsync(ISpecification<TEntity> specification);
 
     }
 }

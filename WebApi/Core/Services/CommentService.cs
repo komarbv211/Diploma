@@ -75,5 +75,25 @@ namespace Core.Services
                 throw new HttpException("Помилка при видаленні коментаря", HttpStatusCode.InternalServerError, ex);
             }
         }
+        public async Task<List<CommentItemDto>> GetRandomCommentsAsync(int count = 5)
+        {
+            try
+            {
+                var comments = await _commentRepository.GetAllQueryable()
+                    .Include(c => c.User)
+                    .Include(c => c.Product)
+                        .ThenInclude(p => p.Images)
+                    .OrderBy(c => Guid.NewGuid()) 
+                    .Take(count)
+                    .ToListAsync();
+
+                return _mapper.Map<List<CommentItemDto>>(comments);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Помилка при отриманні випадкових коментарів", HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
     }
 }
