@@ -1,15 +1,10 @@
 ﻿using Core.Interfaces;
-using Core.Models.Enums;
 using Core.Services;
 using Infrastructure.Data;
 using Infrastructure.Entities;
-using Infrastructure.Enums;
-using MailKit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using System;
 using System.Text;
 using WebApiDiploma.Models.Seeder;
 
@@ -407,7 +402,7 @@ namespace WebApiDiploma.ServiceExtensions
             var warehouseRepo = serviceProvider.GetService<IRepository<NovaPostWarehouseEntity>>();
 
             var newPostService = serviceProvider.GetRequiredService<NovaPoshtaService>();
-            await newPostService.UpdateWarehousesAsync();
+            //await newPostService.UpdateWarehousesAsync();
 
             if (orderRepo == null || await orderRepo.AnyAsync())
                 return;
