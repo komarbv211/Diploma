@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { useGetBrandsQuery } from "../../services/brandApi";
 import BrandListWithAlphabet from "../brand/BrandListWithAlphabet";
+import ToggleIconButton from "../ui/ToggleIconButton";
 
 export interface ProductFilterData {
   Query?: string;
@@ -94,6 +95,13 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
     setSelectedLetter("");
     setDateRange([null, null]);
     setSelectedBrandIds([]); // 🔥 Скидання брендів
+
+     // Скидаємо всі toggle стани:
+  setShowMinRating(false);
+  setShowInStock(false);
+  setShowSortBy(false);
+  setShowSortDesc(false);
+  setShowDateRange(false);
   };
 
   // ✅ Обробник вибору брендів (дозволяє кілька)
@@ -113,9 +121,9 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
   const maxPriceFromApi = 10000;
 
   return (
-    <div className="w-full max-w-[1680px] flex flex-col gap-4 px-4 mb-4">
+    <div className="w-full max-w-[1680px] flex flex-col gap-4 px-4 mb-4 " style={{ width: 308 }}>
       {/* Бренди */}
-      <div className="pt-4">
+      <div >
         {isLoading && <p>Завантаження брендів...</p>}
         {isError && <p>Помилка при завантаженні брендів.</p>}
         {!isLoading && !isError && (
@@ -133,152 +141,113 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
       </div>
 
       {/* Мін. рейтинг */}
-      <div className="flex items-center justify-between">
-        <span className="form-label">Мін. рейтинг</span>
-        <button
-          onClick={() => setShowMinRating((prev) => !prev)}
-          className="text-xl font-bold px-2"
-        >
-          ×
-        </button>
-      </div>
-      {showMinRating && (
-        <input
-          type="number"
-          placeholder="Мін. рейтинг"
-          value={minRating}
-          onChange={(e) => setMinRating(e.target.value)}
-          className="px-3 py-2 rounded w-full"
-          min={0}
-          max={5}
-          step={0.1}
-          style={{ border: "none" }}
-        />
-      )}
+     {/* Мін. рейтинг */}
+<div className="flex items-center justify-between">
+  <span className="form-label">Мін. рейтинг</span>
+  <ToggleIconButton
+    isOpen={showMinRating}
+    onClick={() => setShowMinRating((prev) => !prev)}
+    
+  />
+</div>
+{showMinRating && (
+  <input
+    type="number"
+    placeholder="Мін. рейтинг"
+    value={minRating}
+    onChange={(e) => setMinRating(e.target.value)}
+    className="px-3 py-2 rounded w-full"
+    min={0}
+    max={5}
+    step={0.1}
+    style={{ border: "none" }}
+  />
+)}
 
-      {/* В наявності */}
-      <div className="flex items-center justify-between">
-        <span className="form-label">В наявності</span>
-        <button
-          onClick={() => setShowInStock((prev) => !prev)}
-          className="text-xl font-bold px-2"
-        >
-          ×
-        </button>
-      </div>
-      {showInStock && (
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={inStock}
-            onChange={(e) => setInStock(e.target.checked)}
-          />
-          Так
-        </label>
-      )}
+{/* В наявності */}
+<div className="flex items-center justify-between">
+  <span className="form-label">В наявності</span>
+  <ToggleIconButton
+    isOpen={showInStock}
+    onClick={() => setShowInStock((prev) => !prev)}
+  />
+</div>
+{showInStock && (
+  <label className="flex items-center gap-2">
+    <input
+      type="checkbox"
+      checked={inStock}
+      onChange={(e) => setInStock(e.target.checked)}
+    />
+    Так
+  </label>
+)}
 
-      {/* Сортування */}
-      <div className="flex items-center justify-between">
-        <span className="form-label">Сортування</span>
-        <button
-          onClick={() => setShowSortBy((prev) => !prev)}
-          className="text-xl font-bold px-2"
-        >
-          ×
-        </button>
-      </div>
-      {showSortBy && (
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          className="px-3 py-2 rounded w-full"
-          style={{ border: "none" }}
-        >
-          <option value="">Сортування</option>
-          <option value="Price">Ціна</option>
-          <option value="Rating">Рейтинг</option>
-          <option value="CreatedAt">Дата створення</option>
-        </select>
-      )}
+{/* Сортування */}
+<div className="flex items-center justify-between">
+  <span className="form-label">Сортування</span>
+  <ToggleIconButton
+    isOpen={showSortBy}
+    onClick={() => setShowSortBy((prev) => !prev)}
+  />
+</div>
+{showSortBy && (
+  <select
+    value={sortBy}
+    onChange={(e) => setSortBy(e.target.value)}
+    className="px-3 py-2 rounded w-full"
+    style={{ border: "none" }}
+  >
+    <option value="">Сортування</option>
+    <option value="Price">Ціна</option>
+    <option value="Rating">Рейтинг</option>
+    <option value="CreatedAt">Дата створення</option>
+  </select>
+)}
 
-      {/* За спаданням */}
-      <div className="flex items-center justify-between">
-        <span className="form-label">За спаданням</span>
-        <button
-          onClick={() => setShowSortDesc((prev) => !prev)}
-          className="text-xl font-bold px-2"
-        >
-          ×
-        </button>
-      </div>
-      {showSortDesc && (
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={sortDesc}
-            onChange={(e) => setSortDesc(e.target.checked)}
-          />
-          Так
-        </label>
-      )}
+{/* За спаданням */}
+<div className="flex items-center justify-between">
+  <span className="form-label">За спаданням</span>
+  <ToggleIconButton
+    isOpen={showSortDesc}
+    onClick={() => setShowSortDesc((prev) => !prev)}
+  />
+</div>
+{showSortDesc && (
+  <label className="flex items-center gap-2">
+    <input
+      type="checkbox"
+      checked={sortDesc}
+      onChange={(e) => setSortDesc(e.target.checked)}
+    />
+    Так
+  </label>
+)}
 
-      {/* Діапазон дат */}
-      {isAdmin && (
-        <div className="flex flex-col gap-2 mt-4">
-          <div className="flex items-center justify-between">
-            <label className="form-label">Діапазон дат (від / до)</label>
-            <button
-              onClick={() => setShowDateRange((prev) => !prev)}
-              className="text-xl font-bold px-2"
-            >
-              ×
-            </button>
-          </div>
-          {showDateRange && (
-            <DatePicker
-              selectsRange
-              startDate={startDate}
-              endDate={endDate}
-              onChange={(update: [Date | null, Date | null]) =>
-                setDateRange(update)
-              }
-              isClearable
-              dateFormat="dd.MM.yyyy"
-              placeholderText="Оберіть діапазон"
-              className="px-3 py-2 rounded w-full"
-            />
-          )}
-        </div>
-      )}
-
-      {/* Ціна */}
-      <div className="w-full">
-        <label className="block mb-2 form-label">Вартість</label>
-        <Slider
-          range
-          min={minPriceFromApi}
-          max={maxPriceFromApi}
-          step={10}
-          value={[
-            Number(priceMin) || minPriceFromApi,
-            Number(priceMax) || maxPriceFromApi,
-          ]}
-          onChange={([min, max]) => {
-            setPriceMin(String(min));
-            setPriceMax(String(max));
-          }}
-        />
-        <div className="flex flex-wrap gap-x-4 mt-2">
-          <div className="flex items-center gap-2">
-            <span>Від:</span>
-            <span>{priceMin || minPriceFromApi}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span>До:</span>
-            <span>{priceMax || maxPriceFromApi}</span>
-          </div>
-        </div>
-      </div>
+{/* Діапазон дат */}
+{isAdmin && (
+  <div className="flex flex-col gap-2 mt-4">
+    <div className="flex items-center justify-between">
+      <label className="form-label">Діапазон дат (від / до)</label>
+      <ToggleIconButton
+        isOpen={showDateRange}
+        onClick={() => setShowDateRange((prev) => !prev)}
+      />
+    </div>
+    {showDateRange && (
+      <DatePicker
+        selectsRange
+        startDate={startDate}
+        endDate={endDate}
+        onChange={(update: [Date | null, Date | null]) => setDateRange(update)}
+        isClearable
+        dateFormat="dd.MM.yyyy"
+        placeholderText="Оберіть діапазон"
+        className="px-3 py-2 rounded w-full"
+      />
+    )}
+  </div>
+)}
 
       {/* 🔘 Кнопка очистки */}
       <button
