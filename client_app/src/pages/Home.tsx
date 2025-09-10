@@ -188,9 +188,11 @@ const Home: React.FC = () => {
         />
       </div>
       {/* 🔹 Відгуки покупців (середина, перші 2) */}
-      <section className="flex flex-wrap justify-between gap-[19px] max-w-[1680px] mx-auto mt-[120px]">
-        {renderReviews(reviewsTop)}
-      </section>{" "}
+      <section className="flex flex-wrap justify-center gap-[19px] max-w-[1680px] mx-auto mt-[120px] h-auto ">
+        <div className="grid center-xl:grid-cols-2 gap-6 mx-2">
+          {renderReviews(reviewsTop)}
+        </div>
+      </section>
       <div className="container mx-auto  mt-28 flex flex-col gap-12 max-w-[1680px]">
         <ProductCarousel
           title={"Парфумерія"}
@@ -222,8 +224,10 @@ const Home: React.FC = () => {
         />
       </div>
       {/* 🔹 Відгуки покупців (низ, інші 2) */}
-      <section className="flex flex-wrap justify-between gap-[19px] max-w-[1680px] mx-auto mt-[120px]">
-        {renderReviews(reviewsBottom)}
+      <section className="flex flex-wrap justify-center gap-[19px] max-w-[1680px] mx-auto mt-[120px] h-auto">
+        <div className="grid center-xl:grid-cols-2 gap-6">
+          {renderReviews(reviewsBottom)}
+        </div>
       </section>
       <ScrollToTopButton />
     </>
