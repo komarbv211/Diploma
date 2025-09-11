@@ -54,7 +54,7 @@ const BrandList = () => {
 
   return (
     <div style={{ padding: 20 }}>
-      <Space className="mb-5 flex justify-between">
+      <Space className="mb-5 flex justify-end">
         <Button
           type="primary"
           icon={<PlusOutlined />}
