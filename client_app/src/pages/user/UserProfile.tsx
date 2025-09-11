@@ -10,7 +10,6 @@ import {
   Avatar,
   Form,
   Divider,
-  message,
 } from "antd";
 import { getAuth, getUser } from "../../store/slices/userSlice";
 import {

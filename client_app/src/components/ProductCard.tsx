@@ -77,6 +77,8 @@ const ProductCard: React.FC<Props> = ({
 
   return (
     <div className="grid grid-rows-[325px_1fr_auto] p-[15px_40px] w-[405px] h-[513px] bg-white rounded-[15px] border border-blue2">
+      {/* <div className="grid grid-rows-[325px_1fr_auto] p-[15px_20px] w-full h-auto bg-white rounded-[15px] border border-blue2"> */}
+
       <Link
         key={productId}
         to={`/product/details/${productId}`}

@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Button, Space, Empty, Card, Layout } from "antd";
 import UserSidebar from "../userPages/UserSidebar";
+import { OrderDto } from "../../../types/order";
 
 const OrderHistoryPage = () => {
   const [filter, setFilter] = useState("all");
 
-  const orders = [];
+  // const orders = [];
+  const orders: OrderDto[] = [];
 
   const filters = [
     { key: "all", label: "Всі" },
