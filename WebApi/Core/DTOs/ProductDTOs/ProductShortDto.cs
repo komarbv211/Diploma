@@ -8,6 +8,7 @@ namespace Core.DTOs.ProductDTOs
 {
     public class ProductShortDto
     {
+        public long Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public List<ProductImageDto>? Images { get; set; }
     }

@@ -4,22 +4,29 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useGetProductByIdQuery } from "../services/productApi";
 import { useCart } from "../hooks/useCart";
 import InteractiveRating from "../components/InteractiveRating";
-import { CartIcon } from "../components/icons";
+import { CartFlowerIcon, CartIcon } from "../components/icons";
 import ImagesViewer from "../components/images/images_viewer/ImagesViewer";
 import { Typography } from "antd";
 import AddReviewModal from "../components/comments/AddReviewModalProps";
 import ReviewsScroller from "../components/comments/ReviewsScroller";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { useAppSelector } from "../store/store";
+import { useProducts } from "../hooks/useProducts";
+import Product_3_Carousel from "../components/Product_3_Carousel";
+import { ICartItem } from "../store/slices/localCartSlice";
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { data: product, isLoading } = useGetProductByIdQuery(Number(id));
   const { user } = useAppSelector((s) => s.auth);
-  const { addToCart } = useCart(!!user);
+  const { cart, addToCart } = useCart(!!user);
+const isInCart = cart.some((item: ICartItem) => item.productId === Number(id));
   const navigate = useNavigate();
   const { Paragraph } = Typography;
   const [isReviewOpen, setIsReviewOpen] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
+  const { products: brandProducts } = useProducts({
+    CategoryId: 1,
+  }); // Категорія "Парфумерія"
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -61,6 +68,7 @@ const ProductDetails: React.FC = () => {
               productId={product.id}
               userRating={product.averageRating}
               size={20}
+              readOnly={true}
             />
             <span className="text-[16px] text-gray-700">
               {product.commentsCount}
@@ -106,9 +114,19 @@ const ProductDetails: React.FC = () => {
               onClick={handleAddToCart}
               className="flex items-center gap-2 px-6 py-3 bg-pink text-white text-[24px] font-semibold rounded-lg hover:bg-pink2 transition w-[300px] justify-center"
             >
-              <CartIcon className="w-8 h-8" />
               Купити
             </button>
+            <div className="h-16">
+              {isInCart ?(
+                  <div className="relative w-full h-full">
+                    <CartIcon className="text-black w-full h-full" />
+                    <CartFlowerIcon className="absolute top-[6px] right-0 text-pink2 w-1/2 h-1/2" />
+                  </div>
+                ) : (
+                  <CartIcon className="text-black w-full h-full" /> // 🛒 порожня іконка
+              )}
+
+            </div>
             <button
               onClick={() => navigate(-1)}
               className="text-gray hover:text-pink2 underline"
@@ -117,6 +135,13 @@ const ProductDetails: React.FC = () => {
             </button>
           </div>
         </div>
+      </div>
+      <div className="flex flex-col items-center gap-12 max-w-full md:max-w-[1350px] mx-auto py-12">
+        <Product_3_Carousel
+          title={"Товари цієї ж серії"}
+          products={brandProducts ?? []}
+          maxWidth="100%"
+        />
       </div>
       <div className="flex flex-col items-center gap-12 max-w-full md:max-w-[1380px] mx-auto py-12">
         {/* Заголовок відгуків */}

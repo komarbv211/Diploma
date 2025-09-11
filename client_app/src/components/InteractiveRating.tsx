@@ -9,12 +9,14 @@ type InteractiveRatingProps = {
   userRating?: number;
   onRate?: (rating: number) => Promise<void>;
   size?: number;
+  readOnly?: boolean;
 };
 
 const InteractiveRating: React.FC<InteractiveRatingProps> = ({
   userRating = 0,
   onRate,
   size = 24,
+  readOnly = false, 
 }) => {
   const user = useAppSelector(getUser);
   const [hoverRating, setHoverRating] = useState(0);
@@ -26,6 +28,7 @@ const InteractiveRating: React.FC<InteractiveRatingProps> = ({
   }, [userRating]);
 
   const handleClick = async (rating: number) => {
+    if (readOnly) return; 
     if (!user) {
       showToast("warn", "Ви повинні увійти, щоб оцінити продукт", <WarnIcon />);
       return; // не змінюємо рейтинг
@@ -37,7 +40,7 @@ const InteractiveRating: React.FC<InteractiveRatingProps> = ({
   };
 
   const getFillPercent = (starIndex: number) => {
-    const diff = (hoverRating || currentRating) - starIndex + 1;
+    const diff = (readOnly ? currentRating : hoverRating || currentRating) - starIndex + 1;
     if (diff >= 1) return 100;
     if (diff > 0) return diff * 100;
     return 0;
@@ -80,8 +83,8 @@ const InteractiveRating: React.FC<InteractiveRatingProps> = ({
   return (
     <div
       className="flex gap-1 select-none"
-      onMouseLeave={() => setHoverRating(0)}
-      style={{ cursor: user ? "pointer" : "default" }}
+      onMouseLeave={() => !readOnly && setHoverRating(0)}
+      style={{ cursor: readOnly ? "default" : user ? "pointer" : "default" }}
     >
       {[...Array(starsCount)].map((_, i) => {
         const starIndex = i + 1;
@@ -91,12 +94,12 @@ const InteractiveRating: React.FC<InteractiveRatingProps> = ({
           <div
             key={starIndex}
             onClick={() => handleClick(starIndex)}
-            onMouseEnter={() => user && setHoverRating(starIndex)}
-            role={user ? "button" : undefined}
-            tabIndex={user ? 0 : -1}
+            onMouseEnter={() => !readOnly && user && setHoverRating(starIndex)}
+            role={!readOnly && user ? "button" : undefined}
+            tabIndex={!readOnly && user ? 0 : -1}
             aria-label={`Rate ${starIndex} star`}
             onKeyDown={(e) => {
-              if ((e.key === "Enter" || e.key === " ") && user) {
+              if (!readOnly && (e.key === "Enter" || e.key === " ") && user) {
                 handleClick(starIndex);
               }
             }}
