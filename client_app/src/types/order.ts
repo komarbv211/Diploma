@@ -71,6 +71,8 @@ export interface OrderDto extends OrderBaseDto {
   updatedAt?: string;
   items: OrderItemDto[];
   warehouse?: NovaPostWarehouseDto;
+  date?: string; //додали для білда
+  total?: number; //додали для білда
 }
 
 // location
@@ -88,3 +90,4 @@ export interface NPResponse<T> {
   success: boolean;
   data: T[];
 }
+

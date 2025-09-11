@@ -9,6 +9,9 @@ import RequireAdmin from "./routes/guards/RequireAdmin.tsx";
 import AuthWatcher from "./components/AuthWatcher";
 import CartProtectedRoute from "./routes/сartRoutes.tsx";
 import { ToastContainer } from "react-toastify";
+import AboutUsPage from "./pages/About";
+import ReturnsPage from "./pages/ReturnsPage";
+import ProductQualityPage from "./pages/ProductQualityPage";
 
 const Home = lazy(() => import("./pages/Home"));
 const UserProfile = lazy(() => import("./pages/user/UserProfile.tsx"));
@@ -28,6 +31,7 @@ const ProductDetails = lazy(() => import("./pages/ProductDetails.tsx"));
 const CatalogPage = lazy(() => import("./pages/CatalogPage.tsx"));
 const CommentsPage = lazy(() => import("./pages/CommentsPage.tsx"));
 const OrderSuccess = lazy(() => import("./pages/user/orders/OrderSuccess.tsx"));
+const OrderHistoryPage = lazy(() => import("./pages/user/orders/OrderHistoryPage.tsx"));
 
 function App() {
   return (
@@ -36,6 +40,9 @@ function App() {
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/" element={<Layout />}>
+            <Route path="/about" element={<AboutUsPage />} />
+            <Route path="/returns" element={<ReturnsPage />} />
+            <Route path="/quality" element={<ProductQualityPage />} />
             <Route index element={<Home />} />
             <Route path="profile" element={<UserProfile />} />
             <Route
@@ -47,6 +54,7 @@ function App() {
               }
             />
             <Route path="/order-success" element={<OrderSuccess />} />
+            <Route path="/order-history" element={<OrderHistoryPage />} />
             <Route path="*" element={<NotFoundPage />} />
             <Route path="product">
               <Route path="details/:id" element={<ProductDetails />} />
@@ -67,7 +75,12 @@ function App() {
           </Route>
         </Routes>
       </Suspense>
-      <ToastContainer />
+      <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          aria-label="notification"
+      />
+
     </>
   );
 }
