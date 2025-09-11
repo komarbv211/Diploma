@@ -125,7 +125,7 @@ const ProductCard: React.FC<Props> = ({
               </div>
             ) : (
               <CartIcon className="text-black w-full h-full" /> // 🛒 порожня іконка
-            )}{" "}
+            )}
           </button>
         </div>
       </div>

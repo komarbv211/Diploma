@@ -19,20 +19,24 @@ export interface ReviewItemProduct {
     image: string;
   };
     product: {
+    id: number;
     name: string;
-    images?: IProductImageDto[];
+    images?: IProductImageDto[]| null;
   };
 }
 export interface Review {
   id: number;
+  productId:number;
   text: string;
   user: {
+    id: number;
     firstName: string;
     lastName: string;
     image?: string;
   };
   product: {
+    id: number;
     name: string;
-    images?: IProductImageDto[];
+    images?: IProductImageDto[]| null;
   };
 }
