@@ -249,6 +249,35 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
   </div>
 )}
 
+ {/* Ціна */}
+      <div className="w-full">
+        <label className="block mb-2 form-label">Вартість</label>
+        <Slider
+          range
+          min={minPriceFromApi}
+          max={maxPriceFromApi}
+          step={10}
+          value={[
+            Number(priceMin) || minPriceFromApi,
+            Number(priceMax) || maxPriceFromApi,
+          ]}
+          onChange={([min, max]) => {
+            setPriceMin(String(min));
+            setPriceMax(String(max));
+          }}
+        />
+        <div className="flex flex-wrap gap-x-4 mt-2">
+          <div className="flex items-center gap-2">
+            <span>Від:</span>
+            <span>{priceMin || minPriceFromApi}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span>До:</span>
+            <span>{priceMax || maxPriceFromApi}</span>
+          </div>
+        </div>
+      </div>
+
       {/* 🔘 Кнопка очистки */}
       <button
         onClick={handleReset}

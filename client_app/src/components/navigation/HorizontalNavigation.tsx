@@ -116,6 +116,7 @@ const HorizontalNavigation: React.FC = () => {
               }`}
               onMouseEnter={() => handleCategoryMouseEnter(category.id)}
               onMouseLeave={handleCategoryMouseLeave}
+              onClick={() => handleSubcategoryClick(category.id)}
             >
               <span className="font-manrope text-sm md:text-base font-medium text-gray-700 transition-colors duration-300 mr-1 whitespace-nowrap hover:text-pink2">
                 {category.name}

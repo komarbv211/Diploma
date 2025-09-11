@@ -11,7 +11,7 @@ import { getUser } from "../store/slices/userSlice";
 import { useParams } from "react-router-dom";
 import ProductCarousel from "../components/ProductCarousel";
 import { useGetAllProductsQuery } from "../services/admin/productAdminApi";
-
+import ScrollToTopButton from "../components/ScrollToTopButton";
 const CatalogPage: React.FC = () => {
   const { data: products } = useGetAllProductsQuery();
   const { id } = useParams<{ id: string }>();
@@ -35,9 +35,9 @@ const CatalogPage: React.FC = () => {
     refetch,
   } = useSearchProductsQuery(
     {
-      CategoryId: Number(id),
+      CategoryId: [Number(id)],
       Page: 1,
-      
+
       ItemPerPage: 12,
       ...filters,
     },
@@ -51,28 +51,21 @@ const CatalogPage: React.FC = () => {
     if (id) refetch();
   }, [id, refetch]);
 
-  const getCategoryName = (categoryId: number) =>
-    categories?.find((cat) => cat.id === categoryId)?.name ||
-    "Категорія не вказана";
-
   return (
     <div className="flex flex-col lg:flex-row mt-[100px] px-4 max-w-[1680px] mx-auto gap-4">
-      {/* Ліва колонка: фільтри */}
       <div className="w-full lg:w-[23.5%]">
         <ProductFilter onChange={setFilters} isAdmin={isAdmin} />
       </div>
 
-      {/* Права колонка: фото категорії + товари */}
       <div className="w-full lg:w-[76.5%] flex flex-col gap-6 m-0 p-0">
-     
 
-  <div className="w-full aspect-[284/153] bg-[url('/parfum_banner.png')] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg overflow-hidden">
-  <img
-    src="/parfum_banner.png"
-    alt="Парфуми банер"
-    className="w-full h-full object-cover"
-  />
-</div>
+        <div className="w-full aspect-[284/153] bg-[url('/parfum_banner.png')] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg overflow-hidden">
+          <img
+            src="/parfum_banner.png"
+            alt="Парфуми банер"
+            className="w-full h-full object-cover"
+          />
+        </div>
 
         {/* {category && (
   <>
@@ -96,31 +89,51 @@ const CatalogPage: React.FC = () => {
   </>
 )} */}
 
-    {/* Каруселі */}
-<div className="w-[1310px] bg-white mx-auto mt-16 flex flex-col gap-12">
-  <ProductCarousel
-    title={"Пропозиції брендів"}
-    products={products ?? []}
-    maxWidth="1310px"
-  />
-  <ProductCarousel
-    title="Найпопулярніші"
-    products={[...(products ?? [])].sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0))}
-    maxWidth="1310px"
-  />
-</div>
+        {/* Каруселі */}
+        <div className="w-[1310px] bg-white mx-auto mt-16 flex flex-col gap-12">
+          <ProductCarousel
+            title={"Пропозиції брендів"}
+            products={products ?? []}
+            maxWidth="1310px"
+          />
+          <ProductCarousel
+            title="Найпопулярніші"
+            products={[...(products ?? [])].sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0))}
+            maxWidth="1310px"
+          />
+        </div>
 
 
-<div className="relative w-full max-w-[1024px] aspect-[1021/484] bg-[url('/your-image.png')] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg overflow-hidden mx-auto">
-  <img
-    src="/red_girl.png"
-    alt="Дівчина"
-    className="absolute bottom-0 right-0 h-full object-contain"
-  />
-</div>
+        <div className="relative w-full max-w-[1024px] aspect-[1021/484] bg-[url('/your-image.png')] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg overflow-hidden mx-auto">
+          <img
+            src="/red_girl.png"
+            alt="Дівчина"
+            className="absolute bottom-0 right-0 h-full object-contain"
+          />
+        </div>
 
 
-<div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-4">
+          {category?.image && (
+            <img
+              src={APP_ENV.IMAGES_1200_URL + category.image}
+              alt={category.name}
+              className="w-full max-h-[700px] object-cover rounded-lg"
+            />
+          )}
+
+          <ProductCarousel
+            title={"Пропозиції брендів"}
+            products={searchResult?.items ?? []}
+            maxWidth="1301px"
+          />
+          <ProductCarousel
+            title={"Легкі весняні аромати"}
+            products={searchResult?.items ?? []}
+            maxWidth="1301px"
+          />
+
+         <div className="flex flex-wrap justify-center gap-4">
           {isLoading && <p>Завантаження...</p>}
           {!isLoading && searchResult?.items.length === 0 && (
             <p>Немає товарів у цій категорії.</p>
@@ -144,11 +157,10 @@ const CatalogPage: React.FC = () => {
             />
           ))}
         </div>
-
-
-</div>
-</div>
-
+        </div>
+      </div>
+      <ScrollToTopButton />
+    </div>
   );
 };
 

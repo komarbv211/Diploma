@@ -12,6 +12,6 @@ public interface IProductService
     Task UpdateProductAsync(ProductUpdateDto dto);
     Task DeleteProductAsync(long id);
     Task SetProductPromotionAsync(ProductSetPromotionDto dto);
-
     Task<SearchResult<ProductItemModel>> SearchProductsAsync(ProductSearchModel model, bool isAdmin = false);
+    Task<List<ProductItemDto>> GetProductsByCategoriesAsync(IEnumerable<long> categoryIds);
 }

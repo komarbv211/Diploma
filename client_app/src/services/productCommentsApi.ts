@@ -27,11 +27,20 @@ export const productCommentsApi = createApi({
       }),
       invalidatesTags: ['Comments'],
     }),
+    // ✅ GET випадкових коментарів
+    getRandomComments: builder.query<ReviewItemProduct[], number>({
+      query: (count = 5) => ({
+        url: `GetRandom/${count}`,
+        method: 'GET',
+      }),
+      providesTags: ['Comments'],
+    }),
   }),
 });
 
 // hooks
 export const { 
   useGetCommentsByProductIdQuery, 
-  useReviewProductMutation 
+  useReviewProductMutation,
+  useGetRandomCommentsQuery  
 } = productCommentsApi;

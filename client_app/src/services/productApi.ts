@@ -19,6 +19,14 @@ export const productApi = createApi({
             query: (categoryId) => `category/${categoryId}`,
             providesTags: ['Products'],
         }),
+       getProductsByCategories: builder.query<IProduct[], number[]>({
+            query: (categoryIds) => ({
+                url: 'by-categories',
+                method: 'POST',
+                body: categoryIds,
+            }),
+            providesTags: ['Products'],
+        }),
         searchProducts: builder.query<IProductSearchResponse, IProductSearchRequest>({
             query: (params) => {
                 const searchParams = new URLSearchParams();
@@ -46,5 +54,6 @@ export const {
     useGetAllProductsQuery, 
     useGetProductByIdQuery,
     useGetProductsByCategoryQuery,
+    useGetProductsByCategoriesQuery,
     useSearchProductsQuery,
 } = productApi;
