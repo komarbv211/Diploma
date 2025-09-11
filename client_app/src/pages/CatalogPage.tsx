@@ -9,10 +9,10 @@ import { APP_ENV } from "../env";
 import { useAppSelector } from "../store/store";
 import { getUser } from "../store/slices/userSlice";
 import { useParams } from "react-router-dom";
-import ScrollToTopButton from "../components/ScrollToTopButton";
 import ProductCarousel from "../components/ProductCarousel";
-
+import ScrollToTopButton from "../components/ScrollToTopButton";
 const CatalogPage: React.FC = () => {
+ 
   const { id } = useParams<{ id: string }>();
   const [filters, setFilters] = useState<ProductFilterData>({});
 
@@ -36,6 +36,7 @@ const CatalogPage: React.FC = () => {
     {
       CategoryId: [Number(id)],
       Page: 1,
+
       ItemPerPage: 12,
       ...filters,
     },
@@ -56,26 +57,82 @@ const CatalogPage: React.FC = () => {
       </div>
 
       <div className="w-full lg:w-[76.5%] flex flex-col gap-6 m-0 p-0">
-        {category?.image && (
-          <img
-            src={APP_ENV.IMAGES_1200_URL + category.image}
-            alt={category.name}
-            className="w-full max-h-[700px] object-cover rounded-lg"
-          />
-        )}
 
-        <ProductCarousel
-          title={"Пропозиції брендів"}
-          products={searchResult?.items ?? []}
-          maxWidth="1301px"
-        />
-        <ProductCarousel
-          title={"Легкі весняні аромати"}
-          products={searchResult?.items ?? []}
-          maxWidth="1301px"
-        />
+        <div className="w-full aspect-[284/153] bg-[url('/parfum_banner.png')] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg overflow-hidden">
+          <img
+            src="/parfum_banner.png"
+            alt="Парфуми банер"
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        {/* {category && (
+  <>
+    {category.name === "Парфумерія" ? (
+      <img
+        src="/r_v_brand.jpg"
+        alt="Парфуми банер"
+        className="w-full max-h-[700px] object-cover rounded-lg"
+      />
+    ) : category.image ? (
+      <img
+        src={APP_ENV.IMAGES_1200_URL + category.image}
+        alt={category.name}
+        className="w-full max-h-[700px] object-cover rounded-lg"
+      />
+    ) : (
+      <div className="w-full h-[300px] bg-gray-100 flex items-center justify-center rounded-lg">
+        <p className="text-gray-500">Фото категорії відсутнє</p>
+      </div>
+    )}
+  </>
+)} */}
+
+        {/* Каруселі */}
+        <div className="w-[1310px] bg-white mx-auto mt-16 flex flex-col gap-12">
+          <ProductCarousel
+            title={"Пропозиції брендів"}
+            products={searchResult?.items ?? []}
+            maxWidth="1310px"
+          />
+          <ProductCarousel
+            title="Найпопулярніші"
+            products={[...(searchResult?.items ?? [])].sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0))}
+            maxWidth="1310px"
+          />
+        </div>
+
+
+        <div className="relative w-full max-w-[1024px] aspect-[1021/484] bg-[url('/your-image.png')] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg overflow-hidden mx-auto">
+          <img
+            src="/red_girl.png"
+            alt="Дівчина"
+            className="absolute bottom-0 right-0 h-full object-contain"
+          />
+        </div>
+
 
         <div className="flex flex-wrap justify-center gap-4">
+          {category?.image && (
+            <img
+              src={APP_ENV.IMAGES_1200_URL + category.image}
+              alt={category.name}
+              className="w-full max-h-[700px] object-cover rounded-lg"
+            />
+          )}
+
+          <ProductCarousel
+            title={"Пропозиції брендів"}
+            products={searchResult?.items ?? []}
+            maxWidth="1301px"
+          />
+          <ProductCarousel
+            title={"Легкі весняні аромати"}
+            products={searchResult?.items ?? []}
+            maxWidth="1301px"
+          />
+
+         <div className="flex flex-wrap justify-center gap-4">
           {isLoading && <p>Завантаження...</p>}
           {!isLoading && searchResult?.items.length === 0 && (
             <p>Немає товарів у цій категорії.</p>
@@ -85,7 +142,7 @@ const CatalogPage: React.FC = () => {
             <ProductCard
               key={product.id}
               title={product.name}
-              category={product.categoryName || ""}
+              category={product.category?.name || ""}
               price={product.price}
               userRating={product.rating}
               productId={product.id}
@@ -99,9 +156,9 @@ const CatalogPage: React.FC = () => {
             />
           ))}
         </div>
-
-        <ScrollToTopButton />
+        </div>
       </div>
+      <ScrollToTopButton />
     </div>
   );
 };
