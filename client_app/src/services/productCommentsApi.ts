@@ -13,7 +13,7 @@ export const productCommentsApi = createApi({
     getCommentsByProductId: builder.query<ReviewItemProduct[], number>({
       query: (productId) => ({
         url: `GetByProduct/${productId}`,
-        method: 'GET /api/products/search?brandIds=1&brandIds=2&brandIds=3',
+        method: 'GET',
       }),
       providesTags: ['Comments'],
     }),
