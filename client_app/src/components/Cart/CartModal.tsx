@@ -5,12 +5,13 @@ import { APP_ENV } from "../../env";
 import { CartIcon, DeleteIcon } from "../icons";
 import ReactDOM from "react-dom";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CartModal: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
   const { cart, addToCart, removeFromCart } = useCart(user != null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsCartOpen(false);
@@ -149,7 +150,10 @@ const CartModal: React.FC = () => {
                           Додайте товари, щоб оформити замовлення
                         </p>
                         <button
-                          onClick={() => setIsCartOpen(false)}
+                          onClick={() => {
+                            setIsCartOpen(false);
+                            navigate("/");
+                          }}
                           className="px-6 py-3 bg-pink text-white rounded-lg hover:bg-pink/90 transition"
                         >
                           Повернутися до каталогу
