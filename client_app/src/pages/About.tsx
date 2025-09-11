@@ -6,7 +6,7 @@ const AboutUsPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-center mb-12">Про нас</h1>
 
             {/* Перший блок: текст + фото */}
-            <div className="grid md:grid-cols-2 gap-12 items-center mb-12">
+            <div className="grid md:grid-cols-2 gap-12 items-center mb-12 font-manrope">
                 {/* Текст завжди зліва */}
                 <div className="order-2 md:order-1">
                     <p className="mb-6">
@@ -30,7 +30,7 @@ const AboutUsPage: React.FC = () => {
                     <img
                         src="/AboutUs.png"
                         alt="Cosmeria команда"
-                        className="rounded-2xl shadow-lg object-cover max-h-[500px] w-full"
+                        className="rounded-2xl shadow-lg object-cover max-h-[484px] w-full"
                     />
                 </div>
             </div>

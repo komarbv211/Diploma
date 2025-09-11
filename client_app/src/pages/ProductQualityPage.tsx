@@ -3,7 +3,7 @@ import React from "react";
 const ProductQualityPage: React.FC = () => {
     return (
         <main className="max-w-5xl mx-auto px-4 py-16">
-            <h1 className="text-3xl font-bold text-center mb-12">
+            <h1 className="text-3xl font-bold text-center mb-12 font-manrope">
                 Про якість товару, що продається
             </h1>
 

@@ -3,10 +3,10 @@ import React from "react";
 const ReturnsPage: React.FC = () => {
     return (
         <main className="max-w-5xl mx-auto px-4 py-16">
-            <h1 className="text-3xl font-bold text-center mb-12">
+            <h1 className="text-3xl font-bold text-center mb-12 ">
                 Простий обмін і повернення
             </h1>
-
+         <div className="font-manrope">
             <p className="mb-6">
                 Вкладка додалась або переплутана позиція у замовленні? Під час перевірки
                 посилки ви побачили пошкодження товару? Розуміємо, що непорозуміння
@@ -75,6 +75,7 @@ const ReturnsPage: React.FC = () => {
                 З усіх питань ви можете зв’язатися з нами за телефонами:{" "}
                 <strong>(044) 374 03 83</strong> або <strong>0 (800) 507 740</strong>.
             </p>
+         </div>
         </main>
     );
 };
