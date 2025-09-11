@@ -18,6 +18,7 @@ namespace Core.Services;
 public class ProductService : IProductService
 {
     private readonly IRepository<ProductEntity> _productRepository;
+    private readonly IRepository<PromotionEntity> _promotionRepository;
     private readonly IRepository<ProductImageEntity> _imageRepository;
     private readonly IRepository<CategoryEntity> _categoryRepository;
     private readonly IMapper _mapper;
@@ -27,6 +28,7 @@ public class ProductService : IProductService
         IRepository<ProductEntity> productRepository,
         IRepository<ProductImageEntity> imageRepository,
         IRepository<CategoryEntity> categoryRepository,
+        IRepository<PromotionEntity> promotionRepository,
     IMapper mapper,
         IImageService imageService)
     {
@@ -35,6 +37,7 @@ public class ProductService : IProductService
         _mapper = mapper;
         _imageService = imageService;
         _categoryRepository = categoryRepository;
+        _promotionRepository = promotionRepository;
     }
 
     public async Task<List<ProductItemDto>> GetProductsAsync()
@@ -237,13 +240,40 @@ public class ProductService : IProductService
             if (product == null)
                 throw new HttpException("Продукт не знайдено", HttpStatusCode.NotFound);
 
-            // Мапимо дані з DTO на продукт
-            //product.PromotionId = dto.PromotionId;
-            //product.DiscountPercent = dto.DiscountPercent;
+            PromotionEntity? promotion = null;
 
-            // Зберігаємо зміни
+            if (dto.PromotionId.HasValue)
+            {
+                promotion = await _promotionRepository
+                    .GetAllQueryable()
+                    .Include(p => p.Products) // важливо для навігаційної колекції
+                    .FirstOrDefaultAsync(p => p.Id == dto.PromotionId.Value);
+
+                if (promotion == null)
+                    throw new HttpException("Акція не знайдена", HttpStatusCode.NotFound);
+
+                
+
+                // Ініціалізуємо колекцію продуктів, якщо null
+                if (promotion.Products == null)
+                    promotion.Products = new List<ProductEntity>();
+
+                // Додаємо продукт у колекцію акції, якщо його там ще немає
+                if (!promotion.Products.Any(p => p.Id == product.Id))
+                    promotion.Products.Add(product);
+            }
+
+            // Присвоюємо акцію та знижку продукту
+            product.PromotionId = promotion?.Id;
+            product.DiscountPercent = dto.DiscountPercent;
+
+            // Зберігаємо зміни в обох репозиторіях
             await _productRepository.Update(product);
+            if (promotion != null)
+                await _promotionRepository.Update(promotion);
+
             await _productRepository.SaveAsync();
+            await _promotionRepository.SaveAsync();
         }
         catch (HttpException)
         {
@@ -254,6 +284,7 @@ public class ProductService : IProductService
             throw new HttpException("Сталася внутрішня помилка сервера при оновленні акції продукту", HttpStatusCode.InternalServerError, ex);
         }
     }
+
 
 
 
