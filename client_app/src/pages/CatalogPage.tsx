@@ -10,10 +10,9 @@ import { useAppSelector } from "../store/store";
 import { getUser } from "../store/slices/userSlice";
 import { useParams } from "react-router-dom";
 import ProductCarousel from "../components/ProductCarousel";
-import { useGetAllProductsQuery } from "../services/admin/productAdminApi";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 const CatalogPage: React.FC = () => {
-  const { data: products } = useGetAllProductsQuery();
+ 
   const { id } = useParams<{ id: string }>();
   const [filters, setFilters] = useState<ProductFilterData>({});
 
@@ -93,12 +92,12 @@ const CatalogPage: React.FC = () => {
         <div className="w-[1310px] bg-white mx-auto mt-16 flex flex-col gap-12">
           <ProductCarousel
             title={"Пропозиції брендів"}
-            products={products ?? []}
+            products={searchResult?.items ?? []}
             maxWidth="1310px"
           />
           <ProductCarousel
             title="Найпопулярніші"
-            products={[...(products ?? [])].sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0))}
+            products={[...(searchResult?.items ?? [])].sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0))}
             maxWidth="1310px"
           />
         </div>
