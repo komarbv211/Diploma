@@ -35,10 +35,18 @@ const PromotionCard: React.FC<PromotionCardProps> = ({
         </h2>
 
         {/* Опис */}
-        <p className="mt-6 text-base md:text-lg lg:text-[20px] leading-7 font-manrope text-black">
-          {description}
-        </p>
+        <div className="mt-6">
+        {description.split("\n").map((para, idx) => (
+          <p
+            key={idx}
+            className="text-base md:text-lg lg:text-[20px] leading-7 font-manrope text-black"
+          >
+            {para}
+          </p>
+        ))}
 
+
+        </div>
         {/* Кнопка */}
         <a
           href={buttonLink}

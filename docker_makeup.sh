@@ -4,17 +4,17 @@ set -e
 
 server_up() {
     echo "Server up..."
-    docker-compose pull
+    docker compose pull
     docker stop makeup_container || true
     docker rm makeup_container || true
     docker stop makeup_client_container || true
     docker rm makeup_client_container || true
-    docker-compose up -d
+    docker compose up -d
 }
 
 start_containers() {
     echo "Containers start..."
-    docker-compose up -d
+    docker compose up -d
 }
 
 stop_containers() {
@@ -31,7 +31,7 @@ restart_containers() {
     docker rm makeup_container || true
     docker stop makeup_client_container || true
     docker rm makeup_client_container || true
-    docker-compose up -d
+    docker compose up -d
 }
 
 echo "Choose action:"

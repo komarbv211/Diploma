@@ -1,3 +1,5 @@
+import { IProductImageDto } from "./product";
+
 export interface ReviewProductRequest {
   productId: number;
   userId: number;
@@ -16,6 +18,10 @@ export interface ReviewItemProduct {
     lastName: string;
     image: string;
   };
+    product: {
+    name: string;
+    images?: IProductImageDto[];
+  };
 }
 export interface Review {
   id: number;
@@ -24,5 +30,9 @@ export interface Review {
     firstName: string;
     lastName: string;
     image?: string;
+  };
+  product: {
+    name: string;
+    images?: IProductImageDto[];
   };
 }

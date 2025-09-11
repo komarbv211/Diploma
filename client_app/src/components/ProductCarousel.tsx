@@ -95,13 +95,13 @@ const ProductCarousel: React.FC<Props> = ({
             <div key={p.id} className="px-2">
               <ProductCard
                 title={p.name}
-                category={getCategoryName(p.categoryId)}
+                category={p.categoryName || getCategoryName(p.categoryId)}
                 price={p.finalPrice ?? p.price}
                 oldPrice={p.discountPercent ? p.price : undefined}
                 image={
                   p.images?.[0]?.name
                     ? APP_ENV.IMAGES_1200_URL + p.images[0].name
-                    : ""
+                    : APP_ENV.IMAGES_1200_URL + p.imageUrl || " "
                 }
                 productId={p.id}
                 userId={1} // підстав свого користувача зі стору

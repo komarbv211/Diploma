@@ -7,6 +7,7 @@ export interface IProduct {
   description?: string;
   categoryId: number;
   brandId?: number;
+  categoryName?: string;
   category?: ICategoryName;
   quantity: number;
   averageRating?: number;
@@ -68,7 +69,7 @@ export interface IProductSearchResponse {
 }
 
 export interface IProductSearchRequest {
-  CategoryId?: number;
+  CategoryId?: number | number[];
   BrandId?: number;
   PriceMin?: number;
   PriceMax?: number;
