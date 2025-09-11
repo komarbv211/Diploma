@@ -9,6 +9,9 @@ import RequireAdmin from "./routes/guards/RequireAdmin.tsx";
 import AuthWatcher from "./components/AuthWatcher";
 import CartProtectedRoute from "./routes/сartRoutes.tsx";
 import { ToastContainer } from "react-toastify";
+import AboutUsPage from "./pages/About";
+import ReturnsPage from "./pages/ReturnsPage";
+import ProductQualityPage from "./pages/ProductQualityPage";
 
 const Home = lazy(() => import("./pages/Home"));
 const UserProfile = lazy(() => import("./pages/user/UserProfile.tsx"));
@@ -37,6 +40,9 @@ function App() {
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/" element={<Layout />}>
+            <Route path="/about" element={<AboutUsPage />} />
+            <Route path="/returns" element={<ReturnsPage />} />
+            <Route path="/quality" element={<ProductQualityPage />} />
             <Route index element={<Home />} />
             <Route path="profile" element={<UserProfile />} />
             <Route
@@ -69,7 +75,12 @@ function App() {
           </Route>
         </Routes>
       </Suspense>
-      <ToastContainer />
+      <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          aria-label="notification"
+      />
+
     </>
   );
 }
