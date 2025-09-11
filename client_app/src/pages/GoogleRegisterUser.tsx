@@ -13,6 +13,7 @@ import { ApiError } from "../types/errors";
 import AmoonIcon from "../components/icons/AmoonIcon";
 import AccountBoxIcon from "../components/icons/AccountBoxIcon";
 import StarDecoration from "../../src/components/decorations/StarDecoration";
+import BackButton from "../components/buttons/BackButton";
 
 const GoogleRegisterUser = () => {
   const [form] = Form.useForm();
@@ -89,6 +90,8 @@ const GoogleRegisterUser = () => {
       />
       {/* Декоративний градієнт */}
       <div className="absolute inset-0 left-[45%] bg-gradient-to-r from-beige2  z-0" />
+
+      <BackButton to="/" />
 
       {/* Форма логіну */}
       <div className="relative flex w-full max-w-sm mx-auto  rounded-lg  lg:max-w-6xl ">

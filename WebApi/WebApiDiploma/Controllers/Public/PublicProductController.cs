@@ -40,4 +40,14 @@ public class PublicProductController : ControllerBase
 
         return Ok(result);
     }
+    [HttpPost("by-categories")]
+    public async Task<ActionResult<List<ProductItemDto>>> GetByCategories([FromBody] List<long> categoryIds)
+    {
+        if (categoryIds == null || !categoryIds.Any())
+            return BadRequest("Список категорій порожній");
+
+        var products = await _productService.GetProductsByCategoriesAsync(categoryIds);
+        return Ok(products);
+    }
+
 }

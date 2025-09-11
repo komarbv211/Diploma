@@ -15,6 +15,7 @@ import StarDecoration from "../components/decorations/StarDecoration.tsx";
 import { useState } from "react";
 import { APP_ENV } from "../env/index.ts";
 import ReCAPTCHA from "react-google-recaptcha";
+import BackButton from "../components/buttons/BackButton.tsx";
 
 const RegistrUser: React.FC = () => {
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ const RegistrUser: React.FC = () => {
         <div className="hidden lg:block fixed top-0 right-0 w-[50vw] h-full bg-cover bg-center bg-[url('/amir-seilsepour-unsplash-2.png')]">
           <div className="absolute inset-0 bg-gradient-to-r from-beige2 to-transparent z-10" />
         </div>
+        <BackButton to="/" />
 
         {/* Форма реєстрації */}
         <div className="relative flex w-full max-w-sm mx-auto rounded-lg lg:max-w-6xl ">

@@ -119,28 +119,8 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         return await context.Set<TEntity>().FirstOrDefaultAsync(predicate);
     }
-
-    //public async Task<bool> ExistsByEmailAsync(string email)
-    //{
-    //    using (var connection = new SqlConnection("your_connection_string"))
-    //    {
-    //        var command = new SqlCommand("SELECT COUNT(*) FROM Users WHERE Email = @Email", connection);
-    //        command.Parameters.AddWithValue("@Email", email);
-
-    //        await connection.OpenAsync();
-    //        int count = (int)await command.ExecuteScalarAsync();
-    //        return count > 0;
-    //    }
-    //}
-
-    //public async Task<UserEntity?>GetByIdAsync(long id)
-    //{
-    //    return await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-    //}
-
-    //Task<TEntity> IRepository<TEntity>.GetByIdAsync(long id)
-    //{
-    //    return await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-    //   // throw new NotImplementedException();
-    //}
+    public async Task<List<TEntity>> ListAsync(ISpecification<TEntity> specification)
+    {
+        return await ApplySpecification(specification).ToListAsync();
+    }
 }
