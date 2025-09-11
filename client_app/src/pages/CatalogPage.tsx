@@ -11,12 +11,15 @@ import { getUser } from "../store/slices/userSlice";
 import { useParams } from "react-router-dom";
 import ProductCarousel from "../components/ProductCarousel";
 import ScrollToTopButton from "../components/ScrollToTopButton";
+
+
 const CatalogPage: React.FC = () => {
- 
+  
   const { id } = useParams<{ id: string }>();
   const [filters, setFilters] = useState<ProductFilterData>({});
-
+  
   const user = useAppSelector(getUser);
+  const [showFilter, setShowFilter] = useState(false);
   const isAdmin = user?.roles?.includes("Admin") ?? false;
 
   // Дані категорій
@@ -53,7 +56,41 @@ const CatalogPage: React.FC = () => {
   return (
     <div className="flex flex-col lg:flex-row mt-[100px] px-4 max-w-[1680px] mx-auto gap-4">
       <div className="w-full lg:w-[23.5%]">
-        <ProductFilter onChange={setFilters} isAdmin={isAdmin} />
+
+        {/* Кнопка показу фільтрів (тільки для мобільних) */}
+{/* <div className="lg:hidden mb-4">
+  <button
+    onClick={() => setShowFilter(!showFilter)}
+    className="px-4 py-2 bg-black text-white rounded"
+  >
+    {showFilter ? "Сховати фільтр" : "Показати фільтр"}
+  </button>
+</div> */}
+
+ <div className="lg:hidden mb-4">
+    <button
+      onClick={() => setShowFilter(!showFilter)}
+      className="
+        w-full
+        bg-transparent
+        text-black
+        border border-gray-300
+        rounded
+        px-4 py-2
+        hover:bg-gray-100
+        transition-colors duration-200
+      "
+    >
+      {showFilter ? "Сховати фільтр" : "Показати фільтр"}
+    </button>
+  </div>
+
+
+{/* Сам фільтр */}
+  <div className={`${showFilter ? "block" : "hidden"} lg:block`}>
+    <ProductFilter onChange={setFilters} isAdmin={isAdmin} />
+  </div>
+        {/* <ProductFilter onChange={setFilters} isAdmin={isAdmin} /> */}
       </div>
 
       <div className="w-full lg:w-[76.5%] flex flex-col gap-6 m-0 p-0">
