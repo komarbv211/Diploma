@@ -1,8 +1,6 @@
 import {configureStore} from "@reduxjs/toolkit";
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
-
 import userReducer from "./slices/userSlice";
-
 import {userApi} from "../services/userApi";
 import {authApi} from "../services/authApi";
 import {userAdminApi} from "../services/admin/userAdminApi";
@@ -10,9 +8,7 @@ import {categoryApi} from "../services/categoryApi";
 import {categoryAdminApi} from "../services/admin/categoryAdmnApi";
 import {productApi} from "../services/productApi";
 import {productAdminApi} from "../services/admin/productAdminApi";
-
 import {promotionAdminApi} from "../services/admin/promotionAdminApi";
-
 import {productRatingApi} from "../services/productRatingApi ";
 import {cartApi} from "../services/cartApi";
 import localCarReducer from "./slices/localCartSlice";
@@ -22,9 +18,9 @@ import {brandApi} from '../services/brandApi';
 import {brandAdminApi} from "../services/admin/brandAdminApi";
 import {orderApi} from "../services/orderApi";
 import {orderAdminApi} from "../services/admin/orderAdminApi";
-
 import {locationApi} from "../services/locationApi";
 import {promotionApi} from '../services/promotionApi';
+import { analyticsAdminApi } from "../services/admin/analyticsAdminApi";
 
 export const store = configureStore({
     reducer: {
@@ -47,7 +43,9 @@ export const store = configureStore({
         auth: authReducer,
         [orderApi.reducerPath]: orderApi.reducer,
         [orderAdminApi.reducerPath]: orderAdminApi.reducer,
-        [locationApi.reducerPath]: locationApi.reducer
+        [locationApi.reducerPath]: locationApi.reducer,
+        [analyticsAdminApi.reducerPath]: analyticsAdminApi.reducer
+
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
@@ -67,7 +65,8 @@ export const store = configureStore({
             promotionApi.middleware,
             orderApi.middleware,
             orderAdminApi.middleware,
-            locationApi.middleware
+            locationApi.middleware,
+            analyticsAdminApi.middleware
         ),
 });
 
