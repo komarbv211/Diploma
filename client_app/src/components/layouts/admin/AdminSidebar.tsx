@@ -1,6 +1,6 @@
 import {
   AppstoreOutlined,
-  DeleteOutlined,
+  // DeleteOutlined,
   LogoutOutlined,
   UsergroupAddOutlined,
   ProductOutlined,
@@ -33,13 +33,13 @@ const AdminSidebar = () => {
       <Menu.Item key="/admin/products" icon={<ProductOutlined />}>
         Продукти
       </Menu.Item>
-      <Menu.Item
+      {/* <Menu.Item
         key="/delete-account"
         icon={<DeleteOutlined style={{ color: "#ff4d4f" }} />}
         style={{ color: "#ff4d4f" }}
       >
         Видалити мій акаунт
-      </Menu.Item>
+      </Menu.Item> */}
       <Menu.Item key="/" icon={<LogoutOutlined />}>
         Вихід
       </Menu.Item>

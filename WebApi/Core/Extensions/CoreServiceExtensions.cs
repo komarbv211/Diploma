@@ -25,6 +25,7 @@ namespace Core.Extensions
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IRecaptchaService, RecaptchaService>();
+            services.AddScoped<IAnalyticsService, AnalyticsService>();
 
         }
     }
