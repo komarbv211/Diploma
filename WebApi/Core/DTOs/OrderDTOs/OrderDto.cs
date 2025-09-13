@@ -30,6 +30,7 @@ namespace Core.DTOs.OrderDTOs
         public string? TrackingNumber { get; set; }
         public List<OrderItemDto> Items { get; set; } = [];
         public NovaPostWarehouseDto? Warehouse { get; set; }
+        public DateTime DateCreated { get; set; }
     }
 
     public class OrderCreateDto
@@ -59,5 +60,11 @@ namespace Core.DTOs.OrderDTOs
         public long Id { get; set; }
         public OrderStatus Status { get; set; }
         public DateTime? UpdatedAt { get; set; }
+    }
+
+    public class OrderStatusUpdateDto
+    {
+        public long Id { get; set; }
+        public OrderStatus Status { get; set; }
     }
 }

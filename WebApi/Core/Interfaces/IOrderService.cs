@@ -9,6 +9,7 @@ namespace Core.Interfaces
         Task<List<OrderDto>> GetOrdersByUserIdAsync(long? userId = null);
         Task<OrderDto> CreateOrderAsync(OrderCreateDto dto, long? userId = null);
         Task UpdateOrderAsync(OrderUpdateDto dto);
+        Task UpdateOrderStatusAsync(OrderStatusUpdateDto dto);
         Task DeleteOrderAsync(long id);
     }
 }

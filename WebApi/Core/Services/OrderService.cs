@@ -153,6 +153,20 @@ namespace Core.Services
 
         }
 
+        public async Task UpdateOrderStatusAsync(OrderStatusUpdateDto dto)
+        {
+            var entity = await _orderRepository
+                .GetAllQueryable()
+                .FirstOrDefaultAsync(o => o.Id == dto.Id)
+                ?? throw new HttpException("Замовлення не знайдено", HttpStatusCode.NotFound);
+
+            entity.Status = dto.Status;
+            entity.UpdatedAt = DateTime.UtcNow;
+
+            await _orderRepository.Update(entity);
+            await _orderRepository.SaveAsync();
+        }
+
         public async Task DeleteOrderAsync(long orderId)
         {
             var order = await _orderRepository

@@ -1,6 +1,11 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { createBaseQueryWithReauth } from "../../utilities/createBaseQuery";
-import { OrderCreateDto, OrderDto, OrderUpdateDto } from "../../types/order";
+import {
+  OrderCreateDto,
+  OrderDto,
+  OrderStatusUpdateDto,
+  OrderUpdateDto,
+} from "../../types/order";
 
 export const orderAdminApi = createApi({
   reducerPath: "orderAdminApi",
@@ -21,7 +26,7 @@ export const orderAdminApi = createApi({
       query: (id) => `order/${id}`,
       providesTags: ["Orders"],
     }),
-    
+
     createOrder: builder.mutation<OrderDto, OrderCreateDto>({
       query: (newProd) => ({
         url: "order",
@@ -36,6 +41,15 @@ export const orderAdminApi = createApi({
         url: `order`,
         method: "PUT",
         body: upd,
+      }),
+      invalidatesTags: ["Orders"],
+    }),
+
+    updateOrderStatus: builder.mutation<void, OrderStatusUpdateDto>({
+      query: (updateData) => ({
+        url: `order/${updateData.id}/status`,
+        method: "PATCH",
+        body: updateData,
       }),
       invalidatesTags: ["Orders"],
     }),
@@ -55,5 +69,6 @@ export const {
   useGetOrderByIdQuery,
   useCreateOrderMutation,
   useUpdateOrderMutation,
+  useUpdateOrderStatusMutation,
   useDeleteOrderMutation,
 } = orderAdminApi;

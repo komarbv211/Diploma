@@ -60,6 +60,14 @@ namespace WebApiDiploma.Controllers.Admin
             return Ok(upd);
         }
 
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(long id, [FromBody] OrderStatusUpdateDto dto)
+        {
+            await _orderService.UpdateOrderStatusAsync(dto);
+            var updated = await _orderService.GetOrderByIdAsync(dto.Id);
+            return Ok(updated);
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {
