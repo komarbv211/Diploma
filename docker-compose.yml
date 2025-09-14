@@ -44,3 +44,5 @@ services:
       - "5092:80"  
     networks:
       - myAppNetwork
+    environment:
+      VITE_BASE_URL: "https://apimakeup.itstep.click"
