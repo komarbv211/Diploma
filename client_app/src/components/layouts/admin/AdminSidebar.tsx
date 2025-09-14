@@ -4,6 +4,7 @@ import {
   LogoutOutlined,
   UsergroupAddOutlined,
   ProductOutlined,
+  OrderedListOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -32,6 +33,9 @@ const AdminSidebar = () => {
       </Menu.Item>
       <Menu.Item key="/admin/products" icon={<ProductOutlined />}>
         Продукти
+      </Menu.Item>
+      <Menu.Item key="/admin/orders" icon={<OrderedListOutlined />}>
+        Замовлення
       </Menu.Item>
       {/* <Menu.Item
         key="/delete-account"
