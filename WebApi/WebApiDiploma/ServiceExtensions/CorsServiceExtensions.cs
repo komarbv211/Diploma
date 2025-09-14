@@ -2,15 +2,16 @@
 {
     public static class CorsServiceExtensions
     {
-        public static void AddCorsPolicies(this IServiceCollection services)
+        public static void AddCorsPolicies(this IServiceCollection services, 
+            IConfiguration configuration)
         {
+            var allowedOrigins = configuration["Cors:AllowedOrigins"];
             services.AddCors(options =>
             {
                 options.AddPolicy("front-end-cors-policy", policy =>
                 {
                     policy.WithOrigins(
-                        "http://localhost:5173",
-                        "https://makeup.itstep.click"
+                        allowedOrigins ?? ""
                     )
                     .AllowAnyMethod()
                     .AllowAnyHeader()
