@@ -59,35 +59,14 @@ const CatalogPage: React.FC = () => {
       <div className="w-full lg:w-[76.5%] flex flex-col gap-6 m-0 p-0">
 
         <div className="w-full aspect-[284/153] bg-[url('/parfum_banner.png')] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg overflow-hidden">
-          <img
-            src="/parfum_banner.png"
-            alt="Парфуми банер"
-            className="w-full h-full object-cover"
-          />
+          {category?.image && (
+            <img
+              src={APP_ENV.IMAGES_1200_URL + category.image}
+              alt={category.name}
+              className="w-full max-h-[700px] object-cover rounded-lg"
+            />
+          )}
         </div>
-
-        {/* {category && (
-  <>
-    {category.name === "Парфумерія" ? (
-      <img
-        src="/r_v_brand.jpg"
-        alt="Парфуми банер"
-        className="w-full max-h-[700px] object-cover rounded-lg"
-      />
-    ) : category.image ? (
-      <img
-        src={APP_ENV.IMAGES_1200_URL + category.image}
-        alt={category.name}
-        className="w-full max-h-[700px] object-cover rounded-lg"
-      />
-    ) : (
-      <div className="w-full h-[300px] bg-gray-100 flex items-center justify-center rounded-lg">
-        <p className="text-gray-500">Фото категорії відсутнє</p>
-      </div>
-    )}
-  </>
-)} */}
-
         {/* Каруселі */}
         <div className="w-[1310px] bg-white mx-auto mt-16 flex flex-col gap-12">
           <ProductCarousel
@@ -113,14 +92,6 @@ const CatalogPage: React.FC = () => {
 
 
         <div className="flex flex-wrap justify-center gap-4">
-          {category?.image && (
-            <img
-              src={APP_ENV.IMAGES_1200_URL + category.image}
-              alt={category.name}
-              className="w-full max-h-[700px] object-cover rounded-lg"
-            />
-          )}
-
           <ProductCarousel
             title={"Пропозиції брендів"}
             products={searchResult?.items ?? []}
