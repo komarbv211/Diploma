@@ -44,5 +44,3 @@ services:
       - "5092:80"  
     networks:
       - myAppNetwork
-    env_file:
-      - .env
