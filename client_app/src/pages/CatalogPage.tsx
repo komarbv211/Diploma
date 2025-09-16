@@ -12,6 +12,8 @@ import ScrollToTopButton from "../components/ScrollToTopButton";
 import { Pagination } from "antd"; 
 import { useProducts } from "../hooks/useProducts";
 import { useGetBrandsQuery } from "../services/brandApi";
+import { useGetRandomCommentsQuery } from "../services/productCommentsApi";
+import ReviewProductCard from "../components/comments/ReviewProductCard";
 
 // ...
 const CatalogPage: React.FC = () => {
@@ -26,6 +28,8 @@ const CatalogPage: React.FC = () => {
   const { data: categories } = useGetCategoryTreeQuery();
   const { data: categoriesChildren } = useGetChildrenByIdQuery(Number(id));
   const { data: brands } = useGetBrandsQuery();
+  const { data: randomComment } = useGetRandomCommentsQuery(1);
+
 
   const brandIds = useMemo(() => {
     return brands?.map((b) => b.id) ?? [];
@@ -112,26 +116,26 @@ const CatalogPage: React.FC = () => {
             products={brandProducts ?? []}
             maxWidth="1310px"
           />
-         {/* Карусель і банер для випадкової дочірньої категорії */}
-{randomChildCategory && categoriesChildrenProducts.length > 0 && (
-  <div className="flex flex-col gap-8">
-    <ProductCarousel
-      title={randomChildCategory.name}
-      products={categoriesChildrenProducts}
-      maxWidth="1310px"
-    />
+          {/* Карусель і банер для випадкової дочірньої категорії */}
+          {randomChildCategory && categoriesChildrenProducts.length > 0 && (
+            <div className="flex flex-col gap-8">
+              <ProductCarousel
+                title={randomChildCategory.name}
+                products={categoriesChildrenProducts}
+                maxWidth="1310px"
+              />
 
-    {randomChildCategory.image && (
-      <div className="relative w-full max-w-[1024px] aspect-[1021/484] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg overflow-hidden mx-auto">
-        <img
-          src={APP_ENV.IMAGES_1200_URL + randomChildCategory.image}
-          alt={randomChildCategory.name}
-          className="w-full max-h-[700px] object-cover rounded-lg"
-        />
-      </div>
-    )}
-  </div>
-)}
+              {randomChildCategory.image && (
+                <div className="relative w-full max-w-[1024px] aspect-[1021/484] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg overflow-hidden mx-auto">
+                  <img
+                    src={APP_ENV.IMAGES_1200_URL + randomChildCategory.image}
+                    alt={randomChildCategory.name}
+                    className="w-full max-h-[700px] object-cover rounded-lg"
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
         </div>
         {/* Carousels */}
@@ -142,6 +146,28 @@ const CatalogPage: React.FC = () => {
             maxWidth="1310px"
           />
         </div>
+        {/* Один випадковий коментар */}
+        {randomComment && randomComment.length > 0 && (
+          <section className="flex justify-center mt-12">
+            <ReviewProductCard
+              key={randomComment[0].id}
+              productName={randomComment[0].product?.name || "Товар без назви"}
+              productImage={
+                randomComment[0].product?.images?.[0]
+                  ? APP_ENV.IMAGES_1200_URL + randomComment[0].product.images[0].name
+                  : "/NoImage.png"
+              }
+              reviewTitle="Відгук на товар"
+              userName={randomComment[0].user?.firstName || "Анонім"}
+              reviewText={randomComment[0].text}
+              onGoToProduct={() =>
+                randomComment[0].productId
+                  ? (window.location.href = `/product/details/${randomComment[0].productId}`)
+                  : undefined
+              }
+            />
+          </section>
+        )}
 
         {/* Products */}
         <div className="flex flex-wrap justify-center gap-4">
