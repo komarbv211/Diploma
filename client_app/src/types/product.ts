@@ -69,8 +69,8 @@ export interface IProductSearchResponse {
 }
 
 export interface IProductSearchRequest {
-  CategoryId?: number | number[];
-  BrandId?: number;
+  CategoryId?: number;
+  BrandIds?: number | number[];
   PriceMin?: number;
   PriceMax?: number;
   MinRating?: number;
