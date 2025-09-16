@@ -111,10 +111,10 @@
       },
       {
         "Id": 13,
-        "Name": "Нішева парфумерія",
-        "UrlSlug": "nisheva-parfumeriya",
+        "Name": "Легкі весняні аромати",
+        "UrlSlug": "light-spring-scents",
         "Priority": 12,
-        "Description": "Нішева парфумерія",
+        "Description": "Легкі весняні аромати",
         "DateCreated": "2025-03-20T00:00:00Z",
         "ParentId": 1
       },

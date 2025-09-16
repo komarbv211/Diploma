@@ -1,6 +1,6 @@
 //Home.tsx
-import React from "react";
-import { useGetAllProductsQuery } from "../services/productApi";
+import React, { useMemo } from "react";
+// import { useGetAllProductsQuery } from "../services/productApi";
 import ProductCarousel from "../components/ProductCarousel";
 import { APP_ENV } from "../env";
 import { useGetPromotionByIdQuery } from "../services/promotionApi";
@@ -9,11 +9,18 @@ import ScrollToTopButton from "../components/ScrollToTopButton";
 import ReviewProductCard from "../components/comments/ReviewProductCard";
 import { useGetRandomCommentsQuery } from "../services/productCommentsApi";
 import { useProducts } from "../hooks/useProducts";
+import { useGetBrandsQuery } from "../services/brandApi";
 
 const Home: React.FC = () => {
-  const { data: products } = useGetAllProductsQuery();
+  // const { data: products } = useGetAllProductsQuery();
   const { data: promotions } = useGetPromotionByIdQuery(1);
   const { data: reviewsFromApi } = useGetRandomCommentsQuery(4);
+  const { data: brands } = useGetBrandsQuery();
+  
+  const brandIds = useMemo(() => {
+    return brands?.map((b) => b.id) ?? [];
+  }, [brands]);
+  
   const today = new Date();
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(today.getDate() - 7);
@@ -31,6 +38,9 @@ const Home: React.FC = () => {
   const { products: faceProducts } = useProducts({
     CategoryId: 28,
   }); // Категорія "Обличчя"
+  const { products: brandProducts } = useProducts({
+    BrandIds: brandIds,
+  }); 
 
   // розділяємо коментарі на дві групи
   const reviewsTop = reviewsFromApi?.slice(0, 2) ?? [];
@@ -178,7 +188,7 @@ const Home: React.FC = () => {
       <div className="container mx-auto  mt-28 flex flex-col gap-12 max-w-[1680px]">
         <ProductCarousel
           title={"Пропозиції брендів"}
-          products={products ?? []}
+          products={brandProducts ?? []}
           maxWidth="100%"
         />
         <ProductCarousel
