@@ -58,4 +58,6 @@ input::placeholder {
 .burger:where(.css-dev-only-do-not-override-pjilya).ant-btn.ant-btn-icon-only .anticon {
     font-size: 40px;
 }
-
+:where(.css-dev-only-do-not-override-22dhr8) a:hover {
+    color: #8A0149;
+}

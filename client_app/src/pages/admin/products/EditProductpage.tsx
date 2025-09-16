@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Input, Upload, Form, InputNumber, Select } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Button, Input, Upload, Form, InputNumber, Select, message } from "antd";
+import { EyeOutlined, PlusOutlined, ScissorOutlined } from "@ant-design/icons";
 import {
   useUpdateProductMutation,
   useGetProductByIdQuery,
 } from "../../../services/admin/productAdminApi";
 import CategoryTreeSelect from "../../../components/category/CategoryTreeSelect";
 import { IProductPutRequest } from "../../../types/product";
-import { UploadFile } from "antd/es/upload/interface";
+import { RcFile, UploadFile } from "antd/es/upload/interface";
 import { APP_ENV } from "../../../env";
 import {
   DragDropContext,
@@ -19,15 +19,22 @@ import {
 import { handleFormErrors } from "../../../utilities/handleApiErrors";
 import { ApiError } from "../../../types/errors";
 import { useGetBrandsQuery } from "../../../services/admin/brandAdminApi";
+import CropperModal from "../../../components/images/CropperModal";
+import { base64ToFile } from "../../../utilities/base64ToFile";
 
 const EditProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: productData } = useGetProductByIdQuery(Number(id));
-  const [updateProduct] = useUpdateProductMutation();
+  const [updateProduct,{isLoading}] = useUpdateProductMutation();
   const [form] = Form.useForm<IProductPutRequest>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const { data: brands, isLoading: brandsLoading } = useGetBrandsQuery();
+
+  // Cropper state
+  const [cropIndex, setCropIndex] = useState<number | null>(null);
+  const [isCropModalVisible, setCropModalVisible] = useState(false);
+  const [cropImage, setCropImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (productData) {
@@ -49,6 +56,51 @@ const EditProductPage = () => {
       setFileList(updatedFileList);
     }
   }, [productData, form]);
+
+  const openCropModal = (index: number) => {
+    const file = fileList[index];
+    if (!file.originFileObj) return;
+
+    // дозволяємо кропати лише нові зображення
+    if ((file.originFileObj as RcFile).type === "old-image") return;
+
+    const url = URL.createObjectURL(file.originFileObj as Blob);
+    setCropImage(url);
+    setCropIndex(index);
+    setCropModalVisible(true);
+  };
+
+  const handleCrop = (croppedBase64: string) => {
+    if (cropIndex === null) return;
+
+    const newFile = base64ToFile(
+      croppedBase64,
+      `cropped-${Date.now()}.jpg`
+    ) as RcFile;
+    const newUrl = URL.createObjectURL(newFile);
+
+    setFileList((prev) =>
+      prev.map((file, index) => {
+        if (index === cropIndex) {
+          if ((file.originFileObj as RcFile)?.type !== "old-image") {
+            newFile.uid = file.uid;
+            return {
+              ...file,
+              uid: file.uid,
+              url: newUrl,
+              thumbUrl: newUrl,
+              originFileObj: newFile,
+            };
+          }
+        }
+        return file;
+      })
+    );
+
+    setCropModalVisible(false);
+    setCropIndex(null);
+    setCropImage(null);
+  };
 
   const handleImageChange = (info: { fileList: UploadFile[] }) => {
     const newFileList = info.fileList.map((file, index) => ({
@@ -72,6 +124,7 @@ const EditProductPage = () => {
       values.id = Number(id);
       values.image = fileList.map((x) => x.originFileObj as File);
       await updateProduct(values).unwrap();
+      message.success("Продукт успішно відредаговано!");
       navigate("..");
     } catch (error: unknown) {
       handleFormErrors(error as ApiError, form);
@@ -134,10 +187,11 @@ const EditProductPage = () => {
             showSearch
           />
         </Form.Item>
+
         <Form.Item
           name="brandId"
           label="Бренд"
-          rules={[{ required: true, message: "Будь ласка, оберіть бренд!" }]}
+          // rules={[{ required: true, message: "Будь ласка, оберіть бренд!" }]}
         >
           <Select
             placeholder="Оберіть бренд"
@@ -178,15 +232,39 @@ const EditProductPage = () => {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
+                        className="relative"
                       >
                         <Upload
                           listType="picture-card"
                           fileList={[file]}
                           onRemove={() =>
-                            setFileList(
-                              fileList.filter((f) => f.uid !== file.uid)
-                            )
+                            setFileList(fileList.filter((f) => f.uid !== file.uid))
                           }
+                          showUploadList={{
+                            showPreviewIcon: true,
+                            showRemoveIcon: true,
+                            previewIcon: (file) =>
+                              (file.originFileObj as RcFile)?.type === "old-image" ? (
+                                <EyeOutlined
+                                  title="Переглянути"
+                                  onClick={(e) => {
+                                    e.preventDefault(); // щоб не було стандартної поведінки
+                                    window.open(file.url, "_blank");
+                                  }}
+                                  style={{ color: "white", fontSize: 18 }}
+                                />
+                              ) : (
+                                <ScissorOutlined
+                                  title="Обрізати"
+                                  onClick={(e) => {
+                                    e.preventDefault(); // дуже важливо
+                                    openCropModal(index);
+                                  }}
+                                  style={{ color: "white", fontSize: 18 }}
+                                />
+                              ),
+                          }}
+
                         />
                       </div>
                     )}
@@ -213,11 +291,24 @@ const EditProductPage = () => {
         </Upload>
 
         <Form.Item className="mt-2">
-          <Button type="primary" htmlType="submit" block>
+          <Button type="primary" htmlType="submit" block loading={isLoading}>
             Зберегти
           </Button>
         </Form.Item>
       </Form>
+
+      {/* --- модальне вікно для кропа --- */}
+      <CropperModal
+        image={cropImage}
+        open={isCropModalVisible}
+        aspectRatio={1}
+        onCrop={handleCrop}
+        onCancel={() => {
+          setCropIndex(null);
+          setCropModalVisible(false);
+          setCropImage(null);
+        }}
+      />
     </div>
   );
 };

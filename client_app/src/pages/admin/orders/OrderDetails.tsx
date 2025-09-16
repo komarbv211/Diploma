@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Spin, Tag, Descriptions, Card } from "antd";
 import { useGetOrderByIdQuery } from "../../../services/admin/orderAdminApi";
 import {
@@ -6,6 +6,7 @@ import {
   PaymentMethod,
   DeliveryType,
 } from "../../../types/enums.ts";
+import { Button} from "antd";
 
 const statusLabels: Record<OrderStatus, { label: string; color: string }> = {
   [OrderStatus.Pending]: { label: "Очікується", color: "orange" },
@@ -28,6 +29,7 @@ const paymentMethodLabels: Record<PaymentMethod, string> = {
 const OrderDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { data: order, isLoading } = useGetOrderByIdQuery(Number(id));
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -40,7 +42,16 @@ const OrderDetails = () => {
   if (!order) return <p>Замовлення не знайдено</p>;
 
   return (
-    <Card title={`Замовлення №${order.id}`}>
+   <Card
+      title={
+        <div className="flex justify-between items-center">
+          <span>Замовлення №{order.id}</span>
+          <Button type="default" onClick={() => navigate(-1)}>
+            Назад
+          </Button>
+        </div>
+      }
+    >
       <Descriptions bordered column={1}>
         <Descriptions.Item label="Дата">
           {order.dateCreated

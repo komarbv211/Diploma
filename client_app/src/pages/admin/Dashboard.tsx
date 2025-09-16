@@ -50,7 +50,7 @@ const Dashboard = () => {
       {
         label: "Продажі",
         data: revenue.map((d) => d.revenue),
-        backgroundColor: "#3b82f6",
+        backgroundColor: "#E56B93",
         borderRadius: 8,
       },
     ],
@@ -91,7 +91,7 @@ const Dashboard = () => {
         title="Дохід"
         value={loadingRevenue ? undefined : revenue.reduce((acc, r) => acc + r.revenue, 0)}
         precision={2}
-        valueStyle={{ color: "#3f8600" }}
+        valueStyle={{ color: "#8A0149" }}
         prefix={loadingRevenue ? <Spin /> : "$"}
       />
     </Card>
@@ -99,7 +99,7 @@ const Dashboard = () => {
       <Statistic
         title="Замовлення"
         value={loadingOrders ? undefined : ordersSummary?.ordersCount}
-        valueStyle={{ color: "#108ee9" }}
+        valueStyle={{ color: "#722ed1" }}
         prefix={loadingOrders ? <Spin /> : undefined}
       />
     </Card>
@@ -107,7 +107,7 @@ const Dashboard = () => {
       <Statistic
         title="Користувачі"
         value={loadingUsers ? undefined : userAnalytics?.totalUsers}
-        valueStyle={{ color: "#722ed1" }}
+        valueStyle={{ color: "#C89FB8" }}
         prefix={loadingUsers ? <Spin /> : undefined}
       />
     </Card>
@@ -115,7 +115,7 @@ const Dashboard = () => {
       <Statistic
         title="Нові клієнти"
         value={loadingNewCustomers ? undefined : newCustomers?.newCustomers}
-        valueStyle={{ color: "#13c2c2" }}
+        valueStyle={{ color: "#E56B93" }}
         prefix={loadingNewCustomers ? <Spin /> : undefined}
       />
     </Card>
@@ -124,7 +124,7 @@ const Dashboard = () => {
           title="Повторні покупки"
           value={loadingRepeat ? undefined : repeatPurchases?.customersWithRepeatPurchase}
           suffix={repeatPurchases ? `/ ${repeatPurchases.customersTotal}` : undefined}
-          valueStyle={{ color: "#fa8c16" }}
+          valueStyle={{ color: "#1A3D83" }}
           prefix={loadingRepeat ? <Spin /> : undefined}
         />
       </Card>
