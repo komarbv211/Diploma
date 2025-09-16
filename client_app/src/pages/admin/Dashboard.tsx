@@ -1,4 +1,4 @@
-import { Card } from "antd";
+import { Card, Statistic, DatePicker, Spin } from "antd";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -8,93 +8,173 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { useState, useMemo } from "react";
+import dayjs, { Dayjs } from "dayjs"; // Використовуємо Dayjs
+import {
+  useGetRevenueQuery,
+  useGetTopProductsQuery,
+  useGetOrdersSummaryQuery,
+  useGetSalesByCategoryQuery,
+  useGetNewCustomersQuery,
+  useGetRepeatPurchasesQuery,
+  useGetUserAnalyticsQuery,
+} from "../../services/admin/analyticsAdminApi";
+import ScrollToTopButton from "../../components/ScrollToTopButton";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
-
-const salesData = [
-  { month: "Січень", sales: 4000 },
-  { month: "Лютий", sales: 3200 },
-  { month: "Березень", sales: 4500 },
-  { month: "Квітень", sales: 5100 },
-  { month: "Травень", sales: 6100 },
-  { month: "Червень", sales: 7000 },
-  { month: "Липень", sales: 6700 },
-  { month: "Серпень", sales: 7500 },
-  { month: "Вересень", sales: 6800 },
-  { month: "Жовтень", sales: 7200 },
-  { month: "Листопад", sales: 6900 },
-  { month: "Грудень", sales: 8000 },
-];
-
-const data = {
-  labels: salesData.map((d) => d.month),
-  datasets: [
-    {
-      label: "Продажі",
-      data: salesData.map((d) => d.sales),
-      backgroundColor: "#3b82f6",
-      borderRadius: 8, // закруглені кути
-    },
-  ],
-};
-
-const options = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: false },
-    tooltip: { enabled: true },
-  },
-  scales: {
-    x: {
-      grid: { display: false },
-    },
-    y: {
-      beginAtZero: true,
-      grid: { color: "#e5e7eb" }, // світлі лінії сітки
-    },
-  },
-};
+const { RangePicker } = DatePicker;
 
 const Dashboard = () => {
+  // Стейт для дати (Dayjs)
+  const [dates, setDates] = useState<[Dayjs, Dayjs]>([
+    dayjs().subtract(1, "month"),
+    dayjs(),
+  ]);
+
+  const startUtc = dates[0].startOf("day").toISOString();
+  const endUtc = dates[1].endOf("day").toISOString();
+
+  // Виклики API
+  const { data: revenue = [], isLoading: loadingRevenue } = useGetRevenueQuery({ startUtc, endUtc });
+  const { data: ordersSummary, isLoading: loadingOrders } = useGetOrdersSummaryQuery({ startUtc, endUtc });
+  const { data: userAnalytics, isLoading: loadingUsers } = useGetUserAnalyticsQuery({ startUtc, endUtc });
+  const { data: newCustomers, isLoading: loadingNewCustomers } = useGetNewCustomersQuery({ startUtc, endUtc });
+  const { data: repeatPurchases, isLoading: loadingRepeat } = useGetRepeatPurchasesQuery({ startUtc, endUtc });
+  const { data: topProducts = [], isLoading: loadingTop } = useGetTopProductsQuery({ top: 5, startUtc, endUtc });
+  const { data: salesByCategory = [], isLoading: loadingCategories } = useGetSalesByCategoryQuery({ startUtc, endUtc });
+
+  // Дані для графіка
+  const chartData = useMemo(() => ({
+    labels: revenue.map((d) => new Date(d.date).toLocaleDateString()),
+    datasets: [
+      {
+        label: "Продажі",
+        data: revenue.map((d) => d.revenue),
+        backgroundColor: "#3b82f6",
+        borderRadius: 8,
+      },
+    ],
+  }), [revenue]);
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { enabled: true } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { beginAtZero: true, grid: { color: "#e5e7eb" } },
+    },
+  };
+
   return (
-    <div className="p-4 h-[79vh]">
-      {/* Заголовок */}
-      <div className="text-center mb-4">
-        <h1 className="text-2xl font-bold">Адмін Панель</h1>
-        <p className="text-lg mt-2">
-          Ласкаво просимо! Тут ви можете переглядати статистику продажів.
-        </p>
+<div className="p-4">
+  {/* Заголовок */}
+  {/* <div className="text-center mb-6">
+    <h1 className="text-3xl font-bold">Адмін Панель</h1>
+    <p className="text-lg mt-2">Ласкаво просимо! Тут ви можете переглядати аналітику сайту.</p>
+  </div> */}
+
+  {/* Фільтр по датах */}
+  <div className="flex justify-center mb-6">
+    <RangePicker
+      value={dates}
+      onChange={(val) => val && setDates([val[0]!, val[1]!])}
+      format="YYYY-MM-DD"
+      allowClear={false}
+    />
+  </div>
+
+  {/* Верхній рядок: 4 показники */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+    <Card className="shadow-md text-center">
+      <Statistic
+        title="Дохід"
+        value={loadingRevenue ? undefined : revenue.reduce((acc, r) => acc + r.revenue, 0)}
+        precision={2}
+        valueStyle={{ color: "#3f8600" }}
+        prefix={loadingRevenue ? <Spin /> : "$"}
+      />
+    </Card>
+    <Card className="shadow-md text-center">
+      <Statistic
+        title="Замовлення"
+        value={loadingOrders ? undefined : ordersSummary?.ordersCount}
+        valueStyle={{ color: "#108ee9" }}
+        prefix={loadingOrders ? <Spin /> : undefined}
+      />
+    </Card>
+    <Card className="shadow-md text-center">
+      <Statistic
+        title="Користувачі"
+        value={loadingUsers ? undefined : userAnalytics?.totalUsers}
+        valueStyle={{ color: "#722ed1" }}
+        prefix={loadingUsers ? <Spin /> : undefined}
+      />
+    </Card>
+    <Card className="shadow-md text-center">
+      <Statistic
+        title="Нові клієнти"
+        value={loadingNewCustomers ? undefined : newCustomers?.newCustomers}
+        valueStyle={{ color: "#13c2c2" }}
+        prefix={loadingNewCustomers ? <Spin /> : undefined}
+      />
+    </Card>
+    <Card className="shadow-md text-center flex-1">
+        <Statistic
+          title="Повторні покупки"
+          value={loadingRepeat ? undefined : repeatPurchases?.customersWithRepeatPurchase}
+          suffix={repeatPurchases ? `/ ${repeatPurchases.customersTotal}` : undefined}
+          valueStyle={{ color: "#fa8c16" }}
+          prefix={loadingRepeat ? <Spin /> : undefined}
+        />
+      </Card>
+  </div>
+
+  {/* Нижній рядок: графік + правий стовпчик */}
+  <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+    {/* Графік продажів (зліва, займає 3 колонки) */}
+    <Card className="shadow-md p-4 lg:col-span-3 h-full">
+      <h2 className="text-xl font-semibold text-center mb-4">Аналітика продажів</h2>
+      <div className="w-full h-96">
+        <Bar data={chartData} options={chartOptions} />
       </div>
+    </Card>
 
-      {/* Карточки з показниками */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <Card className="shadow-md text-center">
-          <h2 className="text-xl font-semibold">Дохід</h2>
-          <p className="text-2xl font-bold text-green-600 mt-2">$45,200</p>
-        </Card>
+    {/* Правий стовпчик */}
+    <div className="flex flex-col lg:col-span-2 gap-4 h-full">
+      
 
-        <Card className="shadow-md text-center">
-          <h2 className="text-xl font-semibold">Замовлення</h2>
-          <p className="text-2xl font-bold text-blue-600 mt-2">1,240</p>
-        </Card>
+      <Card className="shadow-md flex-1 p-4">
+        <h3 className="text-lg font-semibold mb-2">Топ продуктів</h3>
+        {loadingTop ? <Spin className="mx-auto" /> : (
+          <ul className="space-y-2">
+            {topProducts.map((p) => (
+              <li key={p.productId} className="flex justify-between px-2 py-1 border rounded hover:bg-gray-50">
+                <span>{p.productName}</span>
+                <span>{p.revenue.toLocaleString()} $</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
 
-        <Card className="shadow-md text-center">
-          <h2 className="text-xl font-semibold">Користувачі</h2>
-          <p className="text-2xl font-bold text-purple-600 mt-2">320</p>
-        </Card>
-      </div>
-
-      {/* Графік продажів */}
-      <Card className="shadow-md p-4">
-        <h2 className="text-xl font-semibold text-center mb-4">
-          Аналітика продажів за рік
-        </h2>
-        <div className="w-full h-96 mx-auto">
-          <Bar data={data} options={options} />
-        </div>
+      <Card className="shadow-md flex-1 p-4">
+        <h3 className="text-lg font-semibold mb-2">Продажі по категоріях</h3>
+        {loadingCategories ? <Spin className="mx-auto" /> : (
+          <ul className="space-y-2">
+            {salesByCategory.map((c) => (
+              <li key={c.categoryId} className="flex justify-between px-2 py-1 border rounded hover:bg-gray-50">
+                <span>{c.categoryName}</span>
+                <span>{c.revenue.toLocaleString()} $</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </Card>
     </div>
+  </div>
+  <ScrollToTopButton />
+</div>
   );
 };
 

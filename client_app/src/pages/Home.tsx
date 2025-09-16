@@ -51,8 +51,7 @@ const Home: React.FC = () => {
           reviewText={review.text}
           onGoToProduct={() =>
             review.productId
-              ? (window.location.href = `/product/details/${19}`)
-              // (window.location.href = `/product/details/${review.productId}`)
+              ? (window.location.href = `/product/details/${review.productId}`)
               : undefined
           }
         />

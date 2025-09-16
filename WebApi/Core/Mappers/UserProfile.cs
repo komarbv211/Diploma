@@ -31,16 +31,6 @@ namespace Core.Mappers
 
             CreateMap<UserEntity, UserShortDto>();
 
-            //.ForMember(x => x.SettlementDescrption, opt => opt.MapFrom(z => z.Settlement != null ? z.Settlement.Description : null))
-            //.ForMember(x => x., opt => opt.MapFrom(z => z.Adverts.Select(y => y.Id)))
-            //.ForMember(x => x.FavoriteAdverts, opt => opt.MapFrom(z => z.FavoriteAdverts.Select(y => y.Id)));
-
-            //CreateMap<UserEditModel, OlxUser>();
-
-            //CreateMap<OlxUser, OlxUserShortDto>()
-            //     .ForMember(x => x.SettlementDescrption, opt => opt.MapFrom(z => z.Settlement != null ? z.Settlement.Description : null));
-
-            //CreateMap<UserPageRequest, OlxUserFilter>();
 
         }
     }

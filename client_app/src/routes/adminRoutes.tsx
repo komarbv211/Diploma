@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { Route, Routes } from "react-router-dom";
+import OrderDetails from "../pages/admin/orders/OrderDetails";
 
 // Лейзі-імпорт сторінок
 const AdminLayout = lazy(() => import("./../components/layouts/admin/Layout"));
@@ -42,6 +43,9 @@ const CreateBrandPage = lazy(
 const EditBrandPage = lazy(
   () => import("./../pages/admin/brands/EditBrandPage")
 );
+const OrderList = lazy(
+  () => import("./../pages/admin/orders/OrderList")
+);
 
 export const AdminRoutes = () => {
   return (
@@ -81,6 +85,11 @@ export const AdminRoutes = () => {
           <Route index element={<BrandList />} />
           <Route path="create" element={<CreateBrandPage />} />
           <Route path="edit/:id" element={<EditBrandPage />} />
+        </Route>
+       
+        <Route path="orders">
+          <Route index element={<OrderList />} />
+          <Route path="order/:id" element={<OrderDetails />} />
         </Route>
       </Route>
     </Routes>

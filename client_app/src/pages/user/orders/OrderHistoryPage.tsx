@@ -60,7 +60,13 @@ const OrderHistoryPage = () => {
               {orders.map((order) => (
                 <Card key={order.id} className="mb-4 w-full">
                   <p>
-                    <strong>Замовлення №{order.id}</strong> — {order.date}
+                    <strong>Замовлення №{order.id}</strong> —{" "}
+                    {order.dateCreated
+                      ? new Date(order.dateCreated).toLocaleString("uk-UA", {
+                          dateStyle: "long",
+                          timeStyle: "short",
+                        })
+                      : "-"}
                   </p>
                   <p>Сума: {order.total} ₴</p>
                   <p>Статус: {order.status}</p>

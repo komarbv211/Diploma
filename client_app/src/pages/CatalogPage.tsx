@@ -69,7 +69,7 @@ console.log("searchResult", searchResult);
       </div>
 
       <div className="w-full lg:w-[76.5%] flex flex-col gap-6 m-0 p-0">
-        <div className="w-full aspect-[284/153] bg-[url('/parfum_banner.png')] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg overflow-hidden">
+         <div className="w-full aspect-[284/153] bg-[url('/parfum_banner.png')] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg overflow-hidden">
           {category?.image && (
             <img
               src={APP_ENV.IMAGES_1200_URL + category.image}
@@ -78,7 +78,6 @@ console.log("searchResult", searchResult);
             />
           )}
         </div>
-
         {/* Каруселі */}
         <div className="w-[1310px] bg-white mx-auto mt-16 flex flex-col gap-12">
           <ProductCarousel

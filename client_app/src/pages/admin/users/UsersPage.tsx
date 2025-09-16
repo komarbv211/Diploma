@@ -365,6 +365,7 @@ const UsersPage: React.FC = () => {
           <Space style={{ width: "100%", justifyContent: "space-between", marginBottom: 20 }}>
             <Space>
               <Select
+              className="custom-select"
                   placeholder="Обрати роль"
                   value={searchRoles}
                   allowClear
@@ -408,7 +409,7 @@ const UsersPage: React.FC = () => {
 
             <Space>
               <Button onClick={resetSorting}>Скинути сортування</Button>
-              <Button type="primary">Додати користувача</Button>
+              {/* <Button type="primary">Додати користувача</Button> */}
             </Space>
           </Space>
 

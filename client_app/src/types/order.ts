@@ -39,6 +39,7 @@ export interface OrderBaseDto {
   house?: string;
   apartment?: string;
   deliveryAddress?: string;
+  dateCreated: Date;
 }
 
 export interface OrderCreateDto {
@@ -65,13 +66,18 @@ export interface OrderUpdateDto extends OrderBaseDto {
   updatedAt?: string;
 }
 
+export interface OrderStatusUpdateDto {
+  id: number;
+  status: OrderStatus;
+}
+
 export interface OrderDto extends OrderBaseDto {
   id: number;
   status: OrderStatus;
   updatedAt?: string;
   items: OrderItemDto[];
   warehouse?: NovaPostWarehouseDto;
-  date?: string; //додали для білда
+  // date?: string; //додали для білда
   total?: number; //додали для білда
 }
 
@@ -90,4 +96,3 @@ export interface NPResponse<T> {
   success: boolean;
   data: T[];
 }
-

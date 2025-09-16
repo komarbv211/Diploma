@@ -119,9 +119,7 @@ const OrderPage = () => {
       console.log("------Working app send server----", newOrder);
       const response = await createOrder(newOrder).unwrap();
 
-
-      if (isAuth)
-        await clearCartOnServer().unwrap();
+      if (isAuth) await clearCartOnServer().unwrap();
       dispatch(clearCart());
 
       // console.log("Відповідь від сервера:", response);
@@ -151,7 +149,7 @@ const OrderPage = () => {
     <>
       <div className="w-[93%] mx-auto font-manrope min-h-[750px]">
         <hr className="my-10 mb-2 border-1 border-gray rounded" />
-        <div className="flex flex-col md:flex-row justify-between">
+        <div className="flex flex-col md:flex-row justify-between items-center md:items-start">
           <Link
             to="/"
             onClick={() => navigate(-1)}
@@ -166,11 +164,11 @@ const OrderPage = () => {
         </div>
 
         <div className="flex flex-col xl:flex-row items-start gap-8">
-          <div className="flex flex-1 justify-between mr-5 mt-5">
-            <div className="flex flex-col w-[47%]">
+          <div className="flex flex-1 xl:w-[65%] justify-between mr-5 mt-5 w-full">
+            <div className="flex flex-col w-[47%] w-full md:w-[47%]">
               <h1 className="form-title !text-left">Оформлення замовлення</h1>
               <Form layout="vertical" form={form} onFinish={onFinish}>
-                <div className="flex justify-between my-6">
+                <div className="flex flex-col sm:flex-row justify-between my-6">
                   <button
                     type="button"
                     onClick={() => handleTabClick("personal")}
@@ -344,7 +342,7 @@ const OrderPage = () => {
                         </>
                       )}
                       <div className="flex-1">
-                        <div className="flex gap-4">
+                        <div className="flex flex-col sm:flex-row gap-0 sm:gap-4">
                           <Form.Item
                             name="deliveryType"
                             label={
@@ -438,7 +436,7 @@ const OrderPage = () => {
             </div>
           </div>
 
-          <div className="w-[35%] border border-blue2 rounded-xl py-[20px] px-[30px] mt-7">
+          <div className="w-full xl:w-[35%] border border-blue2 rounded-xl py-[20px] px-[30px] mt-7">
             <CartSummary />
           </div>
         </div>
