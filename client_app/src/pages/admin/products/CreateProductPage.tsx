@@ -228,7 +228,7 @@ const CreateProductPage = () => {
         <Form.Item
           name="brandId"
           label="Бренд"
-          rules={[{ required: true, message: "Будь ласка, оберіть бренд!" }]}
+          // rules={[{ required: true, message: "Будь ласка, оберіть бренд!" }]}
         >
           <Select
             placeholder="Оберіть бренд"
