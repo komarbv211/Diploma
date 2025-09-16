@@ -149,26 +149,27 @@ const CatalogPage: React.FC = () => {
         {/* Один випадковий коментар */}
         {randomComment && randomComment.length > 0 && (
           <section className="flex justify-center mt-12">
-            <ReviewProductCard
-              key={randomComment[0].id}
-              productName={randomComment[0].product?.name || "Товар без назви"}
-              productImage={
-                randomComment[0].product?.images?.[0]
-                  ? APP_ENV.IMAGES_1200_URL + randomComment[0].product.images[0].name
-                  : "/NoImage.png"
-              }
-              reviewTitle="Відгук на товар"
-              userName={randomComment[0].user?.firstName || "Анонім"}
-              reviewText={randomComment[0].text}
-              onGoToProduct={() =>
-                randomComment[0].productId
-                  ? (window.location.href = `/product/details/${randomComment[0].productId}`)
-                  : undefined
-              }
-            />
+            <div className="relative w-full max-w-[850px] aspect-[840/400] rounded-lg overflow-hidden mx-auto">
+              <ReviewProductCard
+                key={randomComment[0].id}
+                productName={randomComment[0].product?.name || "Товар без назви"}
+                productImage={
+                  randomComment[0].product?.images?.[0]
+                    ? APP_ENV.IMAGES_1200_URL + randomComment[0].product.images[0].name
+                    : "/NoImage.png"
+                }
+                reviewTitle="Відгук на товар"
+                userName={randomComment[0].user?.firstName || "Анонім"}
+                reviewText={randomComment[0].text}
+                onGoToProduct={() =>
+                  randomComment[0].productId
+                    ? (window.location.href = `/product/details/${randomComment[0].productId}`)
+                    : undefined
+                }
+              />
+            </div>
           </section>
         )}
-
         {/* Products */}
         <div className="flex flex-wrap justify-center gap-4">
           {isLoading && <p>Завантаження...</p>}
