@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { OrderCreateDto, OrderDto } from "../types/order";
+import { OrderCreateDto, OrderDto, OrderHistoryDto } from "../types/order";
 import { createBaseQuery } from "../utilities/createBaseQuery";
 import { NovaPostWarehouseDto } from "../types/novaPost";
 
@@ -8,8 +8,8 @@ export const orderApi = createApi({
   baseQuery: createBaseQuery("order"),
   tagTypes: ["Orders", "Warehouses"],
   endpoints: (builder) => ({
-    getMyOrders: builder.query<OrderDto[], void>({
-      query: () => `/order/my`,
+    getMyOrders: builder.query<OrderHistoryDto[], void>({
+      query: () => `/my`,
     }),
 
     getOrderById: builder.query<OrderDto, number>({

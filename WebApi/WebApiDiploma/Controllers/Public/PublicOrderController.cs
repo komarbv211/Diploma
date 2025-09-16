@@ -25,13 +25,9 @@ namespace WebApiDiploma.Controllers.Public
 
         [HttpGet("my")]
         [Authorize]
-        public async Task<ActionResult> GetMyOrders()
+        public async Task<ActionResult<List<OrderHistoryDto>>> GetMyOrders()
         {
-            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //if (string.IsNullOrEmpty(userId))
-            //    return Unauthorized();
-
-            var orders = await _orderService.GetOrdersByUserIdAsync();
+            var orders = await _orderService.GetOrdersHistoryByUserIdAsync();
             return Ok(orders);
         }
 
@@ -43,15 +39,6 @@ namespace WebApiDiploma.Controllers.Public
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] OrderCreateDto dto)
         {
-            //long? userId = null;
-
-            //if (User.Identity?.IsAuthenticated == true)
-            //{
-            //    var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //    if (!string.IsNullOrEmpty(user)) userId = long.Parse(user);
-            //}
-
-            //var request = this.Request;
             var createdOrder = await _orderService.CreateOrderAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = createdOrder.Id }, createdOrder);
         }

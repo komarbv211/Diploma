@@ -399,9 +399,9 @@ namespace WebApiDiploma.ServiceExtensions
         private static async Task SeedOrdersAsync(IServiceProvider serviceProvider)
         {
             var orderRepo = serviceProvider.GetService<IRepository<OrderEntity>>();
-            var warehouseRepo = serviceProvider.GetService<IRepository<NovaPostWarehouseEntity>>();
+            //var warehouseRepo = serviceProvider.GetService<IRepository<NovaPostWarehouseEntity>>();
 
-            var newPostService = serviceProvider.GetRequiredService<NovaPoshtaService>();
+            //var newPostService = serviceProvider.GetRequiredService<NovaPoshtaService>();
             //await newPostService.UpdateWarehousesAsync();
 
             if (orderRepo == null || await orderRepo.AnyAsync())
