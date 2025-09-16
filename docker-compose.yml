@@ -12,7 +12,7 @@ services:
       POSTGRES_PASSWORD: p%rSDj4Imds0763300sfgs7djc**dmUntdOidd3dZ_#WTi4B9Zo
       POSTGRES_DB: cosmeria
     volumes:
-      - /data/postgresql/data:/var/lib/postgresql/data
+      - /volumes/makeup/postgres/data:/var/lib/makeup/data
     ports:
       - "5432:5432"
     networks:
