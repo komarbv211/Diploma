@@ -87,17 +87,16 @@ const BrandListWithAlphabet: React.FC<Props> = ({
 
   return (
       <div
-
-      className="flex flex-col items-start gap-3 overflow-x-hidden "
-  style={{
-    width: '100%',
-    maxWidth: '308px',
-    height: 'auto',
-    maxHeight: 'calc(100vh - 20px)',
-    overflowY: 'auto',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  }}
+        className="flex flex-col items-start gap-3 overflow-x-hidden "
+        style={{
+          width: '100%',
+          maxWidth: '308px',
+          height: 'auto',
+          maxHeight: 'calc(100vh - 20px)',
+          overflowY: 'auto',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
       >
         <div className="flex justify-between items-center w-full mb-2">
           <h2
