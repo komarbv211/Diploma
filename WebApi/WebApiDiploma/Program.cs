@@ -56,7 +56,7 @@ builder.Services.AddSwaggerGen(); // основний
 builder.Services.AddSwaggerJWT(); // +JWT
 
 // CORS
-builder.Services.AddCorsPolicies();
+builder.Services.AddCorsPolicies(builder.Configuration);
 
 
 // Вимикаємо автоматичну валідацію через ModelState

@@ -4,6 +4,20 @@ networks:
     driver: bridge
 
 services:
+  db:
+    container_name: pg-container
+    image: postgres:17
+    environment:
+      POSTGRES_USER: krot
+      POSTGRES_PASSWORD: p%rSDj4Imds0763300sfgs7djc**dmUntdOidd3dZ_#WTi4B9Zo
+      POSTGRES_DB: cosmeria
+    volumes:
+      - /data/postgresql/data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - myAppNetwork
+    restart: unless-stopped
   app:
     container_name: makeup_container
     image: novakvova/makeup-asp-api
@@ -12,7 +26,8 @@ services:
     networks:
       - myAppNetwork
     environment:
-      - DefaultConnection=Server=ep-long-firefly-a2qp0hj6-pooler.eu-central-1.aws.neon.tech;Database=neondb;Username=neondb_owner;Password=npg_wQjgN89tVlTc
+        ConnectionStrings__DefaultConnection: "Host=db;Database=cosmeria;Username=krot;Password=p%rSDj4Imds0763300sfgs7djc**dmUntdOidd3dZ_#WTi4B9Zo"
+        Cors__AllowedOrigins: "https://makeup.itstep.click"
     volumes:
       - /volumes/makeup-asp/backup:/app/backup 
       - /volumes/makeup-asp/images:/app/uploading
