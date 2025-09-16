@@ -39,7 +39,7 @@ const Home: React.FC = () => {
     CategoryId: 28,
   }); // Категорія "Обличчя"
   const { products: brandProducts } = useProducts({
-    BrandIds: brandIds,
+    BrandIds: brandIds ?? [],
   }); 
 
   // розділяємо коментарі на дві групи

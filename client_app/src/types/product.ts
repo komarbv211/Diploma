@@ -70,7 +70,7 @@ export interface IProductSearchResponse {
 
 export interface IProductSearchRequest {
   CategoryId?: number;
-  BrandId?: number | number[];
+  BrandIds?: number | number[];
   PriceMin?: number;
   PriceMax?: number;
   MinRating?: number;

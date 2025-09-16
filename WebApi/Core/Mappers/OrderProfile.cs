@@ -20,6 +20,18 @@ namespace Core.Mappers
             CreateMap<OrderItemCreateDto, OrderItemEntity>();
             CreateMap<OrderItemUpdateDto, OrderItemEntity>();
 
+            CreateMap<OrderItemEntity, OrderHistoryItemDto>()
+           .ForMember(dest => dest.Name,
+                      opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
+           .ForMember(dest => dest.ImageUrl,
+                      opt => opt.MapFrom(src => src.Product != null && src.Product.Images != null
+                          ? src.Product.Images.OrderBy(img => img.Priority).FirstOrDefault().Name
+                          : null));
+
+            CreateMap<OrderEntity, OrderHistoryDto>()
+                .ForMember(dest => dest.TotalPrice,
+                           opt => opt.MapFrom(src => src.Items.Sum(i => i.Price * i.Quantity)));
+
             CreateMap<NovaPostWarehouseEntity, NovaPostWarehouseDto>();
             CreateMap<NovaPostWarehouseData, NovaPostWarehouseEntity>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Description))

@@ -80,6 +80,22 @@ export interface OrderDto extends OrderBaseDto {
   // date?: string; //додали для білда
   total?: number; //додали для білда
 }
+export interface OrderHistoryItemDto {
+  id: number;
+  productId: number;
+  name: string;
+  imageUrl?: string;
+  quantity: number;
+  price: number;
+}
+
+export interface OrderHistoryDto {
+  id: number;
+  dateCreated: string; 
+  status: OrderStatus;
+  totalPrice: number;
+  items: OrderHistoryItemDto[];
+}
 
 // location
 export interface City {
