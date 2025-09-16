@@ -25,9 +25,9 @@ import { handleFormErrors } from "../../utilities/handleApiErrors";
 import { ApiError } from "../../types/errors";
 import CropperModal from "../../components/images/CropperModal.tsx";
 import UserSidebar from "./userPages/UserSidebar.tsx";
-import GoogleIcon from "../../components/icons/GoogleIcon.tsx";
 import PencilFilledIcon from "../../components/icons/PencilFilledIcon.tsx";
 import { showToast } from "../../utilities/showToast.ts";
+import SuccessIcon from "../../components/icons/toasts/SuccessIcon.tsx";
 
 const { Content } = Layout;
 
@@ -102,7 +102,7 @@ const UserProfile = () => {
       }
 
       await updateUser(formData).unwrap();
-      showToast('success', 'Зміни збережено')
+      showToast('success', 'Зміни збережено', <SuccessIcon/>)
     } catch (error: unknown) {
       handleFormErrors(error as ApiError, form);
     }
@@ -212,13 +212,6 @@ const UserProfile = () => {
                     className="max-w-[470px]"
                   >
                     <DatePicker format="YYYY-MM-DD" className="form-input" />
-                  </Form.Item>
-
-                  <Form.Item label className="max-w-[470px]">
-                    <button className="flex items-center justify-center gap-2 p-[10px] bg-pink2 rounded-xl border-pink2 w-full h-[45px] hover:bg-[#58042c] text-[18px] text-white">
-                      <GoogleIcon />
-                      Увійдіть за допомогою Google
-                    </button>
                   </Form.Item>
                 </Form>
 

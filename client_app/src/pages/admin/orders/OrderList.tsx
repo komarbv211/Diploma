@@ -27,6 +27,9 @@ import {
   PaymentMethod,
 } from "../../../types/enums.ts";
 import { showToast } from "../../../utilities/showToast.ts";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon.tsx";
+import ErrorIcon from "../../../components/icons/toasts/ErrorIcon.tsx";
+import WarnIcon from "../../../components/icons/toasts/WarnIcon.tsx";
 
 const statusLabels: Record<OrderStatus, { label: string; color: string }> = {
   [OrderStatus.Pending]: { label: "Очікується", color: "orange" },
@@ -83,12 +86,12 @@ const OrderList = () => {
 
   const handleStatusChange = async () => {
     if (!selectedStatus) {
-      showToast("warn", "Оберіть статус замовлення");
+      showToast("warn", "Оберіть статус замовлення", <WarnIcon/>);
       return;
     }
 
     if (pendingOrderIds.length === 0) {
-      showToast("warn", "Не обрано замовлення для зміни статусу");
+      showToast("warn", "Не обрано замовлення для зміни статусу", <WarnIcon/>);
       return;
     }
 
@@ -99,13 +102,13 @@ const OrderList = () => {
         )
       );
 
-      showToast("success", "Статус оновлено");
+      showToast("success", "Статус оновлено", <SuccessIcon/>);
       setStatusModalVisible(false);
       setSelectedRowKeys([]);
       setPendingOrderIds([]);
       setSelectedStatus(null);
     } catch {
-      showToast("error", "Помилка при оновленні статусу");
+      showToast("error", "Помилка при оновленні статусу", <ErrorIcon/>);
     }
   };
 

@@ -67,4 +67,13 @@ namespace Core.DTOs.OrderDTOs
         public long Id { get; set; }
         public OrderStatus Status { get; set; }
     }
+
+    public class OrderHistoryDto
+    {
+        public long Id { get; set; }
+        public DateTime DateCreated { get; set; }
+        public decimal TotalPrice { get; set; }
+        public OrderStatus Status { get; set; }
+        public List<OrderHistoryItemDto> Items { get; set; } = new();
+    }
 }
