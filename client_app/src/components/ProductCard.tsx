@@ -15,14 +15,14 @@ import { useAddFavoriteMutation, useRemoveFavoriteMutation } from "../services/f
 
 type Props = {
     title: string;
-    category: string;
+    category? : string;
     price: number;
     oldPrice?: number;
     image: string;
     productId: number;
     userId: number;
     userRating?: number;
-    isFavorite?: boolean; // актуальне з бекенду
+    isFavorite?: boolean;
     onRated?: () => void;
 };
 
@@ -46,7 +46,6 @@ const ProductCard: React.FC<Props> = ({
 
     const [favorite, setFavorite] = useState(isFavorite);
 
-    // синхронізація локального стейту з бекендом
     useEffect(() => {
         setFavorite(isFavorite);
     }, [isFavorite]);
@@ -89,7 +88,6 @@ const ProductCard: React.FC<Props> = ({
             return;
         }
 
-        // Миттєво оновлюємо UI
         setFavorite((prev) => !prev);
 
         try {
@@ -99,7 +97,6 @@ const ProductCard: React.FC<Props> = ({
                 await removeFavorite(productId).unwrap();
             }
         } catch (error) {
-            // якщо помилка — відкотимо зміни
             setFavorite((prev) => !prev);
             console.error("Помилка при додаванні/видаленні улюбленого товару", error);
         }
@@ -107,6 +104,7 @@ const ProductCard: React.FC<Props> = ({
 
     return (
         <div className="grid grid-rows-[325px_1fr_auto] p-[15px_40px] w-[405px] h-[513px] bg-white rounded-[15px] border border-blue2 relative">
+            {/* Фото */}
             <Link
                 to={`/product/details/${productId}`}
                 className="block rounded-[15px] overflow-hidden"
@@ -119,13 +117,19 @@ const ProductCard: React.FC<Props> = ({
                 }}
             />
 
+            {/* Кнопка улюбленого */}
             <button
                 onClick={handleToggleFavorite}
                 className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center z-10"
             >
-                {favorite ? <AiFillHeart className="text-red-500 w-6 h-6" /> : <AiOutlineHeart className="text-gray-400 w-6 h-6" />}
+                {favorite ? (
+                    <AiFillHeart className="text-red-500 w-6 h-6" />
+                ) : (
+                    <AiOutlineHeart className="text-gray-400 w-6 h-6" />
+                )}
             </button>
 
+            {/* Інформація про продукт */}
             <div className="flex flex-col justify-normal gap-1">
                 <Link to={`/product/details/${productId}`}>
                     <h3 className="line-clamp-2 min-h-[54px] font-manrope font-medium text-[20px] leading-[27px] bg-gradient-to-r from-blue2 to-blueLight bg-clip-text text-transparent">
@@ -134,13 +138,13 @@ const ProductCard: React.FC<Props> = ({
                     <p className="line-clamp-2 min-h-[34px] text-[18px] text-gray">{category}</p>
                 </Link>
 
-                <InteractiveRating productId={productId} userRating={userRating} onRate={handleRate} size={15} />
+                <InteractiveRating productId={productId} userRating={userRating} onRate={handleRate} size={15} readOnly={true} />
 
-                <div className="line-clamp-2 flex justify-between items-center w-[325px] h-[35px] ">
-                    <span className="text-pink2 font-manrope text-[20px] font-medium leading-[27px]">
-                        {price} ₴
-                        {oldPrice && <span className="text-gray line-through text-[16px] ml-2">{oldPrice} ₴</span>}
-                    </span>
+                <div className="line-clamp-2 flex justify-between items-center w-[325px] h-[35px]">
+          <span className="text-pink2 font-manrope text-[20px] font-medium leading-[27px]">
+            {price} ₴
+              {oldPrice && <span className="text-gray line-through text-[16px] ml-2">{oldPrice} ₴</span>}
+          </span>
                     <button onClick={handleAddToCart} className="w-[28.5px] h-[23.5px] flex items-center justify-center">
                         {isInCart ? (
                             <div className="relative w-full h-full">

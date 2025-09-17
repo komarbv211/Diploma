@@ -59,7 +59,7 @@ namespace Core.Services
 
         public async Task<List<OrderDto>> GetOrdersByUserIdAsync(long? userId = null)
         {
-            var userIdFind = userId == null  ? await _authService.GetUserId() : userId.Value;
+            var userIdFind = userId ?? await _authService.GetUserId();
             var result = await _orderRepository
                 .GetAllQueryable()
                 .Where(o => o.UserId == userIdFind)
@@ -70,7 +70,24 @@ namespace Core.Services
             return result;
         }
 
-        public async Task<OrderDto> CreateOrderAsync(OrderCreateDto dto, long? userId=null)
+        public async Task<List<OrderHistoryDto>> GetOrdersHistoryByUserIdAsync(long? userId = null)
+        {
+            var userIdFind = userId ?? await _authService.GetUserId();
+
+            var orders = await _orderRepository
+                .GetAllQueryable()
+                .Where(o => o.UserId == userIdFind)
+                .Include(o => o.Items)
+                    .ThenInclude(i => i.Product)
+                        .ThenInclude(p => p.Images)
+                .OrderByDescending(o => o.DateCreated)
+                .ProjectTo<OrderHistoryDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return orders;
+        }
+
+        public async Task<OrderDto> CreateOrderAsync(OrderCreateDto dto, long? userId = null)
         {
             if (dto == null)
                 throw new HttpException("Неправильні дані замовлення", HttpStatusCode.BadRequest);
@@ -85,7 +102,7 @@ namespace Core.Services
             }
             catch (Exception ex)
             {
-                if(userId.HasValue)
+                if (userId.HasValue)
                     entity.UserId = userId.Value;
             }
 
@@ -120,7 +137,7 @@ namespace Core.Services
             entity.Status = OrderStatus.Pending;
             await _orderRepository.SaveAsync();
 
-            
+
 
             return _mapper.Map<OrderDto>(entity);
         }

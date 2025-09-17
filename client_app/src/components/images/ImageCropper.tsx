@@ -77,11 +77,11 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
         <div className="mt-2">
           <RedoOutlined
             onClick={() => rotateImage(90)}
-            className="mr-2 px-4 py-2 bg-gray-400 text-white rounded-md"
+            className="mr-2 px-4 py-2 bg-gray-400 text-pink rounded-md hover:text-pink2"
           />
           <UndoOutlined
             onClick={() => rotateImage(-90)}
-            className="px-4 py-2 bg-gray-400 text-white rounded-md"
+            className="px-4 py-2 bg-gray-400 text-pink rounded-md hover:text-pink2"
           />
         </div>
       </div>

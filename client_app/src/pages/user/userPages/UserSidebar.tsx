@@ -15,24 +15,32 @@ const UserSidebar = () => {
   };
 
   const menuItems = [
-    { key: "contact", label: "Контактна інформація", path: "#" },
-    { key: "address", label: "Адресна книга", path: "#" },
-    { key: "orders", label: "Історія замовлень", path: "/order-history" },
-    { key: "features", label: "Мої особливості", path: "#" },
-    { key: "wishlist", label: "Список бажань", path: "wishlist" },
-    { key: "brands", label: "Улюблені бренди", path: "#" },
-    { key: "promocodes", label: "Промокоди", path: "#" },
+
+    // { key: "contact", label: "Контактна інформація", path: "#" },
+    // { key: "address", label: "Адресна книга", path: "#" },
+    { key: "/profile", label: "Профіль користувача", path: "/profile" },
+    { key: "/order-history", label: "Історія замовлень", path: "/order-history" },
+        { key: "wishlist", label: "Список бажань", path: "wishlist" },
+    // { key: "brands", label: "Улюблені бренди", path: "#" },
+    // { key: "promocodes", label: "Промокоди", path: "#" },
     {
-      key: "delete",
-      label: <span className="text-pink2">Видалити мій акаунт</span>,
+      key: "spacer",
+      className: "!h-4 !bg-transparent hover:!bg-transparent !cursor-default",
+    },
+    {
+      key: "/profile/delete",
+      label: <span className="text-pink2 hover:text-pink">Видалити мій акаунт</span>,
       path: "/profile/delete",
     },
-    { key: "logout", label: "Вихід", path: "/logout", onclick: handleLogout },
+    {
+      key: "logout",
+      label: "Вихід",
+    }
   ];
 
   return (
     <>
-      <div className="border border-blue2 bg-white rounded-xl p-2 [&_.ant-menu-root]:!border-0">
+      <div className="border border-blue2 bg-white rounded-xl p-2 [&_.ant-menu-root]:!border-0 h-[260px]">
         <Menu
           mode="inline"
           defaultSelectedKeys={[location.pathname]}

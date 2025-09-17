@@ -34,19 +34,34 @@ const UserFavorites: React.FC = () => {
         );
     }
 
-    const productsForDisplay: IProduct[] = (currentFavorites || []).map((item) => ({
+    const productsForDisplay: IProduct[] = (currentFavorites || []).map((item, index) => ({
         id: item.productId,
         name: item.name,
         categoryName: item.categoryName || "",
         price: item.price,
         finalPrice: item.price,
-        images: item.imageName ? [{ name: item.imageName }] : [],
+        images: item.imageName
+            ? [
+                {
+                    id: index, // тимчасовий унікальний id
+                    name: item.imageName,
+                    priority: 0,
+                    productId: item.productId,
+                },
+            ]
+            : [],
         isFavorite: true,
         averageRating: 0,
         categoryId: 0,
         discountPercent: 0,
         imageUrl: item.imageName || "",
+        quantity: 1,
+        rating: 0,
+        ratingsCount: 0,
+        commentsCount: 0,
     }));
+
+
 
     return (
         <Layout className="bg-white w-[93%] mx-auto font-manrope min-h-[750px]">

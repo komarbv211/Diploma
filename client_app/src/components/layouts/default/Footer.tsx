@@ -138,10 +138,10 @@ const Footer: React.FC = () => {
             <h3 className="text-xl font-semibold mb-2">Контакти</h3>
             <ul className="space-y-1 text-base text-black">
               <li>
-                <a href="tel:+380443740383">(044) 374 03 83</a>
+               (044) 374 03 83
               </li>
               <li>
-                <a href="tel:0800507740">0 (800) 507 740</a>
+                0 (800) 507 740
               </li>
               <li>Щоденно з 8:00 до 20:00</li>
             </ul>
