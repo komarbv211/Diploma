@@ -23,16 +23,16 @@ const UserSidebar = () => {
     { key: "/wishlist", label: "Список бажань", path: "#" },
     // { key: "brands", label: "Улюблені бренди", path: "#" },
     // { key: "promocodes", label: "Промокоди", path: "#" },
-    {
-      key: "spacer",
-      className: "!h-4 !bg-transparent hover:!bg-transparent !cursor-default",
-    },
+    // {
+    //   key: "spacer",
+    //   className: "!h-4 !bg-transparent hover:!bg-transparent !cursor-default",
+    // },
     {
       key: "/profile/delete",
-      label: <span className="text-pink2">Видалити мій акаунт</span>,
+      label: <span className="text-pink2 hover:text-pink">Видалити мій акаунт</span>,
       path: "/profile/delete",
     },
-    { key: "/logout", label: "Вихід", path: "/logout", onclick: handleLogout },
+    { key: "/logout", label: "Вихід", path: "/", onclick: handleLogout },
   ];
 
   return (

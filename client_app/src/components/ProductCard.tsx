@@ -105,8 +105,8 @@ const ProductCard: React.FC<Props> = ({
           userRating={userRating}
           onRate={handleRate}
           size={15}
+          readOnly={true}
         />
-
         <div className="line-clamp-2 flex justify-between items-center w-[325px] h-[35px] ">
           <span className="text-pink2 font-manrope text-[20px] font-medium leading-[27px]">
             {price} ₴
