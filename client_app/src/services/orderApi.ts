@@ -10,6 +10,7 @@ export const orderApi = createApi({
   endpoints: (builder) => ({
     getMyOrders: builder.query<OrderHistoryDto[], void>({
       query: () => `/my`,
+      providesTags: ["Orders"],
     }),
 
     getOrderById: builder.query<OrderDto, number>({
@@ -24,7 +25,7 @@ export const orderApi = createApi({
           url: "",
           method: "POST",
           body: newProd,
-        }
+        };
       },
       invalidatesTags: ["Orders"],
     }),
