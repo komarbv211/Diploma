@@ -5,6 +5,7 @@ import { useGetMyOrdersQuery } from "../../../services/orderApi";
 import { OrderHistoryDto, OrderHistoryItemDto } from "../../../types/order";
 import { OrderStatus } from "../../../types/enums";
 import { DownOutlined } from "@ant-design/icons";
+import { APP_ENV } from "../../../env";
 
 const { Panel } = Collapse;
 
@@ -139,38 +140,60 @@ const OrderHistoryPage = () => {
                             : "opacity-100 translate-y-0"
                         }`}
                       >
-                        <span className="">{order.totalPrice} ₴</span>
+                        <span>{order.totalPrice} ₴</span>
                       </div>
+                      <div className="flex items-center gap-2 w-[10%] flex-shrink-0 flex-row-reverse">
+                        {order.items?.slice(0, 2).map((item, idx) => (
+                          <img
+                            key={idx}
+                            src={`${APP_ENV.IMAGES_200_URL}${
+                              item.imageUrl || "NoImage.png"
+                            }`}
+                            width={40}
+                            height={40}
+                            alt={item.name}
+                            className="object-cover rounded"
+                            onError={(e) =>
+                              (e.currentTarget.src = "/NoImage.png")
+                            }
+                          />
+                        ))}
 
-                      <div className="flex gap-2">
-                        {order.items
-                          ?.slice(0, 2)
-                          .map((item: OrderHistoryItemDto, idx: number) => (
-                            <img
-                              key={idx}
-                              src={item.imageUrl}
-                              alt={item.name}
-                              className="w-10 h-10 object-cover rounded"
-                            />
-                          ))}
+                        {order.items && order.items.length > 2 && (
+                          <div className="font-manrope flex items-center justify-center text-pink font-semibold mr-3">
+                            +{order.items.length - 2}
+                          </div>
+                        )}
                       </div>
                     </div>
                   }
                 >
-                  <div className="flex flex-col gap-4 text-[18px] ">
+                  <div className="flex flex-col gap-4 text-[18px] font-manrope">
                     {order.items?.map(
                       (item: OrderHistoryItemDto, idx: number) => (
                         <div
                           key={idx}
                           className="grid grid-cols-3 items-center gap-4"
                         >
-                          <div>
+                          <div className="flex gap-4 items-center">
                             <img
-                              src={item.imageUrl}
+                              src={`${APP_ENV.IMAGES_200_URL}${
+                                item.imageUrl || "NoImage.png"
+                              }`}
+                              width={110}
+                              height={120}
                               alt={item.name}
-                              className="w-12 h-12 object-cover rounded"
+                              className="object-cover rounded-lg flex-shrink-0 w-12 h-12 object-cover rounded"
+                              onError={(e) => {
+                                console.warn("Image not found:", item.imageUrl);
+                                e.currentTarget.src = "/NoImage.png";
+                              }}
                             />
-                            <p className="font-medium">{item.name}</p>
+                            <p>
+                              {item.name.length > 40
+                                ? item.name.slice(0, 40) + "..."
+                                : item.name}
+                            </p>
                           </div>
                           <div className="text-center">{item.quantity} шт.</div>
                           <div className="flex justify-end">
