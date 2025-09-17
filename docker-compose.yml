@@ -27,7 +27,7 @@ services:
       - myAppNetwork
     environment:
         ConnectionStrings__DefaultConnection: "Host=db;Database=cosmeria;Username=krot;Password=p%rSDj4Imds0763300sfgs7djc**dmUntdOidd3dZ_#WTi4B9Zo"
-        Cors__AllowedOrigins: "https://makeup.itstep.click"
+        Cors__AllowedOrigins: "http://109.87.215.217:5092"
     volumes:
       - /volumes/makeup-asp/backup:/app/backup 
       - /volumes/makeup-asp/images:/app/uploading
