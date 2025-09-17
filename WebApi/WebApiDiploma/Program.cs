@@ -54,6 +54,7 @@ builder.Services.AddAuthorizationPolicies();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(); // основний
 builder.Services.AddSwaggerJWT(); // +JWT
+builder.Services.AddScoped<IFavoriteService, FavoriteService>(); 
 
 // CORS
 builder.Services.AddCorsPolicies(builder.Configuration);

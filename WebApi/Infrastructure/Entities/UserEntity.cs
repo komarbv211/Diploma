@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
 
 namespace Infrastructure.Entities
 {
@@ -16,13 +15,13 @@ namespace Infrastructure.Entities
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
         public DateTime? LastActivity { get; set; } = DateTime.UtcNow;
-        
-        public string? PhoneNumber {get; set;}
+
+        public string? PhoneNumber { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? BirthDate {get; set;}
+        public DateTime? BirthDate { get; set; }
 
-        public bool IsRemove {get ; set; }
+        public bool IsRemove { get; set; }
 
         [StringLength(200)]
         public string? Image { get; set; }
@@ -35,6 +34,6 @@ namespace Infrastructure.Entities
         public virtual ICollection<ProductRatingEntity>? Ratings { get; set; }
         public ICollection<CartEntity>? Carts { get; set; }
         public virtual ICollection<CommentEntity>? Comments { get; set; }
-
+        public ICollection<FavoriteEntity>? Favorites { get; set; }
     }
 }

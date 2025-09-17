@@ -105,6 +105,7 @@ const ProductCarousel: React.FC<Props> = ({
                 }
                 productId={p.id}
                 userId={1} // підстав свого користувача зі стору
+                isFavorite={p.isFavorite}
                 userRating={p.rating}
               />
             </div>

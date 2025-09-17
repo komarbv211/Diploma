@@ -2,17 +2,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace Infrastructure.Data
 {
-    public class DbMakeUpContext : //IdentityDbContext<UserEntity, RoleEntity, long>
+    public class DbMakeUpContext : 
         IdentityDbContext<UserEntity, RoleEntity, long,
         IdentityUserClaim<long>, UserRoleEntity, UserLoginEntity,
         IdentityRoleClaim<long>, IdentityUserToken<long>>
     {
-
-
         public DbMakeUpContext(DbContextOptions<DbMakeUpContext> options) :
             base(options)
         { }
@@ -23,18 +20,20 @@ namespace Infrastructure.Data
         public DbSet<PromotionEntity> Promotions { get; set; }
         public DbSet<ProductRatingEntity> ProductRatings { get; set; }
         public DbSet<CartEntity> Carts { get; set; }
-
         public DbSet<BrandEntity> Brands { get; set; }
-
         public DbSet<OrderEntity> Orders { get; set; }
         public DbSet<OrderItemEntity> OrderItems { get; set; }
         public DbSet<NovaPostWarehouseEntity> NovaPostWarehouses { get; set; }
         public DbSet<WarehouseUpdateHistoryEntity> WarehouseUpdateHistories { get; set; }
         public DbSet<CommentEntity> Comments { get; set; }
 
+        // ✅ Нове
+        public DbSet<FavoriteEntity> Favorites { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
             builder.Entity<UserRoleEntity>(ur =>
             {
                 ur.HasOne(ur => ur.Role)
@@ -55,6 +54,7 @@ namespace Infrastructure.Data
                     .HasForeignKey(l => l.UserId)
                     .IsRequired();
             });
+
             // Конфігурація для рейтингу
             builder.Entity<ProductRatingEntity>(pr =>
             {
@@ -73,6 +73,8 @@ namespace Infrastructure.Data
                 // Забороняємо дублювання рейтингу від одного користувача для одного продукту
                 pr.HasIndex(r => new { r.ProductId, r.UserId }).IsUnique();
             });
+
+            // Конфігурація для кошика
             builder.Entity<CartEntity>(cart =>
             {
                 cart.HasKey(c => new { c.ProductId, c.UserId });
@@ -86,6 +88,7 @@ namespace Infrastructure.Data
                     .HasForeignKey(c => c.UserId);
             });
 
+            // Конфігурація для коментарів
             builder.Entity<CommentEntity>(c =>
             {
                 c.HasKey(x => x.Id);
@@ -99,6 +102,20 @@ namespace Infrastructure.Data
                     .WithMany(u => u.Comments)
                     .HasForeignKey(x => x.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // ✅ Конфігурація для Favorites
+            builder.Entity<FavoriteEntity>(fav =>
+            {
+                fav.HasKey(f => new { f.ProductId, f.UserId });
+
+                fav.HasOne(f => f.Product)
+                    .WithMany(p => p.Favorites)
+                    .HasForeignKey(f => f.ProductId);
+
+                fav.HasOne(f => f.User)
+                    .WithMany(u => u.Favorites)
+                    .HasForeignKey(f => f.UserId);
             });
         }
     }

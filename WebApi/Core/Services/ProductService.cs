@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Core.DTOs.PaginationDTOs;
 using Core.DTOs.ProductDTOs;
 using Core.DTOs.ProductsDTO;
@@ -21,16 +20,20 @@ public class ProductService : IProductService
     private readonly IRepository<PromotionEntity> _promotionRepository;
     private readonly IRepository<ProductImageEntity> _imageRepository;
     private readonly IRepository<CategoryEntity> _categoryRepository;
+    private readonly IRepository<FavoriteEntity> _favoriteRepository;
     private readonly IMapper _mapper;
     private readonly IImageService _imageService;
+    private readonly IAuthService _authService;
 
     public ProductService(
         IRepository<ProductEntity> productRepository,
         IRepository<ProductImageEntity> imageRepository,
         IRepository<CategoryEntity> categoryRepository,
         IRepository<PromotionEntity> promotionRepository,
-    IMapper mapper,
-        IImageService imageService)
+        IRepository<FavoriteEntity> favoriteRepository,
+        IMapper mapper,
+        IImageService imageService,
+        IAuthService authService)
     {
         _productRepository = productRepository;
         _imageRepository = imageRepository;
@@ -38,82 +41,91 @@ public class ProductService : IProductService
         _imageService = imageService;
         _categoryRepository = categoryRepository;
         _promotionRepository = promotionRepository;
+        _favoriteRepository = favoriteRepository;
+        _authService = authService;
     }
 
+    private async Task<long?> GetUserIdSafeAsync()
+    {
+        try
+        {
+            return await _authService.GetUserId();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    // ✅ Отримання всіх продуктів
     public async Task<List<ProductItemDto>> GetProductsAsync()
     {
-        try
-        {
-            var products = await _productRepository.GetAllQueryable()
-                .Include(p => p.Images)
-                .Include(p => p.Ratings)
-                .Include(p => p.Comments)
-                .ToListAsync();
+        var userId = await GetUserIdSafeAsync();
 
-            return _mapper.Map<List<ProductItemDto>>(products);
-        }
-        catch (Exception ex)
-        {
-            throw new HttpException("Помилка при отриманні списку продуктів", HttpStatusCode.InternalServerError, ex);
-        }
+        var products = await _productRepository.GetAllQueryable()
+            .Include(p => p.Images)
+            .Include(p => p.Ratings)
+            .Include(p => p.Comments)
+            .ToListAsync();
+
+        var favoriteIds = userId.HasValue
+            ? await _favoriteRepository.GetAllQueryable()
+                .Where(f => f.UserId == userId.Value)
+                .Select(f => f.ProductId)
+                .ToListAsync()
+            : new List<long>();
+
+        var result = _mapper.Map<List<ProductItemDto>>(products);
+        foreach (var p in result)
+            p.IsFavorite = favoriteIds.Contains(p.Id);
+
+        return result;
     }
 
+    // ✅ Отримання одного продукту
     public async Task<ProductItemDto?> GetByIdAsync(long id)
     {
-        try
-        {
-            var product = await _productRepository.FirstOrDefaultAsync(new ProductWithImagesSpecification(id));
+        var userId = await GetUserIdSafeAsync();
 
-            if (product == null)
-                throw new HttpException("Продукт не знайдений", HttpStatusCode.NotFound);
+        var product = await _productRepository.FirstOrDefaultAsync(new ProductWithImagesSpecification(id));
+        if (product == null)
+            throw new HttpException("Продукт не знайдений", HttpStatusCode.NotFound);
 
-            return _mapper.Map<ProductItemDto>(product);
-        }
-        catch (HttpException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            throw new HttpException("Помилка при отриманні продукту", HttpStatusCode.InternalServerError, ex);
-        }
+        var dto = _mapper.Map<ProductItemDto>(product);
+        dto.IsFavorite = userId.HasValue
+            ? await _favoriteRepository.GetAllQueryable()
+                .AnyAsync(f => f.UserId == userId.Value && f.ProductId == product.Id)
+            : false;
+
+        return dto;
     }
 
+    // ✅ Створення продукту
     public async Task<ProductItemDto> CreateProductAsync(ProductCreateDto dto)
     {
-        try
-        {
-            var product = _mapper.Map<ProductEntity>(dto);
-            product.RatingsCount = 0;
-            await _productRepository.AddAsync(product);
-            await _productRepository.SaveAsync();
+        var product = _mapper.Map<ProductEntity>(dto);
+        product.RatingsCount = 0;
+        await _productRepository.AddAsync(product);
+        await _productRepository.SaveAsync();
 
-            if (dto.image is { Count: > 0 })
+        if (dto.image is { Count: > 0 })
+        {
+            var imageNames = await _imageService.SaveImagesAsync(dto.image);
+            var productImages = imageNames.Select((name, index) => new ProductImageEntity
             {
-                var imageNames = await _imageService.SaveImagesAsync(dto.image);
-                var productImages = imageNames.Select((name, index) => new ProductImageEntity
-                {
-                    Name = name,
-                    Priority = (short)index,
-                    ProductId = product.Id
-                });
+                Name = name,
+                Priority = (short)index,
+                ProductId = product.Id
+            });
+            await _imageRepository.AddRangeAsync(productImages);
+            await _imageRepository.SaveAsync();
+        }
 
-                await _imageRepository.AddRangeAsync(productImages);
-                await _imageRepository.SaveAsync();
-            }
-            var model = await _productRepository.FirstOrDefaultAsync(new ProductWithImagesSpecification(product.Id));
-            return _mapper.Map<ProductItemDto>(model);
-        }
-        catch (DbUpdateException dbEx)
-        {
-            throw new HttpException("Помилка при збереженні продукту в базі даних", HttpStatusCode.InternalServerError, dbEx);
-        }
-        catch (Exception ex)
-        {
-            throw new HttpException("Невідома помилка при створенні продукту", HttpStatusCode.InternalServerError, ex);
-        }
+        var model = await _productRepository.FirstOrDefaultAsync(new ProductWithImagesSpecification(product.Id));
+        return _mapper.Map<ProductItemDto>(model);
     }
 
+    // ✅ Оновлення продукту
     public async Task UpdateProductAsync(ProductUpdateDto dto)
     {
         if (dto == null)
@@ -121,25 +133,15 @@ public class ProductService : IProductService
         if (dto.Id <= 0)
             throw new HttpException("Неправильний ідентифікатор продукту", HttpStatusCode.BadRequest);
 
-        try
-        {
-            var product = await _productRepository.FirstOrDefaultAsync(new ProductWithImagesSpecification(dto.Id));
-            if (product == null)
-                throw new HttpException("Продукт не знайдено", HttpStatusCode.NotFound);
+        var product = await _productRepository.FirstOrDefaultAsync(new ProductWithImagesSpecification(dto.Id));
+        if (product == null)
+            throw new HttpException("Продукт не знайдено", HttpStatusCode.NotFound);
 
-            _mapper.Map(dto, product);
-            await _productRepository.Update(product);
-            await _productRepository.SaveAsync();
-            await HandleProductImagesUpdateAsync(dto, product);
-        }
-        catch (HttpException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            throw new HttpException("Сталася внутрішня помилка сервера", HttpStatusCode.InternalServerError, ex);
-        }
+        _mapper.Map(dto, product);
+        await _productRepository.Update(product);
+        await _productRepository.SaveAsync();
+
+        await HandleProductImagesUpdateAsync(dto, product);
     }
 
     private async Task HandleProductImagesUpdateAsync(ProductUpdateDto dto, ProductEntity product)
@@ -152,16 +154,11 @@ public class ProductService : IProductService
             for (int i = 0; i < dto.image.Count; i++)
             {
                 var formFile = dto.image[i];
-
-                if (formFile == null)
-                    continue;
+                if (formFile == null) continue;
 
                 if (formFile.ContentType == "old-image")
                 {
-                    // Це старе зображення, оновлюємо пріоритет
-                    var imageName = formFile.FileName;
-
-                    if (existingImages.TryGetValue(imageName, out var oldImage))
+                    if (existingImages.TryGetValue(formFile.FileName, out var oldImage))
                     {
                         oldImage.Priority = (short)i;
                         updatedImages.Add(oldImage);
@@ -170,7 +167,6 @@ public class ProductService : IProductService
                 }
                 else
                 {
-                    // Нове зображення
                     var newFileName = await _imageService.SaveImageAsync(formFile);
                     var newImage = new ProductImageEntity
                     {
@@ -184,7 +180,6 @@ public class ProductService : IProductService
             }
         }
 
-        // Видаляємо всі зображення, яких немає у списку оновлених
         var imagesToDelete = product.Images!
             .Where(img => !updatedImages.Any(updated => updated.Name == img.Name))
             .ToList();
@@ -198,98 +193,68 @@ public class ProductService : IProductService
         await _imageRepository.SaveAsync();
     }
 
+    // ✅ Видалення продукту
     public async Task DeleteProductAsync(long id)
     {
-        try
-        {
-            var product = await _productRepository.FirstOrDefaultAsync(new ProductWithImagesSpecification(id));
-            if (product == null)
-                throw new HttpException("Продукт не знайдений для видалення", HttpStatusCode.NotFound);
+        var product = await _productRepository.FirstOrDefaultAsync(new ProductWithImagesSpecification(id));
+        if (product == null)
+            throw new HttpException("Продукт не знайдений для видалення", HttpStatusCode.NotFound);
 
-            if (product.Images != null && product.Images.Any())
-            {
-                foreach (var img in product.Images)
-                {
-                    _imageService.DeleteImageIfExists(img.Name);
-                }
-                _imageRepository.DeleteRange(product.Images);
-            }
+        if (product.Images != null && product.Images.Any())
+        {
+            foreach (var img in product.Images)
+                _imageService.DeleteImageIfExists(img.Name);
 
-            _productRepository.Delete(product.Id);
-            await _productRepository.SaveAsync();
+            _imageRepository.DeleteRange(product.Images);
         }
-        catch (DbUpdateException dbEx)
-        {
-            throw new HttpException("Помилка при видаленні продукту з бази даних", HttpStatusCode.InternalServerError, dbEx);
-        }
-        catch (Exception ex)
-        {
-            throw new HttpException("Невідома помилка при видаленні продукту", HttpStatusCode.InternalServerError, ex);
-        }
+
+        _productRepository.Delete(product.Id);
+        await _productRepository.SaveAsync();
     }
 
+    // ✅ Прив’язка до акції
     public async Task SetProductPromotionAsync(ProductSetPromotionDto dto)
     {
         if (dto == null)
             throw new HttpException("Дані не можуть бути порожніми", HttpStatusCode.BadRequest);
 
-        try
+        var product = await _productRepository.FirstOrDefaultAsync(new ProductWithImagesSpecification(dto.ProductId));
+        if (product == null)
+            throw new HttpException("Продукт не знайдено", HttpStatusCode.NotFound);
+
+        PromotionEntity? promotion = null;
+
+        if (dto.PromotionId.HasValue)
         {
-            // Отримуємо продукт із бази
-            var product = await _productRepository.FirstOrDefaultAsync(new ProductWithImagesSpecification(dto.ProductId));
-            if (product == null)
-                throw new HttpException("Продукт не знайдено", HttpStatusCode.NotFound);
+            promotion = await _promotionRepository.GetAllQueryable()
+                .Include(p => p.Products)
+                .FirstOrDefaultAsync(p => p.Id == dto.PromotionId.Value);
 
-            PromotionEntity? promotion = null;
+            if (promotion == null)
+                throw new HttpException("Акція не знайдена", HttpStatusCode.NotFound);
 
-            if (dto.PromotionId.HasValue)
-            {
-                promotion = await _promotionRepository
-                    .GetAllQueryable()
-                    .Include(p => p.Products) // важливо для навігаційної колекції
-                    .FirstOrDefaultAsync(p => p.Id == dto.PromotionId.Value);
+            promotion.Products ??= new List<ProductEntity>();
 
-                if (promotion == null)
-                    throw new HttpException("Акція не знайдена", HttpStatusCode.NotFound);
-
-                
-
-                // Ініціалізуємо колекцію продуктів, якщо null
-                if (promotion.Products == null)
-                    promotion.Products = new List<ProductEntity>();
-
-                // Додаємо продукт у колекцію акції, якщо його там ще немає
-                if (!promotion.Products.Any(p => p.Id == product.Id))
-                    promotion.Products.Add(product);
-            }
-
-            // Присвоюємо акцію та знижку продукту
-            product.PromotionId = promotion?.Id;
-            product.DiscountPercent = dto.DiscountPercent;
-
-            // Зберігаємо зміни в обох репозиторіях
-            await _productRepository.Update(product);
-            if (promotion != null)
-                await _promotionRepository.Update(promotion);
-
-            await _productRepository.SaveAsync();
-            await _promotionRepository.SaveAsync();
+            if (!promotion.Products.Any(p => p.Id == product.Id))
+                promotion.Products.Add(product);
         }
-        catch (HttpException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            throw new HttpException("Сталася внутрішня помилка сервера при оновленні акції продукту", HttpStatusCode.InternalServerError, ex);
-        }
+
+        product.PromotionId = promotion?.Id;
+        product.DiscountPercent = dto.DiscountPercent;
+
+        await _productRepository.Update(product);
+        if (promotion != null)
+            await _promotionRepository.Update(promotion);
+
+        await _productRepository.SaveAsync();
+        await _promotionRepository.SaveAsync();
     }
 
-
-
-
+    // ✅ Пошук продуктів з улюбленими
     public async Task<SearchResult<ProductItemModel>> SearchProductsAsync(ProductSearchModel model, bool isAdmin = false)
     {
+        var userId = await GetUserIdSafeAsync();
+
         var query = _productRepository
             .GetAllQueryable()
             .Include(p => p.Brand)
@@ -297,34 +262,21 @@ public class ProductService : IProductService
             .Include(p => p.Images)
             .AsQueryable();
 
-        // 🔐 Якщо не адмін, фільтруй за активністю (опціонально)
         if (!isAdmin)
-        {
-            query = query.Where(p => p.Quantity > 0); // або p.IsActive, якщо є таке поле
-        }
+            query = query.Where(p => p.Quantity > 0);
 
-        // 🔍 Фільтрація
         if (model.CategoryId.HasValue)
         {
-            var categoryId = model.CategoryId.Value;
-
             var allCategoryIds = await _categoryRepository.GetAllQueryable()
-                .Where(c => c.Id == categoryId || c.ParentId == categoryId)
+                .Where(c => c.Id == model.CategoryId.Value || c.ParentId == model.CategoryId.Value)
                 .Select(c => c.Id)
                 .ToListAsync();
 
             query = query.Where(p => allCategoryIds.Contains(p.CategoryId));
         }
 
-        //if (model.BrandId.HasValue)
-        //    query = query.Where(p => p.BrandId == model.BrandId.Value);
-
         if (model.BrandIds != null && model.BrandIds.Any())
             query = query.Where(p => model.BrandIds.Contains(p.BrandId));
-        //if (model.BrandIds != null && model.BrandIds.Any())
-        //{
-        //    query = query.Where(p => model.BrandIds.Contains(p.BrandId));
-        //}
 
         if (model.PriceMin.HasValue)
             query = query.Where(p => p.Price >= model.PriceMin.Value);
@@ -334,16 +286,13 @@ public class ProductService : IProductService
 
         if (model.MinRating.HasValue)
             query = query.Where(p => p.AverageRating >= model.MinRating.Value);
-       //якщо ти заходиш під користувачем то він не активний
+
         if (model.InStock == true)
             query = query.Where(p => p.Quantity > 0);
 
-
-        // 🆕 Пошук по тексту
         if (!string.IsNullOrWhiteSpace(model.Query))
         {
             var keyword = model.Query.Trim().ToLower();
-
             query = query.Where(p =>
                 p.Name.ToLower().Contains(keyword) ||
                 (p.Brand != null && p.Brand.Name.ToLower().Contains(keyword)) ||
@@ -351,7 +300,6 @@ public class ProductService : IProductService
                 (p.Description != null && p.Description.ToLower().Contains(keyword))
             );
         }
-
 
         var startDate = model.GetParsedStartDate();
         if (startDate.HasValue)
@@ -361,56 +309,49 @@ public class ProductService : IProductService
         if (endDate.HasValue)
             query = query.Where(p => p.DateCreated <= endDate.Value);
 
-        // 🔢 Загальна кількість перед пагінацією
         var totalCount = await query.CountAsync();
-
-        // 🧾 Безпечна пагінація
         var safeItemsPerPage = model.ItemPerPage < 1 ? 10 : model.ItemPerPage;
         var totalPages = (int)Math.Ceiling(totalCount / (double)safeItemsPerPage);
         var safePage = Math.Min(Math.Max(1, model.Page), Math.Max(1, totalPages));
 
-        // 🔽 Сортування
         query = model.SortBy switch
         {
-            "Price" => model.SortDesc
-                ? query.OrderByDescending(p => p.Price)
-                : query.OrderBy(p => p.Price),
-
-            "Rating" => model.SortDesc
-                ? query.OrderByDescending(p => p.AverageRating)
-                : query.OrderBy(p => p.AverageRating),
-
-            "CreatedAt" => model.SortDesc
-                ? query.OrderByDescending(p => p.DateCreated)
-                : query.OrderBy(p => p.DateCreated),
-
+            "Price" => model.SortDesc ? query.OrderByDescending(p => p.Price) : query.OrderBy(p => p.Price),
+            "Rating" => model.SortDesc ? query.OrderByDescending(p => p.AverageRating) : query.OrderBy(p => p.AverageRating),
+            "CreatedAt" => model.SortDesc ? query.OrderByDescending(p => p.DateCreated) : query.OrderBy(p => p.DateCreated),
             _ => query.OrderBy(p => p.Id)
         };
 
-        // 📦 Пагінація
         var products = await query
             .Skip((safePage - 1) * safeItemsPerPage)
             .Take(safeItemsPerPage)
-            .Select(p => new ProductItemModel
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Price = (int)p.Price,
-                Rating = p.AverageRating,
-                //ImageUrl = p.Images.Select(i => i.ImageUrl).FirstOrDefault(),
-                ImageUrl = p.Images != null ? p.Images.Select(i => i.Name).FirstOrDefault() : null,
-                Quantity = p.Quantity,
-                BrandName = p.Brand != null ? p.Brand.Name : null,
-                CategoryName = p.Category != null ? p.Category.Name : null,
-                CreatedAt = p.DateCreated, // 🟢 ← ОБОВ’ЯЗКОВО
-                IsInStock = p.Quantity > 0
-            })
             .ToListAsync();
 
-        // 📤 Результат
+        var favoriteIds = userId.HasValue
+            ? await _favoriteRepository.GetAllQueryable()
+                .Where(f => f.UserId == userId.Value)
+                .Select(f => f.ProductId)
+                .ToListAsync()
+            : new List<long>();
+
+        var items = products.Select(p => new ProductItemModel
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Price = (int)p.Price,
+            Rating = p.AverageRating,
+            ImageUrl = p.Images?.Select(i => i.Name).FirstOrDefault(),
+            Quantity = p.Quantity,
+            BrandName = p.Brand?.Name,
+            CategoryName = p.Category?.Name,
+            CreatedAt = p.DateCreated,
+            IsInStock = p.Quantity > 0,
+            IsFavorite = favoriteIds.Contains(p.Id)
+        }).ToList();
+
         return new SearchResult<ProductItemModel>
         {
-            Items = products,
+            Items = items,
             Pagination = new PagedResultDto<ProductItemModel>
             {
                 CurrentPage = safePage,
@@ -421,9 +362,24 @@ public class ProductService : IProductService
         };
     }
 
+    // ✅ За категоріями
     public async Task<List<ProductItemDto>> GetProductsByCategoriesAsync(IEnumerable<long> categoryIds)
     {
+        var userId = await GetUserIdSafeAsync();
+
         var products = await _productRepository.ListAsync(new ProductsByCategorySpecification(categoryIds));
-        return _mapper.Map<List<ProductItemDto>>(products);
+
+        var favoriteIds = userId.HasValue
+            ? await _favoriteRepository.GetAllQueryable()
+                .Where(f => f.UserId == userId.Value)
+                .Select(f => f.ProductId)
+                .ToListAsync()
+            : new List<long>();
+
+        var result = _mapper.Map<List<ProductItemDto>>(products);
+        foreach (var p in result)
+            p.IsFavorite = favoriteIds.Contains(p.Id);
+
+        return result;
     }
 }

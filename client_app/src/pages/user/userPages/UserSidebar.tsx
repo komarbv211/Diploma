@@ -15,11 +15,12 @@ const UserSidebar = () => {
   };
 
   const menuItems = [
+
     // { key: "contact", label: "Контактна інформація", path: "#" },
     // { key: "address", label: "Адресна книга", path: "#" },
     { key: "/profile", label: "Профіль користувача", path: "/profile" },
     { key: "/order-history", label: "Історія замовлень", path: "/order-history" },
-    { key: "/wishlist", label: "Список бажань", path: "#" },
+        { key: "wishlist", label: "Список бажань", path: "wishlist" },
     // { key: "brands", label: "Улюблені бренди", path: "#" },
     // { key: "promocodes", label: "Промокоди", path: "#" },
     {
