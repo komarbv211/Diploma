@@ -105,7 +105,7 @@ const ProductCarousel: React.FC<Props> = ({
                 }
                 productId={p.id}
                 userId={1} // підстав свого користувача зі стору
-                userRating={p.averageRating || 0}
+                userRating={p.rating}
               />
             </div>
           ))}

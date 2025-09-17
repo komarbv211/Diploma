@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Input, Form, Select } from "antd";
+import { Input, Form, Select, Button } from "antd";
 import { useEffect, useState } from "react";
 import {
   OrderBaseDto,
@@ -45,7 +45,7 @@ const OrderPage = () => {
       skip: !selectedCityRef,
     }
   );
-  const [createOrder] = useCreateOrderMutation();
+  const [createOrder,{isLoading}] = useCreateOrderMutation();
 
   const { data: warehouses, isLoading: isWarehousesLoading } =
     useWarehousesByCityQuery(selectedCityRef!, {
@@ -165,7 +165,7 @@ const OrderPage = () => {
 
         <div className="flex flex-col xl:flex-row items-start gap-8">
           <div className="flex flex-1 xl:w-[65%] justify-between mr-5 mt-5 w-full">
-            <div className="flex flex-col w-[47%] w-full md:w-[47%]">
+            <div className="flex flex-col w-[47%]  md:w-[47%]">
               <h1 className="form-title !text-left">Оформлення замовлення</h1>
               <Form layout="vertical" form={form} onFinish={onFinish}>
                 <div className="flex flex-col sm:flex-row justify-between my-6">
@@ -183,11 +183,11 @@ const OrderPage = () => {
 
                   <button
                     type="button"
-                    onClick={() => handleTabClick("delivery")}
+                    // onClick={() => handleTabClick("delivery")}
                     className={`text-[18px] cursor-pointer px-4 py-2 rounded ${
                       activeTab === "delivery"
                         ? "bg-gray-200 text-blue2 font-semibold"
-                        : "text-gray hover:text-blue2"
+                        : "text-gray"
                     }`}
                   >
                     2 Інформація про доставку
@@ -424,12 +424,16 @@ const OrderPage = () => {
                 )}
                 {activeTab != "personal" && (
                   <Form.Item className="m-auto w-[60%] mt-8">
-                    <button
+                    <Button type="primary" htmlType="submit" block loading={isLoading} className="rounded-xl h-[45px] text-[18px]">
+                      Оформити замовлення
+                    </Button>
+                    
+                    {/* <button
                       type="submit"
                       className="flex justify-center items-center btn-pink"
                     >
                       <span>Оформити замовлення</span>
-                    </button>
+                    </button> */}
                   </Form.Item>
                 )}
               </Form>

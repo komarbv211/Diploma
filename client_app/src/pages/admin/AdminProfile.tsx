@@ -5,9 +5,7 @@ import {
   Typography,
   Row,
   Col,
-  Divider,
   Button,
-  Space,
   Input,
   Spin,
   Upload,
@@ -17,12 +15,9 @@ import {
 } from "antd";
 import {
   SettingOutlined,
-  LogoutOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { getUser, logOut } from "../../store/slices/userSlice";
+import { getUser } from "../../store/slices/userSlice";
 import { useAppSelector } from "../../store/store";
 import {
   useGetUserByIdQuery,
@@ -43,9 +38,6 @@ const { Title } = Typography;
 const AdminProfile: React.FC = () => {
   const [form] = Form.useForm();
   const client = useAppSelector(getUser);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   const { data: user, isLoading } = useGetUserByIdQuery(Number(client?.id));
   const [updateUser] = useUpdateUserMutation();
 
@@ -66,11 +58,6 @@ const AdminProfile: React.FC = () => {
       setCroppedImage(`${APP_ENV.IMAGES_100_URL}${user.image}` || null);
     }
   }, [user, form]);
-
-  const handleLogout = () => {
-    dispatch(logOut());
-    navigate("/");
-  };
 
   const handleBeforeUpload = (file: File) => {
     const reader = new FileReader();
@@ -146,113 +133,84 @@ const AdminProfile: React.FC = () => {
       <Form layout="vertical" form={form}>
         <Row gutter={40} className="mt-8">
           <Col span={12}>
-            <Form.Item
-              label="Ім’я"
-              name="firstName"
-              rules={[{ required: true, message: "Введіть ім’я" }]}
-            >
-              <Input size="large" />
-            </Form.Item>
+         <Form
+                  form={form}
+                  layout="vertical"
+                  className="flex flex-col gap-2"
+                >
+                  <Form.Item
+                    label={<span className="form-label">Ім’я</span>}
+                    name="firstName"
+                    className="max-w-[470px]"
+                    rules={[{ required: true, message: "Введіть ім’я" }]}
+                  >
+                    <Input size="large" className="form-input" />
+                  </Form.Item>
 
-            <Form.Item
-              label="Прізвище"
-              name="lastName"
-              rules={[{ required: true, message: "Введіть прізвище" }]}
-            >
-              <Input size="large" />
-            </Form.Item>
+                  <Form.Item
+                    label={<span className="form-label">Прізвище</span>}
+                    name="lastName"
+                    className="max-w-[470px]"
+                    rules={[{ required: true, message: "Введіть прізвище" }]}
+                  >
+                    <Input size="large" className="form-input" />
+                  </Form.Item>
 
-            <Form.Item
-              label="E-mail"
-              name="email"
-              rules={[{ required: true, message: "Введіть email" }]}
-            >
-              <Input size="large" />
-            </Form.Item>
-
-            <Form.Item label="Дата народження" name="birthDate">
-              <DatePicker size="large" format="YYYY-MM-DD" />
-            </Form.Item>
-
-            <Form.Item
-              label="Номер телефону"
-              name="phoneNumber"
-              rules={[
-                { required: true, message: "Введіть номер телефону" },
-                {
-                  validator: (_, value) => {
-                    if (!value) {
-                      return Promise.reject(
-                        new Error("Введіть номер телефону")
-                      );
-                    }
-                    // Видаляємо всі _ (якщо є)
-                    const cleanedValue = value.replace(/_/g, "");
-                    if (cleanedValue.includes("_")) {
-                      return Promise.reject(
-                        new Error("Номер телефону не повністю введений")
-                      );
-                    }
-                    const regex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
-                    if (regex.test(cleanedValue)) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error("Невірний формат телефону")
-                    );
-                  },
-                },
-              ]}
-            >
-              <PhoneInput
-                value={form.getFieldValue("phoneNumber")}
-                onChange={(e) => {
-                  form.setFieldsValue({ phoneNumber: e.target.value });
-                  console.log("target", e.target.value);
-                }}
-              />
-            </Form.Item>
+                  <Form.Item
+                    label={<span className="form-label">Номер телефону</span>}
+                    name="phoneNumber"
+                    className="max-w-[470px]"
+                    rules={[
+                      { required: true, message: "Введіть номер телефону" },
+                    ]}
+                  >
+                    <PhoneInput
+                      value={form.getFieldValue("phoneNumber")}
+                      onChange={(e) =>
+                        form.setFieldsValue({ phoneNumber: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                </Form>
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Старий пароль">
-              <Input.Password size="large" placeholder="********" disabled />
-            </Form.Item>
+            <Form
+              form={form}
+              layout="vertical"
+              className="flex flex-col gap-2"
+            >
+              <Form.Item
+                label={<span className="form-label">Email</span>}
+                name="email"
+                className="max-w-[470px]"
+                rules={[{ required: true, message: "Введіть email" }]}
+              >
+                <Input className="form-input" />
+              </Form.Item>
 
-            <Form.Item label="Новий пароль">
-              <Input.Password size="large" placeholder="********" disabled />
-            </Form.Item>
-
-            <Form.Item label="Підтвердження пароля">
-              <Input.Password size="large" placeholder="********" disabled />
-            </Form.Item>
-
-            <Form.Item label="Роль">
-              <Input size="large" disabled value="Адміністратор" />
-            </Form.Item>
-
-            <Form.Item label="Останній вхід">
-              <Input
-                size="large"
-                disabled
-                value={dayjs(user.lastActivity).format("DD.MM.YYYY HH:mm")}
-              />
-            </Form.Item>
+              <Form.Item
+                label={<span className="form-label">Дата народження</span>}
+                name="birthDate"
+                className="max-w-[470px]"
+              >
+                <DatePicker format="YYYY-MM-DD" className="form-input" />
+              </Form.Item>
+             
+              <Form.Item label className="max-w-[470px]"> 
+                <Button 
+                  type="primary" 
+                  icon={<SettingOutlined />} 
+                  onClick={handleSave} 
+                  className="flex items-center justify-center gap-2 p-[10px] bg-pink rounded-xl w-full h-[45px] hover:bg-pink2 text-[18px] text-white"> 
+                  Зберегти зміни 
+                </Button> 
+              </Form.Item>  
+                  
+            </Form>
           </Col>
         </Row>
       </Form>
-
-      <Divider />
-
-      <Space className="flex justify-center gap-[500px]">
-        <Button danger icon={<LogoutOutlined />} onClick={handleLogout}>
-          Вийти
-        </Button>
-        <Button type="primary" icon={<SettingOutlined />} onClick={handleSave}>
-          Зберегти зміни
-        </Button>
-      </Space>
-
       <CropperModal
         image={avatarPreview}
         open={showCropper}
