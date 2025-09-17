@@ -9,7 +9,6 @@ import {
   Upload,
   Avatar,
   Form,
-  Divider,
 } from "antd";
 import { getAuth, getUser } from "../../store/slices/userSlice";
 import {
@@ -213,6 +212,14 @@ const UserProfile = () => {
                   >
                     <DatePicker format="YYYY-MM-DD" className="form-input" />
                   </Form.Item>
+
+                   <Form.Item label className="max-w-[470px]">
+                    <button className="flex items-center justify-center gap-2 p-[10px] bg-pink2 rounded-xl border-pink2 w-full h-[45px] hover:bg-[#58042c] text-[18px] text-white"
+                     onClick={handleSave}
+                    >                      
+                      Зберегти зміни
+                    </button>
+                  </Form.Item>
                 </Form>
 
                 <CropperModal
@@ -223,17 +230,6 @@ const UserProfile = () => {
                   onCancel={handleCancelCrop}
                 />
               </div>
-            </div>
-
-            <Divider className="mt-20" />
-
-            <div className="flex justify-center">
-              <button
-                className="px-5 bg-pink2 rounded-xl border-pink2 h-[45px] hover:bg-[#58042c] text-[18px] text-white"
-                onClick={handleSave}
-              >
-                Зберегти зміни
-              </button>
             </div>
           </div>
         </Content>
