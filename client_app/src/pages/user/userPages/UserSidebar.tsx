@@ -19,20 +19,22 @@ const UserSidebar = () => {
     // { key: "address", label: "Адресна книга", path: "#" },
     { key: "/profile", label: "Профіль користувача", path: "/profile" },
     { key: "/order-history", label: "Історія замовлень", path: "/order-history" },
-    // { key: "features", label: "Мої особливості", path: "#" },
     { key: "/wishlist", label: "Список бажань", path: "#" },
     // { key: "brands", label: "Улюблені бренди", path: "#" },
     // { key: "promocodes", label: "Промокоди", path: "#" },
-    // {
-    //   key: "spacer",
-    //   className: "!h-4 !bg-transparent hover:!bg-transparent !cursor-default",
-    // },
+    {
+      key: "spacer",
+      className: "!h-4 !bg-transparent hover:!bg-transparent !cursor-default",
+    },
     {
       key: "/profile/delete",
       label: <span className="text-pink2 hover:text-pink">Видалити мій акаунт</span>,
       path: "/profile/delete",
     },
-    { key: "/logout", label: "Вихід", path: "/", onclick: handleLogout },
+    {
+      key: "logout",
+      label: "Вихід",
+    }
   ];
 
   return (
