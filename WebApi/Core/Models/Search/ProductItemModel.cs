@@ -19,5 +19,7 @@ namespace Core.Models.Search
         public int Quantity { get; set; }
         public DateTime CreatedAt { get; set; } // 🆕 Додали дату створення
 
+        public bool IsFavorite { get; set; } = false;
+
     }
 }

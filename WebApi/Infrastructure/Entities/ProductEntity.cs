@@ -14,7 +14,7 @@ public class ProductEntity : BaseEntity<long>
     [ForeignKey("Category")]
     public long CategoryId { get; set; }
     public virtual CategoryEntity? Category { get; set; }
-    
+
     [ForeignKey("Brand")]
     public long? BrandId { get; set; }
 
@@ -24,12 +24,10 @@ public class ProductEntity : BaseEntity<long>
 
     public double? AverageRating { get; set; }
 
-    // 🔗 Зв’язок: багато продуктів можуть належати одній акції
     [ForeignKey("Promotion")]
     public long? PromotionId { get; set; }
     public virtual PromotionEntity? Promotion { get; set; }
 
-    // Знижка у відсотках (опціонально)
     public decimal? DiscountPercent { get; set; }
 
     public virtual BrandEntity? Brand { get; set; }
@@ -39,4 +37,5 @@ public class ProductEntity : BaseEntity<long>
     public ICollection<CartEntity>? Carts { get; set; }
     public virtual ICollection<CommentEntity>? Comments { get; set; }
 
+    public ICollection<FavoriteEntity>? Favorites { get; set; }
 }

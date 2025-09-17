@@ -19,7 +19,7 @@ const UserSidebar = () => {
     { key: "address", label: "Адресна книга", path: "#" },
     { key: "orders", label: "Історія замовлень", path: "/order-history" },
     { key: "features", label: "Мої особливості", path: "#" },
-    { key: "wishlist", label: "Список бажань", path: "#" },
+    { key: "wishlist", label: "Список бажань", path: "wishlist" },
     { key: "brands", label: "Улюблені бренди", path: "#" },
     { key: "promocodes", label: "Промокоди", path: "#" },
     {

@@ -15,10 +15,11 @@ export interface IProduct {
   ratingsCount: number;
   commentsCount: number;
   images?: IProductImageDto[];
-  imageUrl?:string;
+  imageUrl?: string;
   promotionId?: number;
   discountPercent?: number;
   finalPrice?: number; // розрахована ціна зі знижкою
+  isFavorite?: boolean; // 🆕 додав поле для улюблених товарів
 }
 
 export interface IProductPostRequest {
@@ -31,8 +32,7 @@ export interface IProductPostRequest {
   image: File[];
 }
 
-export interface IProductPutRequest
-{
+export interface IProductPutRequest {
   id: number;
   name: string;
   price: number;
@@ -49,7 +49,6 @@ export interface IProductSetPromotionRequest {
   discountPercent: number;
 }
 
-
 export interface IProductImageDto {
   id: number;
   name: string;
@@ -57,12 +56,12 @@ export interface IProductImageDto {
   productId: number;
 }
 
-export 
-interface IRateProductRequest {
+export interface IRateProductRequest {
   productId: number;
   rating: number;
   userId: number;
 }
+
 export interface IProductSearchResponse {
   items: IProduct[];
   pagination: IPagination;
@@ -83,6 +82,7 @@ export interface IProductSearchRequest {
   Page?: number;
   ItemPerPage?: number;
 }
+
 export interface IPagination {
   currentPage: number;
   totalPages: number;
