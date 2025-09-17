@@ -7,6 +7,7 @@ import {
   Spin,
   Tag,
   MenuProps,
+  notification,
   Modal,
   Select,
   Input,
@@ -16,7 +17,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import PaginationComponent from "../../../components/pagination/PaginationComponent";
 import {
   useGetAllOrdersQuery,
-  // useDeleteOrderMutation,
+  useDeleteOrderMutation,
   useUpdateOrderStatusMutation,
 } from "../../../services/admin/orderAdminApi";
 import { OrderDto } from "../../../types/order";
@@ -62,7 +63,7 @@ const OrderList = () => {
   const pageSize = 10;
 
   const { data: orders, isLoading } = useGetAllOrdersQuery();
-  // const [deleteOrder] = useDeleteOrderMutation();
+  const [deleteOrder] = useDeleteOrderMutation();
   const [updateOrderStatus, { isLoading: isUpdatingStatus }] =
     useUpdateOrderStatusMutation();
 
@@ -126,24 +127,24 @@ const OrderList = () => {
           <span onClick={() => openStatusModal([orderId])}>Змінити статус</span>
         ),
       },
-      // {
-      //   key: "delete",
-      //   danger: true,
-      //   label: (
-      //     <span
-      //       onClick={async () => {
-      //         try {
-      //           await deleteOrder(orderId).unwrap();
-      //           showToast('success', "Замовлення видалено", <SuccessIcon/>);
-      //         } catch {
-      //           showToast('error', "Помилка видалення", <ErrorIcon/>);
-      //         }
-      //       }}
-      //     >
-      //       Видалити
-      //     </span>
-      //   ),
-      // },
+      {
+        key: "delete",
+        danger: true,
+        label: (
+          <span
+            onClick={async () => {
+              try {
+                await deleteOrder(orderId).unwrap();
+                notification.success({ message: "Замовлення видалено" });
+              } catch {
+                notification.error({ message: "Помилка видалення" });
+              }
+            }}
+          >
+            Видалити
+          </span>
+        ),
+      },
     ];
     return (
       <Dropdown menu={{ items }} trigger={["click"]}>

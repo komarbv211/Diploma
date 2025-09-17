@@ -1,15 +1,16 @@
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { logOut } from "../../../store/slices/userSlice";
 import { Menu } from "antd";
 import { useLocation } from "react-router-dom";
-import { useLogoutMutation } from "../../../services/authApi";
 
 const UserSidebar = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const [logout] = useLogoutMutation();
 
-  const handleLogout = async () => {
-    await logout();
+  const handleLogout = () => {
+    dispatch(logOut());
     navigate("/login");
   };
 
@@ -34,7 +35,6 @@ const UserSidebar = () => {
     {
       key: "logout",
       label: "Вихід",
-      onclick:{handleLogout},
     }
   ];
 

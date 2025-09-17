@@ -3,7 +3,6 @@ import { useCart } from "../../../hooks/useCart";
 import { useGetAllProductsQuery } from "../../../services/productApi";
 import QuantityCounter from "../../../components/counter/QuantityCounter";
 import { useAppSelector } from "../../../store/store";
-import { APP_ENV } from "../../../env";
 
 const CartSummary = () => {
   const { user } = useAppSelector((state) => state.auth);
@@ -42,16 +41,11 @@ const CartSummary = () => {
                 {!collapsedItems[cartItem.productId!] && (
                   <div className="flex items-center justify-center">
                     <img
-                      src={`${APP_ENV.IMAGES_200_URL}${
-                        product.images?.[0]?.name || "NoImage.png"
-                      }`}
+                      src="flowers-bg.png"
                       width={110}
                       height={120}
-                      alt={product.name}
-                      className="object-cover rounded-lg flex-shrink-0"
-                      onError={(e) => {
-                        e.currentTarget.src = "/NoImage.png";
-                      }}
+                      alt="image"
+                      className="rounded"
                     />
                   </div>
                 )}
