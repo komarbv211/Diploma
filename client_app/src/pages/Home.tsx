@@ -39,7 +39,7 @@ const Home: React.FC = () => {
     CategoryId: 28,
   }); // Категорія "Обличчя"
   const { products: brandProducts } = useProducts({
-    BrandIds: brandIds ?? [],
+    BrandIds: brandIds,
   }); 
 
   // розділяємо коментарі на дві групи
@@ -185,7 +185,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-      <div className="container mx-auto  mt-28 flex flex-col gap-12 max-w-[1680px]">
+      <div className="container mx-auto  md:mt-28 flex flex-col gap-12 max-w-[1680px] px-2 md:px-0">
         <ProductCarousel
           title={"Пропозиції брендів"}
           products={brandProducts ?? []}
@@ -198,12 +198,12 @@ const Home: React.FC = () => {
         />
       </div>
       {/* 🔹 Відгуки покупців (середина, перші 2) */}
-      <section className="flex flex-wrap justify-center gap-[19px] max-w-[1680px] mx-auto mt-[120px] h-auto ">
+      <section className="flex flex-wrap justify-center gap-[19px] max-w-[1680px] mx-auto mt-[120px] h-auto px-2 md:px-0">
         <div className="grid center-xl:grid-cols-2 gap-6 mx-2">
           {renderReviews(reviewsTop)}
         </div>
       </section>
-      <div className="container mx-auto  mt-28 flex flex-col gap-12 max-w-[1680px]">
+      <div className="container mx-auto  md:mt-28 flex flex-col gap-12 max-w-[1680px] px-2 md:px-0">
         <ProductCarousel
           title={"Парфумерія"}
           products={perfumeProducts ?? []}
@@ -221,7 +221,7 @@ const Home: React.FC = () => {
         buttonText={"Перейти до товару"}
         buttonLink={`/product/details/${promotions?.productIds}`}
       />
-      <div className="container mx-auto  mt-28 flex flex-col gap-12 max-w-[1680px]">
+      <div className="container mx-auto  md:mt-28 flex flex-col gap-12 max-w-[1680px] px-2 md:px-0">
         <ProductCarousel
           title={"Волосся"}
           products={hairProducts ?? []}
@@ -234,7 +234,7 @@ const Home: React.FC = () => {
         />
       </div>
       {/* 🔹 Відгуки покупців (низ, інші 2) */}
-      <section className="flex flex-wrap justify-center gap-[19px] max-w-[1680px] mx-auto mt-[120px] h-auto">
+      <section className="flex flex-wrap justify-center gap-[19px] max-w-[1680px] mx-auto mt-[120px] h-auto px-2 md:px-0">
         <div className="grid center-xl:grid-cols-2 gap-6">
           {renderReviews(reviewsBottom)}
         </div>

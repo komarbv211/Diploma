@@ -2,7 +2,7 @@ import { type ICartItem } from "../../store/slices/localCartSlice";
 import { useAppSelector } from "../../store/store";
 import { useCart } from "../../hooks/useCart";
 import { APP_ENV } from "../../env";
-import { CartIcon, DeleteIcon } from "../icons";
+import { CartFlowerIcon, CartIcon, DeleteIcon } from "../icons";
 import ReactDOM from "react-dom";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,13 +22,19 @@ const CartModal: React.FC = () => {
       {/* Кнопка відкриття */}
       <button
         onClick={() => setIsCartOpen(true)}
-        className="border-none flex items-center"
+        className="border-none flex items-center gap-2"
       >
-        <div className="relative w-[41px] h-[41px] flex-shrink-0">
+        {cart && cart.length > 0 ? (
+          <div className="relative w-8 h-8 flex-shrink-0 md:w-[41px] md:h-[41px]">
+            <CartIcon className="text-black w-full h-full" />
+            <CartFlowerIcon className="absolute top-[3px] right-0 text-pink2 w-1/2 h-1/2 block md:hidden" />
+          </div>
+        ) : (
           <CartIcon className="text-black w-full h-full" />
-        </div>
+        )}
 
-        <div className="flex flex-col justify-between ml-1 h-[41px]">
+        {/* Текст та лічильник для десктопу */}
+        <div className="hidden md:flex flex-col justify-between h-[41px] ml-1">
           <div className="flex justify-center items-center w-[49px] h-[19px] p-[10px] gap-[10px] bg-light_purple rounded-[15px]">
             <span className="w-[29px] h-[20px] text-black font-manrope font-light text-[15px] leading-[20px] text-center">
               {cart?.reduce((acc, obj) => acc + (obj.quantity ?? 0), 0)}
@@ -39,6 +45,7 @@ const CartModal: React.FC = () => {
           </div>
         </div>
       </button>
+
 
       {/* Overlay + Modal */}
       {isCartOpen &&
