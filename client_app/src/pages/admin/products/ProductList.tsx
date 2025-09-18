@@ -9,7 +9,6 @@ import {
   Image,
   Tag,
   MenuProps,
-  notification,
   Modal,
   Select,
   InputNumber,
@@ -27,11 +26,15 @@ import {
   useSetProductPromotionMutation,
 } from "../../../services/admin/productAdminApi";
 import { useGetAllPromotionsQuery } from "../../../services/admin/promotionAdminApi";
+import ErrorIcon from "../../../components/icons/toasts/ErrorIcon";
+import { showToast } from "../../../utilities/showToast";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
+import WarnIcon from "../../../components/icons/toasts/WarnIcon";
 
 const filterProducts = (list: IProduct[], text: string) =>
-    list.filter((product) =>
-        product.name?.toLowerCase().includes(text.toLowerCase())
-    );
+  list.filter((product) =>
+    product.name?.toLowerCase().includes(text.toLowerCase())
+  );
 
 interface ICategoryWithParent {
   id: number;
@@ -44,7 +47,9 @@ const ProductList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [promotionModalVisible, setPromotionModalVisible] = useState(false);
-  const [selectedPromotionId, setSelectedPromotionId] = useState<number | null>(null);
+  const [selectedPromotionId, setSelectedPromotionId] = useState<number | null>(
+    null
+  );
   const [discountPercent, setDiscountPercent] = useState<number>(0);
 
   const navigate = useNavigate();
@@ -55,7 +60,8 @@ const ProductList = () => {
 
   const { data: allProducts, isLoading } = useGetAllProductsQuery();
   const [deleteProduct] = useDeleteProductMutation();
-  const [setProductPromotion, { isLoading: isSettingPromotion }] = useSetProductPromotionMutation();
+  const [setProductPromotion, { isLoading: isSettingPromotion }] =
+    useSetProductPromotionMutation();
   const { data: promotions } = useGetAllPromotionsQuery();
   const { data: categories } = useGetCategoryTreeQuery();
 
@@ -82,8 +88,8 @@ const ProductList = () => {
   }, [allProducts]);
 
   const filteredProducts = useMemo(
-      () => filterProducts(products, searchText),
-      [products, searchText]
+    () => filterProducts(products, searchText),
+    [products, searchText]
   );
 
   const pagedProducts = useMemo(() => {
@@ -103,48 +109,54 @@ const ProductList = () => {
           setSearchParams({ search: searchText, page: maxPage.toString() });
         return upd;
       });
-      notification.success({
-        message: "Продукт видалено",
-        description: "Продукт успішно видалено!",
-      });
+      showToast("success", "Продукт успішно видалено", <SuccessIcon />);
     } catch {
-      notification.error({ message: "Помилка видалення продукта" });
+      showToast("error", "Помилка видалення продукта", <ErrorIcon />);
     }
   };
 
   const renderActions = (id: number) => {
     const items: MenuProps["items"] = [
       { key: "edit", label: <Link to={`edit/${id}`}>Редагувати</Link> },
-      { key: "delete", danger: true, label: <span onClick={() => handleDelete(id)}>Видалити</span> },
+      {
+        key: "delete",
+        danger: true,
+        label: <span onClick={() => handleDelete(id)}>Видалити</span>,
+      },
     ];
     return (
-        <Dropdown menu={{ items }} trigger={["click"]}>
-          <Button icon={<MoreOutlined />} shape="circle" />
-        </Dropdown>
+      <Dropdown menu={{ items }} trigger={["click"]}>
+        <Button icon={<MoreOutlined />} shape="circle" />
+      </Dropdown>
     );
   };
 
   const handleApplyPromotion = async () => {
     if (!selectedPromotionId && discountPercent === 0) {
-      notification.warning({ message: "Виберіть акцію або введіть знижку" });
+      showToast("warn", "Виберіть акцію або введіть знижку", <WarnIcon />);
       return;
     }
 
     try {
       await Promise.all(
-          selectedRowKeys.map((productId) =>
-              setProductPromotion({
-                productId: Number(productId),
-                promotionId: selectedPromotionId,
-                discountPercent,
-              }).unwrap()
-          )
+        selectedRowKeys.map((productId) =>
+          setProductPromotion({
+            productId: Number(productId),
+            promotionId: selectedPromotionId,
+            discountPercent,
+          }).unwrap()
+        )
       );
-      notification.success({ message: "Акція застосована до вибраних продуктів" });
+      showToast(
+        "success",
+        "Акція застосована до вибраних продуктів",
+        <SuccessIcon />
+      );
+
       setPromotionModalVisible(false);
       setSelectedRowKeys([]);
     } catch {
-      notification.error({ message: "Помилка при застосуванні акції" });
+      showToast("error", "Помилка при застосуванні акці", <ErrorIcon />);
     }
   };
 
@@ -155,7 +167,7 @@ const ProductList = () => {
       key: "name",
       sorter: (a: IProduct, b: IProduct) => a.name.localeCompare(b.name),
       render: (desc: string) =>
-          desc.length > 50 ? desc.slice(0, 50) + "..." : desc,
+        desc.length > 50 ? desc.slice(0, 50) + "..." : desc,
     },
     {
       title: "Ціна",
@@ -192,18 +204,29 @@ const ProductList = () => {
       dataIndex: "description",
       key: "description",
       render: (desc?: string) =>
-          desc ? (desc.length > 50 ? desc.slice(0, 50) + "..." : desc) : <Tag color="blue">—</Tag>,
+        desc ? (
+          desc.length > 50 ? (
+            desc.slice(0, 50) + "..."
+          ) : (
+            desc
+          )
+        ) : (
+          <Tag color="blue">—</Tag>
+        ),
     },
     {
       title: "Зображення",
       dataIndex: "images",
       key: "images",
       render: (images?: IProductImageDto[]) =>
-          !images?.length || !images[0]?.name ? (
-              <Tag color="blue">—</Tag>
-          ) : (
-              <Image width={60} src={`${APP_ENV.IMAGES_1200_URL}${images[0].name}`} />
-          ),
+        !images?.length || !images[0]?.name ? (
+          <Tag color="blue">—</Tag>
+        ) : (
+          <Image
+            width={60}
+            src={`${APP_ENV.IMAGES_1200_URL}${images[0].name}`}
+          />
+        ),
     },
     {
       title: "Дії",
@@ -213,90 +236,95 @@ const ProductList = () => {
   ];
 
   return (
-      <div style={{ padding: "20px" }}>
-        <Space className="mb-5 flex justify-between" style={{ width: "100%" }}>
-          <Input
-              placeholder="Пошук продукту"
-              prefix={<SearchOutlined />}
-              value={searchText}
-              onChange={(e) => setSearchParams({ search: e.target.value, page: "1" })}
-              style={{ width: 200 }}
-          />
-          <Space>
-            {selectedRowKeys.length > 0 && (
-                <Button type="primary" onClick={() => setPromotionModalVisible(true)}>
-                  Вибрати акцію для {selectedRowKeys.length} продуктів
-                </Button>
-            )}
+    <div style={{ padding: "20px" }}>
+      <Space className="mb-5 flex justify-between" style={{ width: "100%" }}>
+        <Input
+          placeholder="Пошук продукту"
+          prefix={<SearchOutlined />}
+          value={searchText}
+          onChange={(e) =>
+            setSearchParams({ search: e.target.value, page: "1" })
+          }
+          style={{ width: 200 }}
+        />
+        <Space>
+          {selectedRowKeys.length > 0 && (
             <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => navigate("/admin/products/create")}
+              type="primary"
+              onClick={() => setPromotionModalVisible(true)}
             >
-              Додати продукт
+              Вибрати акцію для {selectedRowKeys.length} продуктів
             </Button>
-          </Space>
+          )}
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => navigate("/admin/products/create")}
+          >
+            Додати продукт
+          </Button>
         </Space>
+      </Space>
 
-        {isLoading ? (
-            <div className="flex justify-center items-center h-[60vh]">
-              <Spin size="large" />
-            </div>
-        ) : (
-            <>
-              <Table<IProduct>
-                  rowKey="id"
-                  columns={columns}
-                  dataSource={pagedProducts}
-                  pagination={false}
-                  rowSelection={{ selectedRowKeys, onChange: setSelectedRowKeys }}
-              />
+      {isLoading ? (
+        <div className="flex justify-center items-center h-[60vh]">
+          <Spin size="large" />
+        </div>
+      ) : (
+        <>
+          <Table<IProduct>
+            rowKey="id"
+            columns={columns}
+            dataSource={pagedProducts}
+            pagination={false}
+            rowSelection={{ selectedRowKeys, onChange: setSelectedRowKeys }}
+          />
 
-              <PaginationComponent
-                  currentPage={currentPage}
-                  pageSize={pageSize}
-                  totalItems={filteredProducts.length}
-                  onPageChange={(page) =>
-                      setSearchParams({ search: searchText, page: page.toString() })
-                  }
-              />
-            </>
-        )}
+          <PaginationComponent
+            currentPage={currentPage}
+            pageSize={pageSize}
+            totalItems={filteredProducts.length}
+            onPageChange={(page) =>
+              setSearchParams({ search: searchText, page: page.toString() })
+            }
+          />
+        </>
+      )}
 
-        <Modal
-            title="Вибір акції"
-            visible={promotionModalVisible}
-            onOk={handleApplyPromotion}
-            onCancel={() => setPromotionModalVisible(false)}
-            confirmLoading={isSettingPromotion}
-        >
-          <Space direction="vertical" style={{ width: "100%" }}>
-            <Select
-                placeholder="Виберіть акцію"
-                style={{ width: "100%" }}
-                value={selectedPromotionId || undefined}
-                onChange={(value) => setSelectedPromotionId(value)}
-                allowClear
-            >
-              {promotions?.map((promo) => (
-                  <Select.Option key={promo.id} value={promo.id}>
-                    {promo.name}
-                  </Select.Option>
-              ))}
-            </Select>
+      <Modal
+        title="Вибір акції"
+        visible={promotionModalVisible}
+        onOk={handleApplyPromotion}
+        onCancel={() => setPromotionModalVisible(false)}
+        confirmLoading={isSettingPromotion}
+      >
+        <Space direction="vertical" style={{ width: "100%" }}>
+          <Select
+            placeholder="Виберіть акцію"
+            style={{ width: "100%" }}
+            value={selectedPromotionId || undefined}
+            onChange={(value) => setSelectedPromotionId(value)}
+            allowClear
+          >
+            {promotions?.map((promo) => (
+              <Select.Option key={promo.id} value={promo.id}>
+                {promo.name}
+              </Select.Option>
+            ))}
+          </Select>
 
-            <InputNumber
-                min={0}
-                max={100}
-                value={discountPercent}
-                onChange={(value) => setDiscountPercent(Number(value))}
-                addonAfter="%"
-                style={{ width: "100%" }}
-                placeholder="Розмір знижки"
-            />
-          </Space>
-        </Modal>
-      </div>
+          <InputNumber
+            min={0}
+            max={100}
+            value={discountPercent}
+            onChange={(value) => setDiscountPercent(Number(value))}
+            addonAfter="%"
+            style={{ width: "100%" }}
+            placeholder="Розмір знижки"
+          />
+        </Space>
+      </Modal>
+    </div>
   );
 };
 
