@@ -7,13 +7,13 @@ import { APP_ENV } from "../env";
 import { useAppSelector } from "../store/store";
 import { getUser } from "../store/slices/userSlice";
 import { useParams } from "react-router-dom";
-import ProductCarousel from "../components/ProductCarousel";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 import { Pagination } from "antd"; 
 import { useProducts } from "../hooks/useProducts";
 import { useGetBrandsQuery } from "../services/brandApi";
 import { useGetRandomCommentsQuery } from "../services/productCommentsApi";
 import ReviewProductCard from "../components/comments/ReviewProductCard";
+import Product_3_Carousel from "../components/Product_3_Carousel";
 
 // ...
 const CatalogPage: React.FC = () => {
@@ -79,7 +79,7 @@ const CatalogPage: React.FC = () => {
     CategoryId: randomChildCategory?.id,
   });
   return (
-    <div className="flex flex-col lg:flex-row mt-[100px] pr-4 max-w-[1680px] mx-auto gap-4">
+    <div className="flex flex-col lg:flex-row md:mt-[100px] pr-4 max-w-[1680px] mx-auto gap-4 pl-4 md:pl-0">
       {/* Sidebar */}
       <div className="w-full lg:w-[23.5%]">
         <div className="lg:hidden mb-4">
@@ -110,16 +110,16 @@ const CatalogPage: React.FC = () => {
         </div>
 
         {/* Carousels */}
-        <div className="max-w-[1310px] w-full bg-white mx-auto mt-16 flex flex-col gap-12">
-          <ProductCarousel
+        <div className="container mx-auto  md:mt-28 flex flex-col gap-12 max-w-[1310px] px-2 md:px-0">
+          <Product_3_Carousel
             title="Пропозиції брендів"
             products={brandProducts ?? []}
             maxWidth="1310px"
           />
           {/* Карусель і банер для випадкової дочірньої категорії */}
           {randomChildCategory && categoriesChildrenProducts.length > 0 && (
-            <div className="flex flex-col gap-8">
-              <ProductCarousel
+            <div className="flex flex-col gap-8 ">
+              <Product_3_Carousel
                 title={randomChildCategory.name}
                 products={categoriesChildrenProducts}
                 maxWidth="1310px"
@@ -139,8 +139,8 @@ const CatalogPage: React.FC = () => {
 
         </div>
         {/* Carousels */}
-        <div className="max-w-[1310px] w-full bg-white mx-auto mt-16 flex flex-col gap-12">
-          <ProductCarousel
+        <div className="container mx-auto  md:mt-28 flex flex-col gap-12 max-w-[1310px] px-2 md:px-0">
+          <Product_3_Carousel
             title="Спеціально для тебе"
             products={searchResult?.items ?? []}
             maxWidth="1310px"
@@ -148,8 +148,8 @@ const CatalogPage: React.FC = () => {
         </div>
         {/* Один випадковий коментар */}
         {randomComment && randomComment.length > 0 && (
-          <section className="flex justify-center mt-12">
-            <div className="relative w-full max-w-[850px] aspect-[840/400] rounded-lg overflow-hidden mx-auto">
+          <section className="flex justify-center md:mt-12">
+            <div className="relative w-full max-w-[850px] aspect-[840/400] rounded-lg overflow-hidden mx-auto px-2 md:px-0">
               <ReviewProductCard
                 key={randomComment[0].id}
                 productName={randomComment[0].product?.name || "Товар без назви"}
