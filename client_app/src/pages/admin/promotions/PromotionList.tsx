@@ -8,7 +8,6 @@ import {
   Spin,
   Image,
   Tag,
-  notification,
   Modal,
   List,
 } from "antd";
@@ -26,6 +25,10 @@ import { productApi } from "../../../services/productApi.ts";
 import { useAppDispatch } from "../../../store/store.ts";
 import { useSetProductPromotionMutation } from "../../../services/admin/productAdminApi";
 import { ApiError } from "../../../types/errors.ts";
+import ErrorIcon from "../../../components/icons/toasts/ErrorIcon.tsx";
+import { showToast } from "../../../utilities/showToast.ts";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon.tsx";
+import WarnIcon from "../../../components/icons/toasts/WarnIcon.tsx";
 
 const filterPromotions = (list: IPromotion[], text: string) =>
   list.filter((p) => p.name?.toLowerCase().includes(text.toLowerCase()));
@@ -79,7 +82,7 @@ const PromotionList: React.FC = () => {
           setCurrentProducts(results.filter(Boolean) as IProduct[]);
         }
       } catch {
-        notification.error({ message: "Помилка завантаження продуктів" });
+        showToast("error", "Помилка завантаження продуктів", <ErrorIcon />);
       }
     };
 
@@ -100,17 +103,15 @@ const PromotionList: React.FC = () => {
 
       await setProductPromotion(payload).unwrap();
 
-      notification.success({
-        message: "Продукт відв'язано",
-        description: "Продукт успішно видалено з акції!",
-      });
+      showToast("success", "Продукт успішно видалено з акції", <SuccessIcon />);
 
       setCurrentProducts((prev) => prev.filter((p) => p.id !== productId));
     } catch {
-      notification.error({
-        message: "Помилка",
-        description: "Не вдалося відв'язати продукт від акції",
-      });
+      showToast(
+        "error",
+        "Не вдалося відв'язати продукт від акції",
+        <ErrorIcon />
+      );
     }
   };
 
@@ -126,15 +127,13 @@ const PromotionList: React.FC = () => {
   const handleDelete = async (id: number) => {
     try {
       await deletePromotion(id).unwrap();
-      notification.success({
-        message: "Акцію видалено",
-        description: "Акцію успішно видалено!",
-      });
+      showToast("success", "Акцію успішно видалено", <SuccessIcon />);
     } catch (error) {
-      notification.error({
-        message: "Помилка видалення акції",
-        description: (error as ApiError)?.data?.message || "Спробуйте пізніше",
-      });
+      showToast(
+        "error",
+        (error as ApiError)?.data?.message || "Спробуйте пізніше",
+        <ErrorIcon />
+      );
     }
   };
 
@@ -143,10 +142,7 @@ const PromotionList: React.FC = () => {
       setCurrentProductsIds(productsIds);
       setProductsModalVisible(true);
     } else {
-      notification.warning({
-        message: "Продукти відсутні",
-        description: "Ця акція не містить продуктів.",
-      });
+      showToast("warn", "Продукти відсутні", <WarnIcon />);
     }
   };
 

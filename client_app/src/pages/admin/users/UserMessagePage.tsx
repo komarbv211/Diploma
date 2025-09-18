@@ -1,8 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Form, Input, Button, notification, Space, Typography } from "antd";
+import { Form, Input, Button, Space, Typography } from "antd";
 import { useSendMessageToUserMutation } from "../../../services/admin/userAdminApi";
 import { ApiError } from "../../../types/errors";
 import { handleFormErrors } from "../../../utilities/handleApiErrors";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
+import { showToast } from "../../../utilities/showToast";
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -23,10 +25,7 @@ const UserMessagePage = () => {
         message: values.message,
       }).unwrap();
 
-      notification.success({
-        message: "Повідомлення надіслано",
-        description: result || "Повідомлення надіслано",
-      });
+      showToast("success", result || "Повідомлення надіслано", <SuccessIcon />);
 
       navigate(-1);
     } catch (error: unknown) {
