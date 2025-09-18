@@ -46,7 +46,7 @@ function App() {
             <Route path="/quality" element={<ProductQualityPage />} />
             <Route index element={<Home />} />
             <Route path="profile" element={<UserProfile />} />
-            <Route path="/profile/wishlist" element={<UserFavorites />} />
+            <Route path="/wishlist" element={<UserFavorites />} />
             <Route
               path="orders"
               element={
