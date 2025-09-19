@@ -30,6 +30,9 @@
 	  <Folder Include="uploading\" />
 	</ItemGroup>
 	<ItemGroup>
+		<Content Include="Templates\**\*.html" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+	<ItemGroup>
 	  <Content Update="Helpers\JsonData\Brand.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>

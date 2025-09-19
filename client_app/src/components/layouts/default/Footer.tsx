@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
           <h2 className="text-3xl font-semibold text-black mb-6">
             Дізнавайтесь першими про розпродажі і новинки!
           </h2>
-          <div className="flex items-center w-[454px] h-[52px] mx-auto border border-gray-500 rounded-[15px] px-4 gap-[38px] transition">
+          <div className="flex items-center max-w-[454px] h-[52px] mx-auto border border-gray-500 rounded-[15px] px-4 md:gap-[38px] transition">
             <input
                 type="text"
                 placeholder="Введіть ваш email"
