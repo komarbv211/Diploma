@@ -33,7 +33,7 @@ const CommentsPage = lazy(() => import("./pages/CommentsPage.tsx"));
 const OrderSuccess = lazy(() => import("./pages/user/orders/OrderSuccess.tsx"));
 const OrderHistoryPage = lazy(() => import("./pages/user/orders/OrderHistoryPage.tsx"));
 const UserFavorites = lazy(() => import("./pages/user/UserFavorites.tsx"));
-
+const DeleteAccountPage = lazy(() => import("./pages/user/DeleteAccountPage.tsx"));
 function App() {
   return (
     <>
@@ -45,8 +45,11 @@ function App() {
             <Route path="/returns" element={<ReturnsPage />} />
             <Route path="/quality" element={<ProductQualityPage />} />
             <Route index element={<Home />} />
-            <Route path="profile" element={<UserProfile />} />
-            <Route path="/profile/wishlist" element={<UserFavorites />} />
+            <Route path="profile">
+              <Route index element={<UserProfile />} />
+              <Route path="wishlist" element={<UserFavorites />} />
+              <Route path="delete" element={<DeleteAccountPage />} />
+            </Route>
             <Route
               path="orders"
               element={

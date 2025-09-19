@@ -43,6 +43,7 @@ namespace WebApiDiploma.Controllers.User
             await service.DeleteUserAsync(id);
             return NoContent();
         }
+
         [HttpGet("email")]
         public async Task<ActionResult<UserDTO>> GetByEmail([FromQuery] string email)
         {
@@ -52,19 +53,6 @@ namespace WebApiDiploma.Controllers.User
             return Ok(user);
         }
 
-
-        //[HttpPost("register")]
-        //public async Task<ActionResult> Register(UserDTO user)
-        //{
-        //    var existingUser = await service.GetByEmailAsync(user.Email);
-        //    if (existingUser != null)
-        //    {
-        //        return Conflict(new { message = "Ви вже зареєстровані", redirect = "/reset-password" });
-        //    }
-
-        //    await service.CreateUserAsync(user);
-        //    return Created("/users/" + user.Email, new { message = "Користувач успішно зареєстрований" });
-        //}
     }
 
 }

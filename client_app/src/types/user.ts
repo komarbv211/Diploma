@@ -68,6 +68,7 @@ export interface IUser {
   lastActivity: string;
   roles: string[];
   isBlocked: boolean;
+  isRemove: boolean;
   blockedUntil?: string;
 }
 

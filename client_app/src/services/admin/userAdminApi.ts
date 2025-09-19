@@ -85,6 +85,16 @@ export const userAdminApi = createApi({
       }),
       invalidatesTags: ['Users'],
     }),
+
+    // Відновлення видаленого користувача:
+    restoreUser: builder.mutation<void, { id: number }>({
+      query: ({ id }) => ({
+        url: `${id}/restore`,
+        method: 'DELETE', 
+      }),
+      invalidatesTags: ['Users'], 
+    }),
+
   }),
 });
 
@@ -94,6 +104,7 @@ export const {
   useCreateUserMutation,
   useBlockUserMutation,
   useUnblockUserMutation,
-  usePromoteUserToAdminMutation, // <-- новий хук
+  usePromoteUserToAdminMutation, 
+  useRestoreUserMutation,
 } = userAdminApi;
 
