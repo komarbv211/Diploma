@@ -108,6 +108,13 @@ namespace WebApiDiploma.Controllers.Admin
             return Ok(new { Message = $"User {id} promoted to Admin" });
         }
 
+        [HttpDelete("{id}/restore")]
+        public async Task<ActionResult> Restore(long id)
+        {
+            await _service.RestoreUserAsync(id);
+            return NoContent();
+        }
+
 
     }
 }
