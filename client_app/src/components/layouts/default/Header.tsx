@@ -71,6 +71,11 @@ const CustomHeader: React.FC = () => {
       ),
     })) || [];
 
+  useEffect(() => {
+    setSearchText("");
+  }, [location.pathname]);
+
+
   const handleLogout = async () => {
     const serverCart = [...cart];
     await logout();
@@ -142,11 +147,16 @@ const CustomHeader: React.FC = () => {
 
     {/* Пошук */}
     {!isAdminPath && (
-      <div className="hidden xl:flex flex-1 justify-center px-4">        <AutoComplete
+      <div className="hidden xl:flex flex-1 justify-center px-4">      
+        <AutoComplete
+          value={searchText}
           options={options}
           onSelect={(value) => {
             const product = searchResults?.items.find((p) => p.name === value);
-            if (product) navigate(`/product/details/${product.id}`);
+            if (product) {
+              navigate(`/product/details/${product.id}`);
+              setSearchText("");
+            }
           }}
           onSearch={(value) => setSearchText(value)}
           notFoundContent={isFetching ? <Spin size="small" /> : "Нічого не знайдено"}
