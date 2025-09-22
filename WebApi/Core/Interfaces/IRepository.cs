@@ -9,7 +9,9 @@ namespace Core.Interfaces
         Task<IEnumerable<TEntity>> GetAllAsync();
         IQueryable<TEntity> GetAllQueryable();
         Task<bool> AnyAsync();
-       // Task<bool> AnyAsync(Expression<Func<TEntity, bool>> exp);
+        //Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate);
+
+        // Task<bool> AnyAsync(Expression<Func<TEntity, bool>> exp);
         Task AddAsync(TEntity entity);
         Task SaveAsync();
         void Delete(object id);

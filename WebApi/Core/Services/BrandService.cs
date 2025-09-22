@@ -32,12 +32,21 @@ namespace Core.Services
         public async Task<BrandItemDto> CreateBrandAsync(BrandCreateDto dto)
         {
 
+            var brandExists = _brandRepository
+        .GetAllQueryable()
+        .Any(b => b.Name.ToLower() == dto.Name.ToLower());
+
+            if (brandExists)
+            {
+                throw new HttpException($"Бренд з назвою '{dto.Name}' вже існує.", HttpStatusCode.Conflict);
+            }
+
             try
             {
                 var brand = _mapper.Map<BrandEntity>(dto);
                 await _brandRepository.Insert(brand);
                 await _brandRepository.SaveAsync();
-               
+
                 return _mapper.Map<BrandItemDto>(brand);
             }
             catch (DbUpdateException dbEx)
@@ -48,6 +57,53 @@ namespace Core.Services
             {
                 throw new HttpException("Невідома помилка при створенні бренду", HttpStatusCode.InternalServerError, ex);
             }
+
+            //try
+            //{
+            //    // Перевірка на існування бренду з такою ж назвою (чутлива до регістру або ні — залежно від потреб)
+            //     var existingBrand = await _brandRepository.FirstOrDefaultAsync(
+            //     b => b.Name.ToLower() == dto.Name.ToLower()
+            //     );
+
+            //    if (existingBrand != null)
+            //    {
+            //        throw new HttpException(
+            //            $"Бренд з назвою '{dto.Name}' вже існує.",
+            //            HttpStatusCode.Conflict
+            //        );
+            //    }
+
+            //    var brand = _mapper.Map<BrandEntity>(dto);
+            //    await _brandRepository.Insert(brand);
+            //    await _brandRepository.SaveAsync();
+
+            //    return _mapper.Map<BrandItemDto>(brand);
+            //}
+            //catch (DbUpdateException dbEx)
+            //{
+            //    throw new HttpException("Помилка при збереженні бренду в базі даних", HttpStatusCode.InternalServerError, dbEx);
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new HttpException("Невідома помилка при створенні бренду", HttpStatusCode.InternalServerError, ex);
+            //}
+
+            //try
+            //{
+            //    var brand = _mapper.Map<BrandEntity>(dto);
+            //    await _brandRepository.Insert(brand);
+            //    await _brandRepository.SaveAsync();
+
+            //    return _mapper.Map<BrandItemDto>(brand);
+            //}
+            //catch (DbUpdateException dbEx)
+            //{
+            //    throw new HttpException("Помилка при збереженні бренду в базі даних", HttpStatusCode.InternalServerError, dbEx);
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new HttpException("Невідома помилка при створенні бренду", HttpStatusCode.InternalServerError, ex);
+            //}
         }
 
         public async Task DeleteBrandAsync(long id)

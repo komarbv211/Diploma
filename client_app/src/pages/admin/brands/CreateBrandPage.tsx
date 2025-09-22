@@ -44,7 +44,7 @@ const CreateBrandPage = () => {
       navigate("..");
     } catch (error: unknown) {
       handleFormErrors(error as ApiError, form);
-      message.error("Помилка при створенні бренду");
+      // message.error("Помилка при створенні бренду");
     }
   };
 
