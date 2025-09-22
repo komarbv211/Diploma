@@ -1,6 +1,6 @@
 // src/pages/CommentsPage.tsx
 import React, { useState, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Pagination } from "antd";
 import { useGetCommentsByProductIdQuery } from "../services/productCommentsApi";
 import CommentCard from "../components/comments/CommentCard";
@@ -9,6 +9,7 @@ const CommentsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [page, setPage] = useState(1);
   const pageSize = 5;
+  const navigate = useNavigate();
 
   const { data: comments, isLoading } = useGetCommentsByProductIdQuery(
     Number(id)
@@ -25,13 +26,19 @@ const CommentsPage: React.FC = () => {
     <div className="max-w-[1680px] mx-auto px-6 py-10">
       <div className="flex justify-between items-center mt-6">
         <span className="text-2xl">Коментарі</span>
+         <button
+              onClick={() => navigate(-1)}
+              className="text-gray hover:text-pink2 underline"
+            >
+              Повернутися назад
+            </button>
       </div>
 
       <div className="mt-10 space-y-10">
         {isLoading ? (
           <p>Завантаження...</p>
         ) : comments && comments.length > 0 ? (
-          paginatedComments.map((c) => <CommentCard key={c.id} comment={c} productId={c.id}/>)
+          paginatedComments.map((c) => <CommentCard key={c.id} comment={c} productId={c.productId}/>)
         ) : (
           <p>Коментарів поки немає</p>
         )}

@@ -28,6 +28,7 @@ export interface Review {
   id: number;
   productId:number;
   text: string;
+  dateCreated: string;
   user: {
     id: number;
     firstName: string;
