@@ -49,7 +49,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
     try {
       if (text) {
         await reviewProduct({ productId, userId: user.id, text }).unwrap();
-        showToast("success", "Ваш відгук додано!", <SuccessIcon />);
+        showToast('success', "Ваш відгук додано!", <SuccessIcon/>);
       }
       if (rating) {
         await rateProduct({
@@ -57,9 +57,8 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
           rating,
           userId: user.id,
         }).unwrap();
-        showToast("success", "Вашу оцінку додано!", <SuccessIcon />);
+        showToast('success', "Вашу оцінку додано!", <SuccessIcon/>);
       }
-
       setRating(0);
       setText("");
       onClose();

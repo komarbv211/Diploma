@@ -24,6 +24,7 @@ import {
   useBlockUserMutation,
   useUnblockUserMutation,
   usePromoteUserToAdminMutation,
+  useRestoreUserMutation,
 } from "../../../services/admin/userAdminApi";
 import PaginationComponent from "../../../components/pagination/PaginationComponent";
 import { IUser, UserBlockDTO } from "../../../types/user";
@@ -73,7 +74,7 @@ const UsersPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<string | undefined>();
   const [sortDesc, setSortDesc] = useState<boolean>(false);
   const [blockLoading, setBlockLoading] = useState<number | null>(null);
-
+   const [restoreUser] = useRestoreUserMutation();
   const navigate = useNavigate();
 
   const { data, isError, isLoading } = useGetAllUsersQuery({
@@ -263,6 +264,23 @@ const UsersPage: React.FC = () => {
     });
   };
 
+  const handleRestoreUser = async (user: IUserExtended) => {
+    Modal.confirm({
+      title: `Відновити користувача ${user.fullName}?`,
+      onOk: async () => {
+        try {
+          await restoreUser({ id: user.id }).unwrap();
+          message.success(`Користувача ${user.fullName} відновлено`);
+        } catch (err: unknown) {
+          const error = err as ServerError;
+          message.error(error.data?.message || "Не вдалося відновити користувача");
+        }
+      },
+      okText: "Відновити",
+      cancelText: "Відміна",
+    });
+  };
+
   const columns: ColumnsType<IUserExtended> = [
     {
       title: "Ім'я",
@@ -310,19 +328,23 @@ const UsersPage: React.FC = () => {
       render: (date: Dayjs) => (date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-"),
     },
     {
-      title: "Блокування",
+      title: "Статус",
       dataIndex: "lockoutEnd",
       key: "lockoutEnd",
       sorter: true,
       sortOrder: sortBy === "LockoutEnd" ? (sortDesc ? "descend" : "ascend") : null,
       render: (_: unknown, record: IUserExtended) => {
+        if (record.isRemove) {
+          return <span style={{ color: "#8A0149" }}>Видалений</span>;
+        }
+
         const isBlocked = record.lockoutEnd && new Date(record.lockoutEnd) > new Date();
         return isBlocked ? (
-            <span style={{ color: "red" }}>
+          <span style={{ color: "red" }}>
             Заблоковано до {dayjs(record.lockoutEnd).format("DD.MM.YYYY HH:mm")}
           </span>
         ) : (
-            <span style={{ color: "green" }}>Активний</span>
+          <span style={{ color: "green" }}>Активний</span>
         );
       },
     },
@@ -350,6 +372,13 @@ const UsersPage: React.FC = () => {
                     >
                       Призначити Admin
                     </Menu.Item>
+                    <Menu.Item
+                      onClick={() => handleRestoreUser(record)}
+                      disabled={!record.isRemove} 
+                    >
+                      Відновити акаунт
+                    </Menu.Item>
+
                   </Menu>
                 }
             >
