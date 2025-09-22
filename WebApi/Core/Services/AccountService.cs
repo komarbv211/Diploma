@@ -64,6 +64,12 @@ namespace Core.Services
                 }
             }
 
+            if (user.IsRemove)
+            {
+                throw new HttpException("Ваш акаунт було видалено. Якщо це помилка — зверніться до адміністратора.", HttpStatusCode.Forbidden);
+            }
+
+
             if (user.LockoutEnabled && user.LockoutEnd.HasValue && user.LockoutEnd > DateTimeOffset.UtcNow)
             {
                 throw new HttpException("Ваш акаунт заблоковано. Зверніться до адміністратора.", HttpStatusCode.Forbidden);
