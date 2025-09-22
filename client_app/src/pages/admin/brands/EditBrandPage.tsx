@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, Input, Button, Upload, Spin, message } from "antd";
+import { Form, Input, Button, Upload, Spin } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import { IBrandPutRequest } from "../../../types/brand";
 import {
@@ -7,6 +7,9 @@ import {
   useUpdateBrandMutation,
 } from "../../../services/admin/brandAdminApi";
 import CropperModal from "../../../components/images/CropperModal";
+import { showToast } from "../../../utilities/showToast";
+import ErrorIcon from "../../../components/icons/toasts/ErrorIcon";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
 
 const EditBrandPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -49,17 +52,17 @@ const EditBrandPage = () => {
   const onFinish = async (values: IBrandPutRequest) => {
     try {
       if (!brandId) {
-        message.error("Невірний ID бренду");
+        showToast("error", "Неправильний ID бренду", <ErrorIcon />);
         return;
       }
 
       values.id = brandId;
 
       await updateBrand(values).unwrap();
-      message.success("Бренд оновлено");
+      showToast("success", "Бренд оновлено", <SuccessIcon />);
       navigate("..");
     } catch {
-      message.error("Помилка при оновленні бренду");
+      showToast("error", "Помилка при оновленні бренду", <ErrorIcon />);
     }
   };
 

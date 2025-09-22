@@ -10,7 +10,6 @@ import {
   Spin,
   Upload,
   Avatar,
-  message,
   Form,
 } from "antd";
 import {
@@ -31,6 +30,8 @@ import PhoneInput from "../../components/PhoneInput.tsx";
 import { handleFormErrors } from "../../utilities/handleApiErrors";
 import { ApiError } from "../../types/errors";
 import CropperModal from "../../components/images/CropperModal.tsx";
+import { showToast } from "../../utilities/showToast.ts";
+import SuccessIcon from "../../components/icons/toasts/SuccessIcon.tsx";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -100,7 +101,7 @@ const AdminProfile: React.FC = () => {
 
       await updateUser(formData).unwrap();
       console.log("avatar file:", formData.get("avatar"));
-      message.success("Зміни збережено");
+      showToast("success", "Зміни збережено", <SuccessIcon />);
     } catch (error: unknown) {
       handleFormErrors(error as ApiError, form);
     }

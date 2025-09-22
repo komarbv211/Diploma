@@ -5,6 +5,8 @@ import {
   useGetChildrenByIdQuery,
 } from "../../services/categoryApi";
 import { Skeleton, Alert, Empty } from "antd";
+import { showToast } from "../../utilities/showToast";
+import ErrorIcon from "../icons/toasts/ErrorIcon";
 const HorizontalNavigation: React.FC = () => {
   const navigate = useNavigate();
   const [hoveredCategory, setHoveredCategory] = useState<number | null>(null);
@@ -77,19 +79,20 @@ const HorizontalNavigation: React.FC = () => {
   }
 
   if (error) {
-    return (
-      <nav className="nav-wrapper">
-        <div className="nav-inner">
-          <div className="h-12 px-5 flex items-center justify-center w-full">
-            <Alert
-              message="Помилка завантаження категорій"
-              type="error"
-              showIcon
-            />
-          </div>
-        </div>
-      </nav>
-    );
+    // return (
+    //   <nav className="nav-wrapper">
+    //     <div className="nav-inner">
+    //       <div className="h-12 px-5 flex items-center justify-center w-full">
+    //         <Alert
+    //           message="Помилка завантаження категорій"
+    //           type="error"
+    //           showIcon
+    //         />
+    //       </div>
+    //     </div>
+    //   </nav>
+    // );
+    showToast('error', 'Помилка завантаження категорій', <ErrorIcon/>)
   }
 
   if (!rootCategories || rootCategories.length === 0) {

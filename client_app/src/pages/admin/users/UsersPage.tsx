@@ -7,7 +7,6 @@ import {
   Input,
   Space,
   Spin,
-  message,
   Select,
   ConfigProvider,
   DatePicker,
@@ -30,6 +29,10 @@ import PaginationComponent from "../../../components/pagination/PaginationCompon
 import { IUser, UserBlockDTO } from "../../../types/user";
 import { useDebounce } from "use-debounce";
 import { useNavigate } from "react-router-dom";
+import { showToast } from "../../../utilities/showToast";
+import ErrorIcon from "../../../components/icons/toasts/ErrorIcon";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
+import InfoIcon from "../../../components/icons/toasts/InfoIcon";
 
 dayjs.extend(customParseFormat);
 dayjs.locale("uk");
@@ -106,7 +109,7 @@ const UsersPage: React.FC = () => {
   }, [data]);
 
   if (isError) {
-    message.error("Не вдалося завантажити користувачів");
+    showToast("error", "Не вдалося завантажити користувачів", <ErrorIcon />);
   }
 
   const dataSource = useMemo<IUserExtended[]>(() => {
@@ -168,7 +171,7 @@ const UsersPage: React.FC = () => {
 
   const handleBlockWithDate = (user: IUserExtended) => {
     if (user.role.toLowerCase() === "admin") {
-      message.error("Неможливо блокувати користувача з роллю Адмін");
+      showToast("error", "Неможливо блокувати користувача з роллю Адмін", <ErrorIcon />);
       return;
     }
 
@@ -188,15 +191,15 @@ const UsersPage: React.FC = () => {
                   const dto: UserBlockDTO = { id: user.id, until: date.toISOString() };
                   try {
                     await blockUser(dto).unwrap();
-                    message.success(
+                    showToast("success", 
                         `Користувача ${user.fullName} заблоковано до ${dayjs(date).format(
                             "DD.MM.YYYY HH:mm"
                         )}`
-                    );
+                    , <SuccessIcon />);
                     modalRef.destroy();
                   } catch (err: unknown) {
                     const error = err as ServerError;
-                    message.error(error.data?.message || "Не вдалося заблокувати користувача");
+                    showToast("error", error.data?.message || "Не вдалося заблокувати користувача", <ErrorIcon />);
                   }
                 }}
             />
@@ -210,11 +213,11 @@ const UsersPage: React.FC = () => {
                   const dto: UserBlockDTO = { id: user.id };
                   try {
                     await blockUser(dto).unwrap();
-                    message.success(`Користувача ${user.fullName} заблоковано назавжди`);
+                    showToast("success", `Користувача ${user.fullName} заблоковано назавжди`, <SuccessIcon />);
                     modalRef.destroy();
                   } catch (err: unknown) {
                     const error = err as ServerError;
-                    message.error(error.data?.message || "Не вдалося заблокувати користувача");
+                    showToast("error", error.data?.message || "Не вдалося заблокувати користувача", <ErrorIcon />);
                   }
                 }}
             >
@@ -232,7 +235,7 @@ const UsersPage: React.FC = () => {
     setBlockLoading(user.id);
     try {
       await unblockUser({ id: user.id }).unwrap();
-      message.success(`Користувача ${user.fullName} розблоковано`);
+      showToast("success", `Користувача ${user.fullName} розблоковано`, <SuccessIcon />);
     } finally {
       setBlockLoading(null);
     }
@@ -240,7 +243,7 @@ const UsersPage: React.FC = () => {
 
   const handlePromoteToAdmin = async (user: IUserExtended) => {
     if (user.role.toLowerCase() === "admin") {
-      message.info("Цей користувач вже є адміністратором");
+      showToast("info", "Цей користувач вже є адміністратором", <InfoIcon />);
       return;
     }
 
@@ -249,10 +252,10 @@ const UsersPage: React.FC = () => {
       onOk: async () => {
         try {
           await promoteUserToAdmin({ id: user.id }).unwrap();
-          message.success(`Користувач ${user.fullName} тепер Admin`);
+          showToast("success", `Користувач ${user.fullName} тепер Admin`, <SuccessIcon />);
         } catch (err: unknown) {
           const error = err as ServerError;
-          message.error(error.data?.message || "Не вдалося підвищити користувача");
+          showToast("error", error.data?.message || "Не вдалося підвищити користувача", <ErrorIcon />);
         }
       },
       okText: "Підвищити",

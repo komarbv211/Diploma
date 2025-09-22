@@ -4,7 +4,6 @@ import {
   Input,
   Button,
   Upload,
-  message,
   Checkbox,
   DatePicker,
   Divider,
@@ -19,6 +18,9 @@ import { useCreatePromotionMutation } from "../../../services/admin/promotionAdm
 import { handleFormErrors } from "../../../utilities/handleApiErrors";
 import { ApiError } from "../../../types/errors";
 import CropperModal from "../../../components/images/CropperModal";
+import { showToast } from "../../../utilities/showToast";
+import ErrorIcon from "../../../components/icons/toasts/ErrorIcon";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
 
 const { Item } = Form;
 const { RangePicker } = DatePicker;
@@ -70,17 +72,17 @@ const CreatePromotionPage = () => {
       const [startDate, endDate] = values.period;
 
       if (!startDate || !endDate) {
-        message.error("Будь ласка, виберіть період дії!");
+        showToast("error", "Будь ласка, виберіть період дії", <ErrorIcon />);
         return;
       }
 
       if (!endDate.isAfter(startDate)) {
-        message.error("Дата кінця повинна бути більшою за дату початку.");
+        showToast("error", "Дата кінця повинна бути більшою за дату початку", <ErrorIcon />);
         return;
       }
 
       if (!croppedImage) {
-        message.error("Будь ласка, завантажте зображення акції.");
+        showToast("error", "Будь ласка, завантажте зображення акції", <ErrorIcon />);
         return;
       }
 
@@ -106,7 +108,7 @@ const CreatePromotionPage = () => {
 
       await createPromotion(formData).unwrap();
 
-      message.success("Акція успішно створена!");
+      showToast("success", "Акція успішно створена", <SuccessIcon />);
       navigate("/admin/promotions");
     } catch (error: unknown) {
       handleFormErrors(error as ApiError, form);

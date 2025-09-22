@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Input, Upload, Form, InputNumber, Select, message } from "antd";
+import { Button, Input, Upload, Form, InputNumber, Select } from "antd";
 import { EyeOutlined, PlusOutlined, ScissorOutlined } from "@ant-design/icons";
 import {
   useUpdateProductMutation,
@@ -21,6 +21,8 @@ import { ApiError } from "../../../types/errors";
 import { useGetBrandsQuery } from "../../../services/admin/brandAdminApi";
 import CropperModal from "../../../components/images/CropperModal";
 import { base64ToFile } from "../../../utilities/base64ToFile";
+import { showToast } from "../../../utilities/showToast";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
 
 const EditProductPage = () => {
   const { id } = useParams();
@@ -124,7 +126,7 @@ const EditProductPage = () => {
       values.id = Number(id);
       values.image = fileList.map((x) => x.originFileObj as File);
       await updateProduct(values).unwrap();
-      message.success("Продукт успішно відредаговано!");
+      showToast("success", "Продукт успішно відредаговано!о", <SuccessIcon />);
       navigate("..");
     } catch (error: unknown) {
       handleFormErrors(error as ApiError, form);

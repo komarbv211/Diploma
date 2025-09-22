@@ -6,12 +6,13 @@ import InteractiveRating from "../InteractiveRating";
 import { useReviewProductMutation } from "../../services/productCommentsApi";
 import { handleFormErrors } from "../../utilities/handleApiErrors";
 import { ApiError } from "../../types/errors";
-import { Form, message } from "antd";
+import { Form } from "antd";
 import { useRateProductMutation } from "../../services/productRatingApi ";
 import { MailIcon } from "../icons";
 import AcoountBoxIcon from "../icons/AccountBoxIcon";
 import { showToast } from "../../utilities/showToast";
 import WarnIcon from "../icons/toasts/WarnIcon";
+import SuccessIcon from "../icons/toasts/SuccessIcon";
 
 type AddReviewModalProps = {
   productId: number;
@@ -48,7 +49,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
     try {
       if (text) {
         await reviewProduct({ productId, userId: user.id, text }).unwrap();
-        message.success("Ваш відгук додано!");
+        showToast("success", "Ваш відгук додано!", <SuccessIcon />);
       }
       if (rating) {
         await rateProduct({
@@ -56,7 +57,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
           rating,
           userId: user.id,
         }).unwrap();
-        message.success("Вашу оцінку додано!");
+        showToast("success", "Вашу оцінку додано!", <SuccessIcon />);
       }
 
       setRating(0);
