@@ -4,9 +4,9 @@ import {
   useGetRootCategoriesQuery,
   useGetChildrenByIdQuery,
 } from "../../services/categoryApi";
-import { Skeleton, Alert, Empty } from "antd";
 import { showToast } from "../../utilities/showToast";
 import ErrorIcon from "../icons/toasts/ErrorIcon";
+import InfoIcon from "../icons/toasts/InfoIcon";
 const HorizontalNavigation: React.FC = () => {
   const navigate = useNavigate();
   const [hoveredCategory, setHoveredCategory] = useState<number | null>(null);
@@ -71,7 +71,8 @@ const HorizontalNavigation: React.FC = () => {
       <nav className="nav-wrapper">
         <div className="nav-inner">
           <div className="h-12 px-5 flex items-center">
-            <Skeleton.Input active size="small" style={{ width: 80 }} />
+            <div className="w-5 h-5 border-2 border-g border-t-pink2 rounded-full animate-spin"></div>
+            <span className="ml-2 text-sm text-gray-500">Завантаження...</span>{" "}
           </div>
         </div>
       </nav>
@@ -79,32 +80,13 @@ const HorizontalNavigation: React.FC = () => {
   }
 
   if (error) {
-    // return (
-    //   <nav className="nav-wrapper">
-    //     <div className="nav-inner">
-    //       <div className="h-12 px-5 flex items-center justify-center w-full">
-    //         <Alert
-    //           message="Помилка завантаження категорій"
-    //           type="error"
-    //           showIcon
-    //         />
-    //       </div>
-    //     </div>
-    //   </nav>
-    // );
-    showToast('error', 'Помилка завантаження категорій', <ErrorIcon/>)
+    showToast("error", "Помилка завантаження категорій", <ErrorIcon />);
+    return null;
   }
 
   if (!rootCategories || rootCategories.length === 0) {
-    return (
-      <nav className="nav-wrapper">
-        <div className="nav-inner">
-          <div className="h-12 px-5 flex items-center justify-center w-full">
-            <Empty description="Категорії не знайдено" />
-          </div>
-        </div>
-      </nav>
-    );
+    showToast("info", "Категорії не знайдено", <InfoIcon />);
+    return null;
   }
 
   return (

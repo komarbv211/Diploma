@@ -270,10 +270,10 @@ const UsersPage: React.FC = () => {
       onOk: async () => {
         try {
           await restoreUser({ id: user.id }).unwrap();
-          message.success(`Користувача ${user.fullName} відновлено`);
+          showToast("success", `Користувача ${user.fullName} відновлено`, <SuccessIcon />);
         } catch (err: unknown) {
           const error = err as ServerError;
-          message.error(error.data?.message || "Не вдалося відновити користувача");
+          showToast("error", error.data?.message || "Не вдалося відновити користувача", <ErrorIcon />);
         }
       },
       okText: "Відновити",
