@@ -1,36 +1,80 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Button, Drawer, Dropdown, Input } from "antd";
+import { Button, Drawer, Dropdown, AutoComplete, Input, Spin } from "antd";
 import {
   UserOutlined,
   LogoutOutlined,
   DashboardOutlined,
   MenuOutlined,
 } from "@ant-design/icons";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { getUser } from "../../../store/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { UserIcon, SearchIcon } from "../../icons";
 import HorizontalNavigation from "../../navigation/HorizontalNavigation";
+import VerticalNavigation from "../../navigation/VerticalNavigation";
+import Avatar from "../../Avatar";
+import { useLogoutMutation } from "../../../services/authApi";
 import { useCart } from "../../../hooks/useCart";
 import { cartApi } from "../../../services/cartApi";
 import { addItem, clearCart } from "../../../store/slices/localCartSlice";
-import CartModal from "../../Cart/CartModal";
-import VerticalNavigation from "../../navigation/VerticalNavigation";
 import { categoryApi } from "../../../services/categoryApi";
-import Avatar from "../../Avatar";
-import { useLogoutMutation } from "../../../services/authApi";
+import { useSearchProductsQuery } from "../../../services/productApi";
+import { useDebounce } from "use-debounce";
+import CartModal from "../../Cart/CartModal";
+import { APP_ENV } from "../../../env";
 
 const CustomHeader: React.FC = () => {
   const user = useAppSelector(getUser);
   const dispatch = useAppDispatch();
-  const isAdmin = user?.roles.includes("Admin");
+  const navigate = useNavigate();
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith("/admin");
+  const isAdmin = user?.roles.includes("Admin");
+
   const { cart } = useCart(user != null);
   const localCart = useAppSelector((state) => state.localCart.items);
   const prevUserRef = useRef<typeof user | null>(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [logout] = useLogoutMutation();
+
+  // Live search
+  const [searchText, setSearchText] = useState("");
+  const [debouncedSearch] = useDebounce(searchText, 500);
+  const { data: searchResults, isFetching } = useSearchProductsQuery(
+    { Query: debouncedSearch, Page: 1, ItemPerPage: 5 },
+    { skip: !debouncedSearch }
+  );
+
+  const options =
+    searchResults?.items.map((product) => ({
+      value: product.name,
+      label: (
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => navigate(`/product/details/${product.id}`)}
+        >
+          <img
+            src={`${APP_ENV.IMAGES_200_URL}${product.imageUrl}`}
+              alt="Product image"
+              className="w-10 h-10 object-cover rounded"  
+              onError={(e) => {
+              e.currentTarget.src = "/public/NoImage.png";
+            }}
+          />
+          <div className="flex flex-col">
+            <span className="font-medium">{product.name}</span>
+            {product.categoryName && (
+              <span className="text-xs text-gray">{product.categoryName}</span>
+            )}
+          </div>
+        </div>
+      ),
+    })) || [];
+
+  useEffect(() => {
+    setSearchText("");
+  }, [location.pathname]);
+
 
   const handleLogout = async () => {
     const serverCart = [...cart];
@@ -103,16 +147,31 @@ const CustomHeader: React.FC = () => {
 
     {/* Пошук */}
     {!isAdminPath && (
-      <div className="hidden xl:flex flex-1 justify-center px-4">
-        <Input
-          placeholder="Пошук"
-          className="serch-header-input w-[200px]"
-          suffix={<SearchIcon />}
-        />
+      <div className="hidden xl:flex flex-1 justify-center px-4">      
+        <AutoComplete
+          value={searchText}
+          options={options}
+          onSelect={(value) => {
+            const product = searchResults?.items.find((p) => p.name === value);
+            if (product) {
+              navigate(`/product/details/${product.id}`);
+              setSearchText("");
+            }
+          }}
+          onSearch={(value) => setSearchText(value)}
+          notFoundContent={isFetching ? <Spin size="small" /> : "Нічого не знайдено"}
+          className="w-full"
+        >
+          <Input
+            placeholder="Пошук"
+            className="serch-header-input"
+            suffix={isFetching ? <Spin size="small" /> : <SearchIcon />}
+          />
+        </AutoComplete>
       </div>
     )}
 
-    {/* Користувач / кошик */}
+ {/* Користувач / кошик */}
     <div className="flex flex-[80% 20%] xl:flex-1 items-center justify-end gap-4">
       {user ? (
         <Dropdown menu={{ items: menuItems }} trigger={["click"]}>
@@ -143,8 +202,8 @@ const CustomHeader: React.FC = () => {
           </div>
         </div>
       )}
-
-      <CartModal />
+      
+            <CartModal />
     </div>
   </div>
 </header>

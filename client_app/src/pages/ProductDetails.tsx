@@ -16,7 +16,7 @@ import Product_3_Carousel from "../components/Product_3_Carousel";
 import { ICartItem } from "../store/slices/localCartSlice";
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: product, isLoading } = useGetProductByIdQuery(Number(id));
+  const { data: product, isLoading, refetch } = useGetProductByIdQuery(Number(id));
   const { user } = useAppSelector((s) => s.auth);
   const { cart, addToCart } = useCart(!!user);
 const isInCart = cart.some((item: ICartItem) => item.productId === Number(id));
@@ -161,8 +161,12 @@ const isInCart = cart.some((item: ICartItem) => item.productId === Number(id));
             productId={product.id}
             productName={product.name}
             isOpen={isReviewOpen}
-            onClose={() => setIsReviewOpen(false)}
+            onClose={async () => {
+              setIsReviewOpen(false);
+              await refetch();
+            }}
           />
+
         </div>
         {/* Відображаємо відгуки тільки якщо вони є */}
         {product.commentsCount > 0 && (
