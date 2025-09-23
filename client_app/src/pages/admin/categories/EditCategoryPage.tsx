@@ -3,7 +3,6 @@ import {
   Input,
   Button,
   Upload,
-  message,
   Spin,
   InputNumber,
   Select,
@@ -22,6 +21,8 @@ import { handleFormErrors } from "../../../utilities/handleApiErrors";
 import { ApiError } from "../../../types/errors";
 import { useGetRootCategoriesQuery } from "../../../services/categoryApi";
 import CropperModal from "../../../components/images/CropperModal";
+import { showToast } from "../../../utilities/showToast";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
 
 const { Item } = Form;
 
@@ -88,7 +89,7 @@ const EditCategoryPage = () => {
       }
 
       await updateCategory(values).unwrap();
-      message.success("Категорію оновлено");
+      showToast("success", "Категорію оновлено", <SuccessIcon />);
       navigate("..");
     } catch (error: unknown) {
       handleFormErrors(error as ApiError, form);

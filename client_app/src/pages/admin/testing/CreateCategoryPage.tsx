@@ -3,7 +3,6 @@ import {
     Input,
     Button,
     Upload,
-    message,
     InputNumber,
     Modal,
     Select,
@@ -18,6 +17,8 @@ import { useGetRootCategoriesQuery } from '../../../services/categoryApi';
 import ImageCropper from '../../../components/images/ImageCropper';
 import { handleFormErrors } from '../../../utilities/handleApiErrors';
 import { ApiError } from '../../../types/errors';
+import { showToast } from '../../../utilities/showToast';
+import SuccessIcon from '../../../components/icons/toasts/SuccessIcon';
 
 const { Item } = Form;
 
@@ -62,8 +63,8 @@ const CreateCategoryPage = () => {
             }
 
             await createCategory(values).unwrap();
-            message.success('Категорію створено');
-            navigate('..'); // Повернення назад (наприклад, до списку)
+            showToast("success", "Категорію створено", <SuccessIcon />);
+            navigate('..');
         } catch (error: unknown) {
             handleFormErrors(error as ApiError, form);
         }

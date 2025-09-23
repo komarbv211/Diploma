@@ -3,7 +3,6 @@ import {
   Input,
   Button,
   Upload,
-  message,
   InputNumber,
   Select,
 } from "antd";
@@ -17,6 +16,8 @@ import { useGetRootCategoriesQuery } from "../../../services/categoryApi";
 import { handleFormErrors } from "../../../utilities/handleApiErrors";
 import { ApiError } from "../../../types/errors";
 import CropperModal from "../../../components/images/CropperModal";
+import { showToast } from "../../../utilities/showToast";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
 
 const { Item } = Form;
 
@@ -61,7 +62,7 @@ const CreateCategoryPage = () => {
       }
 
       await createCategory(values).unwrap();
-      message.success("Категорію створено");
+      showToast("success", "Категорію створено", <SuccessIcon />);
       navigate("..");
     } catch (error: unknown) {
       handleFormErrors(error as ApiError, form);

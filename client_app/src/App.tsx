@@ -84,6 +84,7 @@ function App() {
           position="top-right"
           autoClose={3000}
           aria-label="notification"
+          limit={1}
       />
 
     </>

@@ -7,7 +7,6 @@ import {
   Input,
   Space,
   Spin,
-  message,
   Image,
 } from "antd";
 import { SearchOutlined, PlusOutlined, MoreOutlined } from "@ant-design/icons";
@@ -69,7 +68,7 @@ const CategoryList = () => {
         return addChildren(prevCategories);
       });
     } catch (error) {
-      message.error(`Не вдалося завантажити дочірні категорії: ${error}`);
+      showToast("error", `Не вдалося завантажити дочірні категорії: ${error}`, <ErrorIcon />);
     } finally {
       setLoadingChildrenIds((prev) => prev.filter((id) => id !== parentId));
     }
