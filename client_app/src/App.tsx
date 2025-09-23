@@ -1,8 +1,8 @@
 import "./index.css";
 import "./index.scss";
 import "./App.scss";
-import { Route, Routes, useLocation } from "react-router-dom";
-import { Suspense, lazy, useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
+import { Suspense, lazy } from "react";
 import Layout from "./components/layouts/default/Layout.tsx";
 import Loader from "./components/Loader.tsx";
 import RequireAdmin from "./routes/guards/RequireAdmin.tsx";
@@ -40,12 +40,6 @@ const DeleteAccountPage = lazy(
 );
 
 function App() {
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-
   return (
     <>
       <AuthWatcher />
