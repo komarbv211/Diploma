@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Підтвердження замовлення</title>
+</head>
+
+<body style="margin:0; padding:0; font-family: Arial, sans-serif;">
+    <table role="presentation" style="width:100%; border-collapse:collapse; border:0;">
+        <tr>
+            <td align="center" style="padding:20px; background:#f9f9f9;">
+                <table role="presentation" style="max-width:600px; background:#ffffff; border-radius:6px; padding:30px;">
+                    <tr>
+                        <td align="center">
+                            <h2 style="color:#8A0149;">Дякуємо за замовлення!</h2>
+                            <p style="color:#666; font-size:15px;">
+                                Привіт, {{username}}!<br>
+                                <span style="padding: 20px;">Ваше замовлення <b>№{{orderId}}</b> успішно оформлено.</span>
+                            </p>
+                            <table role="presentation" style="width:100%; margin:20px 0; border-collapse: collapse;">
+                                <tr>
+                                    <th align="left" style="padding:8px; border-bottom:1px solid #eee;">Товар</th>
+                                    <th align="center" style="padding:8px; border-bottom:1px solid #eee;">Кількість</th>
+                                    <th align="right" style="padding:8px; border-bottom:1px solid #eee;">Ціна</th>
+                                </tr>
+                                {{items}}
+                            </table>
+                            <p style="font-size:16px; font-weight:bold; color:#333;">
+                                Разом: {{total}} грн
+                            </p>
+
+
+                            <hr style="border:none; border-top:1px solid #eee; margin:30px 0;">
+                            <p style="font-size:12px; color:#999; margin-top:20px;">
+                                067-363-11-70 дзвінок безкоштовний, щодня з 7:55 до 20:55
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
