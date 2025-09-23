@@ -88,7 +88,7 @@ const OrderHistoryPage = () => {
               Помилка завантаження замовлень
             </p>
           ) : filteredOrders.length === 0 ? (
-            <div className="w-full flex flex-col items-center justify-center py-20 font-manrope">
+            <div className="flex flex-start ml-[34%] py-20 font-manrope">
               <Empty
                 description={
                   <span className="text-[18px] text-gray-500">
