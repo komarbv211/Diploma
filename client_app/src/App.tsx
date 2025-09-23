@@ -32,9 +32,14 @@ const ProductDetails = lazy(() => import("./pages/ProductDetails.tsx"));
 const CatalogPage = lazy(() => import("./pages/CatalogPage.tsx"));
 const CommentsPage = lazy(() => import("./pages/CommentsPage.tsx"));
 const OrderSuccess = lazy(() => import("./pages/user/orders/OrderSuccess.tsx"));
-const OrderHistoryPage = lazy(() => import("./pages/user/orders/OrderHistoryPage.tsx"));
+const OrderHistoryPage = lazy(
+  () => import("./pages/user/orders/OrderHistoryPage.tsx")
+);
 const UserFavorites = lazy(() => import("./pages/user/UserFavorites.tsx"));
-const DeleteAccountPage = lazy(() => import("./pages/user/DeleteAccountPage.tsx"));
+const DeleteAccountPage = lazy(
+  () => import("./pages/user/DeleteAccountPage.tsx")
+);
+
 function App() {
   return (
     <>
@@ -83,12 +88,11 @@ function App() {
         </Routes>
       </Suspense>
       <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          aria-label="notification"
-          limit={1}
+        position="top-right"
+        autoClose={3000}
+        aria-label="notification"
+        limit={1}
       />
-
     </>
   );
 }
