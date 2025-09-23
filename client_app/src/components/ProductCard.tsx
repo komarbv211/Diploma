@@ -129,9 +129,9 @@ const ProductCard: React.FC<Props> = ({
         className="absolute top-2 right-2 w-6 h-6 md:top-4 md:right-4 md:w-8 md:h-8 flex items-center justify-center z-10"
       >
         {favorite ? (
-          <AiFillHeart className="text-red-500 w-full h-full" />
+          <AiFillHeart className="text-pink2 w-full h-full" />
         ) : (
-          <AiOutlineHeart className="text-gray-400 w-full h-full" />
+          <AiOutlineHeart className="text-gray-300 w-full h-full" />
         )}
       </button>
 
