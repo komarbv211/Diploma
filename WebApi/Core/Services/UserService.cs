@@ -11,6 +11,7 @@ using Core.Models.Search;
 using Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Graph.Models.Security;
 using System.Net;
 using WebApiDiploma.Pagination;
 
@@ -282,7 +283,46 @@ namespace Core.Services
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new HttpException($"Не вдалося заблокувати користувача: {errors}", HttpStatusCode.BadRequest);
             }
+
+            // ==========================
+            // Відправка email
+            // ==========================
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "AccountBlocked.html");
+            string body;
+
+            if (File.Exists(templatePath))
+            {
+                body = await File.ReadAllTextAsync(templatePath);
+
+                // Замінюємо ім'я користувача
+                body = body.Replace("{{username}}", user.FirstName ?? "Користувач");
+
+                // Формуємо повідомлення про блокування
+                string blockedMessage;
+                if (lockoutEnd == DateTimeOffset.MaxValue)
+                {
+                    blockedMessage = "Акаунт заблоковано назавжди.";
+                }
+                else
+                {
+                    blockedMessage = $"Блокування діє до: {lockoutEnd.UtcDateTime:dd.MM.yyyy}";
+                }
+
+                body = body.Replace("{{blockedMessage}}", blockedMessage);
+            }
+            else
+            {
+                // fallback — простий текст
+                body = lockoutEnd == DateTimeOffset.MaxValue
+                    ? "Ваш акаунт було заблоковано назавжди."
+                    : $"Ваш акаунт було заблоковано до {lockoutEnd.UtcDateTime:dd.MM.yyyy}.";
+            }
+
+            // Виклик сервісу відправки пошти
+            await _emailService.SendEmailAsync(user.Email, "Акаунт заблоковано", body);
+
         }
+
 
 
         public async Task UnblockUserAsync(long userId)
@@ -300,6 +340,23 @@ namespace Core.Services
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new HttpException($"Не вдалося розблокувати користувача: {errors}", HttpStatusCode.BadRequest);
             }
+
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "AccountUnblocked.html");
+            string body;
+
+            if (File.Exists(templatePath))
+            {
+                body = await File.ReadAllTextAsync(templatePath);
+                body = body.Replace("{{username}}", user.FirstName ?? "Користувач");
+
+            }
+            else
+            {
+                // fallback — простий текст
+                body = "Ваш акаунт було розблоковано.";
+            }
+
+            await _emailService.SendEmailAsync(user.Email, "Акаунт розблоковано", body);
         }
 
         public async Task PromoteUserToAdminAsync(long userId)
