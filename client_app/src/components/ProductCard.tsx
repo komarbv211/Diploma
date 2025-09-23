@@ -5,7 +5,10 @@ import InteractiveRating from "../components/InteractiveRating";
 import { CartIcon, CartFlowerIcon } from "../components/icons";
 import { useAppSelector } from "../store/store";
 import { useCart } from "../hooks/useCart";
-import { useAddFavoriteMutation, useRemoveFavoriteMutation } from "../services/favoriteApi";
+import {
+  useAddFavoriteMutation,
+  useRemoveFavoriteMutation,
+} from "../services/favoriteApi";
 import { APP_ENV } from "../env";
 import { ICartItem } from "../store/slices/localCartSlice";
 import { showToast } from "../utilities/showToast";
@@ -51,7 +54,9 @@ const ProductCard: React.FC<Props> = ({
   const isInCart = cart.some((item: ICartItem) => item.productId === productId);
 
   const getImageName = (img: string) =>
-    img?.startsWith(APP_ENV.IMAGES_1200_URL) ? img.replace(APP_ENV.IMAGES_1200_URL, "") : img;
+    img?.startsWith(APP_ENV.IMAGES_1200_URL)
+      ? img.replace(APP_ENV.IMAGES_1200_URL, "")
+      : img;
 
   const handleRate = async (rating: number) => {
     if (!userId) {
@@ -96,83 +101,84 @@ const ProductCard: React.FC<Props> = ({
   };
 
   return (
-<div
-  className="
+    <div
+      className="
     bg-white rounded-[15px] border border-blue2 relative
     flex flex-col
     w-[161px] h-[293px] p-[10px_20px] gap-2
-    md:w-[405px] md:h-[513px] md:p-[15px_40px] md:gap-0
+    md:w-[405px] md:h-[513px] md:p-[25px_40px] md:gap-0
+    justify-between
   "
->
-  {/* Фото */}
-  <Link
-    to={`/product/details/${productId}`}
-    className="block rounded-[15px] overflow-hidden md:min-h-[325px] "
-    style={{
-      width: "100%",
-      height: "180px", // мобільна висота
-      backgroundImage: `url(${image})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-    }}
-  />
+    >
+      {/* Фото */}
+      <Link
+        to={`/product/details/${productId}`}
+        className="block rounded-[15px] overflow-hidden md:min-h-[325px] "
+        style={{
+          width: "100%",
+          height: "180px", // мобільна висота
+          backgroundImage: `url(${image})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
 
-  {/* Кнопка улюбленого */}
-  <button
-    onClick={handleToggleFavorite}
-    className="absolute top-2 right-2 w-6 h-6 md:top-4 md:right-4 md:w-8 md:h-8 flex items-center justify-center z-10"
-  >
-    {favorite ? (
-      <AiFillHeart className="text-red-500 w-full h-full" />
-    ) : (
-      <AiOutlineHeart className="text-gray-400 w-full h-full" />
-    )}
-  </button>
-
-  {/* Інфо */}
-  <div className="flex flex-col gap-1 md:gap-2 md:mt-2">
-    <Link to={`/product/details/${productId}`}>
-      <h3 className="line-clamp-2 font-manrope font-medium text-[14px] leading-[19px] md:text-[20px] md:leading-[27px] bg-gradient-to-r from-blue2 to-blueLight bg-clip-text text-transparent">
-        {title}
-      </h3>
-      <p className="line-clamp-2 text-[12px] leading-[15px] md:text-[18px] md:leading-[24px] text-gray">
-        {category}
-      </p>
-    </Link>
-
-    <InteractiveRating
-      productId={productId}
-      userRating={userRating}
-      onRate={handleRate}
-      size={12}
-      readOnly={true}
-    />
-
-    <div className="flex justify-between items-center md:flex-col md:items-start md:gap-1">
-      <span className="text-pink2 font-manrope text-[14px] leading-[19px] md:text-[20px] md:leading-[27px] font-medium">
-        {price} ₴
-        {oldPrice && (
-          <span className="text-gray line-through text-[12px] md:text-[16px] ml-2">
-            {oldPrice} ₴
-          </span>
-        )}
-      </span>
+      {/* Кнопка улюбленого */}
       <button
-        onClick={handleAddToCart}
-        className="w-6 h-6 md:w-[28.5px] sm:h-[23.5px] flex items-center justify-center"
+        onClick={handleToggleFavorite}
+        className="absolute top-2 right-2 w-6 h-6 md:top-4 md:right-4 md:w-8 md:h-8 flex items-center justify-center z-10"
       >
-        {isInCart ? (
-          <div className="relative w-full h-full">
-            <CartIcon className="text-black w-full h-full" />
-            <CartFlowerIcon className="absolute top-[3px] right-0 md:top-[6px] text-pink2 w-1/2 h-1/2" />
-          </div>
+        {favorite ? (
+          <AiFillHeart className="text-red-500 w-full h-full" />
         ) : (
-          <CartIcon className="text-black w-full h-full" />
+          <AiOutlineHeart className="text-gray-400 w-full h-full" />
         )}
       </button>
+
+      {/* Інфо */}
+      <div className="flex flex-col gap-1 md:gap-2 md:mt-2">
+        <Link to={`/product/details/${productId}`}>
+          <h3 className="line-clamp-2 font-manrope font-medium text-[14px] leading-[19px] md:text-[20px] md:leading-[27px] bg-gradient-to-r from-blue2 to-blueLight bg-clip-text text-transparent">
+            {title}
+          </h3>
+          <p className="line-clamp-2 text-[12px] leading-[15px] md:text-[18px] md:leading-[24px] text-gray">
+            {category}
+          </p>
+        </Link>
+
+        <InteractiveRating
+          productId={productId}
+          userRating={userRating}
+          onRate={handleRate}
+          size={12}
+          readOnly={true}
+        />
+
+        <div className="flex justify-between items-center md:gap-1">
+          <span className="text-pink2 font-manrope text-[14px] leading-[19px] md:text-[20px] md:leading-[27px] font-medium">
+            {price} ₴
+            {oldPrice && (
+              <span className="text-gray line-through text-[12px] md:text-[16px] ml-2">
+                {oldPrice} ₴
+              </span>
+            )}
+          </span>
+          <button
+            onClick={handleAddToCart}
+            className="w-6 h-6 md:w-[28.5px] sm:h-[23.5px] flex items-center justify-center"
+          >
+            {isInCart ? (
+              <div className="relative w-full h-full">
+                <CartIcon className="text-black w-full h-full" />
+                <CartFlowerIcon className="absolute top-[3px] right-0 md:top-[6px] text-pink2 w-1/2 h-1/2" />
+              </div>
+            ) : (
+              <CartIcon className="text-black w-full h-full" />
+            )}
+          </button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
   );
 };
 

@@ -1,8 +1,8 @@
 import "./index.css";
 import "./index.scss";
 import "./App.scss";
-import { Route, Routes } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { Suspense, lazy, useEffect } from "react";
 import Layout from "./components/layouts/default/Layout.tsx";
 import Loader from "./components/Loader.tsx";
 import RequireAdmin from "./routes/guards/RequireAdmin.tsx";
@@ -31,10 +31,21 @@ const ProductDetails = lazy(() => import("./pages/ProductDetails.tsx"));
 const CatalogPage = lazy(() => import("./pages/CatalogPage.tsx"));
 const CommentsPage = lazy(() => import("./pages/CommentsPage.tsx"));
 const OrderSuccess = lazy(() => import("./pages/user/orders/OrderSuccess.tsx"));
-const OrderHistoryPage = lazy(() => import("./pages/user/orders/OrderHistoryPage.tsx"));
+const OrderHistoryPage = lazy(
+  () => import("./pages/user/orders/OrderHistoryPage.tsx")
+);
 const UserFavorites = lazy(() => import("./pages/user/UserFavorites.tsx"));
-const DeleteAccountPage = lazy(() => import("./pages/user/DeleteAccountPage.tsx"));
+const DeleteAccountPage = lazy(
+  () => import("./pages/user/DeleteAccountPage.tsx")
+);
+
 function App() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <>
       <AuthWatcher />
@@ -81,12 +92,11 @@ function App() {
         </Routes>
       </Suspense>
       <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          aria-label="notification"
-          limit={1}
+        position="top-right"
+        autoClose={3000}
+        aria-label="notification"
+        limit={1}
       />
-
     </>
   );
 }
