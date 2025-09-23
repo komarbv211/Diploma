@@ -12,6 +12,7 @@ import { ToastContainer } from "react-toastify";
 import AboutUsPage from "./pages/About";
 import ReturnsPage from "./pages/ReturnsPage";
 import ProductQualityPage from "./pages/ProductQualityPage";
+import ScrollToTop from "./components/ScrollTop/ScrollToTop.tsx";
 
 const Home = lazy(() => import("./pages/Home"));
 const UserProfile = lazy(() => import("./pages/user/UserProfile.tsx"));
@@ -37,6 +38,7 @@ const DeleteAccountPage = lazy(() => import("./pages/user/DeleteAccountPage.tsx"
 function App() {
   return (
     <>
+     <ScrollToTop /> {/* 👈 вставляється над усіма маршрутами */}
       <AuthWatcher />
       <Suspense fallback={<Loader />}>
         <Routes>

@@ -58,10 +58,10 @@ const CatalogPage: React.FC = () => {
     { skip: !id }
   );
 
-  // Прокручування вгору при зміні категорії
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [id]);
+  // // Прокручування вгору при зміні категорії
+  // useEffect(() => {
+  //   window.scrollTo({ top: 0, behavior: "smooth" });
+  // }, [id]);
   
   useEffect(() => {
     setCurrentPage(1);
