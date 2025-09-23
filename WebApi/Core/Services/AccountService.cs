@@ -64,6 +64,12 @@ namespace Core.Services
                 }
             }
 
+            if (user.IsRemove)
+            {
+                throw new HttpException("Ваш акаунт було видалено. Якщо це помилка — зверніться до адміністратора.", HttpStatusCode.Forbidden);
+            }
+
+
             if (user.LockoutEnabled && user.LockoutEnd.HasValue && user.LockoutEnd > DateTimeOffset.UtcNow)
             {
                 throw new HttpException("Ваш акаунт заблоковано. Зверніться до адміністратора.", HttpStatusCode.Forbidden);
@@ -120,11 +126,6 @@ namespace Core.Services
             {
                 throw new HttpException(Errors.UserCreateError, HttpStatusCode.InternalServerError);
             }
-            //await userManager.AddToRoleAsync(user, isAdmin ? Roles.Admin : Roles.User);
-            //if (!isAdmin && !await userManager.IsEmailConfirmedAsync(user))
-            //{
-            //    await SendEmailConfirmationMessageAsync(user);
-            //}
         }
         public async Task<AuthResponse> GoogleLoginAsync(GoogleLoginViewModel model)
         {
@@ -257,9 +258,6 @@ namespace Core.Services
             };
 
         }
-
-
-
         public async Task<AuthResponse> RegisterAsync(RegisterDto model)
         {
 
@@ -321,35 +319,45 @@ namespace Core.Services
                 RefreshToken = await CreateRefreshToken(user.Id)
             };
         }
-
         public async Task ForgotPasswordAsync(ForgotPasswordDto model)
         {
             // Перевірка, чи існує користувач із заданим email
             var user = await userManager.FindByEmailAsync(model.Email);
             if (user == null)
-            {
                 throw new HttpException("Email не знайдено", HttpStatusCode.NotFound);
-            }
 
             // Генерація токена для скидання пароля
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
-            // Перевірка конфігурації ResetPasswordUrl
-            var resetUrl = configuration["ResetPasswordUrl"];
-
             // Кодування параметрів для URL
-            //var encodedEmail = Uri.EscapeDataString(user.Email);
+            var resetUrl = configuration["ResetPasswordUrl"];
             var encodedUserId = Uri.EscapeDataString(user.Id.ToString());
             var encodedToken = Uri.EscapeDataString(token);
-            var callbackUrl = $"{resetUrl}/{encodedToken}?userId={encodedUserId}"; // Форматуємо URL для клієнта, наприклад, /reset-password/{token}
+            var callbackUrl = $"{resetUrl}/{encodedToken}?userId={encodedUserId}";
 
-            // Надсилання листа з посиланням для скидання пароля
+            // Читаємо шаблон з файлу
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "ForgotPassword.html");
+            string body;
+
+            if (File.Exists(templatePath))
+            {
+                body = await File.ReadAllTextAsync(templatePath);
+                body = body.Replace("{{username}}", user.UserName ?? "Користувач")
+                           .Replace("{{callbackUrl}}", callbackUrl);
+            }
+            else
+            {
+                // fallback на простий текст, якщо шаблону немає
+                body = $"Для скидання пароля перейдіть за посиланням: <a href=\"{callbackUrl}\">Скинути пароль</a>";
+            }
+
             try
             {
                 await emailService.SendEmailAsync(
                     model.Email,
                     "Скидання паролю",
-                    $"Для скидання пароля перейдіть за посиланням: <a href=\"{callbackUrl}\">Скинути пароль</a>");
+                    body
+                );
             }
             catch (Exception ex)
             {
@@ -390,150 +398,36 @@ namespace Core.Services
             if (!result.Succeeded)
                 throw new HttpException("Не вдалося підтвердити email", HttpStatusCode.BadRequest);
         }
-
-
         public async Task SendEmailConfirmationAsync(UserEntity user)
         {
-            if (user == null)
-                throw new ArgumentNullException(nameof(user));
-
             var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-
             var confirmEmailUrl = configuration["ConfirmEmailUrl"];
-
             var encodedUserId = Uri.EscapeDataString(user.Id.ToString());
             var encodedToken = Uri.EscapeDataString(token);
 
             var callbackUrl = $"{confirmEmailUrl}?userId={encodedUserId}&token={encodedToken}";
 
+            // Читаємо шаблон з файлу
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "ConfirmEmail.html");
+            var template = await File.ReadAllTextAsync(templatePath);
+
+            // Підставляємо дані
+            var body = template
+                .Replace("{{username}}", user.UserName ?? "Користувач")
+                .Replace("{{callbackUrl}}", callbackUrl);
             try
             {
                 await emailService.SendEmailAsync(
                     user.Email!,
                     "Підтвердження електронної пошти",
-                    $"Для підтвердження електронної пошти перейдіть за посиланням: <a href=\"{callbackUrl}\">Підтвердити email</a>"
+                    body
                 );
             }
             catch (Exception ex)
             {
                 throw new HttpException("Не вдалося надіслати лист для підтвердження email.", HttpStatusCode.InternalServerError, ex);
             }
+
         }
-
-
-
-
-        //public async Task<SearchResult<UserEntity>> SearchUsersAsync(UserSearchModel model)
-        //{
-        //    var query = userManager.Users
-        //     .Include(u => u.UserRoles)
-        //     .ThenInclude(ur => ur.Role)
-        //     .AsQueryable();
-
-        //    // 🔍 Фільтрація по імені
-        //    if (!string.IsNullOrWhiteSpace(model.Name))
-        //    {
-        //        string nameFilter = model.Name.Trim().ToLower().Normalize();
-
-        //        query = query.Where(u =>
-        //            (u.FirstName + " " + u.LastName).ToLower().Contains(nameFilter) ||
-        //            u.FirstName.ToLower().Contains(nameFilter) ||
-        //            u.LastName.ToLower().Contains(nameFilter));
-        //    }
-
-        //    // 📅 Фільтрація по датах
-        //    if (model?.StartDate != null)
-        //    {
-        //        query = query.Where(u => u.CreatedDate >= model.StartDate);
-        //    }
-
-        //    if (model?.EndDate != null)
-        //    {
-        //        query = query.Where(u => u.CreatedDate <= model.EndDate);
-        //    }
-
-        //    // 🧑‍⚖️ Фільтрація по ролях
-        //    if (model.Roles != null && model.Roles.Any())
-        //    {
-        //        var roles = model.Roles.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-
-        //        if (roles.Count > 0)
-        //        {
-        //            query = query.Where(user =>
-        //                user.UserRoles.Any(ur => roles.Contains(ur.Role.Name)));
-        //        }
-        //    }
-
-        //    // 🔢 Загальна кількість
-        //    var totalCount = await query.CountAsync();
-
-        //    // 📄 Пейджинг
-        //    var safeItemsPerPage = model.ItemPerPAge < 1 ? 10 : model.ItemPerPAge;
-        //    var totalPages = (int)Math.Ceiling(totalCount / (double)safeItemsPerPage);
-        //    var safePage = Math.Min(Math.Max(1, model.Page), Math.Max(1, totalPages));
-
-        //    // ↕️ Сортування
-        //    if (!string.IsNullOrWhiteSpace(model.SortBy))
-        //    {
-        //        bool desc = model.SortDesc;
-        //        query = model.SortBy switch
-        //        {
-        //            "FirstName" => desc ? query.OrderByDescending(u => u.FirstName) : query.OrderBy(u => u.FirstName),
-        //            "LastName" => desc ? query.OrderByDescending(u => u.LastName) : query.OrderBy(u => u.LastName),
-        //            "Email" => desc ? query.OrderByDescending(u => u.Email) : query.OrderBy(u => u.Email),
-        //            _ => query.OrderBy(u => u.Id)
-        //        };
-        //    }
-        //    else
-        //    {
-        //        query = query.OrderBy(u => u.Id); // default
-        //    }
-
-        //    // 🔄 Завантаження користувачів з пагінацією
-        //    var users = await query
-        //        .Skip((safePage - 1) * safeItemsPerPage)
-        //        .Take(safeItemsPerPage)
-        //        .ToListAsync();
-
-        //    // 📦 Результат
-        //    //return new SearchResult<UserEntity>
-        //    //{
-        //    //    Items = users,
-        //    //    Pagination = new PaginationModel
-        //    //    {
-        //    //        TotalCount = totalCount,
-        //    //        TotalPages = totalPages,
-        //    //        ItemsPerPage = safeItemsPerPage,
-        //    //        CurrentPage = safePage
-        //    //    }
-        //    //};
-
-        //    return new SearchResult<UserEntity>
-        //    {
-        //        Items = users,
-        //        Pagination = new PagedResultDto<UserEntity>
-        //        {
-        //            CurrentPage = safePage,
-        //            PageSize = safeItemsPerPage,
-        //            TotalCount = totalCount,
-        //            TotalPages = totalPages,
-        //            Items = users
-        //        }
-        //    };
-
-        //}
-
-
-        //public async Task<bool> IsRegisteredWithGoogleAsync(string email)
-        //{
-        //    var user = await userManager.FindByEmailAsync(email);
-        //    if (user == null)
-        //        return false;
-
-        //    var logins = await userManager.GetLoginsAsync(user);
-        //    return logins.Any(login => login.LoginProvider == "Google");
-        //}
-
-
     }
 }

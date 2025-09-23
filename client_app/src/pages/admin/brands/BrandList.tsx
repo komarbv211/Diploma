@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Table, Button, Dropdown, Space, Spin, notification } from "antd";
+import { Table, Button, Dropdown, Space, Spin } from "antd";
 import { PlusOutlined, MoreOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { IBrand } from "../../../types/brand";
@@ -7,6 +7,9 @@ import {
   useDeleteBrandMutation,
   useGetBrandsQuery,
 } from "../../../services/admin/brandAdminApi";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
+import { showToast } from "../../../utilities/showToast";
+import ErrorIcon from "../../../components/icons/toasts/ErrorIcon";
 
 const BrandList = () => {
   const navigate = useNavigate();
@@ -17,9 +20,9 @@ const BrandList = () => {
   const handleDelete = async (id: number) => {
     try {
       await deleteBrand(id).unwrap();
-      notification.success({ message: "Бренд видалено" });
+      showToast("success", "Бренд видалено", <SuccessIcon/>);
     } catch {
-      notification.error({ message: "Помилка при видаленні бренду" });
+      showToast("error", "Помилка при видаленні бренду", <ErrorIcon/>);
     }
   };
 

@@ -1,16 +1,15 @@
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logOut } from "../../../store/slices/userSlice";
 import { Menu } from "antd";
 import { useLocation } from "react-router-dom";
+import { useLogoutMutation } from "../../../services/authApi";
 
 const UserSidebar = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const [logout] = useLogoutMutation();
 
-  const handleLogout = () => {
-    dispatch(logOut());
+  const handleLogout = async () => {
+    await logout();
     navigate("/login");
   };
 
@@ -20,18 +19,14 @@ const UserSidebar = () => {
     // { key: "address", label: "Адресна книга", path: "#" },
     { key: "/profile", label: "Профіль користувача", path: "/profile" },
     { key: "/order-history", label: "Історія замовлень", path: "/order-history" },
-        { key: "wishlist", label: "Список бажань", path: "/wishlist" },
+    { key: "/profile/wishlist", label: "Список бажань", path: "/profile/wishlist" },
     // { key: "brands", label: "Улюблені бренди", path: "#" },
     // { key: "promocodes", label: "Промокоди", path: "#" },
     {
       key: "spacer",
       className: "!h-4 !bg-transparent hover:!bg-transparent !cursor-default",
     },
-    {
-      key: "/profile/delete",
-      label: <span className="text-pink2 hover:text-pink">Видалити мій акаунт</span>,
-      path: "/profile/delete",
-    },
+    { key: "/profile/delete", label: <span className="text-pink2 hover:text-pink">Видалити мій акаунт</span>, path: "/profile/delete" },
     {
       key: "logout",
       label: "Вихід",

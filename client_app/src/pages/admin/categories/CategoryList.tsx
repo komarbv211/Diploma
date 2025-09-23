@@ -8,7 +8,6 @@ import {
   Space,
   Spin,
   message,
-  notification,
   Image,
 } from "antd";
 import { SearchOutlined, PlusOutlined, MoreOutlined } from "@ant-design/icons";
@@ -21,6 +20,9 @@ import {
   useDeleteCategoryMutation,
   useGetCategoryTreeQuery,
 } from "../../../services/admin/categoryAdmnApi";
+import { showToast } from "../../../utilities/showToast";
+import ErrorIcon from "../../../components/icons/toasts/ErrorIcon";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
 
 const CategoryList = () => {
   const navigate = useNavigate();
@@ -131,14 +133,9 @@ const CategoryList = () => {
   const handleDelete = async (id: number) => {
     try {
       await deleteCategory(id).unwrap();
-      notification.success({
-        message: "Категорія видалена",
-        description: "Категорія успішно видалена!",
-      });
+      showToast("success", "Категорія видалена", <SuccessIcon />);
     } catch {
-      notification.error({
-        message: "Помилка видалення категорії",
-      });
+      showToast("error", "Помилка видалення категорії", <ErrorIcon />);
     }
   };
 

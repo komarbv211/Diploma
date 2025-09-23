@@ -28,9 +28,9 @@ export default {
         xl: '15px',
       },
       screens: {
-        xs: '320px',
+        xs: '390px',
         sm: '640px',
-        md: '768px',
+        md: '866px',
         lg: '1024px',
         xl: '1280px',
         '2xl': '1536px',

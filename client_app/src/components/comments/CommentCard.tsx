@@ -1,29 +1,33 @@
 import React from "react";
-//import { LikeOutlined, DislikeOutlined } from "@ant-design/icons";
 import { Review } from "../../types/review";
 import Avatar from "../Avatar";
 import { useGetRatingsByProductQuery } from "../../services/productRatingApi ";
 import InteractiveRating from "../InteractiveRating";
 
 const CommentCard: React.FC<{ comment: Review, productId:number}> = ({ comment , productId}) => {
-  //const productId = comment.product?.id;
   const userId = comment.user?.id;
   const { data: ratings, isLoading } = useGetRatingsByProductQuery(productId);
   const userRating = ratings?.find((r) => r.userId === Number(userId))?.rating ?? 0;
   return (
     <div className="border-b border-blue-300 pb-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3">
-            <Avatar
-              firstName={comment.user?.firstName}
-              lastName={comment.user?.lastName}
-              image={comment.user?.image}
-              size={50}
-            />
-            <p className="font-medium text-lg">{comment.user.firstName}</p>
-          </div>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Avatar
+            firstName={comment.user?.firstName}
+            lastName={comment.user?.lastName}
+            image={comment.user?.image}
+            size={50}
+          />
+          <p className="font-medium text-lg">{comment.user.firstName}</p>
         </div>
+        {/* Дата відгуку */}
+        <p className="text-gray-600 text-[16px] leading-[22px] font-normal">
+          {new Date(comment.dateCreated).toLocaleDateString("uk-UA", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}
+        </p>
       </div>
       <div className="ml-32">
             {productId && !isLoading && (
