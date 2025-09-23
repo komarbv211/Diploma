@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Form, Input, Button, Upload, message } from "antd";
+import { Form, Input, Button, Upload } from "antd";
 import { useNavigate } from "react-router-dom";
 import { IBrandPostRequest } from "../../../types/brand";
 import { useCreateBrandMutation } from "../../../services/admin/brandAdminApi";
 import CropperModal from "../../../components/images/CropperModal";
 import { ApiError } from "../../../types/errors";
 import { handleFormErrors } from "../../../utilities/handleApiErrors";
+import { showToast } from "../../../utilities/showToast";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
+import ErrorIcon from "../../../components/icons/toasts/ErrorIcon";
 
 const CreateBrandPage = () => {
   const [form] = Form.useForm();
@@ -40,11 +43,11 @@ const CreateBrandPage = () => {
       //     values.image = new File([blob], "brand.png", { type: blob.type });
       //   }
       await createBrand(values).unwrap();
-      message.success("Бренд створено");
+      showToast("success", "Бренд створено", <SuccessIcon />);
       navigate("..");
     } catch (error: unknown) {
       handleFormErrors(error as ApiError, form);
-      message.error("Помилка при створенні бренду");
+      showToast("error", "Помилка при створенні бренду", <ErrorIcon />);
     }
   };
 
