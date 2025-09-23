@@ -11,6 +11,7 @@ using Core.Models.Search;
 using Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Graph.Models.Security;
 using System.Net;
 using WebApiDiploma.Pagination;
 
@@ -24,16 +25,18 @@ namespace Core.Services
         private readonly IImageService _imageService;
         private readonly UserManager<UserEntity> _userManager;
         private readonly IAccountService _accountService;
+        private readonly IEmailService _emailService;
         public UserService(UserManager<UserEntity> userManager,
             IAccountService accountService,
 
-            IRepository<UserEntity> repository, IMapper mapper, IImageService imageService)
+            IRepository<UserEntity> repository, IMapper mapper, IImageService imageService, IEmailService emailService)
         {
             _repository = repository;
             _mapper = mapper;
             _imageService = imageService;
             _userManager = userManager;
             _accountService = accountService;
+            _emailService = emailService;
         }
 
 
@@ -70,12 +73,10 @@ namespace Core.Services
             await _repository.SaveAsync(); // Зберігаємо, щоб отримати UserId
         }
 
-
         public async Task DeleteUserAsync(long id)
         {
             try
             {
-                // Отримуємо користувача з його зображенням
                 var user = await _repository.GetByID(id);
 
                 if (user == null)
@@ -83,15 +84,12 @@ namespace Core.Services
                     throw new HttpException("Користувача не знайдено для видалення", HttpStatusCode.NotFound);
                 }
 
-                //// Перевіряємо, чи є зображення у користувача
-                //if (!string.IsNullOrEmpty(user.Image))
-                //{
-                //    _imageService.DeleteImageIfExists(user.Image); // Видаляємо зображення, якщо воно є
-                //}
-
-                //// Видаляємо користувача
-                //await _repository.DeleteAsync(id);
+                // М’яке видалення
                 user.IsRemove = true;
+
+                // Надсилаємо листа про видалення акаунта
+                await SendAccountDeletionEmailAsync(user);
+
                 await _repository.SaveAsync();
             }
             catch (DbUpdateException dbEx)
@@ -104,9 +102,80 @@ namespace Core.Services
             }
         }
 
+        public async Task SendAccountDeletionEmailAsync(UserEntity user)
+        {
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "AccountDeleted.html");
+            var template = await File.ReadAllTextAsync(templatePath);
 
+            var body = template.Replace("{{username}}", user.UserName ?? "Користувач");
 
+            try
+            {
+                await _emailService.SendEmailAsync(
+                    user.Email!,
+                    "Видалення облікового запису",
+                    body
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Не вдалося надіслати лист про видалення акаунта.", HttpStatusCode.InternalServerError, ex);
+            }
+        }
+        public async Task RestoreUserAsync(long id)
+        {
+            try
+            {
+                var user = await _repository.GetByID(id);
 
+                if (user == null)
+                {
+                    throw new HttpException("Користувача не знайдено для відновлення", HttpStatusCode.NotFound);
+                }
+
+                if (!user.IsRemove && user.LockoutEnd == null)
+                {
+                    throw new HttpException("Користувач вже активний", HttpStatusCode.BadRequest);
+                }
+
+                // Відновлюємо акаунт
+                user.IsRemove = false;
+
+                await _repository.SaveAsync();
+
+                // (опційно) Надсилаємо лист про відновлення акаунта
+                await SendAccountRestoreEmailAsync(user);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new HttpException("Помилка при відновленні користувача в базі даних", HttpStatusCode.InternalServerError, dbEx);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Невідома помилка при відновленні користувача", HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public async Task SendAccountRestoreEmailAsync(UserEntity user)
+        {
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "AccountRestored.html");
+            var template = await File.ReadAllTextAsync(templatePath);
+
+            var body = template.Replace("{{username}}", user.UserName ?? "Користувач");
+
+            try
+            {
+                await _emailService.SendEmailAsync(
+                    user.Email!,
+                    "Ваш акаунт відновлено",
+                    body
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Не вдалося надіслати лист про відновлення акаунта.", HttpStatusCode.InternalServerError, ex);
+            }
+        }
 
         public async Task<PagedResultDto<UserDTO>> GetAllAsync(PagedRequestDto request)
         {
@@ -214,7 +283,46 @@ namespace Core.Services
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new HttpException($"Не вдалося заблокувати користувача: {errors}", HttpStatusCode.BadRequest);
             }
+
+            // ==========================
+            // Відправка email
+            // ==========================
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "AccountBlocked.html");
+            string body;
+
+            if (File.Exists(templatePath))
+            {
+                body = await File.ReadAllTextAsync(templatePath);
+
+                // Замінюємо ім'я користувача
+                body = body.Replace("{{username}}", user.FirstName ?? "Користувач");
+
+                // Формуємо повідомлення про блокування
+                string blockedMessage;
+                if (lockoutEnd == DateTimeOffset.MaxValue)
+                {
+                    blockedMessage = "Акаунт заблоковано назавжди.";
+                }
+                else
+                {
+                    blockedMessage = $"Блокування діє до: {lockoutEnd.UtcDateTime:dd.MM.yyyy}";
+                }
+
+                body = body.Replace("{{blockedMessage}}", blockedMessage);
+            }
+            else
+            {
+                // fallback — простий текст
+                body = lockoutEnd == DateTimeOffset.MaxValue
+                    ? "Ваш акаунт було заблоковано назавжди."
+                    : $"Ваш акаунт було заблоковано до {lockoutEnd.UtcDateTime:dd.MM.yyyy}.";
+            }
+
+            // Виклик сервісу відправки пошти
+            await _emailService.SendEmailAsync(user.Email, "Акаунт заблоковано", body);
+
         }
+
 
 
         public async Task UnblockUserAsync(long userId)
@@ -232,6 +340,23 @@ namespace Core.Services
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new HttpException($"Не вдалося розблокувати користувача: {errors}", HttpStatusCode.BadRequest);
             }
+
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "AccountUnblocked.html");
+            string body;
+
+            if (File.Exists(templatePath))
+            {
+                body = await File.ReadAllTextAsync(templatePath);
+                body = body.Replace("{{username}}", user.FirstName ?? "Користувач");
+
+            }
+            else
+            {
+                // fallback — простий текст
+                body = "Ваш акаунт було розблоковано.";
+            }
+
+            await _emailService.SendEmailAsync(user.Email, "Акаунт розблоковано", body);
         }
 
         public async Task PromoteUserToAdminAsync(long userId)

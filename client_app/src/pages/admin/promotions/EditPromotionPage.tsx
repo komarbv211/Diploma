@@ -5,7 +5,6 @@ import {
   Button,
   Checkbox,
   DatePicker,
-  message,
   Upload,
   Divider,
 } from "antd";
@@ -22,6 +21,9 @@ import {
 } from "../../../services/admin/promotionAdminApi";
 import { PromotionFormValues } from "../../../types/promotion";
 import { APP_ENV } from "../../../env";
+import { showToast } from "../../../utilities/showToast";
+import ErrorIcon from "../../../components/icons/toasts/ErrorIcon";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
 
 const { Item } = Form;
 const { RangePicker } = DatePicker;
@@ -91,7 +93,7 @@ const EditPromotionPage = () => {
 
   const onFinish = async (values: PromotionFormValues) => {
     if (!croppedImage) {
-      message.error("Будь ласка, завантажте зображення.");
+      showToast("error", "Будь ласка, завантажте зображення", <ErrorIcon />);
       return;
     }
 
@@ -118,10 +120,10 @@ const EditPromotionPage = () => {
       }
 
       await updatePromotion({ id: Number(id), formData }).unwrap();
-      message.success("Акцію успішно оновлено!");
+      showToast("success", "Акцію успішно оновлено", <SuccessIcon />);
       navigate("/admin/promotions");
     } catch {
-      message.error("Помилка при оновленні акції.");
+      showToast("error", "Помилка при оновленні акції", <ErrorIcon />);
     }
   };
 

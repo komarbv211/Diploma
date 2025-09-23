@@ -183,7 +183,7 @@ const OrderHistoryPage = () => {
                               width={110}
                               height={120}
                               alt={item.name}
-                              className="object-cover rounded-lg flex-shrink-0 w-12 h-12 object-cover rounded"
+                              className="object-cover rounded-lg flex-shrink-0 w-12 h-12"
                               onError={(e) => {
                                 console.warn("Image not found:", item.imageUrl);
                                 e.currentTarget.src = "/NoImage.png";

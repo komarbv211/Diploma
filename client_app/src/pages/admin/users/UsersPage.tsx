@@ -7,7 +7,6 @@ import {
   Input,
   Space,
   Spin,
-  message,
   Select,
   ConfigProvider,
   DatePicker,
@@ -25,11 +24,16 @@ import {
   useBlockUserMutation,
   useUnblockUserMutation,
   usePromoteUserToAdminMutation,
+  useRestoreUserMutation,
 } from "../../../services/admin/userAdminApi";
 import PaginationComponent from "../../../components/pagination/PaginationComponent";
 import { IUser, UserBlockDTO } from "../../../types/user";
 import { useDebounce } from "use-debounce";
 import { useNavigate } from "react-router-dom";
+import { showToast } from "../../../utilities/showToast";
+import ErrorIcon from "../../../components/icons/toasts/ErrorIcon";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
+import InfoIcon from "../../../components/icons/toasts/InfoIcon";
 
 dayjs.extend(customParseFormat);
 dayjs.locale("uk");
@@ -70,7 +74,7 @@ const UsersPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<string | undefined>();
   const [sortDesc, setSortDesc] = useState<boolean>(false);
   const [blockLoading, setBlockLoading] = useState<number | null>(null);
-
+   const [restoreUser] = useRestoreUserMutation();
   const navigate = useNavigate();
 
   const { data, isError, isLoading } = useGetAllUsersQuery({
@@ -106,7 +110,7 @@ const UsersPage: React.FC = () => {
   }, [data]);
 
   if (isError) {
-    message.error("Не вдалося завантажити користувачів");
+    showToast("error", "Не вдалося завантажити користувачів", <ErrorIcon />);
   }
 
   const dataSource = useMemo<IUserExtended[]>(() => {
@@ -168,7 +172,7 @@ const UsersPage: React.FC = () => {
 
   const handleBlockWithDate = (user: IUserExtended) => {
     if (user.role.toLowerCase() === "admin") {
-      message.error("Неможливо блокувати користувача з роллю Адмін");
+      showToast("error", "Неможливо блокувати користувача з роллю Адмін", <ErrorIcon />);
       return;
     }
 
@@ -188,15 +192,15 @@ const UsersPage: React.FC = () => {
                   const dto: UserBlockDTO = { id: user.id, until: date.toISOString() };
                   try {
                     await blockUser(dto).unwrap();
-                    message.success(
+                    showToast("success", 
                         `Користувача ${user.fullName} заблоковано до ${dayjs(date).format(
                             "DD.MM.YYYY HH:mm"
                         )}`
-                    );
+                    , <SuccessIcon />);
                     modalRef.destroy();
                   } catch (err: unknown) {
                     const error = err as ServerError;
-                    message.error(error.data?.message || "Не вдалося заблокувати користувача");
+                    showToast("error", error.data?.message || "Не вдалося заблокувати користувача", <ErrorIcon />);
                   }
                 }}
             />
@@ -210,11 +214,11 @@ const UsersPage: React.FC = () => {
                   const dto: UserBlockDTO = { id: user.id };
                   try {
                     await blockUser(dto).unwrap();
-                    message.success(`Користувача ${user.fullName} заблоковано назавжди`);
+                    showToast("success", `Користувача ${user.fullName} заблоковано назавжди`, <SuccessIcon />);
                     modalRef.destroy();
                   } catch (err: unknown) {
                     const error = err as ServerError;
-                    message.error(error.data?.message || "Не вдалося заблокувати користувача");
+                    showToast("error", error.data?.message || "Не вдалося заблокувати користувача", <ErrorIcon />);
                   }
                 }}
             >
@@ -232,7 +236,7 @@ const UsersPage: React.FC = () => {
     setBlockLoading(user.id);
     try {
       await unblockUser({ id: user.id }).unwrap();
-      message.success(`Користувача ${user.fullName} розблоковано`);
+      showToast("success", `Користувача ${user.fullName} розблоковано`, <SuccessIcon />);
     } finally {
       setBlockLoading(null);
     }
@@ -240,7 +244,7 @@ const UsersPage: React.FC = () => {
 
   const handlePromoteToAdmin = async (user: IUserExtended) => {
     if (user.role.toLowerCase() === "admin") {
-      message.info("Цей користувач вже є адміністратором");
+      showToast("info", "Цей користувач вже є адміністратором", <InfoIcon />);
       return;
     }
 
@@ -249,13 +253,30 @@ const UsersPage: React.FC = () => {
       onOk: async () => {
         try {
           await promoteUserToAdmin({ id: user.id }).unwrap();
-          message.success(`Користувач ${user.fullName} тепер Admin`);
+          showToast("success", `Користувач ${user.fullName} тепер Admin`, <SuccessIcon />);
         } catch (err: unknown) {
           const error = err as ServerError;
-          message.error(error.data?.message || "Не вдалося підвищити користувача");
+          showToast("error", error.data?.message || "Не вдалося підвищити користувача", <ErrorIcon />);
         }
       },
       okText: "Підвищити",
+      cancelText: "Відміна",
+    });
+  };
+
+  const handleRestoreUser = async (user: IUserExtended) => {
+    Modal.confirm({
+      title: `Відновити користувача ${user.fullName}?`,
+      onOk: async () => {
+        try {
+          await restoreUser({ id: user.id }).unwrap();
+          showToast("success", `Користувача ${user.fullName} відновлено`, <SuccessIcon />);
+        } catch (err: unknown) {
+          const error = err as ServerError;
+          showToast("error", error.data?.message || "Не вдалося відновити користувача", <ErrorIcon />);
+        }
+      },
+      okText: "Відновити",
       cancelText: "Відміна",
     });
   };
@@ -307,19 +328,23 @@ const UsersPage: React.FC = () => {
       render: (date: Dayjs) => (date.isValid() ? date.format("DD.MM.YYYY HH:mm") : "-"),
     },
     {
-      title: "Блокування",
+      title: "Статус",
       dataIndex: "lockoutEnd",
       key: "lockoutEnd",
       sorter: true,
       sortOrder: sortBy === "LockoutEnd" ? (sortDesc ? "descend" : "ascend") : null,
       render: (_: unknown, record: IUserExtended) => {
+        if (record.isRemove) {
+          return <span style={{ color: "#8A0149" }}>Видалений</span>;
+        }
+
         const isBlocked = record.lockoutEnd && new Date(record.lockoutEnd) > new Date();
         return isBlocked ? (
-            <span style={{ color: "red" }}>
+          <span style={{ color: "red" }}>
             Заблоковано до {dayjs(record.lockoutEnd).format("DD.MM.YYYY HH:mm")}
           </span>
         ) : (
-            <span style={{ color: "green" }}>Активний</span>
+          <span style={{ color: "green" }}>Активний</span>
         );
       },
     },
@@ -347,6 +372,13 @@ const UsersPage: React.FC = () => {
                     >
                       Призначити Admin
                     </Menu.Item>
+                    <Menu.Item
+                      onClick={() => handleRestoreUser(record)}
+                      disabled={!record.isRemove} 
+                    >
+                      Відновити акаунт
+                    </Menu.Item>
+
                   </Menu>
                 }
             >

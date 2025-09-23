@@ -64,6 +64,12 @@ namespace Core.Services
                 }
             }
 
+            if (user.IsRemove)
+            {
+                throw new HttpException("Ваш акаунт було видалено. Якщо це помилка — зверніться до адміністратора.", HttpStatusCode.Forbidden);
+            }
+
+
             if (user.LockoutEnabled && user.LockoutEnd.HasValue && user.LockoutEnd > DateTimeOffset.UtcNow)
             {
                 throw new HttpException("Ваш акаунт заблоковано. Зверніться до адміністратора.", HttpStatusCode.Forbidden);
@@ -318,7 +324,7 @@ namespace Core.Services
             // Перевірка, чи існує користувач із заданим email
             var user = await userManager.FindByEmailAsync(model.Email);
             if (user == null)
-                throw new HttpException("Email не знайдено", HttpStatusCode.NotFound);
+                throw new HttpException("Email відправлено якщо така пошта існує", HttpStatusCode.NotFound);
 
             // Генерація токена для скидання пароля
             var token = await userManager.GeneratePasswordResetTokenAsync(user);

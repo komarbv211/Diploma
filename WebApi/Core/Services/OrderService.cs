@@ -20,6 +20,7 @@ namespace Core.Services
         private readonly IRepository<ProductEntity> _productRepository;
         private readonly IMapper _mapper;
         private readonly IAuthService _authService;
+        private readonly IEmailService _emailService;
 
         public OrderService(
             IRepository<OrderEntity> orderRepository,
@@ -27,7 +28,8 @@ namespace Core.Services
             IRepository<NovaPostWarehouseEntity> warehouseRepository,
             IRepository<ProductEntity> productRepository,
             IAuthService authService,
-            IMapper mapper)
+            IMapper mapper,
+            IEmailService emailService)
         {
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
@@ -35,6 +37,7 @@ namespace Core.Services
             _productRepository = productRepository;
             _mapper = mapper;
             _authService = authService;
+            _emailService = emailService;
         }
 
         public async Task<List<OrderDto>> GetOrders()
@@ -94,8 +97,6 @@ namespace Core.Services
 
             var entity = _mapper.Map<OrderEntity>(dto);
 
-
-
             try
             {
                 entity.UserId = userId == null ? await _authService.GetUserId() : userId.Value;
@@ -135,9 +136,20 @@ namespace Core.Services
 
             entity.TotalPrice = entity.Items?.Sum(i => i.Quantity * i.Price) ?? 0;
             entity.Status = OrderStatus.Pending;
+
             await _orderRepository.SaveAsync();
 
-
+            if (!string.IsNullOrEmpty(dto.Email))
+            {
+                try
+                {
+                    await SendOrderConfirmationAsync(dto.Email, entity);
+                }
+                catch
+                {
+                    Console.WriteLine($"Не вдалося надіслати лист на {dto.Email}");
+                }
+            }
 
             return _mapper.Map<OrderDto>(entity);
         }
@@ -215,5 +227,33 @@ namespace Core.Services
             return null;
         }
 
+        public async Task SendOrderConfirmationAsync(string email, OrderEntity order)
+        {
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "OrderReceipt.html");
+            var template = await File.ReadAllTextAsync(templatePath);
+
+            var itemsHtml = string.Join("", order.Items.Select(item =>
+                $"<tr>" +
+                $"<td style='padding:8px; border-bottom:1px solid #eee;'>{item.Product?.Name ?? "Товар"}</td>" +
+                $"<td style='padding:8px; border-bottom:1px solid #eee;' align='center'>{item.Quantity}</td>" +
+                $"<td style='padding:8px; border-bottom:1px solid #eee;' align='right'>{item.Price} грн</td>" +
+                $"</tr>"
+            ));
+
+            var body = template
+                .Replace("{{username}}", email)
+                .Replace("{{orderId}}", order.Id.ToString())
+                .Replace("{{items}}", itemsHtml)
+                .Replace("{{total}}", order.TotalPrice.ToString("F2"));
+
+            try
+            {
+                await _emailService.SendEmailAsync(email, "Підтвердження замовлення", body);
+            }
+            catch
+            {
+                Console.WriteLine($"Не вдалося надіслати лист на {email}");
+            }
+        }
     }
 }

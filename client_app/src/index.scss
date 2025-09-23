@@ -93,7 +93,7 @@
   @apply max-w-6xl mx-auto relative;
 }
 .serch-header-input{
-  @apply flex p-[5px] pl-[15px] h-12 w-[660px] justify-between items-center self-stretch rounded-xl border-[1px] border-black text-gray placeholder:font-manrope leading-normal  !important;
+  @apply flex p-[5px] pl-[15px] h-12 max-w-[660px] justify-between items-center self-stretch rounded-xl border-[1px] border-black text-gray placeholder:font-manrope leading-normal  !important;
 }
 .title{
   @apply  text-center line-clamp-2 min-h-[54px] font-manrope font-medium text-[30px] bg-gradient-to-r from-blue2 to-blueLight bg-clip-text text-transparent;

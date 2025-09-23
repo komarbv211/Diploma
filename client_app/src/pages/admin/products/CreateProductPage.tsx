@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, Input, Button, Upload, message, UploadFile, Select } from "antd";
+import { Form, Input, Button, Upload, UploadFile, Select } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 import { useNavigate } from "react-router-dom";
@@ -26,6 +26,8 @@ import { ApiError } from "../../../types/errors";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { useGetBrandsQuery } from "../../../services/admin/brandAdminApi";
 import CropperModal from "../../../components/images/CropperModal";
+import { showToast } from "../../../utilities/showToast";
+import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
 
 const { Item } = Form;
 
@@ -53,7 +55,7 @@ const CreateProductPage = () => {
       const formData = buildProductFormData(product);
 
       await createProduct(formData).unwrap();
-      message.success("Продукт успішно створено!");
+      showToast("success", "Продукт успішно створено!", <SuccessIcon />);
       navigate("/admin/products");
     } catch (error: unknown) {
       handleFormErrors(error as ApiError, form);
