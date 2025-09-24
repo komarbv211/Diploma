@@ -10,6 +10,8 @@ import CropperModal from "../../../components/images/CropperModal";
 import { showToast } from "../../../utilities/showToast";
 import ErrorIcon from "../../../components/icons/toasts/ErrorIcon";
 import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
+import { handleFormErrors } from "../../../utilities/handleApiErrors";
+import { ApiError } from "../../../types/errors";
 
 const EditBrandPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -61,8 +63,13 @@ const EditBrandPage = () => {
       await updateBrand(values).unwrap();
       showToast("success", "Бренд оновлено", <SuccessIcon />);
       navigate("..");
-    } catch {
-      showToast("error", "Помилка при оновленні бренду", <ErrorIcon />);
+    }catch (error: unknown) {
+      // спроба обробити як помилки валідації
+      const handled = handleFormErrors(error as ApiError, form);
+      // якщо не було field errors чи global message → показати загальне повідомлення
+      if (!handled) {
+        showToast("error", "Помилка при оновленні бренду", <ErrorIcon />);
+      }
     }
   };
 
