@@ -7,6 +7,7 @@ import { useAppSelector } from "../store/store";
 import { useCart } from "../hooks/useCart";
 import {
     useAddFavoriteMutation,
+    useGetFavoritesQuery,
     useRemoveFavoriteMutation,
 } from "../services/favoriteApi";
 import { APP_ENV } from "../env";
@@ -15,6 +16,7 @@ import { showToast } from "../utilities/showToast";
 import SuccessIcon from "./icons/toasts/SuccessIcon";
 import WarnIcon from "./icons/toasts/WarnIcon";
 import { useRateProductMutation } from "../services/productRatingApi ";
+import { useGetProductByIdQuery } from "../services/productApi";
 
 type Props = {
     title: string;
@@ -30,26 +32,32 @@ type Props = {
 };
 
 const ProductCard: React.FC<Props> = ({
-                                          title,
-                                          category,
-                                          price,
-                                          oldPrice,
-                                          image,
-                                          productId,
-                                          userId,
-                                          userRating = 0,
-                                          isFavorite = false,
-                                          onRated,
-                                      }) => {
+  title,
+  category,
+  price,
+  oldPrice,
+  image,
+  productId,
+  userId,
+  userRating = 0,
+  isFavorite = false,
+  onRated,
+}) => {
     const { user } = useAppSelector((s) => s.auth);
     const { cart, addToCart } = useCart(!!user);
     const [addFavorite] = useAddFavoriteMutation();
     const [removeFavorite] = useRemoveFavoriteMutation();
     const [rateProduct] = useRateProductMutation();
-
+    const { data: productData } = useGetProductByIdQuery(productId);
     const [favorite, setFavorite] = useState(isFavorite);
 
-    useEffect(() => setFavorite(isFavorite), [isFavorite]);
+    const { data: favorites = [] } = useGetFavoritesQuery();
+    const favoriteIds = favorites.map(f => f.productId);
+
+    useEffect(() => {
+        setFavorite(favoriteIds.includes(productId));
+    }, [favoriteIds, productId]);
+
 
     const isInCart = cart.some(
         (item: ICartItem) => item.productId === productId
@@ -77,19 +85,21 @@ const ProductCard: React.FC<Props> = ({
         }
     };
 
-    const handleAddToCart = async () => {
-        const item: ICartItem = {
-            productId,
-            name: title,
-            categoryName: category,
-            price,
-            quantity: 1,
-            imageName: getImageName(image),
-        };
-        await addToCart(item);
-        window.dispatchEvent(new CustomEvent("open-cart"));
-        showToast("success", "Товар додано до кошика", <SuccessIcon />);
+  const handleAddToCart = async () => {
+    const item: ICartItem = {
+    productId,
+    name: title,
+    categoryName: category,
+    price: productData?.price ?? price,
+    quantity: 1,
+    imageName: getImageName(image),
+    discountPercent: productData?.discountPercent ?? 0,
+    finalPrice: productData?.finalPrice ?? price,
     };
+    await addToCart(item);
+    window.dispatchEvent(new CustomEvent("open-cart"));
+    showToast("success", "Товар додано до кошика", <SuccessIcon />);
+  };
 
     const handleToggleFavorite = async () => {
         if (!user) {
@@ -139,15 +149,15 @@ const ProductCard: React.FC<Props> = ({
             <button
                 onClick={handleToggleFavorite}
                 className="
-          absolute top-2 right-3 md:top-4 md:right-5
-          w-8 h-8 md:w-10 md:h-10
-          flex items-center justify-center
-          rounded-full bg-white/80 hover:bg-white shadow-md
-          transition
-        "
+                    absolute top-2 right-3 md:top-4 md:right-5    
+                    w-8 h-8 md:w-10 md:h-10
+                    flex items-center justify-center
+                    rounded-full bg-white/80 hover:bg-white shadow-md
+                    transition
+                "
             >
                 {favorite ? (
-                    <AiFillHeart className="text-red-500 w-5 h-5 md:w-6 md:h-6" />
+                    <AiFillHeart className="text-pink2 w-5 h-5 md:w-6 md:h-6" />
                 ) : (
                     <AiOutlineHeart className="text-gray-600 w-5 h-5 md:w-6 md:h-6" />
                 )}
@@ -175,17 +185,17 @@ const ProductCard: React.FC<Props> = ({
                 <div className="flex justify-between items-center md:gap-1">
                     {oldPrice ? (
                         <span className="font-manrope font-medium flex items-center gap-2">
-              <span className="text-pink2 text-[14px] md:text-[20px] leading-[19px] md:leading-[27px]">
-                {price} ₴
-              </span>
-              <span className="text-gray-400 line-through text-[12px] md:text-[16px]">
-                {oldPrice} ₴
-              </span>
-            </span>
-                    ) : (
-                        <span className="text-gray-900 font-manrope font-medium text-[14px] md:text-[20px] leading-[19px] md:leading-[27px]">
-              {price} ₴
-            </span>
+                            <span className="text-pink2 text-[14px] md:text-[20px] leading-[19px] md:leading-[27px]">
+                                {price} ₴
+                            </span>
+                            <span className="text-gray-400 line-through text-[12px] md:text-[16px]">
+                                {oldPrice} ₴
+                            </span>
+                            </span>
+                                    ) : (
+                                        <span className="text-gray-900 font-manrope font-medium text-[14px] md:text-[20px] leading-[19px] md:leading-[27px]">
+                            {price} ₴
+                        </span>
                     )}
 
                     <button

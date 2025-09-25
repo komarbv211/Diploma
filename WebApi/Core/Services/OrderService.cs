@@ -114,9 +114,27 @@ namespace Core.Services
             await _orderRepository.AddAsync(entity);
             await _orderRepository.SaveAsync();
 
+            //if (dto.Items.Any())
+            //{
+            //    //entity.Items = _mapper.Map<List<OrderItemEntity>>(dto.Items);
+            //    entity.Items = new List<OrderItemEntity>();
+            //    foreach (var itemDto in dto.Items)
+            //    {
+            //        var product = await _productRepository.GetByID(itemDto.ProductId);
+            //        if (product == null)
+            //            throw new HttpException($"Товар з id {itemDto.ProductId} не знайдено", HttpStatusCode.BadRequest);
+
+            //        var orderItem = _mapper.Map<OrderItemEntity>(itemDto);
+            //        orderItem.Price = product.Price;
+            //        orderItem.OrderId = entity.Id;
+            //        //await _orderItemRepository.AddAsync(orderItem);
+            //        //await _orderItemRepository.SaveAsync();
+            //        entity.Items.Add(orderItem);
+            //    }
+
+            //}
             if (dto.Items.Any())
             {
-                //entity.Items = _mapper.Map<List<OrderItemEntity>>(dto.Items);
                 entity.Items = new List<OrderItemEntity>();
                 foreach (var itemDto in dto.Items)
                 {
@@ -124,14 +142,25 @@ namespace Core.Services
                     if (product == null)
                         throw new HttpException($"Товар з id {itemDto.ProductId} не знайдено", HttpStatusCode.BadRequest);
 
-                    var orderItem = _mapper.Map<OrderItemEntity>(itemDto);
-                    orderItem.Price = product.Price;
-                    orderItem.OrderId = entity.Id;
-                    //await _orderItemRepository.AddAsync(orderItem);
-                    //await _orderItemRepository.SaveAsync();
+                    // Рахуємо ціну з урахуванням знижки
+                    decimal finalPrice = product.Price;
+                    if (product.DiscountPercent.HasValue)
+                    {
+                        finalPrice = product.Price * (1 - (decimal)product.DiscountPercent.Value / 100);
+                    }
+
+                    var orderItem = new OrderItemEntity
+                    {
+                        ProductId = product.Id,
+                        Product = product,
+                        Quantity = itemDto.Quantity,
+                        Price = finalPrice,
+                        OrderId = entity.Id,
+                        Order = entity
+                    };
+
                     entity.Items.Add(orderItem);
                 }
-
             }
 
             entity.TotalPrice = entity.Items?.Sum(i => i.Quantity * i.Price) ?? 0;

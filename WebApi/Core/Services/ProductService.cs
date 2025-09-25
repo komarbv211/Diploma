@@ -346,7 +346,8 @@ public class ProductService : IProductService
             CategoryName = p.Category?.Name,
             CreatedAt = p.DateCreated,
             IsInStock = p.Quantity > 0,
-            IsFavorite = favoriteIds.Contains(p.Id)
+            IsFavorite = favoriteIds.Contains(p.Id),
+            DiscountPercent = p.DiscountPercent
         }).ToList();
 
         return new SearchResult<ProductItemModel>

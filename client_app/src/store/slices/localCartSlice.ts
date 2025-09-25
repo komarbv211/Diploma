@@ -6,23 +6,22 @@ export interface ICartItem {
     categoryId?: number;
     name?: string;
     categoryName?: string;
-    quantity?: number;
-    price?: number;
+    quantity: number; 
+    price: number;    
     sizeName?: string;
     imageName?: string;
+    finalPrice: number;
+    discountPercent?: number;
 }
-
 export  interface ICartState {
     items: ICartItem[];
     totalPrice: number;
 }
 
-
 const initialState: ICartState = {
     items: JSON.parse(localStorage.getItem('cart') || '[]'),
     totalPrice: 0
 }
-
 
 const localCartSlice = createSlice({
     name: 'localCart',

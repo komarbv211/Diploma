@@ -12,10 +12,9 @@ const CartModal: React.FC = () => {
   const { cart, addToCart, removeFromCart } = useCart(user != null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
-
   useEffect(() => {
     setIsCartOpen(false);
-  }, [location.pathname]);
+  }, []);
 
   return (
     <>
@@ -127,11 +126,22 @@ const CartModal: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col w-1/4 justify-end lg:flex-row lg:items-center lg:gap-6">
                                   {/* Ціна */}
-                                  <div className="w-auto text-left lg:text-right max-w-32">
-                                    <span className="text-[20px] font-medium font-manrope">
-                                      {item.price} ₴
-                                    </span>
-                                  </div>
+                                  <span className="flex flex-col">
+                                    {item.discountPercent ? (  
+                                      <>
+                                        <span className="text-gray-400 line-through text-[16px]">
+                                          {(item.price ?? 0).toFixed(2)} ₴
+                                        </span>
+                                        <span className="text-[20px] font-medium text-pink2">
+                                          {(item.finalPrice ?? item.price ?? 0).toFixed(2)} ₴
+                                        </span>
+                                      </>
+                                    ) : (
+                                      <span className="text-[20px] font-medium text-black">
+                                        {(item.price ?? 0).toFixed(2)} ₴
+                                      </span>
+                                    )}
+                                  </span>
                                   <button
                                     type="button"
                                     onClick={() =>
@@ -176,15 +186,12 @@ const CartModal: React.FC = () => {
                         <div className="flex xs:text-[27px] font-medium font-manrope mb-2 justify-between">
                           <span>Загальна сума:</span>
                           <span>
-                            {cart
-                              ?.reduce(
-                                (acc, item) =>
-                                  acc +
-                                  (item.price ?? 0) * (item.quantity ?? 1),
-                                0
-                              )
-                              .toLocaleString()}{" "}
-                            ₴
+                            {cart?.reduce((acc, item) => {
+                              const finalPrice = item.discountPercent
+                                ? (item.finalPrice ?? item.price ?? 0)
+                                : (item.price ?? 0);
+                              return acc + finalPrice * (item.quantity ?? 1);
+                            }, 0).toLocaleString()} ₴
                           </span>
                         </div>
 

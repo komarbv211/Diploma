@@ -4,8 +4,8 @@ import { useAppSelector } from "../../store/store";
 import UserSidebar from "./userPages/UserSidebar";
 import { useGetFavoritesQuery } from "../../services/favoriteApi";
 import ProductCard from "../../components/ProductCard";
-import { IProduct } from "../../types/product";
 import { APP_ENV } from "../../env";
+import { getUser } from "../../store/slices/userSlice";
 
 const { Content } = Layout;
 
@@ -14,9 +14,11 @@ const UserFavorites: React.FC = () => {
   const { data: favorites, isLoading } = useGetFavoritesQuery();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 9; // щоб заповнювався ряд по 3 картки
-  const startIndex = (currentPage - 1) * pageSize;
-  const currentFavorites = favorites?.slice(startIndex, startIndex + pageSize);
+  const pageSize = 9;
+
+  const user = useAppSelector(getUser);
+  const userId = user?.id ? Number(user.id) : undefined;
+  
 
   if (!auth.user) {
     return (
@@ -34,34 +36,8 @@ const UserFavorites: React.FC = () => {
     );
   }
 
-  const productsForDisplay: IProduct[] = (currentFavorites || []).map(
-    (item, index) => ({
-      id: item.productId,
-      name: item.name,
-      categoryName: item.categoryName || "",
-      price: item.price,
-      finalPrice: item.price,
-      images: item.imageName
-        ? [
-            {
-              id: index, // тимчасовий унікальний id
-              name: item.imageName,
-              priority: 0,
-              productId: item.productId,
-            },
-          ]
-        : [],
-      isFavorite: true,
-      averageRating: 0,
-      categoryId: 0,
-      discountPercent: 0,
-      imageUrl: item.imageName || "",
-      quantity: 1,
-      rating: 0,
-      ratingsCount: 0,
-      commentsCount: 0,
-    })
-  );
+  const startIndex = (currentPage - 1) * pageSize;
+  const currentFavorites = favorites?.slice(startIndex, startIndex + pageSize) || [];
 
   return (
     <Layout className="bg-white w-[93%] mx-auto font-manrope min-h-[750px]">
@@ -71,52 +47,37 @@ const UserFavorites: React.FC = () => {
 
       <div className="flex gap-6 mt-12">
         <UserSidebar />
-
         <Content className="flex flex-col flex-1 items-start">
-          {productsForDisplay.length > 0 ? (
-            // Сітка: 1 картка на мобільних, 2 на планшеті, 3 на десктопі
+          {currentFavorites.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-              {productsForDisplay.map((p) => (
+              {currentFavorites.map(fav => (
                 <ProductCard
-                  key={p.id}
-                  title={p.name}
-                  category={p.categoryName}
-                  price={p.finalPrice ?? p.price}
-                  oldPrice={p.discountPercent ? p.price : undefined}
-                  image={
-                    p.images?.[0]?.name
-                      ? APP_ENV.IMAGES_1200_URL + p.images[0].name
-                      : p.imageUrl
-                      ? APP_ENV.IMAGES_1200_URL + p.imageUrl
-                      : ""
-                  }
-                  productId={p.id}
-                  userId={1} // заміни на свій userId зі стору
-                  userRating={p.averageRating || 0}
-                  isFavorite={p.isFavorite}
+                  key={fav.productId}
+                  title={fav.name}
+                  category={fav.categoryName}
+                  oldPrice={fav.discountPercent ? fav.price : undefined}
+                  price={fav.finalPrice ?? fav.price}
+                  image={fav.imageName ? APP_ENV.IMAGES_1200_URL + fav.imageName : ""}
+                  productId={fav.productId}
+                  userId={userId || 0}
+                  userRating={fav.averageRating ?? 0}
+                  isFavorite={true}
                 />
               ))}
             </div>
           ) : (
             <div className="flex flex-start ml-[32%] text-center w-full mt-12">
-              <Empty
-                description={
-                  <span className="text-[18px] text-gray-500">
-                    У вас поки немає улюблених товарів.{" "}
-                  </span>
-                }
-              />
+              <Empty description={<span className="text-[18px] text-gray-500">У вас поки немає улюблених товарів.</span>} />
             </div>
           )}
 
-          {/* Пагінація */}
           {favorites && favorites.length > pageSize && (
             <div className="flex justify-center mt-8 w-full">
               <Pagination
                 current={currentPage}
                 pageSize={pageSize}
                 total={favorites.length}
-                onChange={(page) => setCurrentPage(page)}
+                onChange={setCurrentPage}
                 showSizeChanger={false}
               />
             </div>

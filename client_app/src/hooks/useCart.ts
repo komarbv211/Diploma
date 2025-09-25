@@ -13,11 +13,13 @@ export const useCart = (isAuth: boolean) => {
 
     const addToCart = async (item: ICartItem) => {
         if (isAuth) {
-            // console.log("Add remote cart", item);
+            console.log("Add remote cart", item);
             const existing = remoteCart?.find(i => i.productId === item.productId);
-            const quantity = existing ? existing.quantity! + item.quantity! : item.quantity!;
+            const quantity = existing ? existing.quantity! + item.quantity! : item.quantity!;           
             await addRemote({ ...item, quantity });
         } else {
+             console.log('Додаю в localCart:', item);
+
             dispatch(addItem(item));
         }
     };

@@ -14,5 +14,7 @@ public class CartItemDTO
     public string CategoryName { get; set; } = string.Empty;
     public int Quantity { get; set; }
     public decimal Price { get; set; }
+    public decimal? DiscountPercent { get; set; }
+    public decimal FinalPrice { get; set; }
     public string ImageName { get; set; } = string.Empty;
 }

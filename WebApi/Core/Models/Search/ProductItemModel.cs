@@ -21,5 +21,9 @@ namespace Core.Models.Search
 
         public bool IsFavorite { get; set; } = false;
 
+        public decimal? DiscountPercent { get; set; }
+        public decimal FinalPrice => DiscountPercent.HasValue
+            ? Price - (Price * (DiscountPercent.Value / 100m))
+            : Price;
     }
 }
