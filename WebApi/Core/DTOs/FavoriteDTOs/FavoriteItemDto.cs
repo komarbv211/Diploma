@@ -8,4 +8,7 @@ public class FavoriteItemDTO
     public string CategoryName { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public string ImageName { get; set; } = string.Empty;
+    public decimal? DiscountPercent { get; set; }
+    public decimal FinalPrice { get; set; }
+
 }

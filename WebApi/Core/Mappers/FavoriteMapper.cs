@@ -14,9 +14,16 @@ public class FavoriteMapper : Profile
             .ForMember(x => x.CategoryName, opt => opt.MapFrom(x => x.Product!.Category!.Name))
             .ForMember(x => x.Name, opt => opt.MapFrom(x => x.Product!.Name))
             .ForMember(x => x.Price, opt => opt.MapFrom(x => x.Product!.Price))
+            .ForMember(dest => dest.DiscountPercent, opt => opt.MapFrom(src => src.Product!.DiscountPercent))
+            .ForMember(dest => dest.FinalPrice, opt => opt.MapFrom(src =>
+                src.Product!.DiscountPercent.HasValue
+                    ? src.Product.Price - (src.Product.Price * (src.Product.DiscountPercent.Value / 100))
+                    : src.Product.Price
+            ))
             .ForMember(x => x.ImageName, opt => opt.MapFrom(x =>
                 x.Product!.Images != null && x.Product.Images.Any()
                     ? x.Product.Images.OrderBy(img => img.Priority).First().Name
-                    : null));
+                    : null
+            ));
     }
 }
