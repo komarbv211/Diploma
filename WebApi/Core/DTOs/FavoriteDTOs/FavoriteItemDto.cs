@@ -10,5 +10,6 @@ public class FavoriteItemDTO
     public string ImageName { get; set; } = string.Empty;
     public decimal? DiscountPercent { get; set; }
     public decimal FinalPrice { get; set; }
-
+    public double? AverageRating { get; set; }
+    public int RatingsCount { get; set; }
 }

@@ -24,6 +24,8 @@ public class FavoriteMapper : Profile
                 x.Product!.Images != null && x.Product.Images.Any()
                     ? x.Product.Images.OrderBy(img => img.Priority).First().Name
                     : null
-            ));
+            ))
+            .ForMember(x => x.AverageRating, opt => opt.MapFrom(src => src.Product!.AverageRating))
+            .ForMember(x => x.RatingsCount, opt => opt.MapFrom(src => src.Product!.RatingsCount));
     }
 }
