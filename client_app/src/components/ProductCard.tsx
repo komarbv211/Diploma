@@ -155,14 +155,21 @@ const ProductCard: React.FC<Props> = ({
         />
 
         <div className="flex justify-between items-center md:gap-1">
-          <span className="text-pink2 font-manrope text-[14px] leading-[19px] md:text-[20px] md:leading-[27px] font-medium">
-            {price} ₴
-            {oldPrice && (
-              <span className="text-gray line-through text-[12px] md:text-[16px] ml-2">
+          {oldPrice ? (
+            <span className="font-manrope font-medium flex items-center gap-2">
+              <span className="text-pink2 text-[14px] md:text-[20px] leading-[19px] md:leading-[27px]">
+                {price} ₴
+              </span>
+              <span className="text-gray-400 line-through text-[12px] md:text-[16px]">
                 {oldPrice} ₴
               </span>
-            )}
-          </span>
+            </span>
+          ) : (
+            <span className="text-gray-900 font-manrope font-medium text-[14px] md:text-[20px] leading-[19px] md:leading-[27px]">
+              {price} ₴
+            </span>
+          )}
+
           <button
             onClick={handleAddToCart}
             className="w-6 h-6 md:w-[28.5px] sm:h-[23.5px] flex items-center justify-center"
