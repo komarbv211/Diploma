@@ -14,10 +14,12 @@ const CartSummary = () => {
     {}
   );
 
-  const totalPrice = cart.reduce(
-    (sum, i) => sum + (i.price ?? 0) * (i.quantity ?? 0),
-    0
-  );
+  const totalPrice = cart.reduce((sum, i) => {
+    const priceToUse = i.finalPrice ?? i.price;
+    return sum + (priceToUse * (i.quantity ?? 0));
+  }, 0);
+
+
   const deliveryPrice = 0;
 
   const toggleItem = (id: number) => {
@@ -69,7 +71,27 @@ const CartSummary = () => {
                           : product.description ?? ""}
                       </p>
                       <p className="text-left text-[24px]">
-                        {cartItem.price} ₴
+                        {cartItem.discountPercent ? (
+                          <>
+                            <span className="line-through text-gray text-[20px]">
+                              {(cartItem.price ?? 0).toFixed(2)} ₴
+                            </span>
+                            <br />
+                            <span className="text-pink2 font-medium">
+                              {(cartItem.finalPrice ?? cartItem.price ?? 0).toFixed(2)} ₴
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="invisible">
+                              {(cartItem.price ?? 0).toFixed(2)} ₴
+                            </span>
+                            <br />
+                            <span className="text-black font-medium">
+                              {(cartItem.price ?? 0).toFixed(2)} ₴
+                            </span>
+                          </>
+                        )}
                       </p>
                       <QuantityCounter
                         quantity={cartItem.quantity!}

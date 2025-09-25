@@ -110,8 +110,9 @@ const OrderPage = () => {
       items: cart.map<OrderItemCreateDto>((item) => ({
         productId: item.productId!,
         quantity: item.quantity!,
-        price: item.price!,
+        price: item.finalPrice!,
       })),
+
     };
     console.log("Об'єкт для бекенду:", JSON.stringify(newOrder, null, 2));
 

@@ -12,14 +12,6 @@ const CartModal: React.FC = () => {
   const { cart, addToCart, removeFromCart } = useCart(user != null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
-
-  // const cartWithFinalPrice = cart.map((item) => {
-  //   const discount = item.discountPercent ?? 0;
-  //   console.log("discount: " + discount);
-  //   const finalPrice = item.price * (1 - discount / 100);
-  //   return { ...item, finalPrice};
-  // });
-
   useEffect(() => {
     setIsCartOpen(false);
   }, []);
@@ -149,10 +141,7 @@ const CartModal: React.FC = () => {
                                         {(item.price ?? 0).toFixed(2)} ₴
                                       </span>
                                     )}
-
                                   </span>
-
-
                                   <button
                                     type="button"
                                     onClick={() =>
