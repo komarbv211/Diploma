@@ -23,6 +23,7 @@ import CropperModal from "../../../components/images/CropperModal";
 import { base64ToFile } from "../../../utilities/base64ToFile";
 import { showToast } from "../../../utilities/showToast";
 import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
+import ErrorIcon from "../../../components/icons/toasts/ErrorIcon";
 
 const EditProductPage = () => {
   const { id } = useParams();
@@ -129,7 +130,12 @@ const EditProductPage = () => {
       showToast("success", "Продукт успішно відредаговано!о", <SuccessIcon />);
       navigate("..");
     } catch (error: unknown) {
-      handleFormErrors(error as ApiError, form);
+      // спроба обробити як помилки валідації
+      const handled = handleFormErrors(error as ApiError, form);
+      // якщо не було field errors чи global message → показати загальне повідомлення
+      if (!handled) {
+        showToast("error", "Помилка при оновленні продукту", <ErrorIcon />);
+      }
     }
   };
 

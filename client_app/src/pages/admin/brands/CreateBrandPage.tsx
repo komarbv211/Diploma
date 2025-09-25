@@ -8,7 +8,6 @@ import { ApiError } from "../../../types/errors";
 import { handleFormErrors } from "../../../utilities/handleApiErrors";
 import { showToast } from "../../../utilities/showToast";
 import SuccessIcon from "../../../components/icons/toasts/SuccessIcon";
-import ErrorIcon from "../../../components/icons/toasts/ErrorIcon";
 
 const CreateBrandPage = () => {
   const [form] = Form.useForm();
@@ -47,7 +46,6 @@ const CreateBrandPage = () => {
       navigate("..");
     } catch (error: unknown) {
       handleFormErrors(error as ApiError, form);
-      showToast("error", "Помилка при створенні бренду", <ErrorIcon />);
     }
   };
 

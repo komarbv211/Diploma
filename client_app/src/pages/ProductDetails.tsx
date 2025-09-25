@@ -16,10 +16,16 @@ import Product_3_Carousel from "../components/Product_3_Carousel";
 import { ICartItem } from "../store/slices/localCartSlice";
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: product, isLoading, refetch } = useGetProductByIdQuery(Number(id));
+  const {
+    data: product,
+    isLoading,
+    refetch,
+  } = useGetProductByIdQuery(Number(id));
   const { user } = useAppSelector((s) => s.auth);
   const { cart, addToCart } = useCart(!!user);
-const isInCart = cart.some((item: ICartItem) => item.productId === Number(id));
+  const isInCart = cart.some(
+    (item: ICartItem) => item.productId === Number(id)
+  );
   const navigate = useNavigate();
   const { Paragraph } = Typography;
   const [isReviewOpen, setIsReviewOpen] = React.useState(false);
@@ -45,6 +51,12 @@ const isInCart = cart.some((item: ICartItem) => item.productId === Number(id));
     });
     window.dispatchEvent(new CustomEvent("open-cart"));
   };
+
+  const hasDiscount =
+    product.discountPercent != null && product.discountPercent > 0;
+  const priceToShow = hasDiscount
+    ? product.finalPrice ?? product.price
+    : product.price;
 
   return (
     <>
@@ -81,12 +93,29 @@ const isInCart = cart.some((item: ICartItem) => item.productId === Number(id));
             </span>
           </div>
 
+          <div className="font-manrope text-2xl font-medium text-black flex items-center">
+            Опис
+          </div>
+
           <Paragraph className="font-manrope text-xl whitespace-pre-line ">
             {product.description}
           </Paragraph>
 
-          <span className="text-3xl font-medium text-black">
-            {product.price} ₴
+          <span className="font-manrope flex items-center gap-4">
+            {hasDiscount ? (
+              <>
+                <span className="text-pink2 text-3xl font-semibold">
+                  {priceToShow} ₴
+                </span>
+                <span className="text-gray line-through text-xl">
+                  {product.price} ₴
+                </span>
+              </>
+            ) : (
+              <span className="text-gray-900 text-3xl font-semibold">
+                {product.price} ₴
+              </span>
+            )}
           </span>
 
           <div className="flex items-center gap-6">
@@ -117,15 +146,14 @@ const isInCart = cart.some((item: ICartItem) => item.productId === Number(id));
               Купити
             </button>
             <div className="h-16">
-              {isInCart ?(
-                  <div className="relative w-full h-full">
-                    <CartIcon className="text-black w-full h-full" />
-                    <CartFlowerIcon className="absolute top-[6px] right-0 text-pink2 w-1/2 h-1/2" />
-                  </div>
-                ) : (
-                  <CartIcon className="text-black w-full h-full" /> // 🛒 порожня іконка
+              {isInCart ? (
+                <div className="relative w-full h-full">
+                  <CartIcon className="text-black w-full h-full" />
+                  <CartFlowerIcon className="absolute top-[6px] right-0 text-pink2 w-1/2 h-1/2" />
+                </div>
+              ) : (
+                <CartIcon className="text-black w-full h-full" /> // 🛒 порожня іконка
               )}
-
             </div>
             <button
               onClick={() => navigate(-1)}
@@ -166,7 +194,6 @@ const isInCart = cart.some((item: ICartItem) => item.productId === Number(id));
               await refetch();
             }}
           />
-
         </div>
         {/* Відображаємо відгуки тільки якщо вони є */}
         {product.commentsCount > 0 && (

@@ -1,19 +1,10 @@
 ﻿using AutoMapper;
 using Core.DTOs.BrandsDTOs;
-using Core.DTOs.CategoryDTOs;
-using Core.DTOs.ProductsDTO;
 using Core.Exceptions;
 using Core.Interfaces;
-using Core.Repositories;
-using Core.Specifications;
 using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Services
 {
@@ -26,18 +17,14 @@ namespace Core.Services
             _brandRepository = brandRepository;
             _mapper = mapper;
         }
-
-
-
         public async Task<BrandItemDto> CreateBrandAsync(BrandCreateDto dto)
         {
-
             try
             {
                 var brand = _mapper.Map<BrandEntity>(dto);
                 await _brandRepository.Insert(brand);
                 await _brandRepository.SaveAsync();
-               
+
                 return _mapper.Map<BrandItemDto>(brand);
             }
             catch (DbUpdateException dbEx)
@@ -59,8 +46,6 @@ namespace Core.Services
                 await _brandRepository.SaveAsync();
             }
         }
-
-
 
         public async Task<List<BrandItemDto>> GetBrandsAsync()
         {

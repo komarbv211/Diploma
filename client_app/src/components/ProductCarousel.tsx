@@ -80,7 +80,7 @@ const ProductCarousel: React.FC<Props> = ({
   return (
     <div className="relative mx-auto flex flex-col md:gap-[20px] md:h-[610px] w-[100%] px-4 md:px-0">
       <div className="flex flex-row justify-center items-center w-[98%] h-[50px] ">
-        <h2 className="text-[20px] md:text-[32px] font-['Source Sans Pro'] text-black ml-1">
+        <h2 className="text-[20px] md:text-[32px] font-['Source Sans Pro'] text-black ml-[7px]">
           {title}
         </h2>
 
@@ -108,7 +108,7 @@ const ProductCarousel: React.FC<Props> = ({
       <div className="relative w-[99%] md:h-[540px] ">
         <Slider ref={sliderRef} {...settings}>
           {products.map((p) => (
-            <div key={p.id} className="px-2">
+            <div key={p.id} className="px-2.5">
               <ProductCard
                 title={p.name}
                 category={p.categoryName || getCategoryName(p.categoryId)}
