@@ -106,8 +106,10 @@ const ProductCard: React.FC<Props> = ({
     bg-white rounded-[15px] border border-blue2 relative
     flex flex-col
     w-[161px] h-[293px] p-[10px_20px] gap-2
-    md:w-[405px] md:h-[513px] md:p-[25px_40px] md:gap-0
+    md:w-[390px] md:h-[513px] md:p-[25px_40px] md:gap-0
     justify-between
+    transition-transform duration-300 ease-in-out
+    hover:scale-105 hover:border-pink2 my-5
   "
     >
       {/* Фото */}
