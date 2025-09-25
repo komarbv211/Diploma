@@ -48,6 +48,8 @@ const ProductDetails: React.FC = () => {
       price: product.price,
       quantity: quantity,
       imageName: product.images?.[0]?.name || "",
+      discountPercent: product?.discountPercent,
+      finalPrice: product?.finalPrice,
     });
     window.dispatchEvent(new CustomEvent("open-cart"));
   };
