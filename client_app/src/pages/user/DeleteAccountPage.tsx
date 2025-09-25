@@ -33,14 +33,14 @@ const DeleteAccountPage = () => {
   };
 
   return (
-    <div className="flex justify-center mt-10">
-      <Card className="max-w-lg w-full p-6 text-center shadow-md rounded-xl">
+    <div className="flex justify-center items-center min-h-[750px]">
+      <Card className="max-w-lg w-full p-6 text-center shadow-md rounded-xl max-h-[350px]">
         <Title level={3} >Видалити мій акаунт</Title>
-        <Paragraph>
+        <Paragraph className="font-manrope">
           Ця дія є незворотною. Після видалення акаунта ви втратите доступ до
           всіх даних і замовлень, пов’язаних з вашим профілем.
         </Paragraph>
-        <Button type="default" className="mb-1" onClick={() => navigate(-1)}>
+        <Button type="default" className="mb-1 mt-2" onClick={() => navigate(-1)}>
           Повернутись до профілю
         </Button>  
         <Popconfirm

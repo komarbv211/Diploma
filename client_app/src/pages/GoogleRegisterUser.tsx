@@ -161,7 +161,12 @@ const GoogleRegisterUser = () => {
             <Form.Item
               name="firstName"
               label={<span className="form-label">Ім'я</span>}
-              rules={[{ required: true }]}
+              rules={[
+                {
+                  required: true,
+                  message: "Будь ласка, введіть ім'я",
+                },
+              ]}
             >
               <Input
                 placeholder="Ваше Ім'я"

@@ -84,6 +84,9 @@ const OrderDetails = () => {
                 order.apartment ?? ""
               }`.trim()}
         </Descriptions.Item>
+        <Descriptions.Item label="Коментар до замовлення">
+          {order.customerNote}
+        </Descriptions.Item>
       </Descriptions>
     </Card>
   );
