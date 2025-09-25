@@ -18,6 +18,9 @@ const isPublicPath = (pathname: string): boolean => {
     "/product/details/:id",
     "/orders",
     "/order-success",
+    "/about",
+    "/returns",
+    "/quality",
   ];
 
   // Перевіряємо точні збіги
@@ -39,7 +42,8 @@ const isPublicPath = (pathname: string): boolean => {
   }
 
   if (pathname.startsWith("/product/details/")) return true;
-  if (pathname.startsWith("/product/") && pathname.endsWith("/comments")) return true;
+  if (pathname.startsWith("/product/") && pathname.endsWith("/comments"))
+    return true;
 
   console.log("AuthWatcher: path is NOT public:", pathname);
   return false;

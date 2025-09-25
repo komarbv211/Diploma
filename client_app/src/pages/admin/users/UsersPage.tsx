@@ -357,7 +357,7 @@ const UsersPage: React.FC = () => {
             <Dropdown
                 overlay={
                   <Menu>
-                    <Menu.Item onClick={() => handleAction("edit", record)}>Редагувати</Menu.Item>
+                    {/* <Menu.Item onClick={() => handleAction("edit", record)}>Редагувати</Menu.Item> */}
                     <Menu.Item onClick={() => handleAction("delete", record)}>Видалити</Menu.Item>
                     <Menu.Item onClick={() => handleAction("message", record)}>Надіслати повідомлення</Menu.Item>
                     <Menu.Item

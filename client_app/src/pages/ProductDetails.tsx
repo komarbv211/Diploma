@@ -85,12 +85,16 @@ const ProductDetails: React.FC = () => {
               readOnly={true}
             />
             <span className="text-[16px] text-gray-700">
-              {product.commentsCount}
               <button
                 onClick={() => navigate(`/product/${id}/comments`)}
-                className="ml-1 text-black underline text-lg hover:text-pink2 font-manrope"
+                disabled={product.commentsCount === 0}
+                className={`ml-1 underline text-lg font-manrope ${
+                  product.commentsCount === 0
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-black hover:text-pink2"
+                }`}
               >
-                відгуки
+                {product.commentsCount} відгуки
               </button>
             </span>
           </div>
