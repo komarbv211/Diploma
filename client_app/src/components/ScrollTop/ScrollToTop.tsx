@@ -1,6 +1,7 @@
 // src/components/ScrollToTop.tsx
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import ScrollToTopButton from "../ScrollToTopButton";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -10,7 +11,7 @@ const ScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [pathname]);
 
-  return null; // нічого не рендериться
+  return <ScrollToTopButton />; // нічого не рендериться
 };
 
 export default ScrollToTop;

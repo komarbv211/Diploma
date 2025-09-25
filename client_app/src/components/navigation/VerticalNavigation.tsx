@@ -44,11 +44,13 @@ const VerticalNavigation: React.FC<VerticalNavigationProps> = ({
       onSelectCategory?.();
     } else {
       // Батьківський вузол — перемикаємо розгортання
-      setExpandedKeys((prev) =>
-        prev.includes(nodeKey)
-          ? prev.filter((k) => k !== nodeKey)
-          : [...prev, nodeKey]
-      );
+      // setExpandedKeys((prev) =>
+      //   prev.includes(nodeKey)
+      //     ? prev.filter((k) => k !== nodeKey)
+      //     : [...prev, nodeKey]
+      // );
+      navigate(`/category/${nodeKey}`);
+      onSelectCategory?.();
     }
   };
 
