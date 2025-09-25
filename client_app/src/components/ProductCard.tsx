@@ -15,6 +15,7 @@ import { showToast } from "../utilities/showToast";
 import SuccessIcon from "./icons/toasts/SuccessIcon";
 import WarnIcon from "./icons/toasts/WarnIcon";
 import { useRateProductMutation } from "../services/productRatingApi ";
+import { useGetProductByIdQuery } from "../services/productApi";
 
 type Props = {
   title: string;
@@ -46,6 +47,7 @@ const ProductCard: React.FC<Props> = ({
   const [addFavorite] = useAddFavoriteMutation();
   const [removeFavorite] = useRemoveFavoriteMutation();
   const [rateProduct] = useRateProductMutation();
+const { data: productData } = useGetProductByIdQuery(productId);
 
   const [favorite, setFavorite] = useState(isFavorite);
 
@@ -73,12 +75,14 @@ const ProductCard: React.FC<Props> = ({
 
   const handleAddToCart = async () => {
     const item: ICartItem = {
-      productId,
-      name: title,
-      categoryName: category,
-      price,
-      quantity: 1,
-      imageName: getImageName(image),
+    productId,
+    name: title,
+    categoryName: category,
+    price: productData?.price ?? price,
+    quantity: 1,
+    imageName: getImageName(image),
+    discountPercent: productData?.discountPercent ?? 0,
+    finalPrice: productData?.finalPrice ?? price,
     };
     await addToCart(item);
     window.dispatchEvent(new CustomEvent("open-cart"));

@@ -186,7 +186,8 @@ const CatalogPage: React.FC = () => {
               key={product.id}
               title={product.name}
               category={product.category?.name || ""}
-              price={product.price}
+              price={product.finalPrice ?? product.price}
+              oldPrice={product.discountPercent ? product.price : undefined}
               userRating={product.rating}
               productId={product.id}
               userId={Number(user?.id)}
