@@ -7,6 +7,7 @@ import { useAppSelector } from "../store/store";
 import { useCart } from "../hooks/useCart";
 import {
     useAddFavoriteMutation,
+    useGetFavoritesQuery,
     useRemoveFavoriteMutation,
 } from "../services/favoriteApi";
 import { APP_ENV } from "../env";
@@ -47,11 +48,16 @@ const ProductCard: React.FC<Props> = ({
     const [addFavorite] = useAddFavoriteMutation();
     const [removeFavorite] = useRemoveFavoriteMutation();
     const [rateProduct] = useRateProductMutation();
-    const { data: productData, refetch } = useGetProductByIdQuery(productId);
-
+    const { data: productData } = useGetProductByIdQuery(productId);
     const [favorite, setFavorite] = useState(isFavorite);
 
-    useEffect(() => setFavorite(isFavorite), [isFavorite]);
+    const { data: favorites = [] } = useGetFavoritesQuery();
+    const favoriteIds = favorites.map(f => f.productId);
+
+    useEffect(() => {
+        setFavorite(favoriteIds.includes(productId));
+    }, [favoriteIds, productId]);
+
 
     const isInCart = cart.some(
         (item: ICartItem) => item.productId === productId
@@ -108,7 +114,6 @@ const ProductCard: React.FC<Props> = ({
         try {
             if (!favorite) await addFavorite({ productId }).unwrap();
             else await removeFavorite(productId).unwrap();
-            refetch();
         } catch (error) {
             setFavorite((prev) => !prev);
             console.error("Помилка улюбленого товару", error);

@@ -8,6 +8,8 @@ import "slick-carousel/slick/slick-theme.css";
 import { PrevArrowIcon, NextArrowIcon } from "./icons";
 import { APP_ENV } from "../env";
 import { useGetCategoryTreeQuery } from "../services/categoryApi";
+import { useAppSelector } from "../store/store";
+import { getUser } from "../store/slices/userSlice";
 
 type Props = {
   products: IProduct[] | undefined;
@@ -21,7 +23,9 @@ const Product_3_Carousel: React.FC<Props> = ({
   title = "",
 }) => {
   const { data: categories } = useGetCategoryTreeQuery();
-
+  const user = useAppSelector(getUser);
+  const userId = user?.id ? Number(user.id) : undefined;
+  console.log("userId: " + userId)
   const defaultSlides = useMemo(() => {
     if (typeof maxWidth === "number") return maxWidth >= 1300 ? 3 : 2;
     if (typeof maxWidth === "string" && maxWidth.endsWith("px")) {
@@ -119,7 +123,7 @@ const Product_3_Carousel: React.FC<Props> = ({
                     : (p.imageUrl ? APP_ENV.IMAGES_1200_URL + p.imageUrl : "/NoImage.png")
                 }
                 productId={p.id}
-                userId={1} // підстав свого користувача зі стору, або передавай через пропси
+                userId={userId || 0} 
                 isFavorite={p.isFavorite}
                 userRating={p.rating}
               />
