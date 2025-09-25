@@ -123,7 +123,7 @@ const Product_3_Carousel: React.FC<Props> = ({
                     : (p.imageUrl ? APP_ENV.IMAGES_1200_URL + p.imageUrl : "/NoImage.png")
                 }
                 productId={p.id}
-                userId={userId || 0} 
+                userId={userId || 1} 
                 isFavorite={p.isFavorite}
                 userRating={p.rating}
               />

@@ -5,6 +5,7 @@ import UserSidebar from "./userPages/UserSidebar";
 import { useGetFavoritesQuery } from "../../services/favoriteApi";
 import ProductCard from "../../components/ProductCard";
 import { APP_ENV } from "../../env";
+import { getUser } from "../../store/slices/userSlice";
 
 const { Content } = Layout;
 
@@ -14,6 +15,10 @@ const UserFavorites: React.FC = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 9;
+
+  const user = useAppSelector(getUser);
+  const userId = user?.id ? Number(user.id) : undefined;
+  
 
   if (!auth.user) {
     return (
@@ -54,7 +59,7 @@ const UserFavorites: React.FC = () => {
                   price={fav.finalPrice ?? fav.price}
                   image={fav.imageName ? APP_ENV.IMAGES_1200_URL + fav.imageName : ""}
                   productId={fav.productId}
-                  userId={1}
+                  userId={userId || 0}
                   userRating={fav.averageRating ?? 0}
                   isFavorite={true}
                 />
