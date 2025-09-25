@@ -129,9 +129,9 @@ const ProductCard: React.FC<Props> = ({
         className="absolute top-2 right-2 w-6 h-6 md:top-4 md:right-4 md:w-8 md:h-8 flex items-center justify-center z-10"
       >
         {favorite ? (
-          <AiFillHeart className="text-red-500 w-full h-full" />
+          <AiFillHeart className="text-pink2 w-full h-full" />
         ) : (
-          <AiOutlineHeart className="text-gray-400 w-full h-full" />
+          <AiOutlineHeart className="text-gray-300 w-full h-full" />
         )}
       </button>
 
@@ -155,14 +155,21 @@ const ProductCard: React.FC<Props> = ({
         />
 
         <div className="flex justify-between items-center md:gap-1">
-          <span className="text-pink2 font-manrope text-[14px] leading-[19px] md:text-[20px] md:leading-[27px] font-medium">
-            {price} ₴
-            {oldPrice && (
-              <span className="text-gray line-through text-[12px] md:text-[16px] ml-2">
+          {oldPrice ? (
+            <span className="font-manrope font-medium flex items-center gap-2">
+              <span className="text-pink2 text-[14px] md:text-[20px] leading-[19px] md:leading-[27px]">
+                {price} ₴
+              </span>
+              <span className="text-gray-400 line-through text-[12px] md:text-[16px]">
                 {oldPrice} ₴
               </span>
-            )}
-          </span>
+            </span>
+          ) : (
+            <span className="text-gray-900 font-manrope font-medium text-[14px] md:text-[20px] leading-[19px] md:leading-[27px]">
+              {price} ₴
+            </span>
+          )}
+
           <button
             onClick={handleAddToCart}
             className="w-6 h-6 md:w-[28.5px] sm:h-[23.5px] flex items-center justify-center"

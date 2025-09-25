@@ -18,7 +18,7 @@ export interface IProduct {
   imageUrl?: string;
   promotionId?: number;
   discountPercent?: number;
-  finalPrice?: number; // розрахована ціна зі знижкою
+  finalPrice: number; // розрахована ціна зі знижкою
   isFavorite?: boolean; // 🆕 додав поле для улюблених товарів
 }
 
