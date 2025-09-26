@@ -3,6 +3,7 @@ import { createBaseQueryWithReauth } from '../../utilities/createBaseQuery';
 import { IProduct, IProductPutRequest, IProductSetPromotionRequest} from '../../types/product';
 import { serializeProduct } from '../../utilities/serialize';
 import { promotionAdminApi } from './promotionAdminApi';
+import { productApi } from '../productApi';
 
 
 
@@ -78,6 +79,7 @@ export const productAdminApi = createApi({
 
                 try {
                     await queryFulfilled;
+                    dispatch(productApi.util.invalidateTags(["Products"]));
                     dispatch(promotionAdminApi.util.invalidateTags([{ type: 'Promotions', id: 'LIST' }]));
                 } catch {
                     patch.undo();

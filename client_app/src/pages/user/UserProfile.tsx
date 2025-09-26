@@ -10,7 +10,7 @@ import {
   Avatar,
   Form,
 } from "antd";
-import { getAuth, getUser } from "../../store/slices/userSlice";
+import { getUser } from "../../store/slices/userSlice";
 import {
   useGetUserByIdQuery,
   useUpdateUserMutation,
@@ -36,9 +36,6 @@ const UserProfile = () => {
 
   const { data: user, isLoading } = useGetUserByIdQuery(Number(client?.id));
   const [updateUser] = useUpdateUserMutation();
-
-  const auth = useAppSelector(getAuth);
-  const isAdmin = auth.roles.includes("Admin");
 
   // Стани для роботи з аватаром
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
@@ -116,12 +113,12 @@ const UserProfile = () => {
   }
 
   return (
-    <Layout className="bg-white w-[93%] mx-auto font-manrope min-h-[750px]">
+    <Layout className="bg-white w-[93%] mx-auto font-manrope min-h-[785px]">
       <h1 className="text-[28px] font-bold mt-12 mb-6 text-center">
         Мій профіль
       </h1>
       <div className="flex gap-6 mt-12">
-        {isAdmin ? null : <UserSidebar />}
+        <UserSidebar />
 
         <Content
           className="flex justify-center items-start"

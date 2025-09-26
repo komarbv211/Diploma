@@ -114,7 +114,7 @@ const CustomHeader: React.FC = () => {
     {
       key: "profile",
       icon: <UserOutlined />,
-      label: <Link to={isAdmin ? "/admin/profile" : "/profile"}>Профіль</Link>,
+      label: <Link to={"/profile"}>Профіль</Link>,
     },
     {
       key: "logout",
