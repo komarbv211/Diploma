@@ -40,7 +40,7 @@ const UserFavorites: React.FC = () => {
   const currentFavorites = favorites?.slice(startIndex, startIndex + pageSize) || [];
 
   return (
-    <Layout className="bg-white w-[93%] mx-auto font-manrope min-h-[750px]">
+    <Layout className="bg-white w-[93%] mx-auto font-manrope min-h-[785px]">
       <h1 className="text-[28px] font-bold mt-12 mb-6 text-center">
         Мої улюблені товари
       </h1>
@@ -59,7 +59,7 @@ const UserFavorites: React.FC = () => {
                   price={fav.finalPrice ?? fav.price}
                   image={fav.imageName ? APP_ENV.IMAGES_1200_URL + fav.imageName : ""}
                   productId={fav.productId}
-                  userId={userId || 0}
+                  userId={userId || 1}
                   userRating={fav.averageRating ?? 0}
                   isFavorite={true}
                 />

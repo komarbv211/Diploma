@@ -23,7 +23,7 @@ const CommentsPage: React.FC = () => {
   }, [comments, page]);
 
   return (
-    <div className="max-w-[1680px] mx-auto px-6 py-10 min-h-[770px]">
+    <div className="max-w-[1680px] mx-auto px-6 py-10 min-h-[785px]">
       <div className="flex justify-between items-center mt-6">
         <span className="text-2xl">Коментарі</span>
          <button

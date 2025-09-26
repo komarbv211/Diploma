@@ -51,7 +51,7 @@ const OrderHistoryPage = () => {
   });
 
   return (
-    <Layout className="bg-white w-[93%] mx-auto font-manrope min-h-[750px]">
+    <Layout className="bg-white w-[93%] mx-auto font-manrope min-h-[785px]">
       <h1 className="text-[28px] font-bold mt-12 mb-6 text-center">
         Історія замовлень
       </h1>
