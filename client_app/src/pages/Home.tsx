@@ -133,7 +133,7 @@ const Home: React.FC = () => {
             </div>
           </div>
           {/* Нижній ряд зображень-карток */}
-          <div className="grid grid-cols-2 md:grid-cols-4 w-full">
+          <div className="hidden md:grid grid-cols-2 md:grid-cols-4 w-full">
             <div className="relative rounded-bl-2xl overflow-hidden">
               <img
                 src="1_n_brand.jpg"

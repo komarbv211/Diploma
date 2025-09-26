@@ -3,6 +3,7 @@ import { createBaseQueryWithReauth } from '../utilities/createBaseQuery';
 import { IUserDTO, IUserListResponse } from '../types/user';
 import { handleAuthQueryStarted } from '../utilities/handleAuthQueryStarted.ts';
 import { IAuthResponse } from '../types/account.ts';
+import { userAdminApi } from './admin/userAdminApi.ts';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -51,9 +52,23 @@ export const userApi = createApi({
         method: 'PUT',
         body: formData,
       }),
-      onQueryStarted: handleAuthQueryStarted,
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          // 🔑 оновлюємо токен і userSlice (handleAuthQueryStarted)
+          await handleAuthQueryStarted(arg, { dispatch, queryFulfilled });
+
+          // 🔄 інвалідація тегів у userApi
+          dispatch(userApi.util.invalidateTags(['Users']));
+
+          // 🔄 інвалідація тегів у userAdminApi
+          dispatch(userAdminApi.util.invalidateTags(['Users']));
+        } catch (error) {
+          console.error("updateUser error:", error);
+        }
+      },
       invalidatesTags: ['Users'],
     }),
+
     deleteUser: builder.mutation<void, number>({
       query: (id) => ({
         url: `${id}`,
