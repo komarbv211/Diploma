@@ -160,7 +160,7 @@ const OrderPage = () => {
           </Link>
           <div className="flex flex-col items-center justify-center font-manrope duration-300 hover:text-pink2 md:mb-0">
             <p className="text-base">0(800)50 77 40 </p>
-            <p className="text-sm text-gray">Щоденно з 7:55 до 20:05</p>
+            <p className="text-sm text-gray">Щоденно з 8:00 до 20:00</p>
           </div>
         </div>
 
@@ -441,7 +441,7 @@ const OrderPage = () => {
             </div>
           </div>
 
-          <div className="w-full xl:w-[35%] border border-blue2 rounded-xl py-[20px] px-[30px] mt-7">
+          <div className="w-full xl:w-[35%] border border-blue2 rounded-xl py-[20px] px-[30px] mt-7 mb-[5%]">
             <CartSummary />
           </div>
         </div>

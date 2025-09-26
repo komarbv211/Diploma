@@ -50,7 +50,7 @@ const PromotionCard: React.FC<PromotionCardProps> = ({
         {/* Кнопка */}
         <a
           href={buttonLink}
-          className="mt-8 flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-[#E56B93] hover:bg-[#d15a83] transition text-[20px] md:text-[24px] text-[#FFF7F3] font-medium"
+          className="mt-8 flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-[#E56B93] hover:bg-[#d15a83] transition text-[20px] md:text-[24px] text-[#FFF7F3] hover:text-[#FFF7F3] font-medium"
         >
           {buttonText}
           <span className="w-[12px] h-[23px] inline-block"></span>

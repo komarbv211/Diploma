@@ -11,22 +11,22 @@ const OrderSuccess = () => {
   const navigate = useNavigate();
   const orderId = location.state?.orderId;
   const { data: brands } = useGetBrandsQuery();
-  
+
   const brandIds = useMemo(() => {
     return brands?.map((b) => b.id) ?? [];
   }, [brands]);
-  
+
   const today = new Date();
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(today.getDate() - 7);
 
   const { products: newProducts } = useProducts({
-    StartDate: sevenDaysAgo.toISOString().split("T")[0], 
-    EndDate: today.toISOString().split("T")[0], 
-  }); 
+    StartDate: sevenDaysAgo.toISOString().split("T")[0],
+    EndDate: today.toISOString().split("T")[0],
+  });
   const { products: brandProducts } = useProducts({
     BrandIds: brandIds,
-  }); 
+  });
   const { isLoading } = useGetOrderByIdQuery(orderId, {
     skip: !orderId,
   });
@@ -60,21 +60,37 @@ const OrderSuccess = () => {
         </div>
       </div>
       <div className="mt-16">
-        <div className="flex justify-between">
-          <p className="form-title ">Товари які можуть вас зацікавити</p>
-          <Link
-            to="/"
-            className="font-manrope text-base text-blue2 duration-300 hover:text-pink2"
-          >
-            Продовжити покупки
-          </Link>
-        </div>
-        <div className="container mx-auto  md:mt-20 flex flex-col gap-12 max-w-[1680px] px-2 md:px-0">
+        <div className="container mx-auto md:mt-20 flex flex-col gap-5 max-w-[1680px] px-2 md:px-0 mb-[5%]">
+          <div className="flex items-center justify-between mb-4 ml-2">
+            <div className="flex items-center">
+              <p className="font-manrope font-semibold text-[26px]">
+                Товари, які можуть вас зацікавити
+              </p>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="#666"
+                className="ml-4"
+                viewBox="0 0 32 32"
+              >
+                <path d="M8.037 11.166L14.5 22.36c.825 1.43 2.175 1.43 3 0l6.463-11.195c.826-1.43.15-2.598-1.5-2.598H9.537c-1.65 0-2.326 1.17-1.5 2.6z" />
+              </svg>
+            </div>
+            <Link
+              to="/"
+              className="font-manrope text-lg text-blue2 duration-300 hover:text-pink2 font-semibold"
+            >
+              Продовжити покупки
+            </Link>
+          </div>
+
           <ProductCarousel
             title={"Пропозиції брендів"}
             products={brandProducts ?? []}
             maxWidth="100%"
           />
+          <br />
           <ProductCarousel
             title={"Новинки"}
             products={newProducts ?? []}

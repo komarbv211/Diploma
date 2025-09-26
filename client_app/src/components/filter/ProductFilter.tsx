@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Slider } from "antd";
+import { Select, Slider } from "antd";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
@@ -178,9 +178,9 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
         />
       </div>
       {showSortBy && (
-        <select
+        <Select
           value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
+          onChange={(e) => setSortBy(e)}
           className="px-3 py-2 rounded w-full"
           style={{ border: "none" }}
         >
@@ -188,7 +188,7 @@ const ProductFilter: React.FC<Props> = ({ onChange, isAdmin }) => {
           <option value="Price">Ціна</option>
           <option value="Rating">Рейтинг</option>
           <option value="CreatedAt">Дата створення</option>
-        </select>
+        </Select>
       )}
 
       {/* За спаданням */}

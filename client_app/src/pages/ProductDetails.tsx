@@ -38,8 +38,8 @@ const ProductDetails: React.FC = () => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  if (isLoading) return <p className="text-center mt-20">Завантаження...</p>;
-  if (!product) return <p className="text-center mt-20">Продукт не знайдено</p>;
+  if (isLoading) return <p className="font-manrope text-center mt-20">Завантаження...</p>;
+  if (!product) return <p className="font-manrope text-center mt-20">Продукт не знайдено</p>;
 
   const handleAddToCart = async () => {
     await addToCart({
