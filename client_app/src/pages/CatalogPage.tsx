@@ -115,7 +115,7 @@ const CatalogPage: React.FC = () => {
         </div>
 
         {/* Carousels */}
-        <div className="container mx-auto  md:mt-28 flex flex-col gap-12 max-w-[1310px] px-2 md:px-0">
+        <div className="container mx-auto  md:mt-20 flex flex-col gap-12 max-w-[1310px] px-2 md:px-0">
           <Product_3_Carousel
             title="Пропозиції брендів"
             products={brandProducts ?? []}
@@ -144,7 +144,7 @@ const CatalogPage: React.FC = () => {
 
         </div>
         {/* Carousels */}
-        <div className="container mx-auto  md:mt-28 flex flex-col gap-12 max-w-[1310px] px-2 md:px-0">
+        <div className="container mx-auto md:mt-20 flex flex-col gap-12 max-w-[1310px] px-2 md:px-0">
           <Product_3_Carousel
             title="Спеціально для тебе"
             products={searchResult?.items ?? []}

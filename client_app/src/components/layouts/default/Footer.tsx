@@ -18,7 +18,7 @@ const Footer: React.FC = () => {
   return (
       <footer className="bg-[#FFF7F3] w-full py-16 justify-between ">
         {/* Підписка на розсилку */}
-        <div className="max-w-6xl mx-auto text-center mb-12 px-4">
+        <div className="max-w-6xl mx-auto text-center mb-10 px-4">
           <h2 className="text-3xl font-semibold text-black mb-6">
             Дізнавайтесь першими про розпродажі і новинки!
           </h2>
@@ -38,20 +38,20 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Соцмережі */}
-        <div className="flex justify-center items-center gap-6 max-w-full md:max-w-[1380px] mx-auto py-12">
+        <div className="flex justify-center items-center gap-6 max-w-full md:max-w-[1380px] mx-auto pb-16">
           <a
               href="https://facebook.com/cosmeria"
               target="_blank"
               rel="noopener noreferrer"
           >
-            <FacebookIcon className="w-10 h-10 hover:opacity-70 transition" />
+            <FacebookIcon className="w-11 h-11 hover:opacity-70 transition" />
           </a>
           <a
               href="https://instagram.com/cosmeria"
               target="_blank"
               rel="noopener noreferrer"
           >
-            <InstagramIcon className="w-10 h-10 hover:opacity-70 transition" />
+            <InstagramIcon className="w-9 h-9 hover:opacity-70 transition" />
           </a>
           <a
               href="https://twitter.com/cosmeria"
@@ -153,7 +153,7 @@ const Footer: React.FC = () => {
           <h1 className="text-[28px] font-source-sans-pro font-semibold leading-[150%] tracking-[-0.011em] text-[#1A3D83] text-center">
             Cosmeria. Beauty Without Limits
           </h1>
-          <p className="text-base text-gray-600 text-center">
+          <p className="text-lg text-gray text-center">
             © Cosmeria 2009-2025
           </p>
         </div>
