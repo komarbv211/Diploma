@@ -41,4 +41,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  // Зменшуємо розмір шрифту на мобільних
+  @media (max-width: 768px) {
+    font-size: 16px;
+    line-height: 22px;
+    width: auto; // щоб адаптувати ширину під екран
+  }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    line-height: 20px;
+  }
 }
