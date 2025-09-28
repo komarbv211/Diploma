@@ -94,7 +94,14 @@ export const userAdminApi = createApi({
       }),
       invalidatesTags: ['Users'], 
     }),
-
+    // Підтвердження видалення (фізичне видалення адміном)
+    confirmDeleteUser: builder.mutation<void, { id: number }>({
+      query: ({ id }) => ({
+        url: `${id}/confirm-delete`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Users'],
+    }),
   }),
 });
 
@@ -106,5 +113,6 @@ export const {
   useUnblockUserMutation,
   usePromoteUserToAdminMutation, 
   useRestoreUserMutation,
+  useConfirmDeleteUserMutation,
 } = userAdminApi;
 

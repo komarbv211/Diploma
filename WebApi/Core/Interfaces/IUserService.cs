@@ -16,6 +16,7 @@ namespace Core.Interfaces
         Task<AuthResponse> UpdateUserAsync(UserUpdateDTO dto);
         Task DeleteUserAsync(long id);
         Task RestoreUserAsync(long id);
+        Task ConfirmDeleteUserAsync(long id);
         Task<UserDTO?> GetByEmailAsync(string email);
         Task BlockUserAsync(UserBlockDTO dto);
         Task UnblockUserAsync(long userId);

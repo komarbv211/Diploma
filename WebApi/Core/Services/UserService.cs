@@ -101,6 +101,18 @@ namespace Core.Services
                 throw new HttpException("Невідома помилка при видаленні користувача", HttpStatusCode.InternalServerError, ex);
             }
         }
+        public async Task ConfirmDeleteUserAsync(long id)
+        {
+            var user = await _repository.GetByID(id);
+            if (user == null)
+                throw new HttpException("Користувача не знайдено", HttpStatusCode.NotFound);
+
+            if (!user.IsRemove)
+                throw new HttpException("Користувач не подавав запит на видалення", HttpStatusCode.BadRequest);
+
+            _repository.Delete(user.Id); 
+            await _repository.SaveAsync();
+        }
 
         public async Task SendAccountDeletionEmailAsync(UserEntity user)
         {

@@ -115,6 +115,13 @@ namespace WebApiDiploma.Controllers.Admin
             return NoContent();
         }
 
+        [HttpPost("{id}/confirm-delete")]
+        public async Task<IActionResult> ConfirmDelete(long id)
+        {
+            await _service.ConfirmDeleteUserAsync(id);
+            return Ok(new { Message = $"User {id} permanently deleted" });
+        }
+
 
     }
 }

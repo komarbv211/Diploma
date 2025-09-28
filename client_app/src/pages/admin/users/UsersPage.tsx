@@ -25,6 +25,7 @@ import {
   useUnblockUserMutation,
   usePromoteUserToAdminMutation,
   useRestoreUserMutation,
+  useConfirmDeleteUserMutation,
 } from "../../../services/admin/userAdminApi";
 import PaginationComponent from "../../../components/pagination/PaginationComponent";
 import { IUser, UserBlockDTO } from "../../../types/user";
@@ -74,7 +75,7 @@ const UsersPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<string | undefined>();
   const [sortDesc, setSortDesc] = useState<boolean>(false);
   const [blockLoading, setBlockLoading] = useState<number | null>(null);
-   const [restoreUser] = useRestoreUserMutation();
+  const [restoreUser] = useRestoreUserMutation();
   const navigate = useNavigate();
 
   const { data, isError, isLoading } = useGetAllUsersQuery({
@@ -92,6 +93,8 @@ const UsersPage: React.FC = () => {
   const [blockUser] = useBlockUserMutation();
   const [unblockUser] = useUnblockUserMutation();
   const [promoteUserToAdmin] = usePromoteUserToAdminMutation();
+  const [confirmDeleteUser] = useConfirmDeleteUserMutation();
+
 
   const users = useMemo<{ items: IUser[]; totalCount: number }>(() => {
     const items: IUser[] =
@@ -281,6 +284,25 @@ const UsersPage: React.FC = () => {
     });
   };
 
+  const handleConfirmDeleteUser = (user: IUserExtended) => {
+    Modal.confirm({
+      title: `Підтвердити видалення користувача ${user.fullName}?`,
+      content: "Ця дія безповоротна!",
+      okText: "Видалити",
+      okType: "danger",
+      cancelText: "Відміна",
+      onOk: async () => {
+        try {
+          await confirmDeleteUser({ id: user.id }).unwrap();
+          showToast("success", `Користувача ${user.fullName} видалено остаточно`, <SuccessIcon />);
+        } catch (err: unknown) {
+          const error = err as ServerError;
+          showToast("error", error.data?.message || "Не вдалося видалити користувача", <ErrorIcon />);
+        }
+      },
+    });
+  };
+
   const columns: ColumnsType<IUserExtended> = [
     {
       title: "Ім'я",
@@ -357,8 +379,12 @@ const UsersPage: React.FC = () => {
             <Dropdown
                 overlay={
                   <Menu>
-                    {/* <Menu.Item onClick={() => handleAction("edit", record)}>Редагувати</Menu.Item> */}
-                    <Menu.Item onClick={() => handleAction("delete", record)}>Видалити</Menu.Item>
+                    <Menu.Item
+                      onClick={() => handleConfirmDeleteUser(record)}
+                      disabled={!record.isRemove} // кнопка доступна тільки якщо користувач уже помічений як видалений
+                    >
+                      Підтвердити видалення
+                    </Menu.Item>
                     <Menu.Item onClick={() => handleAction("message", record)}>Надіслати повідомлення</Menu.Item>
                     <Menu.Item
                         onClick={() => (isBlocked ? handleUnblock(record) : handleBlockWithDate(record))}
