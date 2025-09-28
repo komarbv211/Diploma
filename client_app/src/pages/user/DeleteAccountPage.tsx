@@ -33,7 +33,7 @@ const DeleteAccountPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[785px]">
+    <div className="flex justify-center items-center min-h-[810px]">
       <Card className="max-w-lg w-full p-6 text-center shadow-md rounded-xl max-h-[350px]">
         <Title level={3} >Видалити мій акаунт</Title>
         <Paragraph className="font-manrope">

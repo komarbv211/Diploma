@@ -18,7 +18,6 @@ const UserFavorites: React.FC = () => {
 
   const user = useAppSelector(getUser);
   const userId = user?.id ? Number(user.id) : undefined;
-  
 
   if (!auth.user) {
     return (
@@ -37,27 +36,32 @@ const UserFavorites: React.FC = () => {
   }
 
   const startIndex = (currentPage - 1) * pageSize;
-  const currentFavorites = favorites?.slice(startIndex, startIndex + pageSize) || [];
+  const currentFavorites =
+    favorites?.slice(startIndex, startIndex + pageSize) || [];
 
   return (
-    <Layout className="bg-white w-[93%] mx-auto font-manrope min-h-[785px]">
+    <Layout className="bg-white w-[93%] mx-auto font-manrope min-h-[810px]">
       <h1 className="text-[28px] font-bold mt-12 mb-6 text-center">
         Мої улюблені товари
       </h1>
 
-      <div className="flex gap-6 mt-12">
-        <UserSidebar />
+      <div className="flex gap-6 mt-7">
+        <div className="mt-5">
+          <UserSidebar />
+        </div>
         <Content className="flex flex-col flex-1 items-start">
           {currentFavorites.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-              {currentFavorites.map(fav => (
+              {currentFavorites.map((fav) => (
                 <ProductCard
                   key={fav.productId}
                   title={fav.name}
                   category={fav.categoryName}
                   oldPrice={fav.discountPercent ? fav.price : undefined}
                   price={fav.finalPrice ?? fav.price}
-                  image={fav.imageName ? APP_ENV.IMAGES_1200_URL + fav.imageName : ""}
+                  image={
+                    fav.imageName ? APP_ENV.IMAGES_1200_URL + fav.imageName : ""
+                  }
                   productId={fav.productId}
                   userId={userId || 1}
                   userRating={fav.averageRating ?? 0}
@@ -67,7 +71,13 @@ const UserFavorites: React.FC = () => {
             </div>
           ) : (
             <div className="flex flex-start ml-[32%] text-center w-full mt-12">
-              <Empty description={<span className="text-[18px] text-gray-500">У вас поки немає улюблених товарів.</span>} />
+              <Empty
+                description={
+                  <span className="text-[18px] text-gray-500">
+                    У вас поки немає улюблених товарів.
+                  </span>
+                }
+              />
             </div>
           )}
 

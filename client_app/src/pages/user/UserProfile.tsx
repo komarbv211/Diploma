@@ -113,7 +113,7 @@ const UserProfile = () => {
   }
 
   return (
-    <Layout className="bg-white w-[93%] mx-auto font-manrope min-h-[785px]">
+    <Layout className="bg-white w-[93%] mx-auto font-manrope min-h-[810px]">
       <h1 className="text-[28px] font-bold mt-12 mb-6 text-center">
         Мій профіль
       </h1>
