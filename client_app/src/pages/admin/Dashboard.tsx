@@ -109,7 +109,7 @@ const Dashboard = () => {
             }
             precision={2}
             valueStyle={{ color: "#8A0149" }} className="font-manrope"
-            prefix={loadingRevenue ? <Spin /> : "$"}
+            prefix={loadingRevenue ? <Spin /> : "₴"}
           />
         </Card>
         <Card className="shadow-md text-center">
@@ -182,7 +182,7 @@ const Dashboard = () => {
                   >
                     <span>{p.productName}</span>
                     <span className="font-semibold">
-                      {p.revenue.toLocaleString()} $
+                      {p.revenue.toLocaleString()} ₴
                     </span>
                   </li>
                 ))}
@@ -205,7 +205,7 @@ const Dashboard = () => {
                   >
                     <span>{c.categoryName}</span>
                     <span className="font-semibold">
-                      {c.revenue.toLocaleString()} $
+                      {c.revenue.toLocaleString()} ₴
                     </span>
                   </li>
                 ))}
