@@ -56,6 +56,7 @@ function App() {
               <Route index element={<UserProfile />} />
               <Route path="wishlist" element={<UserFavorites />} />
               <Route path="delete" element={<DeleteAccountPage />} />
+
             </Route>
             <Route
               path="orders"
@@ -73,6 +74,10 @@ function App() {
               <Route path=":id/comments" element={<CommentsPage />} />
             </Route>
             <Route path="category/:id" element={<CatalogPage />} />
+            {/* <Route path="/catalog/:id" element={<CatalogPage />} /> */}
+
+            
+
           </Route>
 
           <Route path="login/*" element={<LoginUser />} />

@@ -14,6 +14,7 @@ import { useGetBrandsQuery } from "../services/brandApi";
 import { useGetRandomCommentsQuery } from "../services/productCommentsApi";
 import ReviewProductCard from "../components/comments/ReviewProductCard";
 import Product_3_Carousel from "../components/Product_3_Carousel";
+import Breadcrumbs from "../components/breadcrumbs/Breadcrumbs";
 
 // ...
 const CatalogPage: React.FC = () => {
@@ -97,6 +98,8 @@ const CatalogPage: React.FC = () => {
         </div>
 
         <div className={`${showFilter ? "block" : "hidden"} lg:block`}>
+          {/* <Breadcrumbs categoryName={category?.name} /> */}
+          <Breadcrumbs categoryId={Number(id)} />
           <ProductFilter onChange={setFilters} isAdmin={isAdmin} />
         </div>
       </div>
