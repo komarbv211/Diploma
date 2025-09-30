@@ -99,7 +99,9 @@ const CatalogPage: React.FC = () => {
 
         <div className={`${showFilter ? "block" : "hidden"} lg:block`}>
           {/* <Breadcrumbs categoryName={category?.name} /> */}
-          <Breadcrumbs categoryId={Number(id)} />
+      <Breadcrumbs categoryId={Number(id)} />
+         
+          {/* <Breadcrumbs categoryId={product.categoryId} productName={product.name} /> */}
           <ProductFilter onChange={setFilters} isAdmin={isAdmin} />
         </div>
       </div>

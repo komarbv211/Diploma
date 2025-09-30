@@ -160,6 +160,7 @@ const HorizontalNavigation: React.FC = () => {
           </div>
         )}
       </div>
+      
     </nav>
   );
 };

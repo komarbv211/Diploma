@@ -38,9 +38,12 @@ interface Category {
 
 interface BreadcrumbsProps {
   categoryId?: number;
+//   productName?: string; // Додаємо назву продукту
 }
 
-const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ categoryId }) => {
+const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ categoryId
+    // , productName
+ }) => {
   const { data: categories } = useGetCategoryTreeQuery();
 
   if (!categories || !categoryId) {
@@ -79,7 +82,13 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ categoryId }) => {
               <span className="text-pink">{cat.name}</span>
             )}
           </li>
+          
         ))}
+         {/* {productName && (
+    <li className="flex items-center">
+      <span className="text-pink">{productName}</span>
+    </li>
+  )} */}
       </ol>
     </nav>
   );
