@@ -17,6 +17,7 @@ import SuccessIcon from "./icons/toasts/SuccessIcon";
 import WarnIcon from "./icons/toasts/WarnIcon";
 import { useRateProductMutation } from "../services/productRatingApi ";
 import { useGetProductByIdQuery } from "../services/productApi";
+// import Breadcrumbs from "./breadcrumbs/Breadcrumbs";
 
 type Props = {
     title: string;
@@ -132,6 +133,12 @@ const ProductCard: React.FC<Props> = ({
         hover:scale-105 hover:border-pink2 my-5
       "
         >
+             {/* Хлібні крихти */}
+      {/* <Breadcrumbs
+        categoryId={product.categoryId}
+        productName={product.name}
+      /> */}
+      
             {/* Фото */}
             <Link
                 to={`/product/details/${productId}`}

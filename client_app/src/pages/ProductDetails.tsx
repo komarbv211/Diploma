@@ -1,7 +1,9 @@
+
 // src/pages/ProductDetails.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetProductByIdQuery } from "../services/productApi";
+import { useGetCategoryTreeQuery } from "../services/categoryApi"; // додано
 import { useCart } from "../hooks/useCart";
 import InteractiveRating from "../components/InteractiveRating";
 import { CartFlowerIcon, CartIcon } from "../components/icons";
@@ -14,6 +16,8 @@ import { useAppSelector } from "../store/store";
 import { useProducts } from "../hooks/useProducts";
 import Product_3_Carousel from "../components/Product_3_Carousel";
 import { ICartItem } from "../store/slices/localCartSlice";
+import Breadcrumbs from "../components/breadcrumbs/Breadcrumbs";
+
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const {
@@ -21,18 +25,46 @@ const ProductDetails: React.FC = () => {
     isLoading,
     refetch,
   } = useGetProductByIdQuery(Number(id));
+
+  const { data: categories } = useGetCategoryTreeQuery();
+
   const { user } = useAppSelector((s) => s.auth);
   const { cart, addToCart } = useCart(!!user);
+
   const isInCart = cart.some(
     (item: ICartItem) => item.productId === Number(id)
   );
+
   const navigate = useNavigate();
   const { Paragraph } = Typography;
   const [isReviewOpen, setIsReviewOpen] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
+
   const { products: brandProducts } = useProducts({
     CategoryId: 1,
   }); // Категорія "Парфумерія"
+
+  // Логіка побудови шляху категорій для хлібних крихт
+  const categoryPath = useMemo(() => {
+    if (!product?.categoryId || !categories) return [];
+
+    const buildPath = (
+      id: number,
+      tree: typeof categories,
+      path: { id: number; name: string }[] = []
+    ): { id: number; name: string }[] => {
+      const current = tree.find((cat) => cat.id === id);
+      if (current) {
+        path.unshift({ id: current.id, name: current.name });
+        if (current.parentId) {
+          return buildPath(current.parentId, tree, path);
+        }
+      }
+      return path;
+    };
+
+    return buildPath(product.categoryId, categories);
+  }, [product?.categoryId, categories]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -62,6 +94,9 @@ const ProductDetails: React.FC = () => {
 
   return (
     <>
+     <div className="flex justify-center w-full mt-4">
+  <Breadcrumbs path={categoryPath} productName={product.name} />
+</div>
       <div className="container mx-auto px-4 mt-16 flex flex-col lg:flex-row gap-12 max-w-[1680px]">
         {/* Ліва частина: ImagesViewer */}
         <div className="flex-1 h-full">

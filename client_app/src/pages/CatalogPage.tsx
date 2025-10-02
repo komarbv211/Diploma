@@ -98,16 +98,17 @@ const CatalogPage: React.FC = () => {
         </div>
 
         <div className={`${showFilter ? "block" : "hidden"} lg:block`}>
-          {/* <Breadcrumbs categoryName={category?.name} /> */}
-      <Breadcrumbs categoryId={Number(id)} />
-         
-          {/* <Breadcrumbs categoryId={product.categoryId} productName={product.name} /> */}
           <ProductFilter onChange={setFilters} isAdmin={isAdmin} />
         </div>
       </div>
 
       {/* Content */}
+ 
+
       <div className="w-full lg:w-[76.5%] flex flex-col gap-6 m-0 p-0">
+        
+           <Breadcrumbs categoryId={Number(id)} />
+
         {/* Banner */}
         <div className="w-full aspect-[284/153] bg-[url('/parfum_banner.png')] bg-lightgray bg-center bg-cover bg-no-repeat rounded-lg overflow-hidden">
           {category?.image && (
