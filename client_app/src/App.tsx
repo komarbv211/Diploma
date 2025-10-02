@@ -1,6 +1,7 @@
 import "./index.css";
 import "./index.scss";
 import "./App.scss";
+// import "./i18n";
 import { Route, Routes } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Layout from "./components/layouts/default/Layout.tsx";

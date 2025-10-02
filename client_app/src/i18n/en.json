@@ -1,0 +1,17 @@
+{
+  "product": {
+    "description": "Description",
+    "buy": "Buy",
+    "reviews": "Reviews for {{productName}}",
+    "addReview": "Add a review",
+    "article": "Article"
+  },
+  "catalog": {
+    "showFilter": "Show filter",
+    "hideFilter": "Hide filter",
+    "brandOffers": "Brand Offers",
+    "forYou": "Just for You",
+    "loading": "Loading...",
+    "noProducts": "No products in this category."
+  }
+}

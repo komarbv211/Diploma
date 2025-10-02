@@ -23,6 +23,7 @@ import { useDebounce } from "use-debounce";
 import CartModal from "../../Cart/CartModal";
 import { APP_ENV } from "../../../env";
 import MobileSearchModal from "../../navigation/MobileSearchModal";
+import LanguageSwitcher from "../../Languag/LanguageSwitcher";
 
 const CustomHeader: React.FC = () => {
   const user = useAppSelector(getUser);
@@ -189,6 +190,8 @@ const CustomHeader: React.FC = () => {
             </div>
           )}
 
+
+
            {/* Користувач / кошик */}
           <div className="flex flex-[50% 50% 50%] xl:flex-1 items-center justify-end gap-4">
             {user ? (
@@ -222,6 +225,7 @@ const CustomHeader: React.FC = () => {
             )}
             
                   <CartModal />
+                  <LanguageSwitcher />
           </div>
         </div>
       </header>

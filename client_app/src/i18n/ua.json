@@ -1,0 +1,17 @@
+{
+  "product": {
+    "description": "Опис",
+    "buy": "Купити",
+    "reviews": "Відгуки про {{productName}}",
+    "addReview": "Залишити відгук",
+    "article": "Артикул"
+  },
+  "catalog": {
+    "showFilter": "Показати фільтр",
+    "hideFilter": "Сховати фільтр",
+    "brandOffers": "Пропозиції брендів",
+    "forYou": "Спеціально для тебе",
+    "loading": "Завантаження...",
+    "noProducts": "Немає товарів у цій категорії."
+  }
+}
