@@ -1,6 +1,7 @@
 // ReviewProductCard.tsx
 import React from "react";
 import { ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ReviewCardProps {
   productName: string;
@@ -12,6 +13,7 @@ interface ReviewCardProps {
 }
 
 const ReviewProductCard: React.FC<ReviewCardProps> = ({
+  
   productName,
   productImage,
   reviewTitle,
@@ -19,6 +21,7 @@ const ReviewProductCard: React.FC<ReviewCardProps> = ({
   reviewText,
   onGoToProduct,
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="relative flex flex-col lg:flex-row items-center lg:items-start gap-8 p-6 lg:p-10 bg-[#FFF7F3] rounded-[15px] shadow-sm max-w-[830px] h-full">
       {/* Фото продукту */}
@@ -56,7 +59,8 @@ const ReviewProductCard: React.FC<ReviewCardProps> = ({
           className="flex flex-row items-center justify-center gap-3 px-6 py-2 w-full sm:w-auto bg-[#E56B93] rounded-[15px] hover:bg-[#d15c83] transition mt-auto"
         >
           <span className="font-manrope font-medium text-lg sm:text-xl text-[#FFF7F3]">
-            Перейти до товару
+            {/* Перейти до товару */}
+            {t('home.goToProduct')}
           </span>
           <ArrowRight className="w-4 h-5 text-[#FFF7F3]" />
         </button>

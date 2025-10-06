@@ -10,8 +10,10 @@ import ReviewProductCard from "../components/comments/ReviewProductCard";
 import { useGetRandomCommentsQuery } from "../services/productCommentsApi";
 import { useProducts } from "../hooks/useProducts";
 import { useGetBrandsQuery } from "../services/brandApi";
+import { useTranslation } from "react-i18next";
 
 const Home: React.FC = () => {
+    const { t } = useTranslation();
   // const { data: products } = useGetAllProductsQuery();
   const { data: promotions } = useGetPromotionByIdQuery(1);
   const { data: reviewsFromApi } = useGetRandomCommentsQuery(4);
@@ -107,14 +109,17 @@ const Home: React.FC = () => {
             {/* Текст */}
             <div className="flex flex-col items-center justify-center text-center px-6">
               <h2 className="lg:text-3xl text-[#402945] leading-snug font-manrope font-bold">
-                Улюбленці мільйонів — тепер ближче.
+                {/* Улюбленці мільйонів — тепер ближче. */}
+                 {t('home.brandBannerTitle')}
               </h2>
               <p className="mt-4 lg:text-xl text-[#402945] leading-relaxed font-manrope">
-                Світові лідери індустрії, чиї рішення змінюють звичне уявлення
+                {/* Світові лідери індустрії, чиї рішення змінюють звичне уявлення
                 про зручність, функціональність і стиль, зібрані на одній
                 платформі. Обирай перевірену якість, сучасні технології та
                 надійність, яким довіряють у всьому світі. Твій вибір — серед
-                найкращих.
+                найкращих. */}
+
+                 {t('home.brandBannerDescription')}
               </p>
             </div>
 
@@ -187,12 +192,14 @@ const Home: React.FC = () => {
       </section>
       <div className="container mx-auto  md:mt-28 flex flex-col gap-12 max-w-[1680px] px-2 md:px-0">
         <ProductCarousel
-          title={"Пропозиції брендів"}
+        //  title={"Пропозиції брендів"}
+          title={t('home.brandOffers')}
           products={brandProducts ?? []}
           maxWidth="100%"
         />
         <ProductCarousel
-          title={"Новинки"}
+          // title={"Новинки"}
+          title={t('home.newArrivals')}
           products={newProducts ?? []}
           maxWidth="100%"
         />
@@ -205,7 +212,8 @@ const Home: React.FC = () => {
       </section>
       <div className="container mx-auto  md:mt-28 flex flex-col gap-12 max-w-[1680px] px-2 md:px-0">
         <ProductCarousel
-          title={"Парфумерія"}
+          // title={"Парфумерія"}
+          title={t('home.perfumery')}
           products={perfumeProducts ?? []}
           maxWidth="100%"
         />
@@ -218,17 +226,21 @@ const Home: React.FC = () => {
         }
         title={promotions?.name || ""}
         description={promotions?.description || ""}
-        buttonText={"Перейти до товару"}
+        // buttonText={"Перейти до товару"}
+        buttonText={t('home.goToProduct')}
         buttonLink={`/product/details/${promotions?.productIds}`}
       />
       <div className="container mx-auto  md:mt-28 flex flex-col gap-12 max-w-[1680px] px-2 md:px-0">
         <ProductCarousel
-          title={"Волосся"}
+          // title={"Волосся"}
+          title={t('home.hair')}
           products={hairProducts ?? []}
           maxWidth="100%"
         />
         <ProductCarousel
-          title={"Обличчя"}
+          // title={"Обличчя"}
+          title={t('home.face')}
+
           products={faceProducts ?? []}
           maxWidth="100%"
         />

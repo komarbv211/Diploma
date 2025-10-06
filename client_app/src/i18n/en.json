@@ -13,5 +13,18 @@
     "forYou": "Just for You",
     "loading": "Loading...",
     "noProducts": "No products in this category."
+  },
+   "home": {
+    "brandBannerTitle": "Favorites of millions — now closer.",
+    "brandBannerDescription": "Global industry leaders whose solutions redefine convenience, functionality, and style are gathered on one platform. Choose trusted quality, modern technology, and worldwide reliability.",
+    "reviewTitle": "Product Review",
+    "anonymous": "Anonymous",
+    "noReviews": "No available comments",
+    "brandOffers": "Brand Offers",
+    "newArrivals": "New Arrivals",
+    "goToProduct": "Go to product",
+    "perfumery": "Perfumery",
+    "hair": "Hair",
+    "face": "Face"
   }
 }
