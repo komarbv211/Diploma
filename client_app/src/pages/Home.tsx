@@ -58,7 +58,7 @@ const Home: React.FC = () => {
               ? APP_ENV.IMAGES_1200_URL + review.product.images[0].name
               : "/NoImage.png"
           }
-          reviewTitle="Відгук на товар"
+          reviewTitle= {t('home.reviewTitle')}
           userName={review.user?.firstName || "Анонім"}
           reviewText={review.text}
           onGoToProduct={() =>
