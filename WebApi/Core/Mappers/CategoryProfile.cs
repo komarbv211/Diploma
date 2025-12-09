@@ -8,18 +8,46 @@ namespace Core.Mappers
     {
         public CategoryProfile()
         {
+        //    CreateMap<CategoryEntity, CategoryDto>()
+        //        .ForMember(dest => dest.Children, opt => opt.MapFrom(src => src.Children)); 
+
+        //    CreateMap<CategoryDto, CategoryEntity>()
+        //        .ForMember(dest => dest.Children, opt => opt.Ignore());
+
+        //    CreateMap<CategoryCreateDto, CategoryEntity>()
+        //        .ForMember(dest => dest.Children, opt => opt.Ignore());
+
+        //    CreateMap<CategoryUpdateDto, CategoryEntity>()
+        //        .ForMember(dest => dest.Children, opt => opt.Ignore())  
+        //        .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentId));
+
+
+            //новий автомапер
             CreateMap<CategoryEntity, CategoryDto>()
-                .ForMember(dest => dest.Children, opt => opt.MapFrom(src => src.Children)); 
+               .ForMember(dest => dest.Children, opt => opt.MapFrom(src => src.Children))
+               .ForMember(dest => dest.Translations, opt => opt.MapFrom(src =>
+                   src.Translations.ToDictionary(
+                       t => t.Language,
+                       t => new CategoryTranslationDto
+                       {
+                           Name = t.Name,
+                           Description = t.Description
+                       }
+                   )
+               ));
 
             CreateMap<CategoryDto, CategoryEntity>()
-                .ForMember(dest => dest.Children, opt => opt.Ignore());
+                .ForMember(dest => dest.Children, opt => opt.Ignore())
+                .ForMember(dest => dest.Translations, opt => opt.Ignore());
 
             CreateMap<CategoryCreateDto, CategoryEntity>()
-                .ForMember(dest => dest.Children, opt => opt.Ignore());
+                .ForMember(dest => dest.Children, opt => opt.Ignore())
+                .ForMember(dest => dest.Translations, opt => opt.Ignore());
 
             CreateMap<CategoryUpdateDto, CategoryEntity>()
-                .ForMember(dest => dest.Children, opt => opt.Ignore())  
-                .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentId)); 
+                .ForMember(dest => dest.Children, opt => opt.Ignore())
+                .ForMember(dest => dest.Translations, opt => opt.Ignore())
+                .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentId));
         }
     }
 }

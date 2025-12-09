@@ -15,12 +15,20 @@ namespace WebApiDiploma.Controllers.Public
             _categoryService = categoryService;
         }
 
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAll()
+        //{
+        //    var categories = await _categoryService.GetCategoriesAsync();
+        //    return Ok(categories);
+        //}
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAll([FromQuery] string lang = "uk")
         {
-            var categories = await _categoryService.GetCategoriesAsync();
+            var categories = await _categoryService.GetCategoriesAsync(lang);
             return Ok(categories);
         }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<CategoryDto>> GetById(long id)

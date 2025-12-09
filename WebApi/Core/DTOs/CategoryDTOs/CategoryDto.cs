@@ -10,5 +10,12 @@
         public string? Description { get; set; }
         public long? ParentId { get; set; }
         public List<CategoryDto> Children { get; set; } = [];
+
+        //щоб категорії повертали переклад
+        //нова спроба
+        public List<CategoryTranslationDto> Translations { get; set; } = new();
+
+        //public Dictionary<string, CategoryTranslationDto>? Translations { get; set; }
+
     }
 }

@@ -79,16 +79,32 @@ public class CategoryRepository : Repository<CategoryEntity>, ICategoryRepositor
 
     public async Task<IEnumerable<CategoryEntity>> GetChildrenAsync(long parentId)
     {
+        //return await dbSet
+        //    .Where(c => c.ParentId == parentId)
+        //    .ToListAsync();
+
+        //змінено
         return await dbSet
-            .Where(c => c.ParentId == parentId)
-            .ToListAsync();
+    .Where(c => c.ParentId == parentId)
+    .Include(c => c.Translations)
+    .Include(c => c.Children)
+        .ThenInclude(ch => ch.Translations)
+    .ToListAsync();
+
     }
 
     public async Task<CategoryEntity?> GetCategoryWithChildrenAsync(long id)
     {
+        //return await dbSet
+        //    .Include(c => c.Children)
+        //    .FirstOrDefaultAsync(c => c.Id == id);
+        //змінено
         return await dbSet
-            .Include(c => c.Children)
-            .FirstOrDefaultAsync(c => c.Id == id);
+    .Include(c => c.Translations)
+    .Include(c => c.Children)
+        .ThenInclude(ch => ch.Translations)
+    .FirstOrDefaultAsync(c => c.Id == id);
+
     }
 
     public async Task<CategoryEntity?> GetParentCategoryAsync(long categoryId)
@@ -102,9 +118,19 @@ public class CategoryRepository : Repository<CategoryEntity>, ICategoryRepositor
 
     public async Task<IEnumerable<CategoryEntity>> GetRootCategoriesAsync()
     {
+
+        //return await dbSet
+        //    .Where(c => c.ParentId == null)
+        //    .ToListAsync();
+        //змінено
+
         return await dbSet
-            .Where(c => c.ParentId == null)
-            .ToListAsync();
+    .Where(c => c.ParentId == null)
+    .Include(c => c.Translations)
+    .Include(c => c.Children)
+        .ThenInclude(ch => ch.Translations)
+    .ToListAsync();
+
     }
 
     public async Task<bool> ExistsByNameAsync(string name)
@@ -137,6 +163,15 @@ public class CategoryRepository : Repository<CategoryEntity>, ICategoryRepositor
             .Include(c => c.Children)
                 .ThenInclude(ch => ch.Translations)
             .ToListAsync();
+    }
+
+    public async Task<CategoryEntity?> GetByIdWithTranslationsAsync(long id)
+    {
+        return await dbSet
+            .Include(c => c.Translations)
+            .Include(c => c.Children)
+                .ThenInclude(ch => ch.Translations)
+            .FirstOrDefaultAsync(c => c.Id == id);
     }
 
     //public async Task<CategoryEntity?> GetByIdAsync(long id)

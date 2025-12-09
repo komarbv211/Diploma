@@ -1,4 +1,5 @@
 ﻿using Ardalis.Specification;
+using Infrastructure.Entities;
 using System.Linq.Expressions;
 
 namespace Core.Interfaces

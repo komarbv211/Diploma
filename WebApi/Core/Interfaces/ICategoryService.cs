@@ -4,7 +4,8 @@ namespace Core.Interfaces
 {
     public interface ICategoryService
     {
-        Task<List<CategoryDto>> GetCategoriesAsync();
+        //Task<List<CategoryDto>> GetCategoriesAsync();
+        Task<List<CategoryDto>> GetCategoriesAsync(string lang = "uk"); // <-- додано параметр
         Task<List<CategoryNameDto>> GetCategoriesNamesAsync();
         Task<CategoryDto?> GetByIdAsync(long id);
         Task<CategoryDto?> GetBySlugAsync(string slug);

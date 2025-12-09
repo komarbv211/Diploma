@@ -14,5 +14,7 @@ namespace Core.Interfaces
         Task<IEnumerable<CategoryNameDto>> GetCategoriesNamesAsync();
         Task<bool> ExistsByNameExceptIdAsync(string name, long excludedId);
         Task<List<CategoryEntity>> GetAllWithTranslationsAsync(); // <--- додати сюди
+        Task<CategoryEntity?> GetByIdWithTranslationsAsync(long id);// <--- додати сюди
+
     }
 }

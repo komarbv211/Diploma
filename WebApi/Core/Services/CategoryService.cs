@@ -20,16 +20,19 @@ namespace Core.Services
         }
 
         // Отримати всі категорії
-        public async Task<List<CategoryDto>> GetCategoriesAsync()
-        {
-            var categories = await _categoryRepository.GetAllAsync();
-            return _mapper.Map<List<CategoryDto>>(categories);
-        }
+        //public async Task<List<CategoryDto>> GetCategoriesAsync()
+        //{
+        //    var categories = await _categoryRepository.GetAllAsync();
+        //    return _mapper.Map<List<CategoryDto>>(categories);
+        //}
 
         // Отримати категорію по ID
         public async Task<CategoryDto?> GetByIdAsync(long id)
         {
-            var category = await _categoryRepository.GetByID(id);
+            //var category = await _categoryRepository.GetByID(id);
+            //заміна
+            var category = await _categoryRepository.GetByIdWithTranslationsAsync(id);
+
             return category == null ? null : _mapper.Map<CategoryDto>(category);
         }
 
@@ -79,7 +82,9 @@ namespace Core.Services
         // Оновлення існуючої категорії       
         public async Task UpdateCategoryAsync(CategoryUpdateDto dto)
         {
-            var category = await _categoryRepository.GetByID(dto.Id);
+            //var category = await _categoryRepository.GetByID(dto.Id);
+            //заміна
+            var category = await _categoryRepository.GetByIdWithTranslationsAsync(dto.Id);
             if (category == null) return;
 
             string imageName = category.Image!;
@@ -109,7 +114,9 @@ namespace Core.Services
         // Видалення категорії        
         public async Task DeleteCategoryAsync(long id)
         {
-            var category = await _categoryRepository.GetByID(id);
+            //var category = await _categoryRepository.GetByID(id);
+            //заміна
+            var category = await _categoryRepository.GetByIdWithTranslationsAsync(id);
             if (category != null)
             {
                 // Видалити зображення, якщо воно існує
@@ -151,6 +158,27 @@ namespace Core.Services
         //    return categories.Select(cat => MapToDto(cat, lang)).ToList();
         //}
 
+        //private CategoryDto MapToDto(CategoryEntity cat, string lang)
+        //{
+        //    var translation = cat.Translations.FirstOrDefault(t => t.Language == lang);
+
+        //    return new CategoryDto
+        //    {
+        //        Id = cat.Id,
+        //        UrlSlug = cat.UrlSlug,
+        //        Priority = cat.Priority,
+        //        Image = cat.Image,
+        //        ParentId = cat.ParentId,
+        //        Name = translation?.Name ?? "[no translation]",
+        //        Description = translation?.Description ?? "",
+
+        //        // Рекурсивно обробляємо дочірні категорії
+        //        Children = cat.Children?
+        //            .Select(child => MapToDto(child, lang))
+        //            .ToList() ?? []
+        //    };
+        //}
+
         private CategoryDto MapToDto(CategoryEntity cat, string lang)
         {
             var translation = cat.Translations.FirstOrDefault(t => t.Language == lang);
@@ -164,13 +192,18 @@ namespace Core.Services
                 ParentId = cat.ParentId,
                 Name = translation?.Name ?? "[no translation]",
                 Description = translation?.Description ?? "",
-
-                // Рекурсивно обробляємо дочірні категорії
                 Children = cat.Children?
-                    .Select(child => MapToDto(child, lang))
-                    .ToList() ?? []
+                            .Select(child => MapToDto(child, lang))
+                            .ToList() ?? new List<CategoryDto>(),
+                Translations = cat.Translations.Select(t => new CategoryTranslationDto
+                {
+                    Language = t.Language,
+                    Name = t.Name,
+                    Description = t.Description
+                }).ToList()
             };
         }
+
 
 
     }
